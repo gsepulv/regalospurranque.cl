@@ -32,6 +32,12 @@ assets/img/config/*
 !assets/img/banners/.gitkeep
 !assets/img/noticias/.gitkeep
 !assets/img/og/.gitkeep
+!assets/img/og/og-regalos-purranque.jpg
+!assets/img/og/og-regalos-2026.jpg
+!assets/img/og/categoria-default.jpg
+!assets/img/og/comercio-default.jpg
+!assets/img/og/fecha-default.jpg
+!assets/img/og/noticia-default.jpg
 !assets/img/config/.gitkeep
 
 # Archivos comprimidos y backups

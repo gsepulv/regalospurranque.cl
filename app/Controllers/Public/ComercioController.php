@@ -40,6 +40,7 @@ class ComercioController extends Controller
         $this->render('public/comercios', [
             'title'       => 'Comercios - ' . SITE_NAME,
             'description' => 'Directorio completo de comercios y servicios en Purranque',
+            'og_image'    => asset('img/og/comercio-default.jpg'),
             'comercios'   => $comercios,
             'categorias'  => $categorias,
             'banners'     => $banners,

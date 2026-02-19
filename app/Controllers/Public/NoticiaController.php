@@ -32,6 +32,7 @@ class NoticiaController extends Controller
         $this->render('public/noticias', [
             'title'       => 'Noticias - ' . SITE_NAME,
             'description' => 'Las ultimas noticias y novedades del comercio local de Purranque',
+            'og_image'    => asset('img/og/noticia-default.jpg'),
             'noticias'    => $noticias,
             'destacadas'  => $destacadas,
             'banners'     => $banners,

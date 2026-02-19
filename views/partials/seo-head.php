@@ -27,7 +27,7 @@ if (!empty($og_image)) {
 } elseif (!empty($ogDefaults['image'])) {
     $seoImage = asset('img/og/' . $ogDefaults['image']);
 } else {
-    $seoImage = asset('img/og/default.jpg');
+    $seoImage = asset('img/og/og-regalos-purranque.jpg');
 }
 
 // Detectar tipo MIME de la imagen OG

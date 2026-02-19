@@ -33,6 +33,7 @@ class FechaController extends Controller
         $this->render('public/celebraciones', [
             'title'             => 'Celebraciones y Fechas Especiales - ' . SITE_NAME,
             'description'       => 'Descubre las mejores ofertas y comercios para cada celebracion y fecha especial en Purranque',
+            'og_image'          => asset('img/og/fecha-default.jpg'),
             'fechasPersonales'  => $fechasPersonales,
             'fechasCalendario'  => $fechasCalendario,
             'fechasComerciales' => $fechasComerciales,
@@ -72,6 +73,7 @@ class FechaController extends Controller
         $this->render('public/fecha', [
             'title'       => $fecha['nombre'] . ' - ' . SITE_NAME,
             'description' => $fecha['descripcion'] ?: "Descubre las ofertas y comercios para {$fecha['nombre']} en Purranque",
+            'og_image'    => asset('img/og/fecha-default.jpg'),
             'fecha'       => $fecha,
             'comercios'   => $comercios,
             'banners'     => $banners,

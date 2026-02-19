@@ -31,6 +31,7 @@ class CategoriaController extends Controller
         $this->render('public/categorias', [
             'title'       => 'Categorias - ' . SITE_NAME,
             'description' => 'Explora todas las categorias de comercios y servicios en Purranque',
+            'og_image'    => asset('img/og/categoria-default.jpg'),
             'categorias'  => $categorias,
             'breadcrumbs' => $breadcrumbs,
             'schemas'     => [Seo::schemaBreadcrumbs($breadcrumbs)],
@@ -69,6 +70,7 @@ class CategoriaController extends Controller
         $this->render('public/categoria', [
             'title'       => $categoria['nombre'] . ' en Purranque - ' . SITE_NAME,
             'description' => $categoria['descripcion'] ?: "Encuentra los mejores comercios de {$categoria['nombre']} en Purranque",
+            'og_image'    => asset('img/og/categoria-default.jpg'),
             'categoria'   => $categoria,
             'comercios'   => $comercios,
             'categorias'  => $categorias,
