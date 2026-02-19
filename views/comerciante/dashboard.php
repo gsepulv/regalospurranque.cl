@@ -1,0 +1,131 @@
+<?php
+/**
+ * Dashboard del comerciante
+ * Variables: $comercio, $pendientes, $plan, $usuario
+ */
+$success = $_SESSION['flash_success'] ?? '';
+$error   = $_SESSION['flash_error'] ?? '';
+$info    = $_SESSION['flash_info'] ?? '';
+unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_info']);
+?>
+
+<section class="section">
+    <div class="container" style="max-width:720px">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem">
+            <div>
+                <h1 style="font-size:1.5rem;margin:0">Mi comercio</h1>
+                <p style="color:#6B7280;margin:0.25rem 0 0;font-size:0.9rem">
+                    Hola, <?= e($usuario['nombre']) ?>
+                </p>
+            </div>
+            <a href="<?= url('/mi-comercio/logout') ?>" style="color:#6B7280;font-size:0.85rem;text-decoration:none">
+                Cerrar sesión →
+            </a>
+        </div>
+
+        <!-- Mensajes flash -->
+        <?php if ($success): ?>
+            <div style="background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.9rem">
+                <?= e($success) ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($error): ?>
+            <div style="background:#FEE2E2;border:1px solid #FECACA;color:#991B1B;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.9rem">
+                <?= e($error) ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($info): ?>
+            <div style="background:#DBEAFE;border:1px solid #BFDBFE;color:#1E40AF;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.9rem">
+                <?= e($info) ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!$comercio): ?>
+            <!-- Sin comercio -->
+            <div style="background:var(--color-white);border-radius:12px;padding:2rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                <span style="font-size:3rem">📋</span>
+                <h2 style="margin:0.75rem 0 0.5rem;font-size:1.25rem">Aún no tienes un comercio registrado</h2>
+                <p style="color:#6B7280">Completa el registro de tu negocio para aparecer en el directorio.</p>
+                <a href="<?= url('/registrar-comercio/datos') ?>" class="btn btn--primary" style="margin-top:1rem">
+                    Registrar mi comercio
+                </a>
+            </div>
+
+        <?php else: ?>
+
+            <!-- Estado del comercio -->
+            <div style="background:var(--color-white);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:1.25rem">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
+                    <div>
+                        <h2 style="margin:0;font-size:1.25rem"><?= e($comercio['nombre']) ?></h2>
+                        <p style="color:#6B7280;margin:0.25rem 0 0;font-size:0.9rem">
+                            <?= e($comercio['categorias_nombres'] ?: 'Sin categorías') ?>
+                        </p>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                        <?php if ($comercio['activo']): ?>
+                            <span style="background:#F0FDF4;color:#166534;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.8rem;font-weight:600">✅ Publicado</span>
+                        <?php else: ?>
+                            <span style="background:#FEF3C7;color:#92400E;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.8rem;font-weight:600">⏳ Pendiente de revisión</span>
+                        <?php endif; ?>
+                        <span style="background:#F3F4F6;color:#6B7280;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.8rem">
+                            <?= e($plan['icono'] ?? '🆓') ?> <?= e($plan['nombre'] ?? 'Freemium') ?>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cambios pendientes -->
+            <?php if ($pendientes): ?>
+                <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:12px;padding:1rem;margin-bottom:1.25rem">
+                    <p style="margin:0;font-size:0.9rem;color:#92400E">
+                        ⏳ <strong>Tienes cambios pendientes de aprobación</strong> enviados el <?= date('d/m/Y H:i', strtotime($pendientes['created_at'])) ?>.
+                        Nuestro equipo los revisará pronto.
+                    </p>
+                </div>
+            <?php endif; ?>
+
+            <!-- Resumen rápido -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:1.25rem">
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.5rem"><?= $comercio['logo'] ? '✅' : '❌' ?></span>
+                    <p style="margin:0.35rem 0 0;font-size:0.8rem;color:#6B7280">Logo</p>
+                </div>
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.5rem"><?= $comercio['portada'] ? '✅' : '❌' ?></span>
+                    <p style="margin:0.35rem 0 0;font-size:0.8rem;color:#6B7280">Portada</p>
+                </div>
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.5rem"><?= $comercio['whatsapp'] ? '✅' : '❌' ?></span>
+                    <p style="margin:0.35rem 0 0;font-size:0.8rem;color:#6B7280">WhatsApp</p>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+                <a href="<?= url('/mi-comercio/editar') ?>" class="btn btn--primary" style="flex:1;text-align:center;padding:0.75rem">
+                    ✏️ Editar información
+                </a>
+                <?php if ($comercio['activo']): ?>
+                    <a href="<?= url('/comercio/' . $comercio['slug']) ?>" class="btn btn--outline" style="flex:1;text-align:center;padding:0.75rem" target="_blank">
+                        👁️ Ver mi ficha pública
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <!-- Upgrade plan -->
+            <?php if ($comercio['plan'] === 'freemium'): ?>
+                <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:1rem;margin-top:1.25rem">
+                    <p style="margin:0;font-size:0.9rem;color:#166534">
+                        💡 <strong>¿Quieres más visibilidad?</strong> Con el Plan Básico obtienes 3 fotos, todas las redes, horarios y sello verificado.
+                        <a href="<?= url('/planes') ?>" style="color:#166534;font-weight:600">Ver planes →</a>
+                    </p>
+                </div>
+            <?php endif; ?>
+
+        <?php endif; ?>
+
+    </div>
+</section>

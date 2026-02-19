@@ -1,0 +1,262 @@
+<?php
+/**
+ * Admin - Mantenimiento > Herramientas
+ * Variables: $mantenimientoActivo (bool), $mantenimientoMensaje (string), $mantenimientoFin (string),
+ *            $sitemapExists, $sitemapDate, $cacheFiles, $sesionesExpiradas
+ */
+$modoActivo = !empty($mantenimientoActivo);
+?>
+<div class="admin-breadcrumb">
+    <a href="<?= url('/admin/dashboard') ?>">Dashboard</a> &rsaquo;
+    <a href="<?= url('/admin/mantenimiento') ?>">Mantenimiento</a> &rsaquo;
+    <span>Herramientas</span>
+</div>
+
+<div class="toolbar">
+    <h2 style="margin:0;flex:1">Herramientas</h2>
+</div>
+
+<?php
+$currentTab = 'herramientas';
+$tabs = [
+    'backups'        => ['label' => 'Backups',           'url' => '/admin/mantenimiento/backups'],
+    'archivos'       => ['label' => 'Explorador',        'url' => '/admin/mantenimiento/archivos'],
+    'salud'          => ['label' => 'Salud',             'url' => '/admin/mantenimiento/salud'],
+    'logs'           => ['label' => 'Logs',              'url' => '/admin/mantenimiento/logs'],
+    'herramientas'   => ['label' => 'Herramientas',      'url' => '/admin/mantenimiento/herramientas'],
+    'configuracion'  => ['label' => 'Configuraci&oacute;n',  'url' => '/admin/mantenimiento/configuracion'],
+];
+?>
+<div class="admin-tabs" style="margin-bottom:var(--spacing-6)">
+    <?php foreach ($tabs as $key => $tab): ?>
+        <a href="<?= url($tab['url']) ?>" class="admin-tab <?= $currentTab === $key ? 'admin-tab--active' : '' ?>"><?= $tab['label'] ?></a>
+    <?php endforeach; ?>
+</div>
+
+<style>
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-5);
+    }
+    @media (max-width: 1024px) {
+        .tools-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 640px) {
+        .tools-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .tool-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    .tool-card__icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.75rem;
+        line-height: 1;
+        opacity: 0.85;
+    }
+    .tool-card__title {
+        font-size: 1rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+    }
+    .tool-card__desc {
+        font-size: 0.8rem;
+        color: var(--color-gray);
+        margin-bottom: 1rem;
+        line-height: 1.4;
+        flex: 1;
+    }
+    .tool-card form {
+        width: 100%;
+    }
+    .tool-card .form-group {
+        text-align: left;
+        margin-bottom: 0.75rem;
+    }
+    .tool-card .form-group label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .results-card {
+        margin-bottom: var(--spacing-6);
+    }
+    .results-card pre {
+        background: var(--color-light);
+        padding: 1rem;
+        border-radius: var(--radius-md);
+        font-size: 0.8rem;
+        max-height: 300px;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+</style>
+
+<?php if ($flash['success'] ?? false): ?>
+    <div class="toast toast--success"><?= e($flash['success']) ?></div>
+<?php endif; ?>
+<?php if ($flash['error'] ?? false): ?>
+    <div class="toast toast--error"><?= e($flash['error']) ?></div>
+<?php endif; ?>
+
+<?php if (!empty($flash['optimize_results'])): ?>
+    <?php $optimizeData = json_decode($flash['optimize_results'], true); ?>
+    <?php if ($optimizeData): ?>
+    <div class="admin-card results-card" style="margin-bottom:var(--spacing-6)">
+        <div style="padding:1rem 1rem 0.5rem;border-bottom:1px solid var(--color-border)">
+            <h3 style="margin:0 0 0.5rem">Resultados de Optimizaci&oacute;n</h3>
+        </div>
+        <div style="padding:1rem">
+            <pre><?php foreach ($optimizeData as $r): ?><?= e($r['table']) ?>: <?= e($r['status']) ?>
+<?php endforeach; ?></pre>
+        </div>
+    </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php if (!empty($flash['image_check_results'])): ?>
+    <?php $imgData = json_decode($flash['image_check_results'], true); ?>
+    <?php if ($imgData): ?>
+    <div class="admin-card results-card" style="margin-bottom:var(--spacing-6)">
+        <div style="padding:1rem 1rem 0.5rem;border-bottom:1px solid var(--color-border)">
+            <h3 style="margin:0 0 0.5rem">Verificaci&oacute;n de Im&aacute;genes</h3>
+        </div>
+        <div style="padding:1rem">
+            <p><strong>Faltantes (en BD pero no en disco):</strong> <?= (int)$imgData['missingCount'] ?></p>
+            <?php if (!empty($imgData['missing'])): ?>
+                <pre style="font-size:0.75rem"><?php foreach ($imgData['missing'] as $m): ?><?= e($m['table']) ?> #<?= e($m['id']) ?> [<?= e($m['column']) ?>]: <?= e($m['expected']) ?>
+<?php endforeach; ?></pre>
+            <?php endif; ?>
+            <p style="margin-top:0.5rem"><strong>Hu&eacute;rfanas (en disco pero no en BD):</strong> <?= (int)$imgData['orphanCount'] ?></p>
+            <?php if (!empty($imgData['orphans'])): ?>
+                <pre style="font-size:0.75rem"><?php foreach ($imgData['orphans'] as $o): ?><?= e($o['path']) ?>
+<?php endforeach; ?></pre>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
+<?php endif; ?>
+
+<!-- Tools Grid -->
+<div class="tools-grid">
+
+    <!-- 1. Regenerar Sitemap -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#127760;</div>
+        <h3 class="tool-card__title">Regenerar Sitemap</h3>
+        <p class="tool-card__desc">Genera sitemap.xml actualizado con todas las URLs del sitio.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/sitemap/regenerar') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%">Regenerar</button>
+        </form>
+    </div>
+
+    <!-- 2. Limpiar Cache -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#128465;</div>
+        <h3 class="tool-card__title">Limpiar Cach&eacute;</h3>
+        <p class="tool-card__desc">Vac&iacute;a la carpeta de cach&eacute; del sistema.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/cache/limpiar') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%">Limpiar</button>
+        </form>
+    </div>
+
+    <!-- 3. Modo Mantenimiento -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#128295;</div>
+        <h3 class="tool-card__title">Modo Mantenimiento</h3>
+        <p class="tool-card__desc">Activa/desactiva el modo mantenimiento para visitantes.</p>
+        <div style="margin-bottom:0.75rem">
+            <?php if ($modoActivo): ?>
+                <span class="badge badge--danger">Activo</span>
+            <?php else: ?>
+                <span class="badge badge--success">Inactivo</span>
+            <?php endif; ?>
+        </div>
+        <form method="POST" action="<?= url('/admin/mantenimiento/mantenimiento/toggle') ?>" style="width:100%">
+            <?= csrf_field() ?>
+            <div class="form-group">
+                <label>Mensaje personalizado</label>
+                <textarea name="mensaje" class="form-control" rows="2" placeholder="Estamos en mantenimiento..." style="font-size:0.8rem"><?= e($mantenimientoMensaje ?? '') ?></textarea>
+            </div>
+            <div class="form-group">
+                <label>Fin estimado</label>
+                <input type="datetime-local" name="fecha_estimada_fin" class="form-control" style="font-size:0.8rem"
+                       value="<?= e($mantenimientoFin ?? '') ?>">
+            </div>
+            <?php if ($modoActivo): ?>
+                <button type="submit" class="btn btn--danger btn--sm" style="width:100%">Desactivar</button>
+            <?php else: ?>
+                <button type="submit" class="btn btn--primary btn--sm" style="width:100%"
+                        onclick="return confirm('&iquest;Activar el modo mantenimiento? Los visitantes no podr&aacute;n acceder al sitio.')">Activar</button>
+            <?php endif; ?>
+        </form>
+    </div>
+
+    <!-- 4. Info PHP -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#8505;</div>
+        <h3 class="tool-card__title">Info PHP</h3>
+        <p class="tool-card__desc">Ver informaci&oacute;n completa del servidor PHP.</p>
+        <a href="<?= url('/admin/mantenimiento/phpinfo') ?>" target="_blank" class="btn btn--outline btn--sm" style="width:100%">Ver phpinfo()</a>
+    </div>
+
+    <!-- 5. Limpiar Sesiones -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#128100;</div>
+        <h3 class="tool-card__title">Limpiar Sesiones</h3>
+        <p class="tool-card__desc">Elimina sesiones de admin expiradas de la base de datos.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/sesiones/limpiar') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%">Limpiar Sesiones</button>
+        </form>
+    </div>
+
+    <!-- 6. Optimizar Tablas -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#9889;</div>
+        <h3 class="tool-card__title">Optimizar Tablas</h3>
+        <p class="tool-card__desc">Ejecuta OPTIMIZE TABLE en todas las tablas de la BD.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/tablas/optimizar') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%"
+                    onclick="return confirm('&iquest;Optimizar todas las tablas de la base de datos? Esto puede tomar algunos segundos.')">Optimizar</button>
+        </form>
+    </div>
+
+    <!-- 7. Verificar Imagenes -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#128444;</div>
+        <h3 class="tool-card__title">Verificar Im&aacute;genes</h3>
+        <p class="tool-card__desc">Verifica la integridad de im&aacute;genes referenciadas en la BD.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/imagenes/verificar') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%">Verificar</button>
+        </form>
+    </div>
+
+    <!-- 8. Recalcular Estadísticas -->
+    <div class="admin-card tool-card">
+        <div class="tool-card__icon">&#128202;</div>
+        <h3 class="tool-card__title">Recalcular Estad&iacute;sticas</h3>
+        <p class="tool-card__desc">Recalcula contadores de visitas y clicks desde los logs.</p>
+        <form method="POST" action="<?= url('/admin/mantenimiento/stats/recalcular') ?>">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--primary btn--sm" style="width:100%"
+                    onclick="return confirm('&iquest;Recalcular todas las estad&iacute;sticas? Esto puede tomar varios segundos.')">Recalcular</button>
+        </form>
+    </div>
+
+</div>

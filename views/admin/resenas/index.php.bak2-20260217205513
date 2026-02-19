@@ -1,0 +1,266 @@
+<?php
+/**
+ * Admin - Listado de reseñas con tabs, filtros, acciones masivas y paginación
+ * Variables: $resenas, $counts, $stats, $filters, $currentPage, $totalPages, $total
+ */
+$estado = $filters['estado'] ?? '';
+?>
+<div class="admin-breadcrumb">
+    <a href="<?= url('/admin/dashboard') ?>">Dashboard</a> &rsaquo;
+    <span>Reseñas</span>
+</div>
+
+<h2>Reseñas</h2>
+
+<!-- Estadísticas rápidas -->
+<div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-bottom:var(--spacing-6)">
+    <div class="stat-card">
+        <div class="stat-card__number"><?= $stats['total'] ?></div>
+        <div class="stat-card__label">Total</div>
+    </div>
+    <div class="stat-card stat-card--warning">
+        <div class="stat-card__number"><?= $stats['pendientes'] ?></div>
+        <div class="stat-card__label">Pendientes</div>
+    </div>
+    <div class="stat-card stat-card--success">
+        <div class="stat-card__number"><?= $stats['aprobadas'] ?></div>
+        <div class="stat-card__label">Aprobadas</div>
+    </div>
+    <div class="stat-card stat-card--primary">
+        <div class="stat-card__number"><?= $stats['promedio'] ?> &#9733;</div>
+        <div class="stat-card__label">Promedio</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card__number"><?= $stats['hoy'] ?></div>
+        <div class="stat-card__label">Hoy</div>
+    </div>
+    <?php if ($stats['reportes_pendientes'] > 0): ?>
+        <a href="<?= url('/admin/resenas/reportes') ?>" class="stat-card stat-card--danger" style="text-decoration:none">
+            <div class="stat-card__number"><?= $stats['reportes_pendientes'] ?></div>
+            <div class="stat-card__label">Reportes</div>
+        </a>
+    <?php endif; ?>
+</div>
+
+<!-- Tabs por estado -->
+<div class="admin-tabs">
+    <a href="<?= url('/admin/resenas') ?>"
+       class="admin-tab <?= $estado === '' ? 'admin-tab--active' : '' ?>">
+        Todas <span class="badge" style="margin-left:4px"><?= $counts['total'] ?></span>
+    </a>
+    <a href="<?= url('/admin/resenas?estado=pendiente') ?>"
+       class="admin-tab <?= $estado === 'pendiente' ? 'admin-tab--active' : '' ?>">
+        Pendientes <span class="badge badge--warning" style="margin-left:4px"><?= $counts['pendiente'] ?></span>
+    </a>
+    <a href="<?= url('/admin/resenas?estado=aprobada') ?>"
+       class="admin-tab <?= $estado === 'aprobada' ? 'admin-tab--active' : '' ?>">
+        Aprobadas <span class="badge badge--success" style="margin-left:4px"><?= $counts['aprobada'] ?></span>
+    </a>
+    <a href="<?= url('/admin/resenas?estado=rechazada') ?>"
+       class="admin-tab <?= $estado === 'rechazada' ? 'admin-tab--active' : '' ?>">
+        Rechazadas <span class="badge badge--danger" style="margin-left:4px"><?= $counts['rechazada'] ?></span>
+    </a>
+</div>
+
+<!-- Toolbar: Filtros + Acciones -->
+<div class="toolbar">
+    <form method="GET" action="<?= url('/admin/resenas') ?>" class="toolbar__group" style="gap:0.5rem">
+        <?php if ($estado !== ''): ?>
+            <input type="hidden" name="estado" value="<?= e($estado) ?>">
+        <?php endif; ?>
+
+        <input type="text"
+               name="q"
+               class="form-control"
+               placeholder="Buscar autor, email, comentario..."
+               value="<?= e($filters['q'] ?? '') ?>"
+               style="width:220px;padding:0.4rem 0.75rem;font-size:0.875rem">
+
+        <select name="calificacion" class="form-control" style="width:130px;padding:0.4rem 0.75rem;font-size:0.875rem">
+            <option value="">Calificación</option>
+            <?php for ($i = 5; $i >= 1; $i--): ?>
+                <option value="<?= $i ?>" <?= ($filters['calificacion'] ?? '') == $i ? 'selected' : '' ?>>
+                    <?= $i ?> &#9733;
+                </option>
+            <?php endfor; ?>
+        </select>
+
+        <button type="submit" class="btn btn--outline btn--sm">Filtrar</button>
+
+        <?php if (!empty($filters['q']) || !empty($filters['calificacion'])): ?>
+            <a href="<?= url('/admin/resenas' . ($estado ? '?estado=' . e($estado) : '')) ?>" class="btn btn--outline btn--sm">Limpiar</a>
+        <?php endif; ?>
+    </form>
+
+    <div class="toolbar__separator"></div>
+
+    <a href="<?= url('/admin/resenas/reportes') ?>" class="btn btn--outline btn--sm">
+        Reportes <?php if ($stats['reportes_pendientes'] > 0): ?><span class="badge badge--danger" style="margin-left:4px"><?= $stats['reportes_pendientes'] ?></span><?php endif; ?>
+    </a>
+    <a href="<?= url('/admin/resenas/configuracion') ?>" class="btn btn--outline btn--sm">Configuración</a>
+</div>
+
+<!-- Tabla con acciones masivas -->
+<?php if (!empty($resenas)): ?>
+    <form method="POST" action="<?= url('/admin/resenas/bulk') ?>" id="bulkForm">
+        <?= csrf_field() ?>
+
+        <div class="bulk-bar" id="bulkBar" style="display:none">
+            <span class="bulk-bar__count"><strong id="bulkCount">0</strong> seleccionadas</span>
+            <select name="bulk_action" class="form-control" style="width:160px;padding:0.3rem 0.5rem;font-size:0.875rem" required>
+                <option value="">Acción masiva...</option>
+                <option value="aprobar">Aprobar</option>
+                <option value="rechazar">Rechazar</option>
+                <option value="eliminar">Eliminar</option>
+            </select>
+            <button type="submit" class="btn btn--primary btn--sm" onclick="return confirm('¿Aplicar acción masiva a las reseñas seleccionadas?')">Aplicar</button>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th style="width:32px">
+                                <input type="checkbox" id="checkAll" title="Seleccionar todas">
+                            </th>
+                            <th>Autor</th>
+                            <th>Comercio</th>
+                            <th>Calificación</th>
+                            <th>Comentario</th>
+                            <th>Estado</th>
+                            <th>Reportes</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($resenas as $resena): ?>
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="ids[]" value="<?= $resena['id'] ?>" class="bulk-check">
+                                </td>
+                                <td>
+                                    <strong><?= e($resena['nombre_autor']) ?></strong>
+                                    <br><small style="color:var(--color-gray)"><?= e($resena['email_autor'] ?? 'Sin email') ?></small>
+                                </td>
+                                <td>
+                                    <a href="<?= url('/comercio/' . $resena['comercio_slug']) ?>" target="_blank" style="font-size:0.875rem">
+                                        <?= e(truncate($resena['comercio_nombre'], 25)) ?>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="stars-display">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <span class="star <?= $i <= $resena['calificacion'] ? 'star--filled' : '' ?>">&#9733;</span>
+                                        <?php endfor; ?>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small><?= e(truncate($resena['comentario'] ?? '', 60)) ?></small>
+                                </td>
+                                <td>
+                                    <?php
+                                    $badgeClass = match($resena['estado']) {
+                                        'pendiente' => 'badge--warning',
+                                        'aprobada'  => 'badge--success',
+                                        'rechazada' => 'badge--danger',
+                                        default     => ''
+                                    };
+                                    ?>
+                                    <span class="badge <?= $badgeClass ?>"><?= ucfirst($resena['estado']) ?></span>
+                                </td>
+                                <td style="text-align:center">
+                                    <?php if ($resena['num_reportes'] > 0): ?>
+                                        <span class="badge badge--danger"><?= $resena['num_reportes'] ?></span>
+                                    <?php else: ?>
+                                        <span style="color:var(--color-gray)">0</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <small><?= fecha_es($resena['created_at'], 'd/m/Y H:i') ?></small>
+                                </td>
+                                <td>
+                                    <div class="admin-table__actions">
+                                        <a href="<?= url('/admin/resenas/' . $resena['id']) ?>"
+                                           class="btn btn--outline btn--sm"
+                                           title="Ver detalle">Ver</a>
+
+                                        <?php if ($resena['estado'] === 'pendiente'): ?>
+                                            <form method="POST" action="<?= url('/admin/resenas/aprobar/' . $resena['id']) ?>" style="display:inline">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn--success btn--sm" title="Aprobar">&#10003;</button>
+                                            </form>
+                                            <form method="POST" action="<?= url('/admin/resenas/rechazar/' . $resena['id']) ?>" style="display:inline">
+                                                <?= csrf_field() ?>
+                                                <button type="submit" class="btn btn--danger btn--sm" title="Rechazar">&#10007;</button>
+                                            </form>
+                                        <?php endif; ?>
+
+                                        <button type="button"
+                                                class="btn btn--danger btn--sm"
+                                                data-delete-url="<?= url('/admin/resenas/eliminar/' . $resena['id']) ?>"
+                                                data-delete-name="reseña de <?= e($resena['nombre_autor']) ?>"
+                                                title="Eliminar">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </form>
+
+    <?php if ($totalPages > 1): ?>
+        <div class="admin-pagination">
+            <div class="admin-pagination__info">
+                Página <?= $currentPage ?> de <?= $totalPages ?> (<?= number_format($total) ?> reseñas)
+            </div>
+            <div class="admin-pagination__links">
+                <?php
+                $baseUrl     = '/admin/resenas';
+                $queryParams = array_filter($filters, fn($v) => $v !== '');
+                include BASE_PATH . '/views/partials/pagination.php';
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
+<?php else: ?>
+    <div class="admin-card">
+        <div style="text-align:center;padding:3rem;color:var(--color-gray)">
+            <div style="font-size:2.5rem;margin-bottom:0.5rem">&#9733;</div>
+            <p><strong>No se encontraron reseñas</strong></p>
+            <p style="font-size:0.875rem">
+                <?= $estado ? 'No hay reseñas con estado "' . e($estado) . '".' : 'Aún no se han recibido reseñas.' ?>
+            </p>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+(function() {
+    var checkAll = document.getElementById('checkAll');
+    var checks = document.querySelectorAll('.bulk-check');
+    var bulkBar = document.getElementById('bulkBar');
+    var bulkCount = document.getElementById('bulkCount');
+
+    function updateBulkBar() {
+        var count = document.querySelectorAll('.bulk-check:checked').length;
+        bulkBar.style.display = count > 0 ? 'flex' : 'none';
+        bulkCount.textContent = count;
+    }
+
+    if (checkAll) {
+        checkAll.addEventListener('change', function() {
+            checks.forEach(function(cb) { cb.checked = checkAll.checked; });
+            updateBulkBar();
+        });
+    }
+
+    checks.forEach(function(cb) {
+        cb.addEventListener('change', updateBulkBar);
+    });
+})();
+</script>

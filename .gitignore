@@ -1,0 +1,71 @@
+# Entorno y credenciales
+config/database.php
+config/database.php.production
+.env
+.user.ini
+
+# Storage (contenido generado)
+storage/backups/*
+storage/logs/*
+storage/cache/*
+storage/temp/*
+!storage/backups/.htaccess
+!storage/backups/.gitkeep
+!storage/logs/.htaccess
+!storage/logs/.gitkeep
+!storage/cache/.htaccess
+!storage/cache/.gitkeep
+!storage/temp/.htaccess
+!storage/temp/.gitkeep
+
+# Uploads de usuarios
+assets/img/logos/*
+assets/img/portadas/*
+assets/img/galeria/*
+assets/img/banners/*
+assets/img/noticias/*
+assets/img/og/*
+assets/img/config/*
+!assets/img/logos/.gitkeep
+!assets/img/portadas/.gitkeep
+!assets/img/galeria/.gitkeep
+!assets/img/banners/.gitkeep
+!assets/img/noticias/.gitkeep
+!assets/img/og/.gitkeep
+!assets/img/config/.gitkeep
+
+# Archivos comprimidos y backups
+*.zip
+regalos_purranque/
+.htaccess_bak
+
+# Scripts temporales / utilidades
+extractor-archivos.php
+extractor-publico.php
+generate-assets.php
+rastreo-planes-validacion.php
+restaurar-backups.php
+verificar-controller.php
+ver-tildes.php
+
+# Sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# Dependencias (no usamos, pero por si acaso)
+vendor/
+node_modules/
+composer.lock
+package-lock.json

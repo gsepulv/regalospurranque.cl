@@ -1,0 +1,93 @@
+<?php
+/**
+ * Galeria de fotos del comercio - Admin CRUD
+ * Variables: $comercio, $fotos
+ */
+?>
+
+<div class="admin-breadcrumb">
+    <a href="<?= url('/admin') ?>">Dashboard</a>
+    <span>/</span>
+    <a href="<?= url('/admin/comercios') ?>">Comercios</a>
+    <span>/</span>
+    <a href="<?= url('/admin/comercios/editar/' . $comercio['id']) ?>"><?= e($comercio['nombre']) ?></a>
+    <span>/</span>
+    <span>Galería</span>
+</div>
+
+<h2 style="margin-bottom:1.25rem">Galeria de <?= e($comercio['nombre']) ?></h2>
+
+<!-- Formulario de subida -->
+<div class="admin-card" style="margin-bottom:1.25rem">
+    <div class="admin-card__header">
+        <h3 class="admin-card__title">Subir foto</h3>
+    </div>
+    <div class="admin-card__body">
+        <form method="POST"
+              action="<?= url('/admin/comercios/' . $comercio['id'] . '/foto') ?>"
+              enctype="multipart/form-data">
+            <?= csrf_field() ?>
+            <div class="form-row form-row--3">
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label" for="foto">Imagen <span style="color:var(--color-danger)">*</span></label>
+                    <input type="file"
+                           id="foto"
+                           name="foto"
+                           class="form-control"
+                           accept="image/*"
+                           required>
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label" for="titulo">Titulo (opcional)</label>
+                    <input type="text"
+                           id="titulo"
+                           name="titulo"
+                           class="form-control"
+                           placeholder="Descripcion de la foto">
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn--primary">Subir foto</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Grid de fotos -->
+<div class="admin-card">
+    <div class="admin-card__header">
+        <h3 class="admin-card__title">Fotos (<?= count($fotos) ?>)</h3>
+    </div>
+    <div class="admin-card__body">
+        <?php if (!empty($fotos)): ?>
+            <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:1rem">
+                <?php foreach ($fotos as $foto): ?>
+                    <div style="border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden">
+                        <img src="<?= asset('img/galeria/' . $foto['ruta']) ?>"
+                             alt="<?= e($foto['titulo'] ?? '') ?>"
+                             style="width:100%;height:180px;object-fit:cover;display:block">
+                        <div style="padding:0.75rem">
+                            <?php if (!empty($foto['titulo'])): ?>
+                                <p style="font-size:var(--font-size-sm);margin-bottom:0.5rem"><?= e($foto['titulo']) ?></p>
+                            <?php endif; ?>
+                            <form method="POST"
+                                  action="<?= url('/admin/comercios/' . $comercio['id'] . '/foto/eliminar') ?>"
+                                  onsubmit="return confirm('¿Eliminar esta foto?')">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="foto_id" value="<?= $foto['id'] ?>">
+                                <button type="submit" class="btn btn--danger btn--xs">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="empty-state">
+                <div class="empty-state__icon">&#128247;</div>
+                <div class="empty-state__title">Sin fotos</div>
+                <div class="empty-state__text">Este comercio no tiene fotos en la galeria. Sube la primera foto usando el formulario de arriba.</div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

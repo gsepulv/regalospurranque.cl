@@ -1,0 +1,14 @@
+<?php
+/**
+ * Configuración de base de datos
+ * Copiar a database.php y completar con credenciales reales
+ *
+ * Desarrollo:  host=localhost, name=regalos_v2, user=root, pass=
+ * Producción:  host=localhost, name=purranque_regalos_purranque, user=purranque_admin, pass=CONTRASEÑA
+ */
+
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'regalos_v2');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_CHARSET', 'utf8mb4');

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/
+
+Sitemap: https://regalospurranque.cl/sitemap.xml

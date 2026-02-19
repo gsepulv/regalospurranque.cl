@@ -1,0 +1,3825 @@
+{
+    "generated_at": "2026-02-17 03:06:24",
+    "php_version": "8.3.30",
+    "server": "Apache",
+    "document_root": "\/home\/purranque\/v2.regalos.purranque.info",
+    "base_path": "\/home\/purranque\/v2.regalos.purranque.info",
+    "site_name": "Regalos Purranque",
+    "site_url": "https:\/\/v2.regalos.purranque.info",
+    "app_env": "production",
+    "app_debug": "false",
+    "app_version": "2.0.0",
+    "config_loaded": true,
+    "files": {
+        "total_dirs": 67,
+        "total_files": 303,
+        "total_size": "37.14 MB",
+        "by_extension": {
+            "gitignore": 1,
+            "htaccess": 5,
+            "ini": 1,
+            "example": 2,
+            "php": 194,
+            "zip": 5,
+            "css": 2,
+            "png": 31,
+            "gitkeep": 6,
+            "jpg": 24,
+            "js": 3,
+            "production": 1,
+            "sql": 13,
+            "txt": 2,
+            "md": 3,
+            "ico": 1,
+            "json": 6,
+            "html": 2,
+            "xml": 1
+        }
+    },
+    "critical_files": [
+        {
+            "path": "index.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.15 KB",
+            "modified": "2026-02-14 16:49:43"
+        },
+        {
+            "path": ".htaccess",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.44 KB",
+            "modified": "2026-02-15 13:46:27"
+        },
+        {
+            "path": "config\/app.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.5 KB",
+            "modified": "2026-02-15 13:56:51"
+        },
+        {
+            "path": "config\/database.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "272 B",
+            "modified": "2026-02-14 23:26:13"
+        },
+        {
+            "path": "config\/routes.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "19.55 KB",
+            "modified": "2026-02-15 09:35:12"
+        },
+        {
+            "path": "app\/Core\/App.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.32 KB",
+            "modified": "2026-02-14 23:26:22"
+        },
+        {
+            "path": "app\/Core\/Router.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.59 KB",
+            "modified": "2026-02-13 17:53:09"
+        },
+        {
+            "path": "app\/Core\/Controller.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.86 KB",
+            "modified": "2026-02-13 17:53:16"
+        },
+        {
+            "path": "app\/Core\/Database.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "3.51 KB",
+            "modified": "2026-02-13 17:53:28"
+        },
+        {
+            "path": "app\/Core\/Request.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "3.22 KB",
+            "modified": "2026-02-14 23:26:14"
+        },
+        {
+            "path": "app\/Core\/Response.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.02 KB",
+            "modified": "2026-02-13 17:53:46"
+        },
+        {
+            "path": "app\/Core\/View.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.4 KB",
+            "modified": "2026-02-13 17:53:55"
+        },
+        {
+            "path": "app\/Services\/Validator.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "6.51 KB",
+            "modified": "2026-02-13 17:54:41"
+        },
+        {
+            "path": "app\/helpers.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.33 KB",
+            "modified": "2026-02-13 17:52:46"
+        },
+        {
+            "path": "app\/Services\/FileManager.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "7.43 KB",
+            "modified": "2026-02-14 00:34:53"
+        },
+        {
+            "path": "app\/Services\/Mailer.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "5.22 KB",
+            "modified": "2026-02-14 03:24:09"
+        },
+        {
+            "path": "app\/Services\/Notification.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "7.31 KB",
+            "modified": "2026-02-15 09:12:37"
+        },
+        {
+            "path": "app\/Services\/Theme.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "14 KB",
+            "modified": "2026-02-14 12:54:12"
+        },
+        {
+            "path": "app\/Controllers\/Public\/HomeController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "4.05 KB",
+            "modified": "2026-02-14 13:00:34"
+        },
+        {
+            "path": "app\/Controllers\/Public\/ComercioController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "3.81 KB",
+            "modified": "2026-02-14 14:23:55"
+        },
+        {
+            "path": "app\/Controllers\/Public\/CategoriaController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.8 KB",
+            "modified": "2026-02-14 14:24:03"
+        },
+        {
+            "path": "app\/Controllers\/Public\/FechaController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.96 KB",
+            "modified": "2026-02-14 14:24:05"
+        },
+        {
+            "path": "app\/Controllers\/Public\/NoticiaController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "3.07 KB",
+            "modified": "2026-02-13 23:36:43"
+        },
+        {
+            "path": "app\/Controllers\/Public\/BuscarController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.5 KB",
+            "modified": "2026-02-13 22:31:30"
+        },
+        {
+            "path": "app\/Controllers\/Public\/ContactoController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.74 KB",
+            "modified": "2026-02-14 13:36:55"
+        },
+        {
+            "path": "app\/Controllers\/Public\/PageController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.73 KB",
+            "modified": "2026-02-13 23:30:11"
+        },
+        {
+            "path": "app\/Controllers\/Public\/MapaController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "912 B",
+            "modified": "2026-02-14 01:06:02"
+        },
+        {
+            "path": "app\/Controllers\/Public\/FeedController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.78 KB",
+            "modified": "2026-02-14 12:18:32"
+        },
+        {
+            "path": "app\/Controllers\/Public\/ReviewController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.05 KB",
+            "modified": "2026-02-13 23:30:31"
+        },
+        {
+            "path": "app\/Controllers\/Public\/ShareController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.28 KB",
+            "modified": "2026-02-13 23:30:23"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/DashboardController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "6.86 KB",
+            "modified": "2026-02-14 02:38:00"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/ComercioAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "22.32 KB",
+            "modified": "2026-02-16 21:16:12"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/CategoriaAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "5.67 KB",
+            "modified": "2026-02-14 00:36:32"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/FechaAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "6.92 KB",
+            "modified": "2026-02-16 15:03:37"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/NoticiaAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "13.35 KB",
+            "modified": "2026-02-14 16:52:06"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/BannerAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "7.58 KB",
+            "modified": "2026-02-14 00:49:30"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/UsuarioAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "5.77 KB",
+            "modified": "2026-02-14 00:49:32"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/ConfigController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "5.17 KB",
+            "modified": "2026-02-14 16:51:58"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/SeoAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "15.37 KB",
+            "modified": "2026-02-14 16:52:13"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/ResenaAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "7 KB",
+            "modified": "2026-02-14 03:28:02"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/NotificacionAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "6.52 KB",
+            "modified": "2026-02-15 09:33:46"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/AparienciaAdminController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.16 KB",
+            "modified": "2026-02-14 12:11:19"
+        },
+        {
+            "path": "app\/Controllers\/Admin\/AuthController.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.94 KB",
+            "modified": "2026-02-14 00:43:29"
+        },
+        {
+            "path": "views\/layouts\/public.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "2.76 KB",
+            "modified": "2026-02-16 22:10:32"
+        },
+        {
+            "path": "views\/layouts\/admin.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "1.78 KB",
+            "modified": "2026-02-15 09:49:11"
+        },
+        {
+            "path": "views\/layouts\/login.php",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "471 B",
+            "modified": "2026-02-13 17:57:11"
+        },
+        {
+            "path": "assets\/css\/main.css",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "104.2 KB",
+            "modified": "2026-02-16 23:15:54"
+        },
+        {
+            "path": "assets\/css\/admin.css",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "38.46 KB",
+            "modified": "2026-02-14 16:47:20"
+        },
+        {
+            "path": "assets\/js\/app.js",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "35.49 KB",
+            "modified": "2026-02-14 16:47:20"
+        },
+        {
+            "path": "assets\/js\/admin.js",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "12.17 KB",
+            "modified": "2026-02-14 16:47:20"
+        },
+        {
+            "path": "storage\/logs\/",
+            "exists": true,
+            "perms": "0775",
+            "readable": true,
+            "writable": true
+        },
+        {
+            "path": "storage\/cache\/",
+            "exists": true,
+            "perms": "0775",
+            "readable": true,
+            "writable": true
+        },
+        {
+            "path": "storage\/backups\/",
+            "exists": true,
+            "perms": "0775",
+            "readable": true,
+            "writable": true
+        },
+        {
+            "path": ".user.ini",
+            "exists": true,
+            "perms": "0644",
+            "readable": true,
+            "writable": true,
+            "size": "89 B",
+            "modified": "2026-02-14 23:22:54"
+        }
+    ],
+    "syntax": {
+        "files_checked": 193,
+        "errors_found": 0,
+        "errors": []
+    },
+    "database": {
+        "connected": true,
+        "host": "localhost",
+        "name": "purranque_regalos_v2",
+        "mysql_version": "8.0.45",
+        "tables_count": 27,
+        "tables": [
+            {
+                "name": "admin_log",
+                "rows": 78,
+                "size_kb": "48.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 63,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "usuario_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "usuario_nombre",
+                        "type": "varchar(100)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "modulo",
+                        "type": "varchar(50)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "accion",
+                        "type": "varchar(50)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "entidad_tipo",
+                        "type": "varchar(50)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "entidad_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "detalle",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "datos_antes",
+                        "type": "json",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "datos_despues",
+                        "type": "json",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "user_agent",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "admin_usuarios",
+                "rows": 1,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 2,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "email",
+                        "type": "varchar(150)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "telefono",
+                        "type": "varchar(20)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "password_hash",
+                        "type": "varchar(255)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "rol",
+                        "type": "enum('superadmin','admin','editor','comerciante')",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "editor"
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "avatar",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "last_login",
+                        "type": "datetime",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "analytics_diario",
+                "rows": 0,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "1"
+                    },
+                    {
+                        "field": "fecha",
+                        "type": "date",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "pagina",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "visitas",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "visitantes_unicos",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    }
+                ]
+            },
+            {
+                "name": "banners",
+                "rows": 1,
+                "size_kb": "80.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "titulo",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "tipo",
+                        "type": "enum('hero','sidebar','entre_comercios','footer')",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "sidebar"
+                    },
+                    {
+                        "field": "imagen",
+                        "type": "varchar(255)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "url",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "posicion",
+                        "type": "varchar(50)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "1"
+                    },
+                    {
+                        "field": "clicks",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "impresiones",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "fecha_inicio",
+                        "type": "date",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_fin",
+                        "type": "date",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "orden",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "categorias",
+                "rows": 10,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 11,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "slug",
+                        "type": "varchar(120)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "descripcion",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "icono",
+                        "type": "varchar(50)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "imagen",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "color",
+                        "type": "varchar(7)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "#2563eb"
+                    },
+                    {
+                        "field": "orden",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "comercio_categoria",
+                "rows": 1,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "categoria_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "es_principal",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    }
+                ]
+            },
+            {
+                "name": "comercio_fecha",
+                "rows": 1,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "oferta_especial",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "precio_desde",
+                        "type": "decimal(10,2)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "precio_hasta",
+                        "type": "decimal(10,2)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "1"
+                    }
+                ]
+            },
+            {
+                "name": "comercio_fotos",
+                "rows": 4,
+                "size_kb": "48.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 7,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "ruta",
+                        "type": "varchar(255)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ruta_thumb",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "titulo",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "orden",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "comercio_horarios",
+                "rows": 0,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "dia",
+                        "type": "tinyint",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "hora_apertura",
+                        "type": "time",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "hora_cierre",
+                        "type": "time",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "cerrado",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    }
+                ]
+            },
+            {
+                "name": "comercios",
+                "rows": 1,
+                "size_kb": "96.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 2,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(150)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "slug",
+                        "type": "varchar(170)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "descripcion",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "telefono",
+                        "type": "varchar(20)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "whatsapp",
+                        "type": "varchar(20)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "email",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "sitio_web",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "facebook",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "instagram",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "tiktok",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "youtube",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "x_twitter",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "linkedin",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "telegram",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "pinterest",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "direccion",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "lat",
+                        "type": "decimal(10,8)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "lng",
+                        "type": "decimal(11,8)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "logo",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "portada",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "plan",
+                        "type": "enum('basico','premium','sponsor')",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "basico"
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "destacado",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "visitas",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "whatsapp_clicks",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "seo_titulo",
+                        "type": "varchar(160)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_descripcion",
+                        "type": "varchar(320)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_keywords",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "razon_social",
+                        "type": "varchar(200)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "rut_empresa",
+                        "type": "varchar(15)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "giro",
+                        "type": "varchar(200)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "direccion_tributaria",
+                        "type": "varchar(300)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "comuna_tributaria",
+                        "type": "varchar(100)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contacto_nombre",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contacto_rut",
+                        "type": "varchar(15)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contacto_telefono",
+                        "type": "varchar(20)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contacto_email",
+                        "type": "varchar(200)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contrato_inicio",
+                        "type": "date",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "contrato_monto",
+                        "type": "int unsigned",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "metodo_pago",
+                        "type": "varchar(100)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "configuracion",
+                "rows": 25,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "clave",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "valor",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "grupo",
+                        "type": "varchar(50)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "general"
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "1"
+                    }
+                ]
+            },
+            {
+                "name": "configuracion_mantenimiento",
+                "rows": 3,
+                "size_kb": "16.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "clave",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "valor",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    }
+                ]
+            },
+            {
+                "name": "fechas_especiales",
+                "rows": 26,
+                "size_kb": "80.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 27,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(150)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "slug",
+                        "type": "varchar(170)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "descripcion",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "tipo",
+                        "type": "enum('personal','calendario','comercial')",
+                        "null": "NO",
+                        "key": "",
+                        "default": "calendario"
+                    },
+                    {
+                        "field": "icono",
+                        "type": "varchar(50)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "color",
+                        "type": "varchar(7)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "color_texto",
+                        "type": "varchar(7)",
+                        "null": "YES",
+                        "key": "",
+                        "default": "#ffffff"
+                    },
+                    {
+                        "field": "imagen",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_inicio",
+                        "type": "date",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_fin",
+                        "type": "date",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "recurrente",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "mensajes_contacto",
+                "rows": 8,
+                "size_kb": "16.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 9,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int unsigned",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "email",
+                        "type": "varchar(255)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "asunto",
+                        "type": "varchar(200)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "mensaje",
+                        "type": "text",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": ""
+                    },
+                    {
+                        "field": "leido",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "noticia_categoria",
+                "rows": 0,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "noticia_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "categoria_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    }
+                ]
+            },
+            {
+                "name": "noticia_fecha",
+                "rows": 0,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "noticia_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    }
+                ]
+            },
+            {
+                "name": "noticias",
+                "rows": 1,
+                "size_kb": "80.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 2,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "titulo",
+                        "type": "varchar(200)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "slug",
+                        "type": "varchar(220)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "contenido",
+                        "type": "longtext",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "extracto",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "imagen",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "autor",
+                        "type": "varchar(100)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "destacada",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "seo_titulo",
+                        "type": "varchar(160)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_descripcion",
+                        "type": "varchar(320)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_keywords",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_imagen_og",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "seo_noindex",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "fecha_publicacion",
+                        "type": "datetime",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "notificaciones_log",
+                "rows": 7,
+                "size_kb": "80.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 8,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "destinatario",
+                        "type": "varchar(150)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "asunto",
+                        "type": "varchar(255)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "template",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "estado",
+                        "type": "enum('enviado','fallido')",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "enviado"
+                    },
+                    {
+                        "field": "datos",
+                        "type": "json",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "redes_sociales_config",
+                "rows": 103,
+                "size_kb": "48.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 106,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int unsigned",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int unsigned",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "clave",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "valor",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "YES",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "YES",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "resenas",
+                "rows": 0,
+                "size_kb": "80.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "nombre_autor",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "email_autor",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "calificacion",
+                        "type": "tinyint",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "comentario",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "estado",
+                        "type": "enum('pendiente','aprobada','rechazada')",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "pendiente"
+                    },
+                    {
+                        "field": "respuesta_comercio",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "fecha_respuesta",
+                        "type": "datetime",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "resenas_reportes",
+                "rows": 0,
+                "size_kb": "32.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "resena_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "motivo",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "descripcion",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "seo_config",
+                "rows": 6,
+                "size_kb": "16.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": null,
+                "columns": [
+                    {
+                        "field": "clave",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "1"
+                    },
+                    {
+                        "field": "valor",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    }
+                ]
+            },
+            {
+                "name": "seo_redirects",
+                "rows": 0,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "url_origen",
+                        "type": "varchar(500)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "url_destino",
+                        "type": "varchar(500)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "tipo",
+                        "type": "smallint",
+                        "null": "NO",
+                        "key": "",
+                        "default": "301"
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "hits",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "",
+                        "default": "0"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "sesiones_admin",
+                "rows": 13,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 13,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "usuario_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "token",
+                        "type": "varchar(128)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "user_agent",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "expira",
+                        "type": "datetime",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "share_log",
+                "rows": 0,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "pagina",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "red_social",
+                        "type": "varchar(50)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "user_agent",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "sitios",
+                "rows": 1,
+                "size_kb": "64.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 2,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "nombre",
+                        "type": "varchar(150)",
+                        "null": "NO",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "slug",
+                        "type": "varchar(170)",
+                        "null": "NO",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "dominio",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "UNI",
+                        "default": null
+                    },
+                    {
+                        "field": "descripcion",
+                        "type": "text",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "logo",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "favicon",
+                        "type": "varchar(255)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "color_primario",
+                        "type": "varchar(7)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "#2563eb"
+                    },
+                    {
+                        "field": "color_secundario",
+                        "type": "varchar(7)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "#1e40af"
+                    },
+                    {
+                        "field": "ciudad",
+                        "type": "varchar(100)",
+                        "null": "NO",
+                        "key": "",
+                        "default": "Purranque"
+                    },
+                    {
+                        "field": "lat",
+                        "type": "decimal(10,8)",
+                        "null": "YES",
+                        "key": "",
+                        "default": "-40.91305000"
+                    },
+                    {
+                        "field": "lng",
+                        "type": "decimal(11,8)",
+                        "null": "YES",
+                        "key": "",
+                        "default": "-73.15913000"
+                    },
+                    {
+                        "field": "zoom",
+                        "type": "tinyint",
+                        "null": "NO",
+                        "key": "",
+                        "default": "15"
+                    },
+                    {
+                        "field": "email_contacto",
+                        "type": "varchar(150)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "telefono",
+                        "type": "varchar(20)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "redes_sociales",
+                        "type": "json",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "activo",
+                        "type": "tinyint(1)",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    },
+                    {
+                        "field": "updated_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            },
+            {
+                "name": "visitas_log",
+                "rows": 1284,
+                "size_kb": "480.00",
+                "engine": "InnoDB",
+                "collation": "utf8mb4_unicode_ci",
+                "auto_increment": 1201,
+                "columns": [
+                    {
+                        "field": "id",
+                        "type": "bigint",
+                        "null": "NO",
+                        "key": "PRI",
+                        "default": null
+                    },
+                    {
+                        "field": "site_id",
+                        "type": "int",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "1"
+                    },
+                    {
+                        "field": "comercio_id",
+                        "type": "int",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "pagina",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "MUL",
+                        "default": null
+                    },
+                    {
+                        "field": "tipo",
+                        "type": "varchar(50)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "ip",
+                        "type": "varchar(45)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "user_agent",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "referrer",
+                        "type": "varchar(500)",
+                        "null": "YES",
+                        "key": "",
+                        "default": null
+                    },
+                    {
+                        "field": "created_at",
+                        "type": "timestamp",
+                        "null": "NO",
+                        "key": "MUL",
+                        "default": "CURRENT_TIMESTAMP"
+                    }
+                ]
+            }
+        ],
+        "total_size": "1808 KB",
+        "configuracion": [
+            {
+                "clave": "analytics_activo",
+                "valor": "1",
+                "grupo": "analytics"
+            },
+            {
+                "clave": "backup_frecuencia",
+                "valor": "semanal",
+                "grupo": "backup"
+            },
+            {
+                "clave": "backup_retener",
+                "valor": "5",
+                "grupo": "backup"
+            },
+            {
+                "clave": "notif_contacto",
+                "valor": "1",
+                "grupo": "general"
+            },
+            {
+                "clave": "sitio_descripcion",
+                "valor": "Directorio comercial de Purranque, Chile",
+                "grupo": "general"
+            },
+            {
+                "clave": "sitio_direccion",
+                "valor": "Purranque, Región de Los Lagos, Chile",
+                "grupo": "general"
+            },
+            {
+                "clave": "sitio_email",
+                "valor": "contacto@purranque.info",
+                "grupo": "general"
+            },
+            {
+                "clave": "sitio_nombre",
+                "valor": "Regalos Purranque",
+                "grupo": "general"
+            },
+            {
+                "clave": "sitio_telefono",
+                "valor": "",
+                "grupo": "general"
+            },
+            {
+                "clave": "email_from",
+                "valor": "admin@regalos.purranque.info",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "email_reply_to",
+                "valor": "admin@regalos.purranque.info",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_backup",
+                "valor": "0",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_bienvenida_comercio",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_error_sistema",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_fecha_proxima",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_nueva_resena",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_nuevo_comercio",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_reporte_resena",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_resena_aprobada",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_resena_rechazada",
+                "valor": "0",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_resena_respuesta",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notif_resumen_semanal",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "notificaciones_activas",
+                "valor": "1",
+                "grupo": "notificaciones"
+            },
+            {
+                "clave": "resenas_minimo",
+                "valor": "10",
+                "grupo": "resenas"
+            },
+            {
+                "clave": "resenas_moderacion",
+                "valor": "1",
+                "grupo": "resenas"
+            }
+        ],
+        "admin_users": [],
+        "comercios": []
+    },
+    "health": {
+        "php_extensions": {
+            "pdo": true,
+            "pdo_mysql": true,
+            "mbstring": true,
+            "json": true,
+            "fileinfo": true,
+            "gd": true,
+            "curl": false
+        },
+        "writable_dirs": {
+            "storage": {
+                "exists": true,
+                "writable": true,
+                "perms": "0775"
+            },
+            "storage\/logs": {
+                "exists": true,
+                "writable": true,
+                "perms": "0775"
+            },
+            "storage\/cache": {
+                "exists": true,
+                "writable": true,
+                "perms": "0775"
+            },
+            "storage\/backups": {
+                "exists": true,
+                "writable": true,
+                "perms": "0775"
+            },
+            "assets\/img\/logos": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            },
+            "assets\/img\/portadas": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            },
+            "assets\/img\/galeria": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            },
+            "assets\/img\/banners": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            },
+            "assets\/img\/noticias": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            },
+            "assets\/img\/config": {
+                "exists": true,
+                "writable": true,
+                "perms": "0755"
+            }
+        },
+        "htaccess": {
+            "exists": true,
+            "size": "2.44 KB",
+            "has_rewrite": true,
+            "has_https": true,
+            "has_security_headers": true,
+            "has_compression": true,
+            "has_caching": true,
+            "has_fallback_resource": false
+        },
+        "user_ini": {
+            "exists": true,
+            "content": "upload_max_filesize = 10M\npost_max_size = 12M\nmax_execution_time = 60\nmax_input_time = 60"
+        },
+        "php_settings": {
+            "memory_limit": "128M",
+            "max_execution_time": "60",
+            "upload_max_filesize": "10M",
+            "post_max_size": "12M",
+            "display_errors": "0",
+            "error_reporting": "32767",
+            "session.gc_maxlifetime": "1440"
+        },
+        "ssl": {
+            "https": true,
+            "server_port": "443"
+        },
+        "routes": {
+            "total": 158,
+            "list": [
+                {
+                    "method": "GET",
+                    "path": "\/"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/comercios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/comercio\/{slug}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/categorias"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/categoria\/{slug}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/celebraciones"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/fecha\/{slug}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/buscar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/noticias"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/noticia\/{slug}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/mapa"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/sitemap.xml"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/feed\/rss.xml"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/contacto"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/contacto\/enviar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/terminos"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/privacidad"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/cookies"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/mis-resenas"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/compartir\/{tipo}\/{slug}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/login"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/login"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/logout"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/dashboard"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/comercios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/comercios\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/comercios\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/comercios\/{id}\/galeria"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/{id}\/foto"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/{id}\/foto\/eliminar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/comercios\/{id}\/horarios"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/comercios\/{id}\/horarios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/categorias"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/categorias\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/categorias\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/categorias\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/categorias\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/categorias\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/fechas"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/fechas\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/fechas\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/fechas\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/fechas\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/fechas\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/noticias"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/noticias\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/noticias\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/noticias\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/noticias\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/noticias\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/noticias\/upload-imagen"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/noticias\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/banners"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/banners\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/banners\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/banners\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/banners\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/banners\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/banners\/eliminar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/banners\/reset\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/usuarios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/usuarios\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/usuarios\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/usuarios\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/usuarios\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/usuarios\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/usuarios\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/planes"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/planes\/update"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/resenas"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/resenas\/reportes"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/resenas\/configuracion"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/configuracion"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/resenas\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/aprobar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/rechazar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/responder\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/eliminar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/bulk"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/resenas\/reportes\/eliminar\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/visitas"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/comercios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/categorias"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/fechas"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/banners"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/reportes\/export"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/seo"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/config"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/metatags"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/schema"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/redirects"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/redirects\/eliminar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/redirects\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/seo\/sitemap"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/notificaciones"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/notificaciones\/config"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/notificaciones\/test"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/notificaciones\/log"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/notificaciones\/log\/limpiar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/share"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/redes-sociales"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/redes-sociales\/update"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/apariencia"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/apariencia\/update"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/apariencia\/preset"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/apariencia\/auto-shades"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/backups"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/backup\/db"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/backup\/archivos"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/backup\/completo"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/backup\/descargar\/{file}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/backup\/eliminar\/{file}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/archivos"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/archivos\/ver"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/archivos\/descargar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/archivos\/subir"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/archivos\/crear-carpeta"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/archivos\/renombrar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/archivos\/eliminar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/salud"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/salud\/refresh"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/logs"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/logs\/exportar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/logs\/limpiar"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/logs\/{id}"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/herramientas"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/sitemap\/regenerar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/cache\/limpiar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/mantenimiento\/toggle"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/phpinfo"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/sesiones\/limpiar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/tablas\/optimizar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/imagenes\/verificar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/stats\/recalcular"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/mantenimiento\/configuracion"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/mantenimiento\/configuracion"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/perfil"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/perfil\/password"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/sitios"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/sitios\/crear"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/sitios\/store"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/admin\/sitios\/editar\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/sitios\/update\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/sitios\/toggle\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/admin\/sitios\/cambiar"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/reviews\/create"
+                },
+                {
+                    "method": "GET",
+                    "path": "\/api\/reviews\/list\/{id}"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/reviews\/report"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/track"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/banner-track"
+                },
+                {
+                    "method": "POST",
+                    "path": "\/api\/share-track"
+                }
+            ]
+        },
+        "logs": [],
+        "assets": {
+            "css\/main.css": true,
+            "css\/admin.css": true,
+            "js\/app.js": true,
+            "js\/admin.js": true
+        }
+    },
+    "project_map": {
+        ".htaccess": "60 líneas",
+        ".user.ini": "4 líneas",
+        "app\/": {
+            "Controllers\/": {
+                "Admin\/": {
+                    "AparienciaAdminController.php": "67 líneas",
+                    "AuthController.php": "76 líneas",
+                    "BackupController.php": "156 líneas",
+                    "BannerAdminController.php": "205 líneas",
+                    "CategoriaAdminController.php": "155 líneas",
+                    "ComercioAdminController.php": "544 líneas",
+                    "ConfigController.php": "167 líneas",
+                    "DashboardController.php": "180 líneas",
+                    "FechaAdminController.php": "191 líneas",
+                    "FileExplorerController.php": "548 líneas",
+                    "HealthController.php": "752 líneas",
+                    "LogsController.php": "284 líneas",
+                    "MantenimientoController.php": "16 líneas",
+                    "NoticiaAdminController.php": "371 líneas",
+                    "NotificacionAdminController.php": "202 líneas",
+                    "PerfilController.php": "78 líneas",
+                    "PlanAdminController.php": "53 líneas",
+                    "RedesAdminController.php": "106 líneas",
+                    "ReporteAdminController.php": "188 líneas",
+                    "ResenaAdminController.php": "228 líneas",
+                    "ResenaConfigController.php": "79 líneas",
+                    "SeoAdminController.php": "470 líneas",
+                    "ShareAdminController.php": "44 líneas",
+                    "SitioAdminController.php": "204 líneas",
+                    "ToolsController.php": "438 líneas",
+                    "UsuarioAdminController.php": "164 líneas"
+                },
+                "Api\/": {
+                    "BannerApiController.php": "35 líneas",
+                    "ReviewApiController.php": "171 líneas",
+                    "ShareApiController.php": "31 líneas",
+                    "TrackApiController.php": "42 líneas"
+                },
+                "Public\/": {
+                    "BuscarController.php": "69 líneas",
+                    "CategoriaController.php": "87 líneas",
+                    "ComercioController.php": "115 líneas",
+                    "ContactoController.php": "57 líneas",
+                    "FechaController.php": "89 líneas",
+                    "FeedController.php": "70 líneas",
+                    "HomeController.php": "107 líneas",
+                    "MapaController.php": "34 líneas",
+                    "NoticiaController.php": "94 líneas",
+                    "PageController.php": "62 líneas",
+                    "ReviewController.php": "39 líneas",
+                    "ShareController.php": "68 líneas"
+                }
+            },
+            "Core\/": {
+                "App.php": "90 líneas",
+                "Controller.php": "74 líneas",
+                "Database.php": "129 líneas",
+                "Middleware.php": "16 líneas",
+                "Request.php": "147 líneas",
+                "Response.php": "67 líneas",
+                "Router.php": "96 líneas",
+                "View.php": "83 líneas"
+            },
+            "Middleware\/": {
+                "AuthMiddleware.php": "41 líneas",
+                "CsrfMiddleware.php": "33 líneas",
+                "MaintenanceMiddleware.php": "44 líneas",
+                "PermissionMiddleware.php": "34 líneas",
+                "RedirectMiddleware.php": "51 líneas"
+            },
+            "Models\/": {
+                "Analytics.php": "324 líneas",
+                "Banner.php": "47 líneas",
+                "Categoria.php": "58 líneas",
+                "Comercio.php": "359 líneas",
+                "FechaEspecial.php": "117 líneas",
+                "Noticia.php": "104 líneas",
+                "Resena.php": "404 líneas",
+                "Share.php": "111 líneas"
+            },
+            "Services\/": {
+                "Auth.php": "110 líneas",
+                "Backup.php": "325 líneas",
+                "FileManager.php": "242 líneas",
+                "Logger.php": "61 líneas",
+                "Mailer.php": "179 líneas",
+                "Notification.php": "264 líneas",
+                "Permission.php": "62 líneas",
+                "RedesSociales.php": "374 líneas",
+                "Seo.php": "293 líneas",
+                "SiteManager.php": "162 líneas",
+                "Theme.php": "400 líneas",
+                "Validator.php": "215 líneas",
+                "VisitTracker.php": "49 líneas"
+            },
+            "helpers.php": "112 líneas"
+        },
+        "assets\/": {
+            "css\/": {
+                "admin.css": "1503 líneas",
+                "main.css": "4460 líneas"
+            },
+            "img\/": {
+                "banners\/": {
+                    "thumbs\/": []
+                },
+                "config\/": [],
+                "email\/": [],
+                "galeria\/": {
+                    "thumbs\/": []
+                },
+                "hero\/": [],
+                "icons\/": [],
+                "logo\/": [],
+                "logos\/": {
+                    "thumbs\/": []
+                },
+                "noticias\/": {
+                    "contenido\/": [],
+                    "thumbs\/": []
+                },
+                "og\/": {
+                    "thumbs\/": []
+                },
+                "placeholder\/": [],
+                "portadas\/": {
+                    "thumbs\/": []
+                }
+            },
+            "js\/": {
+                "admin.js": "291 líneas",
+                "app.js": "930 líneas",
+                "social-profiles.php": "59 líneas"
+            }
+        },
+        "cgi-bin\/": [],
+        "config\/": {
+            "app.php": "54 líneas",
+            "database.php": "11 líneas",
+            "middleware.php": "13 líneas",
+            "permissions.php": "30 líneas",
+            "routes.php": "228 líneas"
+        },
+        "cron\/": {
+            "analytics-daily.php": "82 líneas",
+            "backup-auto.php": "64 líneas",
+            "notificaciones.php": "111 líneas"
+        },
+        "database\/": {
+            "migrations\/": {
+                "migrate_v1_to_v2.php": "1271 líneas"
+            }
+        },
+        "deploy\/": {
+            "INSTRUCCIONES-DEPLOY.md": "288 líneas",
+            "checklist-pre-deploy.md": "73 líneas",
+            "fix-permissions.php": "114 líneas",
+            "post-deploy-monitor.md": "47 líneas",
+            "verify.php": "268 líneas"
+        },
+        "diagnostico.php": "835 líneas",
+        "generate-assets.php": "817 líneas",
+        "ig.php": "93 líneas",
+        "index.php": "57 líneas",
+        "manifest.json": "77 líneas",
+        "rastreo-menu.php": "62 líneas",
+        "rastreo-redes.php": "69 líneas",
+        "router.php": "53 líneas",
+        "sw.js": "96 líneas",
+        "test-diag.php": "7 líneas",
+        "test-mail.php": "7 líneas",
+        "testcorreo.php": "37 líneas",
+        "views\/": {
+            "admin\/": {
+                "apariencia\/": {
+                    "index.php": "193 líneas"
+                },
+                "banners\/": {
+                    "form.php": "335 líneas",
+                    "index.php": "161 líneas"
+                },
+                "categorias\/": {
+                    "form.php": "146 líneas",
+                    "index.php": "81 líneas"
+                },
+                "comercios\/": {
+                    "form.php": "769 líneas",
+                    "galeria.php": "93 líneas",
+                    "horarios.php": "110 líneas",
+                    "index.php": "173 líneas"
+                },
+                "dashboard.php": "237 líneas",
+                "fechas\/": {
+                    "form.php": "270 líneas",
+                    "index.php": "122 líneas"
+                },
+                "login.php": "54 líneas",
+                "mantenimiento\/": {
+                    "archivos.php": "357 líneas",
+                    "backups.php": "194 líneas",
+                    "configuracion.php": "424 líneas",
+                    "herramientas.php": "262 líneas",
+                    "index.php": "16 líneas",
+                    "logs-detalle.php": "298 líneas",
+                    "logs.php": "366 líneas",
+                    "salud.php": "283 líneas"
+                },
+                "noticias\/": {
+                    "form.php": "437 líneas",
+                    "index.php": "142 líneas"
+                },
+                "notificaciones\/": {
+                    "index.php": "197 líneas",
+                    "log.php": "116 líneas"
+                },
+                "perfil\/": {
+                    "index.php": "100 líneas"
+                },
+                "planes\/": {
+                    "index.php": "154 líneas"
+                },
+                "redes-sociales\/": {
+                    "index.php": "578 líneas"
+                },
+                "reportes\/": {
+                    "banners.php": "77 líneas",
+                    "categorias.php": "62 líneas",
+                    "comercios.php": "100 líneas",
+                    "fechas.php": "71 líneas",
+                    "index.php": "158 líneas",
+                    "visitas.php": "196 líneas"
+                },
+                "resenas\/": {
+                    "configuracion.php": "115 líneas",
+                    "index.php": "266 líneas",
+                    "reportes.php": "100 líneas",
+                    "show.php": "209 líneas"
+                },
+                "seo\/": {
+                    "index.php": "693 líneas"
+                },
+                "share\/": {
+                    "index.php": "121 líneas"
+                },
+                "sitios\/": {
+                    "form.php": "157 líneas",
+                    "index.php": "83 líneas"
+                },
+                "usuarios\/": {
+                    "form.php": "120 líneas",
+                    "index.php": "102 líneas"
+                }
+            },
+            "emails\/": {
+                "backup-completado.php": "30 líneas",
+                "comercio-bienvenida.php": "28 líneas",
+                "contacto-mensaje.php": "27 líneas",
+                "error-sistema.php": "27 líneas",
+                "fecha-proxima.php": "39 líneas",
+                "layout.php": "42 líneas",
+                "nueva-resena.php": "34 líneas",
+                "nuevo-comercio.php": "40 líneas",
+                "reporte-resena.php": "44 líneas",
+                "resena-aprobada.php": "35 líneas",
+                "resena-rechazada.php": "31 líneas",
+                "resena-respuesta.php": "39 líneas",
+                "resumen-semanal.php": "85 líneas",
+                "test.php": "24 líneas"
+            },
+            "errors\/": {
+                "403.php": "25 líneas",
+                "404.php": "25 líneas",
+                "500.php": "25 líneas"
+            },
+            "layouts\/": {
+                "admin.php": "47 líneas",
+                "login.php": "16 líneas",
+                "public.php": "71 líneas"
+            },
+            "partials\/": {
+                "breadcrumbs.php": "30 líneas",
+                "cta-comercio.php": "15 líneas",
+                "footer.php": "47 líneas",
+                "modal.php": "20 líneas",
+                "nav.php": "37 líneas",
+                "pagination.php": "54 líneas",
+                "seo-head.php": "139 líneas",
+                "share-buttons.php": "121 líneas",
+                "share-float.php": "53 líneas",
+                "sidebar.php": "78 líneas",
+                "social-profiles.php": "77 líneas",
+                "toast.php": "27 líneas",
+                "topbar.php": "35 líneas",
+                "whatsapp-float.php": "24 líneas"
+            },
+            "public\/": {
+                "buscar.php": "141 líneas",
+                "categoria.php": "135 líneas",
+                "categorias.php": "32 líneas",
+                "celebraciones.php": "86 líneas",
+                "comercio.php": "712 líneas",
+                "comercios.php": "57 líneas",
+                "contacto.php": "147 líneas",
+                "cookies.php": "88 líneas",
+                "fecha.php": "140 líneas",
+                "home.php": "355 líneas",
+                "mapa.php": "194 líneas",
+                "noticia.php": "134 líneas",
+                "noticias.php": "110 líneas",
+                "privacidad.php": "103 líneas",
+                "resenas.php": "81 líneas",
+                "share.php": "128 líneas",
+                "terminos.php": "82 líneas"
+            }
+        }
+    },
+    "score": 97,
+    "issues": [],
+    "warnings": [
+        "Extensión PHP faltante: curl"
+    ]
+}

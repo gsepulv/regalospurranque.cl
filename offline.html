@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sin conexión — Regalos Purranque</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f4f5f7;
+            color: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .offline {
+            text-align: center;
+            max-width: 480px;
+        }
+        .offline__icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+        .offline__title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        .offline__text {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+        .offline__btn {
+            display: inline-block;
+            background: #2563eb;
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .offline__btn:hover {
+            background: #1d4ed8;
+        }
+        .offline__footer {
+            margin-top: 2rem;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline">
+        <div class="offline__icon">&#128268;</div>
+        <h1 class="offline__title">Sin conexión a Internet</h1>
+        <p class="offline__text">
+            No se pudo conectar al servidor de Regalos Purranque.
+            Verifica tu conexión a Internet e intenta nuevamente.
+        </p>
+        <button class="offline__btn" onclick="window.location.reload()">
+            Reintentar
+        </button>
+        <p class="offline__footer">
+            Regalos Purranque — Directorio comercial de Purranque, Chile
+        </p>
+    </div>
+</body>
+</html>

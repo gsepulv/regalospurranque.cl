@@ -1,0 +1,18 @@
+; Regalos Purranque v2 — Configuración PHP para producción
+;
+; En hostings con PHP-FPM donde mod_rewrite no redirige a index.php,
+; esta directiva hace que router.php se ejecute antes de cada request.
+; router.php detecta rutas del framework y las envía a index.php.
+;
+; INSTRUCCIONES:
+;   1. Copiar este archivo como .user.ini (sin .example)
+;   2. Descomentar la línea auto_prepend_file
+;   3. Ajustar la ruta absoluta al directorio del sitio
+;   4. Esperar ~5 minutos para que el caché de .user.ini se actualice
+;      (user_ini.cache_ttl = 300 segundos)
+;
+; IMPORTANTE: La ruta DEBE ser absoluta.
+; Para encontrar la ruta correcta, ir a cPanel > File Manager y copiar
+; la ruta completa que aparece en la barra superior.
+
+auto_prepend_file = "/home/purranque/v2.regalos.purranque.info/router.php"

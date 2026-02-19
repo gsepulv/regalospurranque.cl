@@ -1,0 +1,97 @@
+============================================
+  DEPLOY CHECKLIST — Regalos Purranque v2
+  Hosting: HostGator cPanel + PHP-FPM
+============================================
+
+ANTES DE EMPEZAR
+- Tener acceso a cPanel (https://162.241.53.185:2083)
+- Tener credenciales de la BD (purranque_v2user)
+- Tener deploy-v2.zip en tu computador
+
+--------------------------------------------
+PASO 1: Subir archivos
+--------------------------------------------
+[ ] cPanel > File Manager > v2.regalos.purranque.info/
+[ ] Subir deploy-v2.zip
+[ ] Clic derecho > Extract
+[ ] Eliminar deploy-v2.zip del servidor
+
+--------------------------------------------
+PASO 2: Configurar .user.ini
+--------------------------------------------
+[ ] En File Manager, copiar .user.ini.example como .user.ini
+[ ] Editar .user.ini:
+    - Descomentar la linea auto_prepend_file
+    - Verificar que la ruta sea:
+      auto_prepend_file = "/home/purranque/v2.regalos.purranque.info/router.php"
+[ ] NOTA: Esperar ~5 minutos para que el cache se actualice
+
+--------------------------------------------
+PASO 3: Configurar base de datos
+--------------------------------------------
+[ ] Renombrar config/database.php.production a config/database.php
+[ ] Editar config/database.php con credenciales reales:
+    DB_HOST = 'localhost'
+    DB_NAME = 'purranque_regalos_v2'
+    DB_USER = 'purranque_v2user'
+    DB_PASS = 'tu_password_real'
+
+--------------------------------------------
+PASO 4: Importar base de datos
+--------------------------------------------
+[ ] cPanel > phpMyAdmin > seleccionar purranque_regalos_v2
+[ ] Importar > Seleccionar database/export.sql
+[ ] Ejecutar
+
+--------------------------------------------
+PASO 5: Corregir permisos
+--------------------------------------------
+[ ] Abrir en navegador:
+    https://v2.regalos.purranque.info/deploy/fix-permissions.php
+[ ] Verificar que dice "0 errores"
+[ ] El script se auto-elimina
+
+--------------------------------------------
+PASO 6: Verificar deploy
+--------------------------------------------
+[ ] Abrir en navegador:
+    https://v2.regalos.purranque.info/deploy/verify.php?key=regalos_verify_2026
+[ ] Verificar que el score es >= 80%
+[ ] Clic en "Eliminar verify.php" al final
+
+--------------------------------------------
+PASO 7: Probar el sitio
+--------------------------------------------
+[ ] Home: https://v2.regalos.purranque.info/
+[ ] Categorias: https://v2.regalos.purranque.info/categorias
+[ ] Comercios: https://v2.regalos.purranque.info/comercios
+[ ] Una ficha: https://v2.regalos.purranque.info/comercio/algun-slug
+[ ] Mapa: https://v2.regalos.purranque.info/mapa
+[ ] Buscar: https://v2.regalos.purranque.info/buscar?q=test
+[ ] Admin login: https://v2.regalos.purranque.info/admin/login
+[ ] Dashboard admin
+[ ] Subir una imagen de prueba
+[ ] CSS y JS cargan correctamente
+[ ] Responsive en movil
+
+--------------------------------------------
+PASO 8: Limpiar
+--------------------------------------------
+[ ] Eliminar carpeta deploy/ del servidor
+[ ] Eliminar archivos de desarrollo si quedaron (.md, etc.)
+
+--------------------------------------------
+PASO 9: Cron Jobs (opcional)
+--------------------------------------------
+[ ] cPanel > Cron Jobs
+[ ] Backup diario (2:00 AM):
+    Comando: /usr/local/bin/ea-php83 /home/purranque/v2.regalos.purranque.info/cron/backup-auto.php
+    Horario: 0 2 * * *
+[ ] Analytics diario (12:05 AM):
+    Comando: /usr/local/bin/ea-php83 /home/purranque/v2.regalos.purranque.info/cron/analytics-daily.php
+    Horario: 5 0 * * *
+
+============================================
+  Si algo falla, ver GUIA-DEPLOY-DEFINITIVA.md
+  para instrucciones de rollback
+============================================

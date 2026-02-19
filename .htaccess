@@ -1,0 +1,91 @@
+# =========================================================
+# .htaccess — Regalos Purranque
+# Dominio canónico: https://regalospurranque.cl
+# Actualizado: 2026-02-19
+# =========================================================
+RewriteEngine On
+
+# ── 1) Forzar HTTPS (para todos los dominios) ───────────────────────────────
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── 2) Redirigir www.regalospurranque.cl → regalospurranque.cl ──────────────
+RewriteCond %{HTTP_HOST} ^www\.regalospurranque\.cl$ [NC]
+RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
+
+# ── 3) Redirigir v2.regalos.purranque.info → regalospurranque.cl ────────────
+RewriteCond %{HTTP_HOST} ^v2\.regalos\.purranque\.info$ [NC]
+RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
+
+# ── Permitir scripts de mantenimiento ────────────────────────────────────────
+RewriteRule ^testcorreo\.php$ - [L]
+RewriteRule ^diagnostico\.php$ - [L]
+
+# ── Front Controller ─────────────────────────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L,QSA]
+
+# ── Bloquear carpetas del framework ─────────────────────────────────────────
+RewriteRule ^(app|config|storage|database|cron|deploy|views)/ - [F,L]
+
+# ── MIME Types explícitos ───────────────────────────────────────────────────
+# Necesario para que el servidor envíe Content-Type correcto a crawlers
+# (Facebook, Twitter, WhatsApp, etc.)
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/webp .webp
+    AddType image/gif .gif
+    AddType image/svg+xml .svg
+    AddType image/x-icon .ico
+    AddType text/css .css
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType application/xml .xml
+</IfModule>
+
+# ── Headers de seguridad y optimización ─────────────────────────────────────
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header unset X-Powered-By
+</IfModule>
+
+# ── Bloquear archivos ocultos ───────────────────────────────────────────────
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ── Bloquear archivos sensibles ─────────────────────────────────────────────
+<FilesMatch "\.(sql|md|log|sh|bak|env|yml|yaml|lock|ini|php~)$">
+    Require all denied
+</FilesMatch>
+
+# ── Permitir archivos públicos ──────────────────────────────────────────────
+<FilesMatch "^(robots\.txt|sitemap\.xml|manifest\.json|favicon\.ico|sw\.js)$">
+    Require all granted
+</FilesMatch>
+
+# ── Caché de assets estáticos ───────────────────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType font/woff2 "access plus 1 month"
+</IfModule>
+
+# ── Compresión Gzip ─────────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>

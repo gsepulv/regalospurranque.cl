@@ -1,0 +1,173 @@
+<?php
+/**
+ * Listado de comercios - Admin CRUD
+ * Variables: $comercios, $categorias, $currentPage, $totalPages, $total, $filters
+ */
+$q         = $filters['q'] ?? '';
+$catFilter = $filters['categoria'] ?? '';
+$planFilter = $filters['plan'] ?? '';
+$estadoFilter = $filters['estado'] ?? '';
+?>
+
+<div class="admin-breadcrumb">
+    <a href="<?= url('/admin') ?>">Dashboard</a>
+    <span>/</span>
+    <span>Comercios</span>
+</div>
+
+<div class="toolbar">
+    <a href="<?= url('/admin/comercios/crear') ?>" class="btn btn--primary">+ Nuevo comercio</a>
+
+    <form method="GET" action="<?= url('/admin/comercios') ?>" id="filtrosForm" style="display:contents">
+        <input type="text"
+               name="q"
+               class="form-control"
+               placeholder="Buscar comercio..."
+               value="<?= e($q) ?>"
+               style="max-width:220px">
+
+        <select name="categoria" class="form-control" style="max-width:180px" onchange="document.getElementById('filtrosForm').submit()">
+            <option value="">Todas las categorias</option>
+            <?php foreach ($categorias as $cat): ?>
+                <option value="<?= $cat['id'] ?>" <?= (int) $catFilter === (int) $cat['id'] ? 'selected' : '' ?>>
+                    <?= e($cat['nombre']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <select name="plan" class="form-control" style="max-width:150px" onchange="document.getElementById('filtrosForm').submit()">
+            <option value="">Todos los planes</option>
+            <option value="basico" <?= $planFilter === 'basico' ? 'selected' : '' ?>>Basico</option>
+            <option value="premium" <?= $planFilter === 'premium' ? 'selected' : '' ?>>Premium</option>
+            <option value="sponsor" <?= $planFilter === 'sponsor' ? 'selected' : '' ?>>Sponsor</option>
+        </select>
+
+        <select name="estado" class="form-control" style="max-width:140px" onchange="document.getElementById('filtrosForm').submit()">
+            <option value="">Todos los estados</option>
+            <option value="1" <?= $estadoFilter === '1' ? 'selected' : '' ?>>Activo</option>
+            <option value="0" <?= $estadoFilter === '0' ? 'selected' : '' ?>>Inactivo</option>
+        </select>
+    </form>
+</div>
+
+<p style="margin-bottom:1rem;color:var(--color-gray);font-size:var(--font-size-sm)">
+    <?= number_format($total) ?> comercio<?= $total !== 1 ? 's' : '' ?> encontrado<?= $total !== 1 ? 's' : '' ?>
+</p>
+
+<div class="admin-card">
+    <div class="admin-card__body" style="padding:0">
+        <?php if (!empty($comercios)): ?>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Logo</th>
+                            <th>Nombre</th>
+                            <th>Categorías</th>
+                            <th>Plan</th>
+                            <th>Visitas</th>
+                            <th>Activo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($comercios as $com): ?>
+                            <tr>
+                                <!-- Logo -->
+                                <td>
+                                    <?php if (!empty($com['logo'])): ?>
+                                        <img src="<?= asset('img/logos/' . $com['logo']) ?>"
+                                             alt="<?= e($com['nombre']) ?>"
+                                             width="32" height="32"
+                                             style="border-radius:var(--radius-md);object-fit:cover">
+                                    <?php else: ?>
+                                        <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-md);background:var(--color-primary-light,#dbeafe);color:var(--color-primary,#2563eb);font-weight:600;font-size:0.875rem">
+                                            <?= mb_strtoupper(mb_substr($com['nombre'], 0, 1)) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <!-- Nombre -->
+                                <td>
+                                    <strong><?= e($com['nombre']) ?></strong>
+                                    <br><small style="color:var(--color-gray)">/<?= e($com['slug']) ?></small>
+                                </td>
+
+                                <!-- Categorías -->
+                                <td>
+                                    <?php if (!empty($com['categorias_nombres'])): ?>
+                                        <small><?= e(truncate($com['categorias_nombres'], 40)) ?></small>
+                                    <?php else: ?>
+                                        <small style="color:var(--color-gray)">Sin categorias</small>
+                                    <?php endif; ?>
+                                </td>
+
+                                <!-- Plan -->
+                                <td>
+                                    <span class="badge badge--<?= e($com['plan']) ?>"><?= e($com['plan']) ?></span>
+                                </td>
+
+                                <!-- Visitas -->
+                                <td><?= number_format($com['visitas'] ?? 0) ?></td>
+
+                                <!-- Activo (toggle switch) -->
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox"
+                                               <?= $com['activo'] ? 'checked' : '' ?>
+                                               data-toggle-url="<?= url('/admin/comercios/toggle/' . $com['id']) ?>">
+                                        <span class="toggle-switch__slider"></span>
+                                    </label>
+                                </td>
+
+                                <!-- Acciones -->
+                                <td>
+                                    <div class="admin-table__actions">
+                                        <a href="<?= url('/admin/comercios/editar/' . $com['id']) ?>"
+                                           class="btn btn--outline btn--xs"
+                                           title="Editar">Editar</a>
+
+                                        <a href="<?= url('/admin/comercios/' . $com['id'] . '/galeria') ?>"
+                                           class="btn btn--outline btn--xs"
+                                           title="Galeria">Galería</a>
+
+                                        <a href="<?= url('/admin/comercios/' . $com['id'] . '/horarios') ?>"
+                                           class="btn btn--outline btn--xs"
+                                           title="Horarios">Horarios</a>
+
+                                        <a href="<?= url('/comercio/' . $com['slug']) ?>"
+                                           class="btn btn--outline btn--xs"
+                                           target="_blank"
+                                           title="Ver publico">Ver</a>
+
+                                        <button type="button"
+                                                class="btn btn--danger btn--xs"
+                                                data-delete-url="<?= url('/admin/comercios/eliminar/' . $com['id']) ?>"
+                                                data-delete-name="<?= e($com['nombre']) ?>"
+                                                title="Eliminar">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Páginacion -->
+            <?php if ($totalPages > 1): ?>
+                <?php
+                $baseUrl     = '/admin/comercios';
+                $queryParams = array_filter($filters, fn($v) => $v !== '');
+                include BASE_PATH . '/views/partials/pagination.php';
+                ?>
+            <?php endif; ?>
+        <?php else: ?>
+            <div class="empty-state">
+                <div class="empty-state__icon">&#127978;</div>
+                <div class="empty-state__title">Sin comercios</div>
+                <div class="empty-state__text">No se encontraron comercios con los filtros seleccionados.</div>
+                <a href="<?= url('/admin/comercios/crear') ?>" class="btn btn--primary btn--sm">+ Nuevo comercio</a>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

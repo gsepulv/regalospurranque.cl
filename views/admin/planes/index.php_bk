@@ -1,0 +1,154 @@
+<?php
+/**
+ * Admin - Gestion de planes
+ * Variables: $stats (basico/premium/sponsor counts), $comercios
+ */
+$totalComercios = ($stats['basico'] ?? 0) + ($stats['premium'] ?? 0) + ($stats['sponsor'] ?? 0);
+?>
+<div class="admin-breadcrumb">
+    <a href="<?= url('/admin/dashboard') ?>">Dashboard</a> &rsaquo;
+    <span>Planes</span>
+</div>
+
+<h2>Planes</h2>
+
+<!-- Stats cards -->
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:1.5rem">
+    <div class="stat-card">
+        <div class="stat-card__header">
+            <div>
+                <div class="stat-card__number"><?= number_format($stats['basico'] ?? 0) ?></div>
+                <div class="stat-card__label">Plan Basico</div>
+            </div>
+            <div class="stat-card__icon">
+                <span class="badge badge--basico" style="font-size:0.75rem">Basico</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card stat-card--warning">
+        <div class="stat-card__header">
+            <div>
+                <div class="stat-card__number"><?= number_format($stats['premium'] ?? 0) ?></div>
+                <div class="stat-card__label">Plan Premium</div>
+            </div>
+            <div class="stat-card__icon">
+                <span class="badge badge--premium" style="font-size:0.75rem">Premium</span>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card stat-card--primary">
+        <div class="stat-card__header">
+            <div>
+                <div class="stat-card__number"><?= number_format($stats['sponsor'] ?? 0) ?></div>
+                <div class="stat-card__label">Plan Sponsor</div>
+            </div>
+            <div class="stat-card__icon">
+                <span class="badge badge--sponsor" style="font-size:0.75rem">Sponsor</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla de comercios con selector de plan -->
+<div class="admin-card">
+    <div class="admin-card__header">
+        <h3>Comercios (<?= number_format($totalComercios) ?>)</h3>
+    </div>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Plan actual</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($comercios)): ?>
+                    <tr>
+                        <td colspan="3" style="text-align:center;padding:2rem;color:var(--color-gray)">
+                            No hay comercios registrados.
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <?php foreach ($comercios as $comercio): ?>
+                        <tr>
+                            <td>
+                                <strong><?= e($comercio['nombre']) ?></strong>
+                                <br><small style="color:var(--color-gray)">/comercio/<?= e($comercio['slug']) ?></small>
+                            </td>
+                            <td>
+                                <select class="form-control"
+                                        style="width:150px;padding:0.35rem 0.5rem;font-size:0.875rem"
+                                        data-plan-url="<?= url('/admin/planes/update') ?>"
+                                        data-comercio-id="<?= $comercio['id'] ?>">
+                                    <option value="basico" <?= $comercio['plan'] === 'basico' ? 'selected' : '' ?>>Basico</option>
+                                    <option value="premium" <?= $comercio['plan'] === 'premium' ? 'selected' : '' ?>>Premium</option>
+                                    <option value="sponsor" <?= $comercio['plan'] === 'sponsor' ? 'selected' : '' ?>>Sponsor</option>
+                                </select>
+                            </td>
+                            <td>
+                                <?php if ($comercio['activo']): ?>
+                                    <span class="status status--active">Activo</span>
+                                <?php else: ?>
+                                    <span class="status status--inactive">Inactivo</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// AJAX para actualizar plan al cambiar el select
+document.querySelectorAll('[data-plan-url]').forEach(function(select) {
+    select.addEventListener('change', function() {
+        var url = this.getAttribute('data-plan-url');
+        var comercioId = this.getAttribute('data-comercio-id');
+        var plan = this.value;
+        var el = this;
+
+        el.disabled = true;
+
+        // Obtener CSRF token desde el formulario de eliminacion del layout
+        var csrfInput = document.querySelector('#deleteForm input[name="_csrf"]');
+        var token = csrfInput ? csrfInput.value : '';
+
+        var formData = new FormData();
+        formData.append('comercio_id', comercioId);
+        formData.append('plan', plan);
+        formData.append('_csrf', token);
+
+        fetch(url, {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            el.disabled = false;
+            if (data.ok) {
+                // Actualizar CSRF token
+                if (data.csrf) {
+                    document.querySelectorAll('input[name="_csrf"]').forEach(function(inp) {
+                        inp.value = data.csrf;
+                    });
+                }
+                // Feedback visual breve
+                el.style.outline = '2px solid #059669';
+                setTimeout(function() { el.style.outline = ''; }, 1500);
+            } else {
+                alert(data.error || 'Error al actualizar el plan');
+                location.reload();
+            }
+        })
+        .catch(function() {
+            el.disabled = false;
+            alert('Error de conexion');
+            location.reload();
+        });
+    });
+});
+</script>

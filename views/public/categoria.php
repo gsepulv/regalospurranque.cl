@@ -1,0 +1,135 @@
+<?php
+/**
+ * Vista listado de comercios por categoria
+ * Variables: $categoria, $comercios, $categorias, $banners, $total, $currentPage, $totalPages, $baseUrl
+ */
+$pageType = 'categoria';
+?>
+
+<section class="section">
+    <div class="container">
+
+        <!-- Cabecera -->
+        <div class="page-header">
+            <?php if (!empty($categoria['icono'])): ?>
+                <span class="page-header__icon" style="color: <?= e($categoria['color'] ?? '#2563eb') ?>"><?= $categoria['icono'] ?></span>
+            <?php endif; ?>
+            <h1><?= e($categoria['nombre']) ?></h1>
+            <?php if (!empty($categoria['descripcion'])): ?>
+                <p class="text-muted"><?= e($categoria['descripcion']) ?></p>
+            <?php endif; ?>
+            <p class="text-muted text-sm"><?= $total ?> comercio<?= $total != 1 ? 's' : '' ?> encontrado<?= $total != 1 ? 's' : '' ?></p>
+        </div>
+
+        <div class="comercio-layout">
+
+            <!-- Contenido principal -->
+            <div class="comercio-main">
+                <?php if (!empty($comercios)): ?>
+                    <div class="grid grid--auto">
+                        <?php foreach ($comercios as $com): ?>
+                            <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card">
+                                <?php if (!empty($com['portada'])): ?>
+                                    <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
+                                         alt="<?= e($com['nombre']) ?>"
+                                         class="card__img" loading="lazy">
+                                <?php else: ?>
+                                    <div class="card__img card__img--placeholder">
+                                        <?= mb_substr($com['nombre'], 0, 1) ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div class="card__body">
+                                    <h3 class="card__title"><?= e($com['nombre']) ?></h3>
+                                    <?php if (!empty($com['categorias_nombres'])): ?>
+                                        <p class="card__text card__text--small"><?= e($com['categorias_nombres']) ?></p>
+                                    <?php endif; ?>
+                                    <?php if (!empty($com['direccion'])): ?>
+                                        <p class="card__text card__text--small">&#128205; <?= e(truncate($com['direccion'], 50)) ?></p>
+                                    <?php endif; ?>
+                                    <?php if ($com['calificación_promedio']): ?>
+                                        <div class="rating-small">
+                                            <?php for ($i = 1; $i <= 5; $i++): ?>
+                                                <span class="star <?= $i <= round($com['calificación_promedio']) ? 'star--filled' : '' ?>">&#9733;</span>
+                                            <?php endfor; ?>
+                                            <span class="text-muted">(<?= $com['total_resenas'] ?>)</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <?php include BASE_PATH . '/views/partials/pagination.php'; ?>
+
+                <?php else: ?>
+                    <div class="empty-state">
+                        <span class="empty-state__emoji"><?= !empty($categoria['icono']) ? $categoria['icono'] : '&#128269;' ?></span>
+                        <h3>Aun no hay comercios en <?= e($categoria['nombre']) ?></h3>
+                        <p>Pronto tendras opciones aqui. Mientras tanto, explora otras categorias:</p>
+                        <div class="empty-state__pills">
+                            <?php foreach ($categorias as $cat): ?>
+                                <?php if ($cat['id'] == $categoria['id'] || ($cat['comercios_count'] ?? 0) == 0) continue; ?>
+                                <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="empty-state__pill">
+                                    <?= !empty($cat['icono']) ? $cat['icono'] . ' ' : '' ?><?= e($cat['nombre']) ?>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="comercio-sidebar">
+                <?php // Profiles: sidebar position ?>
+                <?php $position = 'sidebar'; include BASE_PATH . '/views/partials/social-profiles.php'; ?>
+
+                <?php // Share: sidebar position ?>
+                <?php
+                $sharePageType = 'categoria';
+                $sharePosition = 'sidebar';
+                $shareTitle = $categoria['nombre'];
+                $shareDescription = $categoria['descripcion'] ?? '';
+                $shareUrl = url('/categoria/' . $categoria['slug']);
+                $shareSlug = $categoria['slug'];
+                include BASE_PATH . '/views/partials/share-buttons.php';
+                ?>
+
+                <div class="card sidebar-card">
+                    <div class="card__body">
+                        <h3 class="sidebar-card__title">Otras categorías</h3>
+                        <ul class="category-list">
+                            <?php foreach ($categorias as $cat): ?>
+                                <?php if ($cat['id'] == $categoria['id']) continue; ?>
+                                <li>
+                                    <a href="<?= url('/categoria/' . $cat['slug']) ?>">
+                                        <?= !empty($cat['icono']) ? $cat['icono'] . ' ' : '' ?>
+                                        <?= e($cat['nombre']) ?>
+                                        <span class="text-muted text-sm">(<?= (int) ($cat['comercios_count'] ?? 0) ?>)</span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+
+                <?php foreach ($banners as $banner): ?>
+                    <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
+                        <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
+                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>" alt="<?= e($banner['titulo'] ?? 'Publicidad') ?>" loading="lazy">
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<script>
+function trackBanner(bannerId) {
+    fetch('<?= url('/api/banner-track') ?>', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({banner_id: bannerId, tipo: 'click'})
+    });
+}
+</script>
