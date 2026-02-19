@@ -48,6 +48,12 @@ restaurar-backups.php
 verificar-controller.php
 ver-tildes.php
 
+# Backups y diagnósticos
+*.bak
+*.bak*
+*_bk
+storage/diagnostico-*.json
+
 # Sistema
 .DS_Store
 Thumbs.db
