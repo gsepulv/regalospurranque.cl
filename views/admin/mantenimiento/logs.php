@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin - Mantenimiento > Logs de Auditoría
- * Variables: $logs, $total, $página, $totalPages, $filtros, $usuarios, $modulos,
+ * Variables: $logs, $total, $pagina, $totalPages, $filtros, $usuarios, $modulos,
  *            $stats (total_registros, top_acciones, top_usuarios, top_modulos),
  *            $actividad (date => count, last 30 days)
  */
@@ -227,16 +227,16 @@ $exportParams = http_build_query(array_filter($filtros));
     $queryParams = array_filter($filtros);
     ?>
     <div class="logs-págination">
-        <?php if ($página > 1): ?>
-            <a href="<?= url('/admin/mantenimiento/logs?' . http_build_query(array_merge($queryParams, ['página' => $página - 1]))) ?>" class="btn btn--outline btn--sm">&laquo; Anterior</a>
+        <?php if ($pagina > 1): ?>
+            <a href="<?= url('/admin/mantenimiento/logs?' . http_build_query(array_merge($queryParams, ['pagina' => $pagina - 1]))) ?>" class="btn btn--outline btn--sm">&laquo; Anterior</a>
         <?php else: ?>
             <span class="btn btn--outline btn--sm" style="opacity:0.5;pointer-events:none">&laquo; Anterior</span>
         <?php endif; ?>
 
-        <span class="logs-págination__info">P&aacute;gina <?= $página ?> de <?= $totalPages ?></span>
+        <span class="logs-págination__info">P&aacute;gina <?= $pagina ?> de <?= $totalPages ?></span>
 
-        <?php if ($página < $totalPages): ?>
-            <a href="<?= url('/admin/mantenimiento/logs?' . http_build_query(array_merge($queryParams, ['página' => $página + 1]))) ?>" class="btn btn--outline btn--sm">Siguiente &raquo;</a>
+        <?php if ($pagina < $totalPages): ?>
+            <a href="<?= url('/admin/mantenimiento/logs?' . http_build_query(array_merge($queryParams, ['pagina' => $pagina + 1]))) ?>" class="btn btn--outline btn--sm">Siguiente &raquo;</a>
         <?php else: ?>
             <span class="btn btn--outline btn--sm" style="opacity:0.5;pointer-events:none">Siguiente &raquo;</span>
         <?php endif; ?>

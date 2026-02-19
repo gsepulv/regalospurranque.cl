@@ -22,7 +22,7 @@ define('SITE_NAME', 'Regalos Purranque');
 define('SITE_DESCRIPTION', 'Directorio comercial de Purranque, Chile. Encuentra los mejores comercios, ofertas y servicios.');
 define('SITE_URL', $isProduction
     ? 'https://regalospurranque.cl'
-    : 'http://localhost:8000'
+    : 'http://localhost'
 );
 
 // Versión

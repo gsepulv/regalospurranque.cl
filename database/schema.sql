@@ -465,11 +465,155 @@ CREATE TABLE IF NOT EXISTS `configuracion_mantenimiento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
+-- Planes: configuración de planes comerciales
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `planes_config` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `slug` VARCHAR(20) NOT NULL COMMENT 'freemium|basico|premium|sponsor|banner',
+    `nombre` VARCHAR(50) NOT NULL,
+    `descripcion` TEXT DEFAULT NULL,
+    `precio_intro` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Precio introductorio CLP',
+    `precio_regular` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Precio regular CLP',
+    `max_fotos` TINYINT UNSIGNED NOT NULL DEFAULT 1,
+    `max_redes` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '1=solo 1 red, 99=todas',
+    `tiene_mapa` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0=boton GMaps, 1=mapa integrado',
+    `tiene_horarios` TINYINT(1) NOT NULL DEFAULT 0,
+    `tiene_sello` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Sello verificado del plan',
+    `tiene_reporte` TINYINT(1) NOT NULL DEFAULT 0,
+    `posicion` ENUM('normal','prioritaria','primero') NOT NULL DEFAULT 'normal',
+    `max_cupos` INT UNSIGNED DEFAULT NULL COMMENT 'NULL=ilimitado',
+    `max_cupos_categoria` INT UNSIGNED DEFAULT NULL COMMENT 'Para sponsors: max por categoria',
+    `color` VARCHAR(7) DEFAULT '#6B7280',
+    `icono` VARCHAR(10) DEFAULT NULL,
+    `orden` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Cambios pendientes de comerciantes
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `comercio_cambios_pendientes` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `comercio_id` INT NOT NULL,
+    `usuario_id` INT NOT NULL,
+    `cambios_json` JSON NOT NULL COMMENT 'JSON con campos anterior/nuevo',
+    `estado` ENUM('pendiente','aprobado','rechazado') NOT NULL DEFAULT 'pendiente',
+    `notas` TEXT COMMENT 'Notas del admin al aprobar/rechazar',
+    `revisado_por` INT DEFAULT NULL COMMENT 'ID del admin que reviso',
+    `revisado_at` DATETIME DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_comercio` (`comercio_id`),
+    KEY `idx_estado` (`estado`),
+    KEY `idx_usuario` (`usuario_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Mensajes de contacto
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `mensajes_contacto` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `asunto` VARCHAR(200) NOT NULL,
+    `mensaje` TEXT NOT NULL,
+    `ip` VARCHAR(45) DEFAULT '',
+    `leido` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Log de notificaciones enviadas
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `notificaciones_log` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
+    `destinatario` VARCHAR(150) NOT NULL,
+    `asunto` VARCHAR(255) NOT NULL,
+    `template` VARCHAR(100) NOT NULL,
+    `estado` ENUM('enviado','fallido') NOT NULL DEFAULT 'enviado',
+    `datos` JSON DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_notif_log_estado` (`estado`),
+    KEY `idx_notif_log_template` (`template`),
+    KEY `idx_notif_log_fecha` (`created_at`),
+    KEY `idx_notif_site` (`site_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Redes sociales: configuración del sitio
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `redes_sociales_config` (
+    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `site_id` INT UNSIGNED NOT NULL DEFAULT 1,
+    `clave` VARCHAR(100) NOT NULL,
+    `valor` TEXT DEFAULT NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_site_clave` (`site_id`, `clave`),
+    KEY `idx_site` (`site_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Log de shares (compartidos en redes sociales)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `share_log` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `comercio_id` INT DEFAULT NULL,
+    `pagina` VARCHAR(500) DEFAULT NULL,
+    `red_social` VARCHAR(50) NOT NULL,
+    `ip` VARCHAR(45) DEFAULT NULL,
+    `user_agent` VARCHAR(500) DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    KEY `idx_share_log_comercio` (`comercio_id`),
+    KEY `idx_share_log_red` (`red_social`),
+    KEY `idx_share_log_fecha` (`created_at`),
+    CONSTRAINT `fk_share_log_comercio` FOREIGN KEY (`comercio_id`) REFERENCES `comercios` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Sitios: configuración multi-sitio
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `sitios` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `nombre` VARCHAR(150) NOT NULL,
+    `slug` VARCHAR(170) NOT NULL,
+    `dominio` VARCHAR(255) DEFAULT NULL,
+    `descripcion` TEXT DEFAULT NULL,
+    `logo` VARCHAR(255) DEFAULT NULL,
+    `favicon` VARCHAR(255) DEFAULT NULL,
+    `color_primario` VARCHAR(7) NOT NULL DEFAULT '#2563eb',
+    `color_secundario` VARCHAR(7) NOT NULL DEFAULT '#1e40af',
+    `ciudad` VARCHAR(100) NOT NULL DEFAULT 'Purranque',
+    `lat` DECIMAL(10,8) DEFAULT '-40.91305000',
+    `lng` DECIMAL(11,8) DEFAULT '-73.15913000',
+    `zoom` TINYINT NOT NULL DEFAULT 15,
+    `email_contacto` VARCHAR(150) DEFAULT NULL,
+    `telefono` VARCHAR(20) DEFAULT NULL,
+    `redes_sociales` JSON DEFAULT NULL,
+    `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sitios_slug` (`slug`),
+    UNIQUE KEY `uk_sitios_dominio` (`dominio`),
+    KEY `idx_sitios_activo` (`activo`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
 -- Restaurar verificacion de claves foraneas
 -- ============================================================================
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================================================
 -- FIN DEL ESQUEMA - purranque_regalos_purranque
--- Total de tablas: 22
+-- Total de tablas: 29
 -- ============================================================================
