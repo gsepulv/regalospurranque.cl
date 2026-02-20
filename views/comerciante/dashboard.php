@@ -80,7 +80,10 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
                         <li style="margin-bottom:0.25rem">&#9744; Selecciona al menos una categoría</li>
                     <?php endif; ?>
                 </ul>
-                <a href="<?= url('/mi-comercio/editar') ?>" style="display:inline-block;margin-top:0.75rem;color:#D97706;font-weight:600;font-size:0.85rem;text-decoration:none">Completar ficha &rarr;</a>
+                <p style="margin:0.75rem 0 0;font-size:0.8rem;color:#92400E">
+                    <strong>Tu ficha no aparece en el directorio hasta completar todos los campos.</strong>
+                </p>
+                <a href="<?= url('/mi-comercio/editar') ?>" style="display:inline-block;margin-top:0.5rem;color:#D97706;font-weight:600;font-size:0.85rem;text-decoration:none">Completar ficha &rarr;</a>
             </div>
             <?php endif; ?>
 

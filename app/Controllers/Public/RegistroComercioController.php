@@ -201,6 +201,8 @@ class RegistroComercioController extends Controller
             ]);
         }
 
+        \App\Models\Comercio::recalcularCalidad($comercioId);
+
         // Notificar admin
         $this->notificarAdmin($comercioId, $nombre);
 

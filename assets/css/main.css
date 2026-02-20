@@ -4551,6 +4551,7 @@ textarea:focus-visible {
 /* Mobile: ocultar celebraciones/fechas en home, mostrar enlace "Ver más" */
 .mobile-only { display: none; }
 @media (max-width: 768px) {
+    .section--banners,
     .section-celebraciones-home,
     .section-fechas-home,
     .section-eventos-home { display: none; }

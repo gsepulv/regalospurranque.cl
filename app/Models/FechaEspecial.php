@@ -30,7 +30,7 @@ class FechaEspecial
             "SELECT fe.*,
                     (SELECT COUNT(DISTINCT cf.comercio_id)
                      FROM comercio_fecha cf
-                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
+                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1 AND c.calidad_ok = 1
                      WHERE cf.fecha_id = fe.id AND cf.activo = 1) as comercios_count
              FROM fechas_especiales fe
              WHERE fe.activo = 1 AND fe.tipo = ?
@@ -49,7 +49,7 @@ class FechaEspecial
             "SELECT fe.*,
                     (SELECT COUNT(DISTINCT cf.comercio_id)
                      FROM comercio_fecha cf
-                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
+                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1 AND c.calidad_ok = 1
                      WHERE cf.fecha_id = fe.id AND cf.activo = 1) as comercios_count
              FROM fechas_especiales fe
              WHERE fe.slug = ? AND fe.activo = 1",
@@ -101,7 +101,7 @@ class FechaEspecial
         return $db->fetch(
             "SELECT fe.* FROM fechas_especiales fe
              INNER JOIN comercio_fecha cf ON fe.id = cf.fecha_id AND cf.activo = 1
-             INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
+             INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1 AND c.calidad_ok = 1
              WHERE fe.activo = 1
              AND fe.fecha_inicio IS NOT NULL
              AND fe.fecha_inicio >= CURDATE()

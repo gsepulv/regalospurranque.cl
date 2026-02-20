@@ -169,6 +169,8 @@ class ComercioAdminController extends Controller
         // Fechas especiales
         $this->syncFechas($id, $_POST['fechas'] ?? [], $_POST);
 
+        \App\Models\Comercio::recalcularCalidad($id);
+
         $this->log('comercios', 'crear', 'comercio', $id, "Comercio creado: {$data['nombre']}");
 
         // Notificaciones
@@ -317,6 +319,8 @@ class ComercioAdminController extends Controller
 
         // Fechas especiales
         $this->syncFechas($id, $_POST['fechas'] ?? [], $_POST);
+
+        \App\Models\Comercio::recalcularCalidad($id);
 
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio actualizado correctamente']);

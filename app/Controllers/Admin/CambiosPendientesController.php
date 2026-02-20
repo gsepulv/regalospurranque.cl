@@ -159,6 +159,8 @@ class CambiosPendientesController extends Controller
             }
         }
 
+        \App\Models\Comercio::recalcularCalidad($comercioId);
+
         // Marcar como aprobado
         $notas = trim($_POST['notas'] ?? '');
         $this->db->update('comercio_cambios_pendientes', [

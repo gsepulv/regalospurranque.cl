@@ -30,7 +30,7 @@ class Categoria
             "SELECT cat.*,
                     (SELECT COUNT(DISTINCT cc.comercio_id)
                      FROM comercio_categoria cc
-                     INNER JOIN comercios c ON cc.comercio_id = c.id AND c.activo = 1
+                     INNER JOIN comercios c ON cc.comercio_id = c.id AND c.activo = 1 AND c.calidad_ok = 1
                      WHERE cc.categoria_id = cat.id) as comercios_count
              FROM categorias cat
              WHERE cat.slug = ? AND cat.activo = 1",
@@ -49,7 +49,7 @@ class Categoria
                     COUNT(DISTINCT c.id) as comercios_count
              FROM categorias cat
              LEFT JOIN comercio_categoria cc ON cat.id = cc.categoria_id
-             LEFT JOIN comercios c ON cc.comercio_id = c.id AND c.activo = 1
+             LEFT JOIN comercios c ON cc.comercio_id = c.id AND c.activo = 1 AND c.calidad_ok = 1
              WHERE cat.activo = 1
              GROUP BY cat.id
              ORDER BY cat.orden ASC, cat.nombre ASC"
