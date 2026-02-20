@@ -24,6 +24,7 @@
                     <a href="<?= url('/terminos') ?>">Términos y Condiciones</a>
                     <a href="<?= url('/privacidad') ?>">Política de Privacidad</a>
                     <a href="<?= url('/cookies') ?>">Política de Cookies</a>
+                    <a href="<?= url('/contenidos') ?>">Política de Contenidos</a>
                 </div>
             </div>
             <div>

@@ -30,6 +30,7 @@ return [
     ['GET',  '/terminos',           'Public\\PageController@terminos'],
     ['GET',  '/privacidad',         'Public\\PageController@privacidad'],
     ['GET',  '/cookies',            'Public\\PageController@cookies'],
+    ['GET',  '/contenidos',         'Public\\PageController@contenidos'],
 
     // ── Mis reseñas ─────────────────────────────────────────────
     ['GET',  '/mis-resenas',        'Public\\ReviewController@misResenas'],

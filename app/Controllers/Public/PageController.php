@@ -59,4 +59,21 @@ class PageController extends Controller
             ],
         ]);
     }
+
+    /**
+     * GET /contenidos
+     */
+    public function contenidos(): void
+    {
+        VisitTracker::track(null, '/contenidos', 'pagina');
+
+        $this->render('public/contenidos', [
+            'title'       => 'Política de Contenidos — ' . SITE_NAME,
+            'description' => 'Política de contenidos y normativa de publicación de ' . SITE_NAME,
+            'breadcrumbs' => [
+                ['label' => 'Inicio', 'url' => '/'],
+                ['label' => 'Política de Contenidos'],
+            ],
+        ]);
+    }
 }
