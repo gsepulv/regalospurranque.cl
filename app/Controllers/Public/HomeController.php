@@ -68,6 +68,10 @@ class HomeController extends Controller
             ['loc' => url('/noticias'), 'priority' => '0.8', 'changefreq' => 'daily'],
             ['loc' => url('/mapa'), 'priority' => '0.7', 'changefreq' => 'weekly'],
             ['loc' => url('/buscar'), 'priority' => '0.6', 'changefreq' => 'weekly'],
+            ['loc' => url('/terminos'), 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => url('/privacidad'), 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => url('/cookies'), 'priority' => '0.3', 'changefreq' => 'yearly'],
+            ['loc' => url('/contenidos'), 'priority' => '0.3', 'changefreq' => 'yearly'],
         ];
 
         try {
