@@ -2,6 +2,7 @@
 namespace App\Controllers\Public;
 
 use App\Core\Controller;
+use App\Services\Captcha;
 use App\Services\Notification;
 
 class ContactoController extends Controller
@@ -20,6 +21,15 @@ class ContactoController extends Controller
 
     public function send(): void
     {
+        // Validar hCaptcha
+        if (!Captcha::verify($_POST['h-captcha-response'] ?? null)) {
+            $this->back([
+                'error' => 'Verificación anti-bot fallida. Intenta nuevamente.',
+                'old'   => $_POST,
+            ]);
+            return;
+        }
+
         $validator = $this->validate($_POST, [
             'nombre'  => 'required|min:2|max:100',
             'email'   => 'required|email|max:255',

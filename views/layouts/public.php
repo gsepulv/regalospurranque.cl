@@ -32,6 +32,7 @@
     <?php endif; ?>
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="<?= e(SITE_NAME) ?> — Noticias" href="<?= url('/feed/rss.xml') ?>">
+    <?= \App\Services\Captcha::script() ?>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->

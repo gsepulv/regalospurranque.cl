@@ -102,7 +102,7 @@
     </div>
   </div>
 
-  <form method="POST" action="<?= url('/derechos') ?>" class="form-derechos" novalidate>
+  <form method="POST" action="<?= url('/derechos') ?>" class="form-derechos" id="arcoForm" novalidate>
     <?= csrf_field() ?>
     <input type="hidden" name="tipo" value="<?= e($tipoSeleccionado) ?>">
 
@@ -221,8 +221,9 @@
       </p>
     </div>
 
+    <?= \App\Services\Captcha::widget('onDerechosCaptcha') ?>
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">
+      <button type="submit" class="btn btn-primary" id="derechosSubmit">
         &#x1F4E8; Enviar solicitud
       </button>
       <a href="<?= url('/derechos') ?>" class="btn btn-secondary">Cancelar</a>
@@ -288,4 +289,26 @@
     });
   }
 })();
+<?php if (\App\Services\Captcha::isEnabled()): ?>
+(function() {
+    var form = document.getElementById('arcoForm');
+    if (!form) return;
+    var submitted = false;
+    window.onDerechosCaptcha = function(token) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'h-captcha-response';
+        input.value = token;
+        form.appendChild(input);
+        submitted = true;
+        form.submit();
+    };
+    form.addEventListener('submit', function(e) {
+        if (!submitted && typeof hcaptcha !== 'undefined') {
+            e.preventDefault();
+            hcaptcha.execute();
+        }
+    });
+})();
+<?php endif; ?>
 </script>

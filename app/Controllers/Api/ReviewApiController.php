@@ -3,6 +3,7 @@ namespace App\Controllers\Api;
 
 use App\Core\Controller;
 use App\Models\Resena;
+use App\Services\Captcha;
 use App\Services\Notification;
 
 /**
@@ -26,6 +27,12 @@ class ReviewApiController extends Controller
         $csrfToken = $data['_csrf'] ?? '';
         if (empty($csrfToken) || $csrfToken !== ($_SESSION['csrf_token'] ?? '')) {
             $this->json(['error' => 'Token CSRF inválido'], 403);
+            return;
+        }
+
+        // Validar hCaptcha
+        if (!Captcha::verify($data['h-captcha-response'] ?? null)) {
+            $this->json(['error' => 'Verificación anti-bot fallida. Intenta nuevamente.'], 403);
             return;
         }
 
@@ -61,8 +68,32 @@ class ReviewApiController extends Controller
             return;
         }
 
-        // Verificar que no haya enviado resena recientemente (misma IP, mismo comercio, ultimas 24h)
+        // Rate limiting por IP
         $ip = $this->request->ip();
+
+        // Máx 3 reseñas por hora por IP (global)
+        $countHora = $this->db->fetch(
+            "SELECT COUNT(*) as total FROM resenas WHERE ip = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)",
+            [$ip]
+        );
+        if ($countHora && (int)$countHora['total'] >= 3) {
+            error_log("[RateLimit] Reseña bloqueada: IP $ip excede 3/hora");
+            $this->json(['error' => 'Has enviado demasiadas reseñas. Intenta de nuevo más tarde.'], 429);
+            return;
+        }
+
+        // Máx 10 reseñas por día por IP (global)
+        $countDia = $this->db->fetch(
+            "SELECT COUNT(*) as total FROM resenas WHERE ip = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)",
+            [$ip]
+        );
+        if ($countDia && (int)$countDia['total'] >= 10) {
+            error_log("[RateLimit] Reseña bloqueada: IP $ip excede 10/día");
+            $this->json(['error' => 'Has enviado demasiadas reseñas. Intenta de nuevo más tarde.'], 429);
+            return;
+        }
+
+        // Máx 1 reseña por IP + comercio en 24h
         $reciente = $this->db->fetch(
             "SELECT id FROM resenas
              WHERE comercio_id = ? AND ip = ? AND created_at > DATE_SUB(NOW(), INTERVAL 24 HOUR)",

@@ -2,6 +2,7 @@
 namespace App\Controllers\Public;
 
 use App\Core\Controller;
+use App\Services\Captcha;
 use App\Services\Notification;
 use App\Services\VisitTracker;
 
@@ -96,6 +97,11 @@ class DerechosController extends Controller
 
         $old = $_POST;
         $errores = [];
+
+        // Validar hCaptcha
+        if (!Captcha::verify($_POST['h-captcha-response'] ?? null)) {
+            $errores[] = 'Verificación anti-bot fallida. Intenta nuevamente.';
+        }
 
         // Validaciones
         if (!array_key_exists($tipo, $this->tiposConfig)) {

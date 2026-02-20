@@ -332,6 +332,7 @@ $hoy = (int) date('w');
                                 </div>
                             </div>
 
+                            <?= \App\Services\Captcha::widget('onReviewCaptcha') ?>
                             <button type="submit" class="btn btn--primary" id="submitReview">Enviar reseña</button>
                             <div id="reviewMessage" class="review-message" style="display:none"></div>
                         </form>
@@ -409,7 +410,7 @@ $hoy = (int) date('w');
                         <?php if (!empty($comercio['email'])): ?>
                             <div class="contact-item">
                                 <span class="contact-item__icon">&#9993;</span>
-                                <a href="mailto:<?= e($comercio['email']) ?>"><?= e($comercio['email']) ?></a>
+                                <a href="#" class="email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;" title="Enviar correo">Mostrar email</a>
                             </div>
                         <?php endif; ?>
 
@@ -474,6 +475,13 @@ $hoy = (int) date('w');
 <?php endif; ?>
 
 <script>
+function deobfuscateEmail(el) {
+    var email = atob(el.dataset.e);
+    el.href = 'mailto:' + email;
+    el.textContent = email;
+    el.onclick = null;
+    el.classList.remove('email-obfuscated');
+}
 function trackWhatsApp(comercioId) {
     fetch('<?= url('/api/track') ?>', {
         method: 'POST',
@@ -511,7 +519,7 @@ function trackBanner(bannerId) {
 })();
 <?php endif; ?>
 
-/* Formulario de reseña */
+/* Formulario de reseña con hCaptcha */
 (function() {
     var form = document.getElementById('newReviewForm');
     if (!form) return;
@@ -519,6 +527,7 @@ function trackBanner(bannerId) {
     var starInput = document.getElementById('starInput');
     var calificaciónInput = document.getElementById('calificaciónInput');
     var stars = starInput.querySelectorAll('.star-input__star');
+    var hcaptchaEnabled = <?= \App\Services\Captcha::isEnabled() ? 'true' : 'false' ?>;
 
     var comentarioEl = document.getElementById('reviewComentario');
     var charCountEl = document.getElementById('charCount');
@@ -552,15 +561,9 @@ function trackBanner(bannerId) {
         });
     });
 
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    function submitReview(captchaToken) {
         var msgEl = document.getElementById('reviewMessage');
         var btn = document.getElementById('submitReview');
-
-        if (!calificaciónInput.value) {
-            showMsg(msgEl, 'Selecciona una calificación', 'error');
-            return;
-        }
 
         btn.disabled = true;
         btn.textContent = 'Enviando...';
@@ -574,6 +577,7 @@ function trackBanner(bannerId) {
             tipo_experiencia: form.querySelector('[name="tipo_experiencia"]').value,
             comentario: form.querySelector('[name="comentario"]').value.trim()
         };
+        if (captchaToken) data['h-captcha-response'] = captchaToken;
 
         fetch('<?= url('/api/reviews/create') ?>', {
             method: 'POST',
@@ -598,12 +602,35 @@ function trackBanner(bannerId) {
             }
             btn.disabled = false;
             btn.textContent = 'Enviar reseña';
+            if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') hcaptcha.reset();
         })
         .catch(function() {
             showMsg(msgEl, 'Error de conexión. Intenta nuevamente.', 'error');
             btn.disabled = false;
             btn.textContent = 'Enviar reseña';
+            if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') hcaptcha.reset();
         });
+    }
+
+    // Callback de hCaptcha invisible
+    window.onReviewCaptcha = function(token) {
+        submitReview(token);
+    };
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var msgEl = document.getElementById('reviewMessage');
+
+        if (!calificaciónInput.value) {
+            showMsg(msgEl, 'Selecciona una calificación', 'error');
+            return;
+        }
+
+        if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') {
+            hcaptcha.execute();
+        } else {
+            submitReview(null);
+        }
     });
 
     function showMsg(el, msg, type) {

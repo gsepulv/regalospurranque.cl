@@ -1,6 +1,7 @@
 # Entorno y credenciales
 config/database.php
 config/database.php.production
+config/captcha.php
 .env
 .user.ini
 
