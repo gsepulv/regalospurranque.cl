@@ -4547,3 +4547,12 @@ textarea:focus-visible {
 .comercio-redes__link:hover { background-color: var(--red-color); color: #fff; }
 .comercio-redes__icon { display: inline-flex; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
 .comercio-redes__icon svg { width: 1.1rem; height: 1.1rem; }
+
+/* Mobile: ocultar celebraciones/fechas en home, mostrar enlace "Ver más" */
+.mobile-only { display: none; }
+@media (max-width: 768px) {
+    .section-celebraciones-home,
+    .section-fechas-home,
+    .section-eventos-home { display: none; }
+    .mobile-only { display: block; }
+}

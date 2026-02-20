@@ -133,27 +133,26 @@
 <?php endif; ?>
 
 <!-- Categorías -->
-<section class="section">
+<?php if (!empty($categorias)): ?>
+<section class="section section-categorias-home">
     <div class="container">
         <h2 class="section__title">Categorías</h2>
-        <?php if (!empty($categorias)): ?>
-            <div class="category-grid">
-                <?php foreach ($categorias as $cat): ?>
-                    <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="category-card">
-                        <span class="category-card__icon"><?= !empty($cat['icono']) ? $cat['icono'] : mb_substr($cat['nombre'], 0, 1) ?></span>
-                        <span class="category-card__name"><?= e($cat['nombre']) ?></span>
-                        <span class="category-card__count"><?= (int) ($cat['comercios_count'] ?? 0) ?> comercio<?= ($cat['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p class="text-center text-muted">Las categorias se mostraran aqui cuando esten configuradas.</p>
-        <?php endif; ?>
+        <div class="category-grid">
+            <?php foreach ($categorias as $cat): ?>
+                <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="category-card">
+                    <span class="category-card__icon"><?= !empty($cat['icono']) ? $cat['icono'] : mb_substr($cat['nombre'], 0, 1) ?></span>
+                    <span class="category-card__name"><?= e($cat['nombre']) ?></span>
+                    <span class="category-card__count"><?= (int)$cat['comercios_count'] ?> comercio<?= $cat['comercios_count'] != 1 ? 's' : '' ?></span>
+                </a>
+            <?php endforeach; ?>
+        </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Celebraciones Personales -->
-<section class="section section--alt">
+<?php if (!empty($fechasPersonales)): ?>
+<section class="section section--alt section-celebraciones-home">
     <div class="container">
         <h2 class="section__title">&#127881; Celebraciones Personales</h2>
         <p class="text-center text-muted mb-4">Encuentra el regalo ideal para cada momento especial de tu vida</p>
@@ -166,15 +165,20 @@
                     <?php if (!empty($fe['descripcion'])): ?>
                         <span class="celebracion-card__desc"><?= e(truncate($fe['descripcion'], 80)) ?></span>
                     <?php endif; ?>
-                    <span class="celebracion-card__count"><?= (int) ($fe['comercios_count'] ?? 0) ?> comercio<?= ($fe['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
+                    <span class="celebracion-card__count"><?= (int)$fe['comercios_count'] ?> comercio<?= $fe['comercios_count'] != 1 ? 's' : '' ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
+        <div class="text-center mt-3 mobile-only">
+            <a href="<?= url('/celebraciones') ?>" class="btn btn--outline btn--sm">Ver todas las celebraciones &rarr;</a>
+        </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Fechas del Calendario -->
-<section class="section">
+<?php if (!empty($fechasCalendario)): ?>
+<section class="section section-fechas-home">
     <div class="container">
         <h2 class="section__title">&#128197; Fechas del Calendario</h2>
         <p class="text-center text-muted mb-4">Ofertas especiales para cada fecha importante del ano</p>
@@ -187,15 +191,20 @@
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="celebracion-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>
                     <?php endif; ?>
-                    <span class="celebracion-card__count"><?= (int) ($fe['comercios_count'] ?? 0) ?> comercio<?= ($fe['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
+                    <span class="celebracion-card__count"><?= (int)$fe['comercios_count'] ?> comercio<?= $fe['comercios_count'] != 1 ? 's' : '' ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
+        <div class="text-center mt-3 mobile-only">
+            <a href="<?= url('/celebraciones') ?>" class="btn btn--outline btn--sm">Ver todas las fechas &rarr;</a>
+        </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Eventos Comerciales -->
-<section class="section section--alt">
+<?php if (!empty($fechasComerciales)): ?>
+<section class="section section--alt section-eventos-home">
     <div class="container">
         <h2 class="section__title">&#128176; Eventos Comerciales</h2>
         <p class="text-center text-muted mb-4">Sumate a los grandes eventos de descuentos del ano</p>
@@ -208,63 +217,62 @@
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="celebracion-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>
                     <?php endif; ?>
-                    <span class="celebracion-card__count"><?= (int) ($fe['comercios_count'] ?? 0) ?> comercio<?= ($fe['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
+                    <span class="celebracion-card__count"><?= (int)$fe['comercios_count'] ?> comercio<?= $fe['comercios_count'] != 1 ? 's' : '' ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Comercios Destacados -->
-<section class="section">
+<?php if (!empty($comercios)): ?>
+<section class="section section-comercios-home">
     <div class="container">
         <h2 class="section__title">Comercios Destacados</h2>
-        <?php if (!empty($comercios)): ?>
-            <div class="grid grid--4">
-                <?php foreach ($comercios as $com): ?>
-                    <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card<?= in_array($com['plan'] ?? '', ['sponsor','premium']) ? ' card--' . $com['plan'] : '' ?>">
-                        <?php if (!empty($com['portada'])): ?>
-                            <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
-                                 alt="<?= e($com['nombre']) ?>"
-                                 class="card__img" loading="lazy">
-                        <?php else: ?>
-                            <div class="card__img card__img--placeholder">
-                                <?= mb_substr($com['nombre'], 0, 1) ?>
+        <div class="grid grid--4">
+            <?php foreach ($comercios as $com): ?>
+                <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card<?= in_array($com['plan'] ?? '', ['sponsor','premium']) ? ' card--' . $com['plan'] : '' ?>">
+                    <?php if (!empty($com['portada'])): ?>
+                        <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
+                             alt="<?= e($com['nombre']) ?>"
+                             class="card__img" loading="lazy">
+                    <?php else: ?>
+                        <div class="card__img card__img--placeholder">
+                            <?= mb_substr($com['nombre'], 0, 1) ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="card__body">
+                        <?php include BASE_PATH . '/views/partials/card-badges.php'; ?>
+                        <h3 class="card__title"><?= e($com['nombre']) ?></h3>
+                        <?php if (!empty($com['categorias_nombres'])): ?>
+                            <p class="card__text card__text--small"><?= e($com['categorias_nombres']) ?></p>
+                        <?php endif; ?>
+                        <?php if ($com['calificación_promedio']): ?>
+                            <div class="rating-small">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <span class="star <?= $i <= round($com['calificación_promedio']) ? 'star--filled' : '' ?>">&#9733;</span>
+                                <?php endfor; ?>
+                                <span class="text-muted">(<?= $com['total_resenas'] ?>)</span>
                             </div>
                         <?php endif; ?>
-                        <div class="card__body">
-                            <?php include BASE_PATH . '/views/partials/card-badges.php'; ?>
-                            <h3 class="card__title"><?= e($com['nombre']) ?></h3>
-                            <?php if (!empty($com['categorias_nombres'])): ?>
-                                <p class="card__text card__text--small"><?= e($com['categorias_nombres']) ?></p>
-                            <?php endif; ?>
-                            <?php if ($com['calificación_promedio']): ?>
-                                <div class="rating-small">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <span class="star <?= $i <= round($com['calificación_promedio']) ? 'star--filled' : '' ?>">&#9733;</span>
-                                    <?php endfor; ?>
-                                    <span class="text-muted">(<?= $com['total_resenas'] ?>)</span>
-                                </div>
-                            <?php endif; ?>
-                            <?php if (!empty($com['direccion'])): ?>
-                                <p class="card__text card__text--small">&#128205; <?= e(truncate($com['direccion'], 60)) ?></p>
-                            <?php endif; ?>
-                        </div>
-                    </a>
-                <?php endforeach; ?>
-            </div>
-            <div class="text-center mt-3">
-                <a href="<?= url('/comercios') ?>" class="btn btn--outline">Ver todos los comercios</a>
-            </div>
-        <?php else: ?>
-            <p class="text-center text-muted">Los comercios destacados se mostraran aqui.</p>
-        <?php endif; ?>
+                        <?php if (!empty($com['direccion'])): ?>
+                            <p class="card__text card__text--small">&#128205; <?= e(truncate($com['direccion'], 60)) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <div class="text-center mt-3">
+            <a href="<?= url('/comercios') ?>" class="btn btn--outline">Ver todos los comercios</a>
+        </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Noticias -->
 <?php if (!empty($noticias)): ?>
-<section class="section">
+<section class="section section-noticias-home">
     <div class="container">
         <h2 class="section__title">Últimas Noticias</h2>
         <div class="grid grid--3">

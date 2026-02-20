@@ -60,6 +60,49 @@ class Comercio
     }
 
     /**
+     * Verificar completitud de una ficha de comercio
+     * Retorna array con porcentaje y items faltantes
+     */
+    public static function checkCompletitud(array $comercio): array
+    {
+        $items = [];
+        $total = 4;
+        $completos = 0;
+
+        // Descripción >= 100 caracteres
+        $descOk = mb_strlen($comercio['descripcion'] ?? '') >= 100;
+        $items['descripcion'] = $descOk;
+        if ($descOk) $completos++;
+
+        // Al menos 1 imagen (portada)
+        $imgOk = !empty($comercio['portada']);
+        $items['imagen'] = $imgOk;
+        if ($imgOk) $completos++;
+
+        // Al menos 1 dato de contacto
+        $contactoOk = !empty($comercio['telefono']) || !empty($comercio['whatsapp']) || !empty($comercio['email']);
+        $items['contacto'] = $contactoOk;
+        if ($contactoOk) $completos++;
+
+        // Al menos 1 categoría
+        $db = Database::getInstance();
+        $catCount = $db->fetch(
+            "SELECT COUNT(*) as total FROM comercio_categoria WHERE comercio_id = ?",
+            [(int)$comercio['id']]
+        );
+        $catOk = ($catCount['total'] ?? 0) > 0;
+        $items['categoria'] = $catOk;
+        if ($catOk) $completos++;
+
+        return [
+            'porcentaje' => (int) round(($completos / $total) * 100),
+            'completa'   => $completos === $total,
+            'items'      => $items,
+            'faltantes'  => array_keys(array_filter($items, fn($v) => !$v)),
+        ];
+    }
+
+    /**
      * Comercios destacados para la home
      */
     public static function getDestacados(int $limit = 8): array

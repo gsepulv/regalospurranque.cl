@@ -54,6 +54,35 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
             </div>
 
         <?php else: ?>
+            <?php $completitud = \App\Models\Comercio::checkCompletitud($comercio); ?>
+
+            <?php if (!$completitud['completa']): ?>
+            <!-- Indicador de completitud -->
+            <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:1.25rem;margin-bottom:1.25rem">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem">
+                    <strong style="font-size:0.95rem">Tu ficha está al <?= $completitud['porcentaje'] ?>%</strong>
+                    <span style="font-size:0.8rem;color:#92400E">Completa tu ficha para mayor visibilidad</span>
+                </div>
+                <div style="background:#FDE68A;border-radius:99px;height:8px;overflow:hidden">
+                    <div style="background:#F59E0B;height:100%;width:<?= $completitud['porcentaje'] ?>%;border-radius:99px;transition:width 0.3s"></div>
+                </div>
+                <ul style="margin:0.75rem 0 0;padding:0;list-style:none;font-size:0.85rem;color:#6B7280">
+                    <?php if (!$completitud['items']['descripcion']): ?>
+                        <li style="margin-bottom:0.25rem">&#9744; Agrega una descripción de al menos 100 caracteres</li>
+                    <?php endif; ?>
+                    <?php if (!$completitud['items']['imagen']): ?>
+                        <li style="margin-bottom:0.25rem">&#9744; Sube una imagen de portada</li>
+                    <?php endif; ?>
+                    <?php if (!$completitud['items']['contacto']): ?>
+                        <li style="margin-bottom:0.25rem">&#9744; Agrega al menos un dato de contacto (teléfono, WhatsApp o email)</li>
+                    <?php endif; ?>
+                    <?php if (!$completitud['items']['categoria']): ?>
+                        <li style="margin-bottom:0.25rem">&#9744; Selecciona al menos una categoría</li>
+                    <?php endif; ?>
+                </ul>
+                <a href="<?= url('/mi-comercio/editar') ?>" style="display:inline-block;margin-top:0.75rem;color:#D97706;font-weight:600;font-size:0.85rem;text-decoration:none">Completar ficha &rarr;</a>
+            </div>
+            <?php endif; ?>
 
             <!-- Estado del comercio -->
             <div style="background:var(--color-white);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:1.25rem">

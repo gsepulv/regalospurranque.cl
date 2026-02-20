@@ -93,6 +93,26 @@ class FechaEspecial
     }
 
     /**
+     * La proxima fecha especial que TENGA al menos 1 comercio asociado (para countdown inteligente)
+     */
+    public static function getProximaConComercio(): ?array
+    {
+        $db = Database::getInstance();
+        return $db->fetch(
+            "SELECT fe.* FROM fechas_especiales fe
+             INNER JOIN comercio_fecha cf ON fe.id = cf.fecha_id AND cf.activo = 1
+             INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
+             WHERE fe.activo = 1
+             AND fe.fecha_inicio IS NOT NULL
+             AND fe.fecha_inicio >= CURDATE()
+             GROUP BY fe.id
+             HAVING COUNT(DISTINCT c.id) > 0
+             ORDER BY fe.fecha_inicio ASC
+             LIMIT 1"
+        );
+    }
+
+    /**
      * Proximas fechas de calendario para sidebar/home
      */
     public static function getProximas(int $limit = 4): array

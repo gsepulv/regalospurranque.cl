@@ -25,15 +25,17 @@ class HomeController extends Controller
         $fechasComerciales = [];
         $proximaFecha = null;
 
+        $hasComercio = fn($item) => ((int)($item['comercios_count'] ?? 0)) > 0;
+
         try {
-            $categorias          = Categoria::getWithComerciosCount();
+            $categorias          = array_values(array_filter(Categoria::getWithComerciosCount(), $hasComercio));
             $comerciosDestacados = Comercio::getDestacados(8);
             $noticias            = Noticia::getDestacadas(3);
             $banners             = Banner::getByTipo('hero', 5);
-            $fechasPersonales    = FechaEspecial::getAllByTipo('personal');
-            $fechasCalendario    = FechaEspecial::getAllByTipo('calendario');
-            $fechasComerciales   = FechaEspecial::getAllByTipo('comercial');
-            $proximaFecha        = FechaEspecial::getProximaConFecha();
+            $fechasPersonales    = array_values(array_filter(FechaEspecial::getAllByTipo('personal'), $hasComercio));
+            $fechasCalendario    = array_values(array_filter(FechaEspecial::getAllByTipo('calendario'), $hasComercio));
+            $fechasComerciales   = array_values(array_filter(FechaEspecial::getAllByTipo('comercial'), $hasComercio));
+            $proximaFecha        = FechaEspecial::getProximaConComercio();
         } catch (\Throwable $e) {
             // Sin BD, la home muestra estructura vacia
         }
