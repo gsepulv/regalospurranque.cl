@@ -105,6 +105,19 @@
                 <li>Monitoreo de actividad sospechosa.</li>
             </ul>
 
+            <h3>8.1. Notificación de Incidentes de Seguridad</h3>
+            <p>En cumplimiento de la Ley 21.719, en caso de una brecha de seguridad que comprometa datos personales, <?= e(SITE_NAME) ?> se compromete a:</p>
+            <ul>
+                <li>Notificar a la Agencia de Protección de Datos Personales dentro de las 72 horas siguientes al conocimiento del incidente.</li>
+                <li>Notificar a los titulares afectados cuando la brecha suponga un alto riesgo para sus derechos y libertades.</li>
+                <li>Documentar el incidente, incluyendo: naturaleza de la brecha, datos afectados, consecuencias probables y medidas adoptadas.</li>
+                <li>Implementar medidas correctivas para evitar la recurrencia del incidente.</li>
+            </ul>
+            <p>Para reportar un incidente de seguridad: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></p>
+
+            <h3>8.2. Política de Respaldo y Retención</h3>
+            <p><?= e(SITE_NAME) ?> realiza respaldos automáticos diarios de la base de datos y archivos del sitio. Los respaldos se almacenan de forma cifrada y se retienen por un máximo de 30 días, tras lo cual son eliminados automáticamente. En caso de restauración, solo se utiliza el respaldo más reciente disponible.</p>
+
             <h2>9. Transferencia Internacional</h2>
             <p>Los datos personales son almacenados en servidores ubicados en Estados Unidos. Al utilizar la plataforma, usted consiente la transferencia de sus datos a estos servidores, que cuentan con medidas de seguridad adecuadas.</p>
 

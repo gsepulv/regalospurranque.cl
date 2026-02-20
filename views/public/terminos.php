@@ -48,6 +48,7 @@
 
             <h2>4. Registro y Cuentas</h2>
             <p>Para ciertas funciones (como publicar reseñas), puede ser necesario proporcionar datos personales como nombre y correo electrónico. El usuario garantiza que la información proporcionada es verídica y actualizada.</p>
+            <p>El tratamiento de datos personales se rige por nuestra <a href="<?= url('/privacidad') ?>">Política de Privacidad</a>, en conformidad con la Ley 19.628 modificada por la Ley 21.719 sobre Protección de Datos Personales. Para información sobre el uso de cookies, consulte nuestra <a href="<?= url('/cookies') ?>">Política de Cookies</a>.</p>
 
             <h2>5. Contenido Generado por Usuarios</h2>
             <p>Las reseñas y comentarios publicados por los usuarios representan exclusivamente la opinión personal de sus autores. <?= e(SITE_NAME) ?> no se responsabiliza por el contenido generado por los usuarios, pero se reserva el derecho de moderar, editar o eliminar contenido que infrinja estos términos.</p>
