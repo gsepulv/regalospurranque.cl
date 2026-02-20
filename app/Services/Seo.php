@@ -146,8 +146,12 @@ class Seo
             'addressRegion' => 'Los Lagos',
             'addressCountry' => 'CL',
         ];
-        $schema['telephone'] = $comercio['telefono'] ?? null;
-        $schema['image'] = !empty($comercio['portada']) ? asset('img/portadas/' . $comercio['portada']) : null;
+        if (!empty($comercio['telefono'])) {
+            $schema['telephone'] = $comercio['telefono'];
+        }
+        if (!empty($comercio['portada'])) {
+            $schema['image'] = asset('img/portadas/' . $comercio['portada']);
+        }
 
         if (!empty($comercio['lat']) && !empty($comercio['lng'])) {
             $schema['geo'] = [
