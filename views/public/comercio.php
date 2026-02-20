@@ -408,10 +408,9 @@ $hoy = (int) date('w');
                         <?php endif; ?>
 
                         <?php if (!empty($comercio['email'])): ?>
-                            <div class="contact-item">
-                                <span class="contact-item__icon">&#9993;</span>
-                                <a href="#" class="email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;" title="Enviar correo">Mostrar email</a>
-                            </div>
+                            <a href="#" class="btn btn--outline btn--block mb-2 email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;">
+                                &#9993; Enviar mensaje
+                            </a>
                         <?php endif; ?>
 
                         <?php if (!empty($comercio['sitio_web'])): ?>
