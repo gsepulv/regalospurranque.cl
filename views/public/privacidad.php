@@ -9,7 +9,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Política de Privacidad</h1>
-            <p class="legal-updated">Última actualización: <?= date('d/m/Y') ?></p>
+            <p class="legal-updated">Última actualización: 20/02/2026</p>
 
             <h2>1. Responsable del Tratamiento</h2>
             <p><?= e(SITE_NAME) ?>, con domicilio en Purranque, Región de Los Lagos, Chile, es responsable del tratamiento de los datos personales recopilados a través de esta plataforma, en conformidad con la Ley 19.628 sobre Protección de la Vida Privada.</p>
@@ -19,7 +19,7 @@
             <ul>
                 <li><strong>Reseñas:</strong> Nombre, correo electrónico, calificación y comentario.</li>
                 <li><strong>Contacto:</strong> Nombre y correo electrónico cuando nos escribe.</li>
-                <li><strong>Comerciantes:</strong> Datos del comercio (nombre, dirección, teléfono, etc.).</li>
+                <li><strong>Registro de comerciantes:</strong> Nombre completo, correo electrónico, contraseña (almacenada de forma cifrada), y datos del comercio (nombre, dirección, teléfono, WhatsApp, redes sociales, categoría).</li>
             </ul>
 
             <h3>2.2. Datos recopilados automáticamente</h3>
@@ -33,6 +33,8 @@
             <p>Los datos personales son tratados para las siguientes finalidades:</p>
             <ul>
                 <li>Gestionar y publicar reseñas de comercios.</li>
+                <li>Gestionar el registro y autenticación de comerciantes.</li>
+                <li>Permitir a los comerciantes administrar y actualizar la información de sus negocios.</li>
                 <li>Proporcionar estadísticas de uso a los comercios registrados.</li>
                 <li>Mejorar la experiencia de usuario y el funcionamiento de la plataforma.</li>
                 <li>Prevenir usos fraudulentos o abusivos.</li>
@@ -53,6 +55,7 @@
                 <li><strong>Reseñas:</strong> Se conservan mientras estén publicadas en la plataforma.</li>
                 <li><strong>Datos de navegación:</strong> Se conservan por un máximo de 12 meses.</li>
                 <li><strong>Datos de contacto:</strong> Se conservan mientras sea necesario para atender su solicitud.</li>
+                <li><strong>Datos de cuenta de comerciante:</strong> Se conservan mientras la cuenta esté activa. El comerciante puede solicitar la eliminación de su cuenta en cualquier momento contactándonos en <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>.</li>
             </ul>
 
             <h2>6. Derechos del Titular</h2>

@@ -8,7 +8,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Política de Cookies</h1>
-            <p class="legal-updated">Última actualización: <?= date('d/m/Y') ?></p>
+            <p class="legal-updated">Última actualización: 20/02/2026</p>
 
             <h2>1. ¿Qué son las Cookies?</h2>
             <p>Las cookies son pequeños archivos de texto que los sitios web almacenan en su dispositivo (computador, tablet o teléfono) cuando los visita. Se utilizan ampliamente para hacer que los sitios web funcionen de manera más eficiente y para proporcionar información a los propietarios del sitio.</p>
@@ -28,8 +28,8 @@
                 <tbody>
                     <tr>
                         <td><code><?= e(SESSION_NAME) ?></code></td>
-                        <td>Identificador de sesión del usuario</td>
-                        <td>Sesión (se elimina al cerrar el navegador)</td>
+                        <td>Identificador de sesión del usuario. Permite mantener la sesión iniciada de comerciantes y administradores.</td>
+                        <td>2 horas</td>
                     </tr>
                 </tbody>
             </table>
@@ -47,7 +47,7 @@
                 <tbody>
                     <tr>
                         <td>Sesión PHP</td>
-                        <td>Mantener la sesión activa, token CSRF, mensajes flash</td>
+                        <td>Mantener la sesión activa, autenticación de comerciantes, token CSRF, mensajes flash</td>
                         <td>2 horas</td>
                     </tr>
                 </tbody>
