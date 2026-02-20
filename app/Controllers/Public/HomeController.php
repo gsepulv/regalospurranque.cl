@@ -35,7 +35,7 @@ class HomeController extends Controller
             $fechasPersonales    = array_values(array_filter(FechaEspecial::getAllByTipo('personal'), $hasComercio));
             $fechasCalendario    = array_values(array_filter(FechaEspecial::getAllByTipo('calendario'), $hasComercio));
             $fechasComerciales   = array_values(array_filter(FechaEspecial::getAllByTipo('comercial'), $hasComercio));
-            $proximaFecha        = FechaEspecial::getProximaConComercio();
+            $proximaFecha        = FechaEspecial::getProximaConFecha();
         } catch (\Throwable $e) {
             // Sin BD, la home muestra estructura vacia
         }
