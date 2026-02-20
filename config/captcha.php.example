@@ -1,10 +1,10 @@
 <?php
 /**
- * Configuración de hCaptcha
+ * Configuración de Cloudflare Turnstile
  * Copiar este archivo como captcha.php y rellenar las keys
- * Obtener keys en: https://dashboard.hcaptcha.com/
+ * Obtener keys en: https://dash.cloudflare.com/turnstile
  */
 
-define('HCAPTCHA_SITE_KEY', 'TU_SITE_KEY_AQUI');
-define('HCAPTCHA_SECRET_KEY', 'TU_SECRET_KEY_AQUI');
-define('HCAPTCHA_ENABLED', false); // Cambiar a true cuando tengas las keys
+define('TURNSTILE_SITE_KEY', 'TU_SITE_KEY_AQUI');
+define('TURNSTILE_SECRET_KEY', 'TU_SECRET_KEY_AQUI');
+define('TURNSTILE_ENABLED', true);

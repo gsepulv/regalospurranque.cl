@@ -2,18 +2,18 @@
 namespace App\Services;
 
 /**
- * Servicio de validación hCaptcha
+ * Servicio de validación Cloudflare Turnstile
  */
 class Captcha
 {
-    private const VERIFY_URL = 'https://api.hcaptcha.com/siteverify';
+    private const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
     /**
-     * Verificar si hCaptcha está habilitado
+     * Verificar si Turnstile está habilitado
      */
     public static function isEnabled(): bool
     {
-        return defined('HCAPTCHA_ENABLED') && HCAPTCHA_ENABLED === true;
+        return defined('TURNSTILE_ENABLED') && TURNSTILE_ENABLED === true;
     }
 
     /**
@@ -21,12 +21,12 @@ class Captcha
      */
     public static function siteKey(): string
     {
-        return defined('HCAPTCHA_SITE_KEY') ? HCAPTCHA_SITE_KEY : '';
+        return defined('TURNSTILE_SITE_KEY') ? TURNSTILE_SITE_KEY : '';
     }
 
     /**
-     * Validar token de hCaptcha server-side
-     * Retorna true si es válido o si hCaptcha está deshabilitado
+     * Validar token de Turnstile server-side
+     * Retorna true si es válido o si Turnstile está deshabilitado
      */
     public static function verify(?string $token): bool
     {
@@ -39,7 +39,7 @@ class Captcha
         }
 
         $data = [
-            'secret'   => HCAPTCHA_SECRET_KEY,
+            'secret'   => TURNSTILE_SECRET_KEY,
             'response' => $token,
             'remoteip' => $_SERVER['REMOTE_ADDR'] ?? '',
         ];
@@ -57,9 +57,8 @@ class Captcha
         $response = @file_get_contents(self::VERIFY_URL, false, $context);
 
         if ($response === false) {
-            // Si falla la verificación externa, logear y permitir (fail-open)
-            error_log('[Captcha] Error al verificar hCaptcha: no se pudo contactar al servidor');
-            return true;
+            error_log('[Captcha] Error al verificar Turnstile: no se pudo contactar al servidor');
+            return false;
         }
 
         $result = json_decode($response, true);
@@ -68,7 +67,7 @@ class Captcha
     }
 
     /**
-     * Renderizar el script de hCaptcha para el head/footer
+     * Renderizar el script de Turnstile para el layout
      */
     public static function script(): string
     {
@@ -76,18 +75,18 @@ class Captcha
             return '';
         }
 
-        return '<script src="https://js.hcaptcha.com/1/api.js" async defer></script>';
+        return '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
     }
 
     /**
-     * Renderizar widget invisible de hCaptcha
+     * Renderizar widget de Turnstile
      */
-    public static function widget(string $callbackName = 'onCaptchaPass'): string
+    public static function widget(): string
     {
         if (!self::isEnabled()) {
             return '';
         }
 
-        return '<div class="h-captcha" data-sitekey="' . e(self::siteKey()) . '" data-size="invisible" data-callback="' . e($callbackName) . '"></div>';
+        return '<div class="cf-turnstile" data-sitekey="' . e(self::siteKey()) . '"></div>';
     }
 }

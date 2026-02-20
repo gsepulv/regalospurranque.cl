@@ -30,8 +30,8 @@ class ReviewApiController extends Controller
             return;
         }
 
-        // Validar hCaptcha
-        if (!Captcha::verify($data['h-captcha-response'] ?? null)) {
+        // Validar Turnstile
+        if (!Captcha::verify($data['cf-turnstile-response'] ?? null)) {
             $this->json(['error' => 'Verificación anti-bot fallida. Intenta nuevamente.'], 403);
             return;
         }

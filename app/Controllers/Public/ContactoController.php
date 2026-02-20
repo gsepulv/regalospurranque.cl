@@ -21,8 +21,8 @@ class ContactoController extends Controller
 
     public function send(): void
     {
-        // Validar hCaptcha
-        if (!Captcha::verify($_POST['h-captcha-response'] ?? null)) {
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
             $this->back([
                 'error' => 'Verificación anti-bot fallida. Intenta nuevamente.',
                 'old'   => $_POST,

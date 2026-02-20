@@ -98,8 +98,8 @@ class DerechosController extends Controller
         $old = $_POST;
         $errores = [];
 
-        // Validar hCaptcha
-        if (!Captcha::verify($_POST['h-captcha-response'] ?? null)) {
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
             $errores[] = 'Verificación anti-bot fallida. Intenta nuevamente.';
         }
 

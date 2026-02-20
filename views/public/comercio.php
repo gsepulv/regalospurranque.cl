@@ -332,7 +332,7 @@ $hoy = (int) date('w');
                                 </div>
                             </div>
 
-                            <?= \App\Services\Captcha::widget('onReviewCaptcha') ?>
+                            <?= \App\Services\Captcha::widget() ?>
                             <button type="submit" class="btn btn--primary" id="submitReview">Enviar reseña</button>
                             <div id="reviewMessage" class="review-message" style="display:none"></div>
                         </form>
@@ -518,7 +518,7 @@ function trackBanner(bannerId) {
 })();
 <?php endif; ?>
 
-/* Formulario de reseña con hCaptcha */
+/* Formulario de reseña */
 (function() {
     var form = document.getElementById('newReviewForm');
     if (!form) return;
@@ -526,7 +526,6 @@ function trackBanner(bannerId) {
     var starInput = document.getElementById('starInput');
     var calificaciónInput = document.getElementById('calificaciónInput');
     var stars = starInput.querySelectorAll('.star-input__star');
-    var hcaptchaEnabled = <?= \App\Services\Captcha::isEnabled() ? 'true' : 'false' ?>;
 
     var comentarioEl = document.getElementById('reviewComentario');
     var charCountEl = document.getElementById('charCount');
@@ -560,7 +559,7 @@ function trackBanner(bannerId) {
         });
     });
 
-    function submitReview(captchaToken) {
+    function submitReview() {
         var msgEl = document.getElementById('reviewMessage');
         var btn = document.getElementById('submitReview');
 
@@ -576,7 +575,8 @@ function trackBanner(bannerId) {
             tipo_experiencia: form.querySelector('[name="tipo_experiencia"]').value,
             comentario: form.querySelector('[name="comentario"]').value.trim()
         };
-        if (captchaToken) data['h-captcha-response'] = captchaToken;
+        var turnstileInput = form.querySelector('[name="cf-turnstile-response"]');
+        if (turnstileInput) data['cf-turnstile-response'] = turnstileInput.value;
 
         fetch('<?= url('/api/reviews/create') ?>', {
             method: 'POST',
@@ -591,6 +591,7 @@ function trackBanner(bannerId) {
                 calificaciónInput.value = '';
                 stars.forEach(function(s) { s.classList.remove('star-input__star--active'); });
                 if (charCountEl) charCountEl.textContent = '0';
+                if (typeof turnstile !== 'undefined') turnstile.reset();
             } else {
                 var errMsg = result.error || 'Error al enviar';
                 if (result.errors) {
@@ -601,20 +602,13 @@ function trackBanner(bannerId) {
             }
             btn.disabled = false;
             btn.textContent = 'Enviar reseña';
-            if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') hcaptcha.reset();
         })
         .catch(function() {
             showMsg(msgEl, 'Error de conexión. Intenta nuevamente.', 'error');
             btn.disabled = false;
             btn.textContent = 'Enviar reseña';
-            if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') hcaptcha.reset();
         });
     }
-
-    // Callback de hCaptcha invisible
-    window.onReviewCaptcha = function(token) {
-        submitReview(token);
-    };
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -625,11 +619,7 @@ function trackBanner(bannerId) {
             return;
         }
 
-        if (hcaptchaEnabled && typeof hcaptcha !== 'undefined') {
-            hcaptcha.execute();
-        } else {
-            submitReview(null);
-        }
+        submitReview();
     });
 
     function showMsg(el, msg, type) {

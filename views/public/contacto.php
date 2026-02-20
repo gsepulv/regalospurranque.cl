@@ -82,7 +82,7 @@ $errors = $flash['errors'] ?? [];
                                 <?php endif; ?>
                             </div>
 
-                            <?= \App\Services\Captcha::widget('onContactCaptcha') ?>
+                            <?= \App\Services\Captcha::widget() ?>
                             <button type="submit" class="btn btn--primary" id="contactSubmit">Enviar mensaje</button>
                         </form>
                     </div>
@@ -146,27 +146,3 @@ $errors = $flash['errors'] ?? [];
         .openPopup();
 })();
 </script>
-<?php if (\App\Services\Captcha::isEnabled()): ?>
-<script>
-(function() {
-    var form = document.querySelector('form[action*="contacto/enviar"]');
-    if (!form) return;
-    var submitted = false;
-    window.onContactCaptcha = function(token) {
-        var input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'h-captcha-response';
-        input.value = token;
-        form.appendChild(input);
-        submitted = true;
-        form.submit();
-    };
-    form.addEventListener('submit', function(e) {
-        if (!submitted && typeof hcaptcha !== 'undefined') {
-            e.preventDefault();
-            hcaptcha.execute();
-        }
-    });
-})();
-</script>
-<?php endif; ?>
