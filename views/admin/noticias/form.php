@@ -313,12 +313,9 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
     </div>
 </form>
 
-<!-- TinyMCE -->
-<?php if ($tinymceApiKey): ?>
-    <script src="https://cdn.tiny.cloud/1/<?= e($tinymceApiKey) ?>/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-<?php else: ?>
-    <script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>"></script>
-<?php endif; ?>
+<!-- TinyMCE 6 (MIT, sin licencia requerida) -->
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.jsdelivr.net/npm/tinymce-i18n@24/langs6/es.min.js" referrerpolicy="origin"></script>
 
 <script>
 // TinyMCE initialization
