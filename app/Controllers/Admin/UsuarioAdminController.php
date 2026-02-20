@@ -33,7 +33,7 @@ class UsuarioAdminController extends Controller
         $v = $this->validate($_POST, [
             'nombre'   => 'required|string|min:3|max:100',
             'email'    => 'required|email|unique:admin_usuarios,email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
             'rol'      => 'required|in:admin,editor,comerciante',
         ]);
 

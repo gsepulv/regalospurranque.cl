@@ -207,9 +207,9 @@ class ToolsController extends Controller
      */
     public function phpinfo(): void
     {
-        if (APP_ENV !== 'development') {
+        if (APP_ENV !== 'development' || \App\Services\Auth::role() !== 'admin') {
             $this->redirect('/admin/mantenimiento/herramientas', [
-                'error' => 'phpinfo() solo está disponible en entorno de desarrollo',
+                'error' => 'phpinfo() solo está disponible en entorno de desarrollo para administradores',
             ]);
             return;
         }

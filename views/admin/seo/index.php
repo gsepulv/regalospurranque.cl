@@ -169,7 +169,7 @@ $currentTab = $tab ?? 'config';
                             </td>
                             <td>
                                 <button type="button" class="btn btn--outline btn--sm"
-                                        onclick="openMetaEditor('<?= e($page['key']) ?>', '<?= e(addslashes($page['label'])) ?>', '<?= e(addslashes($page['title'])) ?>', '<?= e(addslashes($page['description'])) ?>', '<?= e(addslashes($page['keywords'])) ?>', '<?= e(addslashes($page['image'])) ?>')">
+                                        onclick='openMetaEditor(<?= json_encode($page["key"], JSON_HEX_APOS|JSON_HEX_TAG) ?>, <?= json_encode($page["label"], JSON_HEX_APOS|JSON_HEX_TAG) ?>, <?= json_encode($page["title"], JSON_HEX_APOS|JSON_HEX_TAG) ?>, <?= json_encode($page["description"], JSON_HEX_APOS|JSON_HEX_TAG) ?>, <?= json_encode($page["keywords"], JSON_HEX_APOS|JSON_HEX_TAG) ?>, <?= json_encode($page["image"], JSON_HEX_APOS|JSON_HEX_TAG) ?>)'>
                                     Editar
                                 </button>
                             </td>

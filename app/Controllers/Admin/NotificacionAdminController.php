@@ -53,6 +53,10 @@ class NotificacionAdminController extends Controller
         foreach ($keys as $key) {
             if (in_array($key, ['email_from', 'email_reply_to'])) {
                 $value = trim($this->request->post($key, ''));
+                if ($value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                    $this->back(['error' => "El campo {$key} debe ser un email válido"]);
+                    return;
+                }
             } else {
                 $value = isset($_POST[$key]) ? '1' : '0';
             }

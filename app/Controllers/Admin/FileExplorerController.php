@@ -196,6 +196,15 @@ class FileExplorerController extends Controller
 
         // Limpiar nombre de archivo
         $filename = basename($file['name']);
+
+        // Bloquear extensiones peligrosas
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        $blocked = ['php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'cgi', 'pl', 'py', 'sh', 'bat', 'exe', 'com', 'htaccess', 'htpasswd'];
+        if (in_array($ext, $blocked, true)) {
+            $this->back(['error' => "No se permite subir archivos con extensión .{$ext}"]);
+            return;
+        }
+
         $destination = $realDir . '/' . $filename;
 
         if (!move_uploaded_file($file['tmp_name'], $destination)) {

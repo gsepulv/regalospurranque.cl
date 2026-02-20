@@ -90,6 +90,17 @@ class SeoAdminController extends Controller
             return;
         }
 
+        // Validar que la página es una clave válida
+        $validStaticPages = ['home', 'mapa', 'buscar', 'noticias'];
+        $isValid = in_array($page, $validStaticPages, true)
+                || preg_match('/^cat_\d+$/', $page)
+                || preg_match('/^fecha_\d+$/', $page);
+
+        if (!$isValid) {
+            $this->back(['error' => 'Página no válida']);
+            return;
+        }
+
         $fields = [
             "page_{$page}_title"       => $title,
             "page_{$page}_description" => $desc,

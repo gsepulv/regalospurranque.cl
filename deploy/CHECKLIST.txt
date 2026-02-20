@@ -32,14 +32,14 @@ PASO 3: Configurar base de datos
 [ ] Renombrar config/database.php.production a config/database.php
 [ ] Editar config/database.php con credenciales reales:
     DB_HOST = 'localhost'
-    DB_NAME = 'purranque_regalos_v2'
+    DB_NAME = 'purranque_regalos_purranque'
     DB_USER = 'purranque_v2user'
     DB_PASS = 'tu_password_real'
 
 --------------------------------------------
 PASO 4: Importar base de datos
 --------------------------------------------
-[ ] cPanel > phpMyAdmin > seleccionar purranque_regalos_v2
+[ ] cPanel > phpMyAdmin > seleccionar purranque_regalos_purranque
 [ ] Importar > Seleccionar database/export.sql
 [ ] Ejecutar
 
