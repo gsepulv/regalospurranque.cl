@@ -59,7 +59,7 @@ class RegistroComercioController extends Controller
         $errores = [];
         if (strlen($nombre) < 3) $errores[] = 'El nombre debe tener al menos 3 caracteres.';
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errores[] = 'Ingresa un email válido.';
-        if (strlen($password) < 6) $errores[] = 'La contraseña debe tener al menos 6 caracteres.';
+        if (strlen($password) < 8) $errores[] = 'La contraseña debe tener al menos 8 caracteres.';
         if ($password !== $password2) $errores[] = 'Las contraseñas no coinciden.';
 
         if (empty($errores)) {

@@ -160,6 +160,25 @@ class ReviewApiController extends Controller
             return;
         }
 
+        // Validar CSRF
+        $csrfToken = $data['_csrf'] ?? '';
+        if (empty($csrfToken) || $csrfToken !== ($_SESSION['csrf_token'] ?? '')) {
+            $this->json(['error' => 'Token CSRF inválido'], 403);
+            return;
+        }
+
+        // Rate limiting: máx 5 reportes por hora por IP
+        $ip = $this->request->ip();
+        $countReportes = $this->db->fetch(
+            "SELECT COUNT(*) as total FROM resenas_reportes
+             WHERE ip = ? AND created_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)",
+            [$ip]
+        );
+        if ($countReportes && (int)$countReportes['total'] >= 5) {
+            $this->json(['error' => 'Demasiados reportes. Intenta más tarde.'], 429);
+            return;
+        }
+
         $v = $this->validate($data, [
             'resena_id' => 'required|integer',
             'motivo'    => 'required|string|min:3|max:100',

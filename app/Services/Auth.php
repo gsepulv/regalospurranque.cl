@@ -25,6 +25,9 @@ class Auth
             return false;
         }
 
+        // Prevenir session fixation
+        session_regenerate_id(true);
+
         // Guardar datos en sesión
         $_SESSION['admin'] = [
             'id'     => (int) $user['id'],

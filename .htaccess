@@ -18,10 +18,6 @@ RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^v2\.regalos\.purranque\.info$ [NC]
 RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
 
-# ── Permitir scripts de mantenimiento ────────────────────────────────────────
-RewriteRule ^testcorreo\.php$ - [L]
-RewriteRule ^diagnostico\.php$ - [L]
-
 # ── Front Controller ─────────────────────────────────────────────────────────
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
@@ -84,6 +80,11 @@ RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal)/ - [F
 
 # ── Bloquear archivos sensibles ─────────────────────────────────────────────
 <FilesMatch "\.(sql|md|log|sh|bak|env|yml|yaml|lock|ini|php~)$">
+    Require all denied
+</FilesMatch>
+
+# ── Bloquear scripts de desarrollo/debug accesibles desde raíz ─────────────
+<FilesMatch "^(restaurar-backups|extractor-archivos|extractor-publico|rastreo-planes-validacion|ver-tildes|generate-assets|verificar-controller|testcorreo|diagnostico)\.php$">
     Require all denied
 </FilesMatch>
 

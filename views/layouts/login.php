@@ -12,5 +12,6 @@
     <?= $content ?>
 
     <script src="<?= asset('js/app.js') ?>"></script>
+    <?= \App\Services\Captcha::script() ?>
 </body>
 </html>

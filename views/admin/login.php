@@ -42,6 +42,8 @@
                        required>
             </div>
 
+            <?= \App\Services\Captcha::widget() ?>
+
             <button type="submit" class="btn btn--primary btn--block">
                 Iniciar Sesión
             </button>

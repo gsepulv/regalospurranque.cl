@@ -74,8 +74,8 @@ $editing = isset($usuario);
                            name="password"
                            class="form-control"
                            <?= !$editing ? 'required' : '' ?>
-                           minlength="6"
-                           placeholder="<?= $editing ? 'Dejar vacio para no cambiar' : 'Minimo 6 caracteres' ?>">
+                           minlength="8"
+                           placeholder="<?= $editing ? 'Dejar vacio para no cambiar' : 'Minimo 8 caracteres' ?>">
                     <?php if ($editing): ?>
                         <small style="color:var(--color-gray)">Dejar en blanco para mantener la contrasena actual.</small>
                     <?php endif; ?>

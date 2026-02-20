@@ -43,6 +43,8 @@ unset($_SESSION['flash_error'], $_SESSION['flash_success'], $_SESSION['flash_old
                            placeholder="Tu contraseña" required>
                 </div>
 
+                <?= \App\Services\Captcha::widget() ?>
+
                 <button type="submit" class="btn btn--primary" style="width:100%;padding:0.75rem;font-size:1rem">
                     Ingresar
                 </button>

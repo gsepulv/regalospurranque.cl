@@ -71,7 +71,7 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                         Contraseña <span style="color:#DC2626">*</span>
                     </label>
                     <input type="password" name="password" id="pw1" class="form-control"
-                           placeholder="Mínimo 6 caracteres" minlength="6" required>
+                           placeholder="Mínimo 8 caracteres" minlength="8" required>
                 </div>
 
                 <div style="margin-bottom:1.5rem">
@@ -79,7 +79,7 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                         Confirmar contraseña <span style="color:#DC2626">*</span>
                     </label>
                     <input type="password" name="password_confirm" id="pw2" class="form-control"
-                           placeholder="Repite tu contraseña" minlength="6" required>
+                           placeholder="Repite tu contraseña" minlength="8" required>
                 </div>
 
                 <?= \App\Services\Captcha::widget() ?>

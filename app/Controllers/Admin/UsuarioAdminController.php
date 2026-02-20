@@ -101,8 +101,8 @@ class UsuarioAdminController extends Controller
 
         // Nueva contraseña (opcional)
         if (!empty($_POST['password'])) {
-            if (mb_strlen($_POST['password']) < 6) {
-                $this->back(['errors' => ['password' => 'La contraseña debe tener al menos 6 caracteres'], 'old' => $_POST]);
+            if (mb_strlen($_POST['password']) < 8) {
+                $this->back(['errors' => ['password' => 'La contraseña debe tener al menos 8 caracteres'], 'old' => $_POST]);
                 return;
             }
             $data['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);

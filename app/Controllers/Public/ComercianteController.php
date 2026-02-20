@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Services\Captcha;
 use App\Services\FileManager;
 
 /**
@@ -51,9 +52,34 @@ class ComercianteController extends Controller
 
         $email    = strtolower(trim($_POST['email'] ?? ''));
         $password = $_POST['password'] ?? '';
+        $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
         if (empty($email) || empty($password)) {
             $_SESSION['flash_error'] = 'Ingresa tu email y contraseña.';
+            $_SESSION['flash_old'] = ['email' => $email];
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        // Protección fuerza bruta: máx 5 intentos fallidos en 15 min
+        try {
+            $db = \App\Core\Database::getInstance();
+            $intentos = $db->fetch(
+                "SELECT COUNT(*) as total FROM login_intentos
+                 WHERE ip = ? AND exitoso = 0 AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE)",
+                [$ip]
+            );
+            if ($intentos && (int)$intentos['total'] >= 5) {
+                $_SESSION['flash_error'] = 'Demasiados intentos fallidos. Intenta en 15 minutos.';
+                $_SESSION['flash_old'] = ['email' => $email];
+                header('Location: ' . url('/mi-comercio/login'));
+                exit;
+            }
+        } catch (\Throwable $e) {}
+
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
+            $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
             $_SESSION['flash_old'] = ['email' => $email];
             header('Location: ' . url('/mi-comercio/login'));
             exit;
@@ -63,6 +89,10 @@ class ComercianteController extends Controller
         $user = AdminUsuario::findByEmailAndRol($email, 'comerciante');
 
         if (!$user || !password_verify($password, $user['password_hash'])) {
+            try {
+                $db = $db ?? \App\Core\Database::getInstance();
+                $db->insert('login_intentos', ['ip' => $ip, 'email' => $email, 'exitoso' => 0]);
+            } catch (\Throwable $e) {}
             $_SESSION['flash_error'] = 'Credenciales incorrectas.';
             $_SESSION['flash_old'] = ['email' => $email];
             header('Location: ' . url('/mi-comercio/login'));
@@ -76,12 +106,21 @@ class ComercianteController extends Controller
             exit;
         }
 
+        // Prevenir session fixation
+        session_regenerate_id(true);
+
         // Crear sesión del comerciante (separada del admin)
         $_SESSION['comerciante'] = [
             'id'     => (int)$user['id'],
             'nombre' => $user['nombre'],
             'email'  => $user['email'],
         ];
+
+        // Registrar intento exitoso
+        try {
+            $db = $db ?? \App\Core\Database::getInstance();
+            $db->insert('login_intentos', ['ip' => $ip, 'email' => $email, 'exitoso' => 1]);
+        } catch (\Throwable $e) {}
 
         // Actualizar último login
         AdminUsuario::updateById($user['id'], ['last_login' => date('Y-m-d H:i:s')]);
