@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Services\FileManager;
 
 /**
  * Panel del Comerciante
@@ -264,13 +265,13 @@ class ComercianteController extends Controller
 
         // Imágenes nuevas
         if (!empty($_FILES['logo']['tmp_name']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-            $nuevoLogo = $this->subirImagen($_FILES['logo'], 'logos');
+            $nuevoLogo = FileManager::subirImagen($_FILES['logo'], 'logos', 800) ?: null;
             if ($nuevoLogo) {
                 $cambios['logo'] = ['anterior' => $comercio['logo'], 'nuevo' => $nuevoLogo];
             }
         }
         if (!empty($_FILES['portada']['tmp_name']) && $_FILES['portada']['error'] === UPLOAD_ERR_OK) {
-            $nuevaPortada = $this->subirImagen($_FILES['portada'], 'portadas');
+            $nuevaPortada = FileManager::subirImagen($_FILES['portada'], 'portadas', 1200) ?: null;
             if ($nuevaPortada) {
                 $cambios['portada'] = ['anterior' => $comercio['portada'], 'nuevo' => $nuevaPortada];
             }
@@ -330,22 +331,6 @@ class ComercianteController extends Controller
     private function isLogueado(): bool
     {
         return !empty($_SESSION['comerciante']['id']);
-    }
-
-    private function subirImagen(array $file, string $carpeta): ?string
-    {
-        $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!in_array($file['type'], $permitidos)) return null;
-        if ($file['size'] > 2 * 1024 * 1024) return null;
-
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION) ?: 'jpg';
-        $nombre = uniqid() . '-' . time() . '.' . $ext;
-        $destino = BASE_PATH . '/assets/img/' . $carpeta . '/' . $nombre;
-
-        $dir = dirname($destino);
-        if (!is_dir($dir)) mkdir($dir, 0755, true);
-
-        return move_uploaded_file($file['tmp_name'], $destino) ? $nombre : null;
     }
 
     private function notificarCambios(int $comercioId, string $nombreComercio): void

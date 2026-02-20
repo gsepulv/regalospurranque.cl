@@ -6,6 +6,8 @@ use App\Models\AdminUsuario;
 use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
+use App\Services\Captcha;
+use App\Services\FileManager;
 
 /**
  * Registro público de comercios (Plan Freemium)
@@ -39,6 +41,14 @@ class RegistroComercioController extends Controller
         }
 
         // CSRF ya validado por middleware global
+
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
+            $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
+            $_SESSION['flash_old'] = ['nombre' => $_POST['nombre'] ?? '', 'email' => $_POST['email'] ?? '', 'telefono' => $_POST['telefono'] ?? ''];
+            header('Location: ' . url('/registrar-comercio'));
+            exit;
+        }
 
         $nombre   = trim($_POST['nombre'] ?? '');
         $email    = strtolower(trim($_POST['email'] ?? ''));
@@ -122,6 +132,14 @@ class RegistroComercioController extends Controller
 
         // CSRF ya validado por middleware global
 
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
+            $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
+            $_SESSION['flash_old'] = $_POST;
+            header('Location: ' . url('/registrar-comercio/datos'));
+            exit;
+        }
+
         $uid = $_SESSION['registro_uid'];
         $nombre      = trim($_POST['nombre'] ?? '');
         $whatsapp    = trim($_POST['whatsapp'] ?? '');
@@ -139,13 +157,13 @@ class RegistroComercioController extends Controller
 
         $slug = $this->generarSlug($nombre);
 
-        // Subir imágenes
+        // Subir imágenes (FileManager valida MIME con finfo, redimensiona y genera WebP)
         $logoPath = $portadaPath = null;
         if (!empty($_FILES['logo']['tmp_name']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-            $logoPath = $this->subirImagen($_FILES['logo'], 'logos');
+            $logoPath = FileManager::subirImagen($_FILES['logo'], 'logos', 800) ?: null;
         }
         if (!empty($_FILES['portada']['tmp_name']) && $_FILES['portada']['error'] === UPLOAD_ERR_OK) {
-            $portadaPath = $this->subirImagen($_FILES['portada'], 'portadas');
+            $portadaPath = FileManager::subirImagen($_FILES['portada'], 'portadas', 1200) ?: null;
         }
 
         // Red social (solo 1 en plan freemium)
@@ -227,22 +245,6 @@ class RegistroComercioController extends Controller
             $slug = $original . '-' . $i++;
         }
         return $slug;
-    }
-
-    private function subirImagen(array $file, string $carpeta): ?string
-    {
-        $permitidos = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!in_array($file['type'], $permitidos)) return null;
-        if ($file['size'] > 2 * 1024 * 1024) return null;
-
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION) ?: 'jpg';
-        $nombre = uniqid() . '-' . time() . '.' . $ext;
-        $destino = BASE_PATH . '/assets/img/' . $carpeta . '/' . $nombre;
-
-        $dir = dirname($destino);
-        if (!is_dir($dir)) mkdir($dir, 0755, true);
-
-        return move_uploaded_file($file['tmp_name'], $destino) ? $nombre : null;
     }
 
     private function notificarAdmin(int $comercioId, string $nombreComercio): void

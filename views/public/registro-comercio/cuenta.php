@@ -82,6 +82,8 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                            placeholder="Repite tu contraseña" minlength="6" required>
                 </div>
 
+                <?= \App\Services\Captcha::widget() ?>
+
                 <button type="submit" class="btn btn--primary" style="width:100%;padding:0.75rem;font-size:1rem">
                     Continuar → Datos del comercio
                 </button>
