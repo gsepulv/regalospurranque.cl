@@ -38,8 +38,8 @@ class ComercioController extends Controller
         ];
 
         $this->render('public/comercios', [
-            'title'       => 'Comercios - ' . SITE_NAME,
-            'description' => 'Directorio completo de comercios y servicios en Purranque',
+            'title'       => 'Comercios en Purranque · Directorio Comercial · ' . SITE_NAME,
+            'description' => 'Directorio completo de comercios y servicios en Purranque, Chile. Encuentra tiendas, restaurantes y más con contacto y ubicación.',
             'og_image'    => asset('img/og/comercio-default.jpg'),
             'comercios'   => $comercios,
             'categorias'  => $categorias,
@@ -83,8 +83,15 @@ class ComercioController extends Controller
         VisitTracker::track($id, "/comercio/{$slug}", 'comercio');
 
         // SEO
-        $title = $comercio['seo_titulo'] ?: $comercio['nombre'] . ' - ' . SITE_NAME;
-        $description = $comercio['seo_descripcion'] ?: truncate($comercio['descripcion'] ?? '', 160);
+        $catPrincipal = '';
+        if (!empty($comercio['categorias'])) {
+            foreach ($comercio['categorias'] as $cat) {
+                $catPrincipal = $cat['nombre'];
+                if (!empty($cat['es_principal'])) break;
+            }
+        }
+        $title = $comercio['seo_titulo'] ?: mb_substr($comercio['nombre'] . ($catPrincipal ? ' · ' . $catPrincipal : '') . ' en Purranque', 0, 55) . ' · ' . SITE_NAME;
+        $description = $comercio['seo_descripcion'] ?: mb_substr($comercio['nombre'] . ': ' . ($comercio['descripcion'] ?? ''), 0, 120) . '. ' . ($catPrincipal ? $catPrincipal . ' en Purranque.' : 'Comercio en Purranque.');
         $ogImage = $comercio['portada'] ? asset('img/portadas/' . $comercio['portada']) : null;
 
         $breadcrumbs = [

@@ -3,5 +3,6 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /storage/
+Disallow: /config/
 
 Sitemap: https://regalospurranque.cl/sitemap.xml

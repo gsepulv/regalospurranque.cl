@@ -10,8 +10,8 @@ class ContactoController extends Controller
     public function index(): void
     {
         $this->render('public/contacto', [
-            'title'       => 'Contacto — ' . SITE_NAME,
-            'description' => 'Contáctanos. Estamos en Purranque, Región de Los Lagos, Chile.',
+            'title'       => 'Registra tu Comercio en Purranque · ' . SITE_NAME,
+            'description' => 'Registra tu comercio en el directorio de Purranque, Chile. Contacto, consultas y soporte para comerciantes.',
             'breadcrumbs' => [
                 ['label' => 'Inicio', 'url' => url('/')],
                 ['label' => 'Contacto'],

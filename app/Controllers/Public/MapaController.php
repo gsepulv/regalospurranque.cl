@@ -22,8 +22,8 @@ class MapaController extends Controller
         VisitTracker::track(null, '/mapa', 'mapa');
 
         $this->render('public/mapa', [
-            'title'       => 'Mapa de Comercios - ' . SITE_NAME,
-            'description' => 'Encuentra los comercios de ' . CITY_NAME . ' en el mapa interactivo',
+            'title'       => 'Mapa de Comercios en Purranque · ' . SITE_NAME,
+            'description' => 'Mapa interactivo con todos los comercios de Purranque, Chile. Encuentra ubicación, contacto y horarios.',
             'comercios'   => $comercios,
             'categorias'  => $categorias,
             'centerLat'   => CITY_LAT,

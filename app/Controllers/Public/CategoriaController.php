@@ -68,8 +68,8 @@ class CategoriaController extends Controller
         ];
 
         $this->render('public/categoria', [
-            'title'       => $categoria['nombre'] . ' en Purranque - ' . SITE_NAME,
-            'description' => $categoria['descripcion'] ?: "Encuentra los mejores comercios de {$categoria['nombre']} en Purranque",
+            'title'       => $categoria['nombre'] . ' en Purranque · Comercios y Regalos · ' . SITE_NAME,
+            'description' => $categoria['descripcion'] ?: "Los mejores comercios de {$categoria['nombre']} en Purranque, Chile. Encuentra {$total} opciones con ubicación, contacto y reseñas.",
             'og_image'    => asset('img/og/categoria-default.jpg'),
             'categoria'   => $categoria,
             'comercios'   => $comercios,

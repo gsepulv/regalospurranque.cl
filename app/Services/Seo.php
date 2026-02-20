@@ -129,16 +129,27 @@ class Seo
             'name' => $comercio['nombre'],
             'description' => $comercio['descripcion'] ?? '',
             'url' => url('/comercio/' . $comercio['slug']),
-            'address' => [
-                '@type' => 'PostalAddress',
-                'streetAddress' => $comercio['direccion'] ?? '',
-                'addressLocality' => 'Purranque',
-                'addressRegion' => 'Los Lagos',
-                'addressCountry' => 'CL',
-            ],
-            'telephone' => $comercio['telefono'] ?? null,
-            'image' => !empty($comercio['portada']) ? asset('img/portadas/' . $comercio['portada']) : null,
         ];
+
+        // Categoría principal como additionalType
+        if (!empty($comercio['categorias'])) {
+            foreach ($comercio['categorias'] as $cat) {
+                if (!empty($cat['es_principal']) || true) {
+                    $schema['additionalType'] = $cat['nombre'];
+                    break;
+                }
+            }
+        }
+
+        $schema['address'] = [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $comercio['direccion'] ?? '',
+            'addressLocality' => 'Purranque',
+            'addressRegion' => 'Los Lagos',
+            'addressCountry' => 'CL',
+        ];
+        $schema['telephone'] = $comercio['telefono'] ?? null;
+        $schema['image'] = !empty($comercio['portada']) ? asset('img/portadas/' . $comercio['portada']) : null;
 
         if (!empty($comercio['lat']) && !empty($comercio['lng'])) {
             $schema['geo'] = [
@@ -249,8 +260,9 @@ class Seo
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Event',
-            'name' => $fecha['nombre'],
-            'description' => $fecha['descripcion'] ?? '',
+            'name' => $fecha['nombre'] . ' en Purranque',
+            'description' => $fecha['descripcion'] ?: 'Encuentra comercios y regalos para ' . $fecha['nombre'] . ' en Purranque, Chile',
+            'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
             'location' => [
                 '@type' => 'Place',
                 'name' => 'Purranque',

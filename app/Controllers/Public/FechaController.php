@@ -31,8 +31,8 @@ class FechaController extends Controller
         ];
 
         $this->render('public/celebraciones', [
-            'title'             => 'Celebraciones y Fechas Especiales - ' . SITE_NAME,
-            'description'       => 'Descubre las mejores ofertas y comercios para cada celebracion y fecha especial en Purranque',
+            'title'             => 'Celebraciones y Fechas Especiales en Purranque · ' . SITE_NAME,
+            'description'       => 'Descubre las mejores ofertas y comercios para cada celebración y fecha especial en Purranque, Chile.',
             'og_image'          => asset('img/og/fecha-default.jpg'),
             'fechasPersonales'  => $fechasPersonales,
             'fechasCalendario'  => $fechasCalendario,
@@ -71,8 +71,8 @@ class FechaController extends Controller
         ];
 
         $this->render('public/fecha', [
-            'title'       => $fecha['nombre'] . ' - ' . SITE_NAME,
-            'description' => $fecha['descripcion'] ?: "Descubre las ofertas y comercios para {$fecha['nombre']} en Purranque",
+            'title'       => $fecha['nombre'] . ' en Purranque · Regalos y Comercios · ' . SITE_NAME,
+            'description' => $fecha['descripcion'] ?: "Encuentra regalos y comercios para {$fecha['nombre']} en Purranque, Chile. Ofertas, contacto y ubicación.",
             'og_image'    => asset('img/og/fecha-default.jpg'),
             'fecha'       => $fecha,
             'comercios'   => $comercios,

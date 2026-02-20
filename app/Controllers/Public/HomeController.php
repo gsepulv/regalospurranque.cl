@@ -100,7 +100,7 @@ class HomeController extends Controller
             }
 
             // Comercios
-            $comercios = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1");
+            $comercios = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1");
             foreach ($comercios as $com) {
                 $urls[] = [
                     'loc' => url('/comercio/' . $com['slug']),
