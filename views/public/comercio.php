@@ -18,9 +18,7 @@ $hoy = (int) date('w');
                 <!-- Cabecera: portada + info basica -->
                 <div class="comercio-header">
                     <?php if (!empty($comercio['portada'])): ?>
-                        <img src="<?= asset('img/portadas/' . $comercio['portada']) ?>"
-                             alt="<?= e($comercio['nombre']) ?>"
-                             class="comercio-header__portada">
+                        <?= picture('img/portadas/' . $comercio['portada'], $comercio['nombre'], 'comercio-header__portada', false, 1200, 400) ?>
                     <?php else: ?>
                         <div class="comercio-header__portada comercio-header__portada--placeholder">
                             <span><?= mb_substr($comercio['nombre'], 0, 1) ?></span>
@@ -29,9 +27,7 @@ $hoy = (int) date('w');
 
                     <div class="comercio-header__info">
                         <?php if (!empty($comercio['logo'])): ?>
-                            <img src="<?= asset('img/logos/' . $comercio['logo']) ?>"
-                                 alt="Logo <?= e($comercio['nombre']) ?>"
-                                 class="comercio-header__logo">
+                            <?= picture('img/logos/' . $comercio['logo'], 'Logo ' . $comercio['nombre'], 'comercio-header__logo', false, 100, 100) ?>
                         <?php endif; ?>
 
                         <div>
@@ -113,10 +109,7 @@ $hoy = (int) date('w');
                             <div class="carousel__track">
                                 <?php foreach ($fotos as $foto): ?>
                                 <div class="carousel__slide">
-                                    <img src="<?= asset('img/galeria/' . $foto['ruta']) ?>"
-                                         alt="<?= e($foto['titulo'] ?? $comercio['nombre']) ?>"
-                                         class="gallery-img"
-                                         loading="lazy">
+                                    <?= picture('img/galeria/' . $foto['ruta'], $foto['titulo'] ?? $comercio['nombre'], 'gallery-img', true, 800, 600) ?>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
@@ -136,10 +129,7 @@ $hoy = (int) date('w');
                         <?php else: ?>
                         <div class="gallery-grid">
                             <?php foreach ($fotos as $foto): ?>
-                                <img src="<?= asset('img/galeria/' . $foto['ruta']) ?>"
-                                     alt="<?= e($foto['titulo'] ?? $comercio['nombre']) ?>"
-                                     class="gallery-img"
-                                     loading="lazy">
+                                <?= picture('img/galeria/' . $foto['ruta'], $foto['titulo'] ?? $comercio['nombre'], 'gallery-img', true, 800, 600) ?>
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
@@ -360,9 +350,7 @@ $hoy = (int) date('w');
                             <?php foreach ($relacionados as $rel): ?>
                                 <a href="<?= url('/comercio/' . $rel['slug']) ?>" class="card">
                                     <?php if (!empty($rel['portada'])): ?>
-                                        <img src="<?= asset('img/portadas/' . $rel['portada']) ?>"
-                                             alt="<?= e($rel['nombre']) ?>"
-                                             class="card__img" loading="lazy">
+                                        <?= picture('img/portadas/' . $rel['portada'], $rel['nombre'], 'card__img', true, 400, 267) ?>
                                     <?php else: ?>
                                         <div class="card__img card__img--placeholder">
                                             <?= mb_substr($rel['nombre'], 0, 1) ?>
@@ -455,9 +443,7 @@ $hoy = (int) date('w');
                 <?php foreach ($banners as $banner): ?>
                     <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
                         <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
-                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
-                                 alt="<?= e($banner['titulo'] ?? 'Publicidad') ?>"
-                                 loading="lazy">
+                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true) ?>
                         </a>
                     </div>
                 <?php endforeach; ?>

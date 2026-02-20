@@ -16,9 +16,7 @@ $encodedDesc = urlencode($shareDescription);
             <div class="share-preview">
                 <?php if ($tipo === 'comercio'): ?>
                     <?php if (!empty($data['portada'])): ?>
-                        <img src="<?= asset('img/portadas/' . $data['portada']) ?>"
-                             alt="<?= e($data['nombre']) ?>"
-                             class="share-preview__img">
+                        <?= picture('img/portadas/' . $data['portada'], $data['nombre'], 'share-preview__img', false) ?>
                     <?php endif; ?>
                     <div class="share-preview__body">
                         <h1><?= e($data['nombre']) ?></h1>
@@ -29,9 +27,7 @@ $encodedDesc = urlencode($shareDescription);
                     </div>
                 <?php elseif ($tipo === 'noticia'): ?>
                     <?php if (!empty($data['imagen'])): ?>
-                        <img src="<?= asset('img/noticias/' . $data['imagen']) ?>"
-                             alt="<?= e($data['titulo']) ?>"
-                             class="share-preview__img">
+                        <?= picture('img/noticias/' . $data['imagen'], $data['titulo'], 'share-preview__img', false) ?>
                     <?php endif; ?>
                     <div class="share-preview__body">
                         <h1><?= e($data['titulo']) ?></h1>

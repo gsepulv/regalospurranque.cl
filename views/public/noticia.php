@@ -45,8 +45,7 @@ $seoUrl = url('/noticia/' . $noticia['slug']);
                 <!-- Imagen principal -->
                 <?php if (!empty($noticia['imagen'])): ?>
                     <div class="article-image">
-                        <img src="<?= asset('img/noticias/' . $noticia['imagen']) ?>"
-                             alt="<?= e($noticia['titulo']) ?>">
+                        <?= picture('img/noticias/' . $noticia['imagen'], $noticia['titulo'], '', false, 800, 450) ?>
                     </div>
                 <?php endif; ?>
 
@@ -93,9 +92,7 @@ $seoUrl = url('/noticia/' . $noticia['slug']);
                             <?php foreach ($relacionadas as $rel): ?>
                                 <a href="<?= url('/noticia/' . $rel['slug']) ?>" class="card">
                                     <?php if (!empty($rel['imagen'])): ?>
-                                        <img src="<?= asset('img/noticias/' . $rel['imagen']) ?>"
-                                             alt="<?= e($rel['titulo']) ?>"
-                                             class="card__img" loading="lazy">
+                                        <?= picture('img/noticias/' . $rel['imagen'], $rel['titulo'], 'card__img', true, 400, 267) ?>
                                     <?php endif; ?>
                                     <div class="card__body">
                                         <h3 class="card__title"><?= e(truncate($rel['titulo'], 60)) ?></h3>
@@ -123,7 +120,7 @@ $seoUrl = url('/noticia/' . $noticia['slug']);
                 <?php foreach ($banners as $banner): ?>
                     <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
                         <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
-                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>" alt="<?= e($banner['titulo'] ?? 'Publicidad') ?>" loading="lazy">
+                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true) ?>
                         </a>
                     </div>
                 <?php endforeach; ?>

@@ -23,10 +23,7 @@
                             <article class="noticia-card">
                                 <?php if (!empty($not['imagen'])): ?>
                                     <a href="<?= url('/noticia/' . $not['slug']) ?>" class="noticia-card__img-link">
-                                        <img src="<?= asset('img/noticias/' . $not['imagen']) ?>"
-                                             alt="<?= e($not['titulo']) ?>"
-                                             class="noticia-card__img"
-                                             loading="lazy">
+                                        <?= picture('img/noticias/' . $not['imagen'], $not['titulo'], 'noticia-card__img', true, 400, 267) ?>
                                     </a>
                                 <?php endif; ?>
                                 <div class="noticia-card__content">
@@ -71,10 +68,7 @@
                             <?php foreach ($destacadas as $dest): ?>
                                 <a href="<?= url('/noticia/' . $dest['slug']) ?>" class="noticia-mini">
                                     <?php if (!empty($dest['imagen'])): ?>
-                                        <img src="<?= asset('img/noticias/' . $dest['imagen']) ?>"
-                                             alt="<?= e($dest['titulo']) ?>"
-                                             class="noticia-mini__img"
-                                             loading="lazy">
+                                        <?= picture('img/noticias/' . $dest['imagen'], $dest['titulo'], 'noticia-mini__img', true, 80, 80) ?>
                                     <?php endif; ?>
                                     <div class="noticia-mini__content">
                                         <h4><?= e(truncate($dest['titulo'], 60)) ?></h4>
@@ -90,7 +84,7 @@
                 <?php foreach ($banners as $banner): ?>
                     <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
                         <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
-                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>" alt="<?= e($banner['titulo'] ?? 'Publicidad') ?>" loading="lazy">
+                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true) ?>
                         </a>
                     </div>
                 <?php endforeach; ?>

@@ -76,6 +76,15 @@ class FileManager
         // Generar thumbnail
         self::generarThumbnail($destPath, $carpeta, $fileName);
 
+        // Generar versión WebP (si no es ya WebP)
+        if ($ext !== 'webp') {
+            self::generarWebP($destPath);
+            $thumbPath = UPLOAD_PATH . '/' . $carpeta . '/thumbs/' . $fileName;
+            if (file_exists($thumbPath)) {
+                self::generarWebP($thumbPath);
+            }
+        }
+
         return $fileName;
     }
 
@@ -156,6 +165,37 @@ class FileManager
     }
 
     /**
+     * Generar versión WebP de una imagen existente
+     */
+    public static function generarWebP(string $path, int $quality = 80): bool
+    {
+        if (!function_exists('imagewebp')) {
+            return false;
+        }
+
+        $info = @getimagesize($path);
+        if (!$info || $info['mime'] === 'image/webp' || $info['mime'] === 'image/gif') {
+            return false;
+        }
+
+        $src = self::crearDesdeArchivo($path, $info['mime']);
+        if (!$src) {
+            return false;
+        }
+
+        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $path);
+        if ($webpPath === $path) {
+            imagedestroy($src);
+            return false;
+        }
+
+        imagewebp($src, $webpPath, $quality);
+        imagedestroy($src);
+
+        return file_exists($webpPath);
+    }
+
+    /**
      * Eliminar imagen y su thumbnail
      */
     public static function eliminarImagen(string $carpeta, string $fileName): bool
@@ -181,18 +221,24 @@ class FileManager
 
         $deleted = false;
 
-        if (file_exists($filePath)) {
-            $realFile = realpath($filePath);
-            if ($realFile && str_starts_with($realFile, $realBase)) {
-                unlink($realFile);
-                $deleted = true;
+        // Eliminar original y su WebP
+        foreach ([$filePath, preg_replace('/\.(jpe?g|png)$/i', '.webp', $filePath)] as $f) {
+            if (file_exists($f)) {
+                $real = realpath($f);
+                if ($real && str_starts_with($real, $realBase)) {
+                    unlink($real);
+                    $deleted = true;
+                }
             }
         }
 
-        if (file_exists($thumbPath)) {
-            $realThumb = realpath($thumbPath);
-            if ($realThumb && str_starts_with($realThumb, $realBase)) {
-                unlink($realThumb);
+        // Eliminar thumbnail y su WebP
+        foreach ([$thumbPath, preg_replace('/\.(jpe?g|png)$/i', '.webp', $thumbPath)] as $f) {
+            if (file_exists($f)) {
+                $real = realpath($f);
+                if ($real && str_starts_with($real, $realBase)) {
+                    unlink($real);
+                }
             }
         }
 

@@ -234,9 +234,7 @@
             <?php foreach ($comercios as $com): ?>
                 <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card<?= in_array($com['plan'] ?? '', ['sponsor','premium']) ? ' card--' . $com['plan'] : '' ?>">
                     <?php if (!empty($com['portada'])): ?>
-                        <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
-                             alt="<?= e($com['nombre']) ?>"
-                             class="card__img" loading="lazy">
+                        <?= picture('img/portadas/' . $com['portada'], $com['nombre'], 'card__img', true, 400, 267) ?>
                     <?php else: ?>
                         <div class="card__img card__img--placeholder">
                             <?= mb_substr($com['nombre'], 0, 1) ?>
@@ -279,9 +277,7 @@
             <?php foreach ($noticias as $not): ?>
                 <a href="<?= url('/noticia/' . $not['slug']) ?>" class="card">
                     <?php if (!empty($not['imagen'])): ?>
-                        <img src="<?= asset('img/noticias/' . $not['imagen']) ?>"
-                             alt="<?= e($not['titulo']) ?>"
-                             class="card__img" loading="lazy">
+                        <?= picture('img/noticias/' . $not['imagen'], $not['titulo'], 'card__img', true, 400, 267) ?>
                     <?php endif; ?>
                     <div class="card__body">
                         <h3 class="card__title"><?= e($not['titulo']) ?></h3>

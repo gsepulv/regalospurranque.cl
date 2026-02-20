@@ -30,9 +30,7 @@ $pageType = 'categoria';
                         <?php foreach ($comercios as $com): ?>
                             <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card">
                                 <?php if (!empty($com['portada'])): ?>
-                                    <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
-                                         alt="<?= e($com['nombre']) ?>"
-                                         class="card__img" loading="lazy">
+                                    <?= picture('img/portadas/' . $com['portada'], $com['nombre'], 'card__img', true, 400, 267) ?>
                                 <?php else: ?>
                                     <div class="card__img card__img--placeholder">
                                         <?= mb_substr($com['nombre'], 0, 1) ?>
@@ -115,7 +113,7 @@ $pageType = 'categoria';
                 <?php foreach ($banners as $banner): ?>
                     <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
                         <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
-                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>" alt="<?= e($banner['titulo'] ?? 'Publicidad') ?>" loading="lazy">
+                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true) ?>
                         </a>
                     </div>
                 <?php endforeach; ?>

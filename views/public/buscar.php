@@ -78,9 +78,7 @@
                     <?php foreach ($comercios as $i => $com): ?>
                         <a href="<?= url('/comercio/' . $com['slug']) ?>" class="card">
                             <?php if (!empty($com['portada'])): ?>
-                                <img src="<?= asset('img/portadas/' . $com['portada']) ?>"
-                                     alt="<?= e($com['nombre']) ?>"
-                                     class="card__img" loading="lazy">
+                                <?= picture('img/portadas/' . $com['portada'], $com['nombre'], 'card__img', true, 400, 267) ?>
                             <?php else: ?>
                                 <div class="card__img card__img--placeholder">
                                     <?= mb_substr($com['nombre'], 0, 1) ?>
@@ -108,9 +106,7 @@
                         <?php if (($i + 1) % 6 === 0 && isset($banners[$bannerIndex])): ?>
                             <div class="between-banner" data-banner-id="<?= $banners[$bannerIndex]['id'] ?>">
                                 <a href="<?= e($banners[$bannerIndex]['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banners[$bannerIndex]['id'] ?>)">
-                                    <img src="<?= asset('img/banners/' . $banners[$bannerIndex]['imagen']) ?>"
-                                         alt="<?= e($banners[$bannerIndex]['titulo'] ?? 'Publicidad') ?>"
-                                         loading="lazy">
+                                    <?= picture('img/banners/' . $banners[$bannerIndex]['imagen'], $banners[$bannerIndex]['titulo'] ?? 'Publicidad', '', true) ?>
                                 </a>
                             </div>
                             <?php $bannerIndex++; ?>

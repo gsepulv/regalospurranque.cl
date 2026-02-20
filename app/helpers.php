@@ -110,3 +110,37 @@ function truncate(string $text, int $length = 100): string
     }
     return mb_substr($text, 0, $length) . '...';
 }
+
+/**
+ * Generar etiqueta <picture> con WebP y fallback, o <img> si no hay WebP
+ *
+ * @param string $imgPath Ruta relativa dentro de assets/ (ej: 'img/portadas/foto.jpg')
+ * @param string $alt     Texto alternativo
+ * @param string $class   Clase CSS
+ * @param bool   $lazy    Usar loading="lazy" (false para above-the-fold)
+ * @param int    $width   Ancho para prevenir CLS (0 = omitir)
+ * @param int    $height  Alto para prevenir CLS (0 = omitir)
+ */
+function picture(string $imgPath, string $alt, string $class = '', bool $lazy = true, int $width = 0, int $height = 0): string
+{
+    $alt = e($alt);
+    $src = asset($imgPath);
+    $attrs = $class ? ' class="' . $class . '"' : '';
+    $attrs .= $lazy ? ' loading="lazy"' : '';
+    $attrs .= $width ? ' width="' . $width . '"' : '';
+    $attrs .= $height ? ' height="' . $height . '"' : '';
+
+    // Buscar versión WebP
+    $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $imgPath);
+    $webpFile = BASE_PATH . '/assets/' . $webpPath;
+
+    if ($webpPath !== $imgPath && file_exists($webpFile)) {
+        $webpSrc = asset($webpPath);
+        return '<picture>'
+            . '<source srcset="' . $webpSrc . '" type="image/webp">'
+            . '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . '>'
+            . '</picture>';
+    }
+
+    return '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . '>';
+}
