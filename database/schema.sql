@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Base de Datos: purranque_regalos_purranque
 -- Proyecto: Regalos Purranque v2 - Directorio Comercial
--- Descripcion: Esquema completo con las 22 tablas del sistema
+-- Descripcion: Esquema completo con las 29 tablas del sistema
 -- Motor: InnoDB | Charset: utf8mb4 | Collation: utf8mb4_unicode_ci
 -- ============================================================================
 
@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS `admin_usuarios` (
     `email` VARCHAR(150) NOT NULL,
     `telefono` VARCHAR(20) DEFAULT NULL,
     `password_hash` VARCHAR(255) NOT NULL,
-    `rol` ENUM('admin','editor','comerciante') NOT NULL DEFAULT 'editor',
+    `rol` ENUM('superadmin','admin','editor','comerciante') NOT NULL DEFAULT 'editor',
+    `site_id` INT DEFAULT NULL,
     `avatar` VARCHAR(255) DEFAULT NULL,
     `activo` TINYINT(1) NOT NULL DEFAULT 1,
     `last_login` DATETIME DEFAULT NULL,
@@ -99,6 +100,7 @@ CREATE TABLE IF NOT EXISTS `configuracion` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `comercios` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `nombre` VARCHAR(150) NOT NULL,
     `slug` VARCHAR(170) NOT NULL,
     `descripcion` TEXT DEFAULT NULL,
@@ -106,26 +108,56 @@ CREATE TABLE IF NOT EXISTS `comercios` (
     `whatsapp` VARCHAR(20) DEFAULT NULL,
     `email` VARCHAR(150) DEFAULT NULL,
     `sitio_web` VARCHAR(255) DEFAULT NULL,
+    `facebook` VARCHAR(300) DEFAULT NULL,
+    `instagram` VARCHAR(300) DEFAULT NULL,
+    `tiktok` VARCHAR(300) DEFAULT NULL,
+    `youtube` VARCHAR(300) DEFAULT NULL,
+    `x_twitter` VARCHAR(300) DEFAULT NULL,
+    `linkedin` VARCHAR(300) DEFAULT NULL,
+    `telegram` VARCHAR(300) DEFAULT NULL,
+    `pinterest` VARCHAR(300) DEFAULT NULL,
     `direccion` VARCHAR(255) DEFAULT NULL,
     `lat` DECIMAL(10,8) DEFAULT NULL,
     `lng` DECIMAL(11,8) DEFAULT NULL,
     `logo` VARCHAR(255) DEFAULT NULL,
     `portada` VARCHAR(255) DEFAULT NULL,
-    `plan` ENUM('basico','premium','sponsor') NOT NULL DEFAULT 'basico',
+    `plan` ENUM('freemium','basico','premium','sponsor','banner') NOT NULL DEFAULT 'freemium',
+    `plan_precio` INT UNSIGNED DEFAULT NULL,
+    `plan_inicio` DATE DEFAULT NULL,
+    `plan_fin` DATE DEFAULT NULL,
+    `max_fotos` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `registrado_por` INT DEFAULT NULL,
     `destacado` TINYINT(1) NOT NULL DEFAULT 0,
+    `validado` TINYINT(1) NOT NULL DEFAULT 0,
+    `validado_fecha` DATETIME DEFAULT NULL,
+    `validado_notas` VARCHAR(500) DEFAULT NULL,
     `visitas` INT NOT NULL DEFAULT 0,
     `whatsapp_clicks` INT NOT NULL DEFAULT 0,
     `seo_titulo` VARCHAR(160) DEFAULT NULL,
     `seo_descripcion` VARCHAR(320) DEFAULT NULL,
     `seo_keywords` VARCHAR(255) DEFAULT NULL,
+    `razon_social` VARCHAR(200) DEFAULT NULL,
+    `rut_empresa` VARCHAR(15) DEFAULT NULL,
+    `giro` VARCHAR(200) DEFAULT NULL,
+    `direccion_tributaria` VARCHAR(300) DEFAULT NULL,
+    `comuna_tributaria` VARCHAR(100) DEFAULT NULL,
+    `contacto_nombre` VARCHAR(150) DEFAULT NULL,
+    `contacto_rut` VARCHAR(15) DEFAULT NULL,
+    `contacto_telefono` VARCHAR(20) DEFAULT NULL,
+    `contacto_email` VARCHAR(200) DEFAULT NULL,
+    `contrato_inicio` DATE DEFAULT NULL,
+    `contrato_monto` INT UNSIGNED DEFAULT NULL,
+    `metodo_pago` VARCHAR(100) DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_comercios_slug` (`slug`),
     INDEX `idx_comercios_activo_destacado` (`activo`, `destacado`),
     INDEX `idx_comercios_plan` (`plan`),
-    INDEX `idx_comercios_slug` (`slug`)
+    INDEX `idx_comercios_slug` (`slug`),
+    INDEX `idx_comercios_site` (`site_id`),
+    INDEX `idx_comercios_registrado_por` (`registrado_por`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------

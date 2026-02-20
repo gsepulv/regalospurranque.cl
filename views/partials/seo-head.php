@@ -44,6 +44,15 @@ $articlePublished  = $article_published ?? '';
 $articleModified   = $article_modified ?? '';
 ?>
 
+<?php
+// Google Search Console verification
+$gscMeta = \App\Core\Database::getInstance()->fetch(
+    "SELECT valor FROM seo_config WHERE clave = 'google_search_console' LIMIT 1"
+);
+if (!empty($gscMeta['valor'])): ?>
+<meta name="google-site-verification" content="<?= e($gscMeta['valor']) ?>">
+<?php endif; ?>
+
 <!-- Basic Meta -->
 <title><?= e($seoTitle) ?></title>
 <meta name="description" content="<?= e($seoDescription) ?>">
