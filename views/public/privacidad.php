@@ -12,7 +12,7 @@
             <p class="legal-updated">Última actualización: 20/02/2026</p>
 
             <h2>1. Responsable del Tratamiento</h2>
-            <p><?= e(SITE_NAME) ?>, con domicilio en Purranque, Región de Los Lagos, Chile, es responsable del tratamiento de los datos personales recopilados a través de esta plataforma, en conformidad con la Ley 19.628 sobre Protección de la Vida Privada.</p>
+            <p><?= e(SITE_NAME) ?>, con domicilio en Purranque, Región de Los Lagos, Chile, es responsable del tratamiento de los datos personales recopilados a través de esta plataforma, en conformidad con la Ley 19.628 sobre Protección de la Vida Privada, modificada por la Ley 21.719 sobre Protección de Datos Personales.</p>
 
             <h2>2. Datos que Recopilamos</h2>
             <h3>2.1. Datos proporcionados voluntariamente</h3>
@@ -59,15 +59,34 @@
             </ul>
 
             <h2>6. Derechos del Titular</h2>
-            <p>De acuerdo con la Ley 19.628 y el Reglamento General de Protección de Datos (GDPR) para usuarios de la Unión Europea, usted tiene derecho a:</p>
+            <p>De acuerdo con la Ley 19.628, modificada por la Ley 21.719 sobre Protección de Datos Personales, y el Reglamento General de Protección de Datos (GDPR) para usuarios de la Unión Europea, usted tiene derecho a:</p>
             <ul>
-                <li><strong>Acceso:</strong> Conocer qué datos personales tenemos sobre usted.</li>
-                <li><strong>Rectificación:</strong> Solicitar la corrección de datos inexactos.</li>
-                <li><strong>Supresión:</strong> Solicitar la eliminación de sus datos personales.</li>
-                <li><strong>Oposición:</strong> Oponerse al tratamiento de sus datos.</li>
-                <li><strong>Portabilidad:</strong> Recibir sus datos en un formato estructurado.</li>
+                <li><strong>Acceso:</strong> Conocer qué datos personales tenemos sobre usted y cómo los utilizamos.</li>
+                <li><strong>Rectificación:</strong> Solicitar la corrección de datos inexactos o incompletos.</li>
+                <li><strong>Cancelación (Supresión):</strong> Solicitar la eliminación de sus datos personales cuando ya no sean necesarios para la finalidad para la cual fueron recopilados.</li>
+                <li><strong>Oposición:</strong> Oponerse al tratamiento de sus datos para finalidades específicas.</li>
+                <li><strong>Portabilidad:</strong> Recibir sus datos en un formato estructurado, de uso común y lectura mecánica.</li>
             </ul>
-            <p>Para ejercer estos derechos, contáctenos en <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>.</p>
+
+            <h3>Cómo ejercer tus derechos</h3>
+            <p>Puedes ejercer estos derechos de dos formas:</p>
+            <ol>
+                <li><strong>Formulario web:</strong> Visita nuestra página de <a href="<?= url('/derechos') ?>">Ejercicio de Derechos</a> y completa el formulario con tu solicitud.</li>
+                <li><strong>Correo electrónico:</strong> Envía tu solicitud a <a href="mailto:contacto@purranque.info">contacto@purranque.info</a> indicando tu nombre completo, el derecho que deseas ejercer y una descripción de tu solicitud.</li>
+            </ol>
+            <p><strong>Plazo de respuesta:</strong> Nos comprometemos a responder tu solicitud dentro de <strong>10 días hábiles</strong> desde su recepción.</p>
+            <p><strong>Registro:</strong> Todas las solicitudes quedan registradas internamente para garantizar trazabilidad y cumplimiento normativo.</p>
+
+            <h3>6.1. Registro de Actividades de Tratamiento</h3>
+            <p>En cumplimiento de la Ley 21.719, mantenemos un registro interno de las actividades de tratamiento de datos personales que realizamos, que incluye:</p>
+            <ul>
+                <li>Los tipos de datos personales tratados.</li>
+                <li>La finalidad de cada tratamiento.</li>
+                <li>La base legal que lo sustenta.</li>
+                <li>Los plazos de conservación aplicables.</li>
+                <li>Las medidas de seguridad implementadas.</li>
+            </ul>
+            <p>Este registro está disponible para consulta por parte de la autoridad de protección de datos competente.</p>
 
             <h2>7. Compartición de Datos</h2>
             <p><?= e(SITE_NAME) ?> no vende, alquila ni comparte datos personales con terceros, salvo en los siguientes casos:</p>
@@ -95,7 +114,16 @@
             <h2>11. Modificaciones</h2>
             <p>Nos reservamos el derecho de modificar esta política en cualquier momento. Los cambios serán publicados en esta página con la fecha de última actualización.</p>
 
-            <h2>12. Contacto</h2>
+            <h2>12. Delegado de Protección de Datos</h2>
+            <p>El responsable interno de la protección de datos personales en <?= e(SITE_NAME) ?> es:</p>
+            <p>
+                <strong>Gustavo Sepúlveda Sánchez</strong><br>
+                Correo: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a><br>
+                Ubicación: Purranque, Región de Los Lagos, Chile
+            </p>
+            <p>Puede dirigir cualquier consulta o solicitud relacionada con el tratamiento de sus datos personales a este contacto.</p>
+
+            <h2>13. Contacto</h2>
             <p>Para consultas sobre privacidad y protección de datos:</p>
             <ul>
                 <li>Correo electrónico: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></li>

@@ -227,6 +227,31 @@ class Notification
     }
 
     /**
+     * Solicitud ARCO — notifica a admins
+     */
+    public static function solicitudArcoAdmin(array $solicitud): void
+    {
+        self::mailer()->sendToAdmins(
+            "Solicitud ARCO #{$solicitud['id']} — {$solicitud['tipo_texto']}",
+            'arco-admin',
+            ['solicitud' => $solicitud]
+        );
+    }
+
+    /**
+     * Solicitud ARCO — confirmación al solicitante
+     */
+    public static function solicitudArcoConfirmacion(string $email, array $solicitud): void
+    {
+        self::mailer()->send(
+            $email,
+            "Solicitud recibida #{$solicitud['id']} — " . SITE_NAME,
+            'arco-confirmacion',
+            ['solicitud' => $solicitud]
+        );
+    }
+
+    /**
      * Email de prueba
      */
     public static function test(string $email): bool

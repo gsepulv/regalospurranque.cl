@@ -1,0 +1,87 @@
+<!--
+  ============================================================
+  BANNER DE COOKIES - regalospurranque.cl
+  ============================================================
+  INTEGRACIÓN:
+  Insertar este bloque ANTES de </body> en tu layout principal.
+  El banner se muestra automáticamente si no hay consentimiento previo.
+  Registra el consentimiento vía AJAX en la tabla 'consentimientos'.
+  ============================================================
+-->
+<div id="cookie-banner" style="display:none;">
+  <div class="cb-inner">
+    <div class="cb-text">
+      <span class="cb-icon">🍪</span>
+      <div>
+        <p class="cb-title">Uso de Cookies</p>
+        <p class="cb-desc">
+          Este sitio utiliza <strong>cookies esenciales</strong> para funcionar 
+          (sesión y seguridad). No usamos cookies publicitarias ni de seguimiento.
+          <a href="/cookies" class="cb-link">Más información</a>
+        </p>
+      </div>
+    </div>
+    <div class="cb-buttons">
+      <button id="cb-accept" class="cb-btn cb-btn-accept">Aceptar todas</button>
+      <button id="cb-essential" class="cb-btn cb-btn-essential">Solo esenciales</button>
+    </div>
+  </div>
+</div>
+
+<style>
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1b2838;border-top:3px solid #e67e22;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;animation:cb-up .4s ease-out}
+@keyframes cb-up{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes cb-down{from{transform:translateY(0);opacity:1}to{transform:translateY(100%);opacity:0}}
+.cb-inner{max-width:1200px;margin:0 auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cb-text{display:flex;align-items:flex-start;gap:12px;flex:1;min-width:280px}
+.cb-icon{font-size:32px;flex-shrink:0;margin-top:2px}
+.cb-title{margin:0 0 4px;color:#fff;font-size:15px;font-weight:700}
+.cb-desc{margin:0;color:#b0b8c4;font-size:13px;line-height:1.5}
+.cb-link{color:#e67e22;text-decoration:underline;font-weight:500}
+.cb-link:hover{color:#f39c12}
+.cb-buttons{display:flex;gap:10px;flex-shrink:0}
+.cb-btn{padding:10px 22px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.cb-btn-accept{background:#e67e22;color:#fff}
+.cb-btn-accept:hover{background:#d35400;transform:translateY(-1px)}
+.cb-btn-essential{background:transparent;color:#8899a6;border:1px solid #4a5568}
+.cb-btn-essential:hover{border-color:#8899a6;color:#d0d8e0}
+@media(max-width:640px){
+  .cb-inner{flex-direction:column;padding:14px 16px;gap:12px}
+  .cb-buttons{width:100%}
+  .cb-btn{flex:1;text-align:center;padding:12px 16px}
+}
+</style>
+
+<script>
+(function(){
+  'use strict';
+  var CK='regalos_cookie_consent',DAYS=365;
+  var banner=document.getElementById('cookie-banner');
+  
+  function getCk(){var m=document.cookie.match(new RegExp('(^| )'+CK+'=([^;]+)'));return m?m[2]:null}
+  function setCk(v){var d=new Date();d.setTime(d.getTime()+(DAYS*864e5));document.cookie=CK+'='+v+';expires='+d.toUTCString()+';path=/;SameSite=Lax;Secure'}
+  
+  function send(tipo){
+    try{
+      var x=new XMLHttpRequest();
+      x.open('POST','/api/consentimiento.php',true);
+      x.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+      x.send('tipo='+encodeURIComponent(tipo));
+    }catch(e){}
+  }
+  
+  function hide(){
+    banner.style.animation='cb-down .3s ease-in forwards';
+    setTimeout(function(){banner.style.display='none'},350);
+  }
+  
+  if(!getCk()){banner.style.display='block'}
+  
+  document.getElementById('cb-accept').addEventListener('click',function(){
+    setCk('todas');send('cookies_todas');hide();
+  });
+  document.getElementById('cb-essential').addEventListener('click',function(){
+    setCk('esenciales');send('cookies_esenciales');hide();
+  });
+})();
+</script>

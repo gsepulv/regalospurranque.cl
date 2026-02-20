@@ -27,6 +27,9 @@
     <link rel="dns-prefetch" href="https://cdn.tiny.cloud">
     <link rel="preload" href="<?= asset('css/main.css?v=202602170318') ?>" as="style">
     <link rel="stylesheet" href="<?= asset('css/main.css?v=202602170318') ?>">
+    <?php if (!empty($extraCss)): ?>
+    <link rel="stylesheet" href="<?= asset($extraCss) ?>">
+    <?php endif; ?>
     <!-- RSS -->
     <link rel="alternate" type="application/rss+xml" title="<?= e(SITE_NAME) ?> — Noticias" href="<?= url('/feed/rss.xml') ?>">
 </head>
@@ -78,5 +81,7 @@
 
     <script src="<?= asset('js/app.js') ?>" defer></script>
     <div class="beta-floating">Beta</div>
+
+    <?php include BASE_PATH . '/views/partials/cookie-banner.php'; ?>
 </body>
 </html>

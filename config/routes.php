@@ -31,6 +31,8 @@ return [
     ['GET',  '/privacidad',         'Public\\PageController@privacidad'],
     ['GET',  '/cookies',            'Public\\PageController@cookies'],
     ['GET',  '/contenidos',         'Public\\PageController@contenidos'],
+    ['GET',  '/derechos',           'Public\\DerechosController@index'],
+    ['POST', '/derechos',           'Public\\DerechosController@store'],
 
     // ── Mis reseñas ─────────────────────────────────────────────
     ['GET',  '/mis-resenas',        'Public\\ReviewController@misResenas'],
@@ -241,6 +243,7 @@ return [
     ['POST', '/api/track',              'Api\\TrackApiController@track'],
     ['POST', '/api/banner-track',       'Api\\BannerApiController@track'],
     ['POST', '/api/share-track',        'Api\\ShareApiController@track'],
+    ['POST', '/api/consentimiento',     'Api\\ConsentimientoApiController@store'],
 
 // ── Registro público de comercios ─────────────────────────
     ['GET',  '/registrar-comercio',         'Public\\RegistroComercioController@index',       []],

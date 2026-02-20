@@ -25,6 +25,16 @@
                 <li>Ofertas y promociones por fechas especiales.</li>
             </ul>
 
+            <h3>2.1. Estado BETA</h3>
+            <p>La Plataforma se encuentra actualmente en etapa de validación territorial (BETA). Esto significa que:</p>
+            <ul>
+                <li>Algunas funcionalidades pueden no estar completamente implementadas.</li>
+                <li>Pueden existir errores o interrupciones no previstos.</li>
+                <li>La disponibilidad del servicio no está garantizada al 100%.</li>
+                <li>Los datos y contenidos publicados durante la etapa BETA se conservarán al pasar a versión estable, salvo que se indique lo contrario.</li>
+            </ul>
+            <p>El uso de la Plataforma durante esta etapa implica la aceptación de estas condiciones.</p>
+
             <h2>3. Uso Aceptable</h2>
             <p>El usuario se compromete a utilizar la Plataforma de manera responsable y de acuerdo con la legislación chilena vigente. Queda prohibido:</p>
             <ul>
@@ -45,6 +55,24 @@
 
             <h2>6. Información de Comercios</h2>
             <p>La información sobre los comercios es proporcionada por los propios comerciantes o recopilada de fuentes públicas. <?= e(SITE_NAME) ?> no garantiza la exactitud, vigencia o completitud de esta información. Recomendamos a los usuarios verificar directamente con los comercios antes de realizar compras o visitas.</p>
+
+            <h3>6.1. Indemnización</h3>
+            <p>El comerciante registrado en la Plataforma se compromete a mantener indemne a <?= e(SITE_NAME) ?>, sus representantes y colaboradores, frente a cualquier reclamo, demanda, daño, pérdida o gasto (incluyendo honorarios legales razonables) derivado de:</p>
+            <ul>
+                <li>La información publicada por el comerciante en su ficha (descripciones, fotos, precios, horarios, datos de contacto).</li>
+                <li>El incumplimiento por parte del comerciante de estos Términos y Condiciones o de la legislación vigente.</li>
+                <li>Cualquier vulneración de derechos de terceros derivada del contenido publicado por el comerciante.</li>
+            </ul>
+            <p>El comerciante declara que toda la información proporcionada es veraz y actualizada, y asume la responsabilidad exclusiva por su exactitud.</p>
+
+            <h3>6.2. Licencia de Contenido</h3>
+            <p>Al subir contenido a la Plataforma (incluyendo fotografías, logotipos, descripciones y cualquier material gráfico o textual), el comerciante otorga a <?= e(SITE_NAME) ?> una licencia no exclusiva, gratuita, mundial y por tiempo indefinido para:</p>
+            <ul>
+                <li>Mostrar dicho contenido en la Plataforma y sus canales asociados.</li>
+                <li>Utilizar dicho contenido con fines de promoción de la Plataforma (redes sociales, materiales institucionales, presentaciones a entidades públicas).</li>
+                <li>Adaptar el formato del contenido para diferentes dispositivos y medios.</li>
+            </ul>
+            <p>Esta licencia no implica transferencia de propiedad intelectual. El comerciante conserva todos los derechos sobre su contenido original y puede solicitar su eliminación en cualquier momento contactándonos en <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>.</p>
 
             <h2>7. Propiedad Intelectual</h2>
             <p>Todo el contenido original de la Plataforma (diseño, logotipos, textos, código fuente) es propiedad de <?= e(SITE_NAME) ?> y está protegido por la Ley 17.336 sobre Propiedad Intelectual de Chile. Queda prohibida su reproducción sin autorización expresa.</p>

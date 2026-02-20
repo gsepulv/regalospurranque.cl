@@ -40,6 +40,9 @@ assets/img/config/*
 !assets/img/og/noticia-default.jpg
 !assets/img/config/.gitkeep
 
+# Dumps de BD
+*.sql
+
 # Archivos comprimidos y backups
 *.zip
 regalos_purranque/

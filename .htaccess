@@ -28,7 +28,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L,QSA]
 
 # ── Bloquear carpetas del framework ─────────────────────────────────────────
-RewriteRule ^(app|config|storage|database|cron|deploy|views)/ - [F,L]
+RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal)/ - [F,L]
 
 # ── MIME Types explícitos ───────────────────────────────────────────────────
 # Necesario para que el servidor envíe Content-Type correcto a crawlers
@@ -67,10 +67,11 @@ RewriteRule ^(app|config|storage|database|cron|deploy|views)/ - [F,L]
 
 # ── Headers de seguridad y optimización ─────────────────────────────────────
 <IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
     Header unset X-Powered-By
 </IfModule>
 

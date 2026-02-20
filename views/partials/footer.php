@@ -25,6 +25,7 @@
                     <a href="<?= url('/privacidad') ?>">Política de Privacidad</a>
                     <a href="<?= url('/cookies') ?>">Política de Cookies</a>
                     <a href="<?= url('/contenidos') ?>">Política de Contenidos</a>
+                    <a href="<?= url('/derechos') ?>">Ejercicio de Derechos</a>
                 </div>
             </div>
             <div>

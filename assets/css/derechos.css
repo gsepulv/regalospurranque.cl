@@ -1,0 +1,427 @@
+/* ============================================================
+   CSS para página /derechos (Formulario ARCO)
+   ============================================================ */
+
+.derechos-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.derechos-page h1 {
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.derechos-intro {
+  background: #f0f7ff;
+  border-left: 4px solid #2e86c1;
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 24px;
+}
+
+.derechos-intro p {
+  margin: 0 0 8px;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.derechos-intro p:last-child {
+  margin-bottom: 0;
+}
+
+/* Alertas */
+.derechos-page .alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.derechos-page .alert-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.derechos-page .alert-success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.derechos-page .alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
+.derechos-page .alert ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+/* Grid de derechos */
+.derechos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.derecho-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.derecho-card--clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: #e67e22;
+}
+
+.derecho-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.derecho-card h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: #1e293b;
+}
+
+.derecho-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Casos frecuentes */
+.casos-comunes {
+  margin-top: 32px;
+}
+
+.casos-comunes h3 {
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.casos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.caso-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #334155;
+  font-size: 13px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.caso-card:hover {
+  border-color: #e67e22;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.caso-card span:first-child {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .casos-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Formulario header */
+.form-header {
+  margin-bottom: 20px;
+}
+
+.btn-volver {
+  display: inline-block;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.btn-volver:hover {
+  color: #e67e22;
+}
+
+.form-header-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.form-header-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.form-header-title h2 {
+  margin: 0 0 4px;
+  color: #1e293b;
+}
+
+.form-header-title p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Formulario */
+.form-derechos {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.form-derechos .form-group {
+  margin-bottom: 18px;
+}
+
+.form-derechos .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .form-derechos .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-derechos label {
+  display: block;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.form-derechos .required {
+  color: #dc2626;
+}
+
+.form-derechos input[type="text"],
+.form-derechos input[type="email"],
+.form-derechos input[type="tel"],
+.form-derechos select,
+.form-derechos textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1e293b;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.form-derechos input:focus,
+.form-derechos select:focus,
+.form-derechos textarea:focus {
+  outline: none;
+  border-color: #2e86c1;
+  box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.15);
+}
+
+.form-derechos textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.form-derechos .form-help {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.form-derechos .char-count {
+  text-align: right;
+}
+
+.form-derechos .checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.form-derechos .checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin-top: 3px;
+}
+
+.form-derechos .checkbox-group {
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.form-legal-notice {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.form-legal-notice p {
+  margin: 0;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.form-legal-notice a {
+  color: #b45309;
+  text-decoration: underline;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.form-derechos .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.form-derechos .btn-primary:hover {
+  background: #d35400;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+}
+
+.form-derechos .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: transparent;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.form-derechos .btn-secondary:hover {
+  border-color: #94a3b8;
+  color: #334155;
+}
+
+/* Información complementaria */
+.derechos-info {
+  margin-top: 40px;
+}
+
+.derechos-info h2 {
+  color: #1a1a2e;
+  margin-bottom: 12px;
+}
+
+.derechos-explicacion {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.derecho-explica {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.derecho-explica-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.derecho-explica h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.derecho-explica p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.derechos-legal-ref {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 20px;
+}
+
+.derechos-legal-ref p {
+  margin: 0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+.derechos-legal-ref a {
+  color: #2e86c1;
+}

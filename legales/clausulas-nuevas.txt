@@ -1,0 +1,141 @@
+============================================================
+TEXTOS LEGALES PARA AGREGAR A PÁGINAS EXISTENTES
+regalospurranque.cl — Parche Legal Febrero 2026
+============================================================
+Instrucciones: Copiar cada bloque en la página correspondiente.
+No reemplazar contenido existente; AGREGAR al final de la sección indicada.
+============================================================
+
+
+============================================================
+1. TÉRMINOS Y CONDICIONES — Agregar sección 6.1 (después de sección 6)
+============================================================
+
+## 6.1. Indemnización
+
+El comerciante registrado en la Plataforma se compromete a mantener indemne a Regalos Purranque, sus representantes y colaboradores, frente a cualquier reclamo, demanda, daño, pérdida o gasto (incluyendo honorarios legales razonables) derivado de:
+
+- La información publicada por el comerciante en su ficha (descripciones, fotos, precios, horarios, datos de contacto).
+- El incumplimiento por parte del comerciante de estos Términos y Condiciones o de la legislación vigente.
+- Cualquier vulneración de derechos de terceros derivada del contenido publicado por el comerciante.
+
+El comerciante declara que toda la información proporcionada es veraz y actualizada, y asume la responsabilidad exclusiva por su exactitud.
+
+
+============================================================
+2. TÉRMINOS Y CONDICIONES — Agregar sección 6.2 (después de 6.1)
+============================================================
+
+## 6.2. Licencia de Contenido
+
+Al subir contenido a la Plataforma (incluyendo fotografías, logotipos, descripciones y cualquier material gráfico o textual), el comerciante otorga a Regalos Purranque una licencia no exclusiva, gratuita, mundial y por tiempo indefinido para:
+
+- Mostrar dicho contenido en la Plataforma y sus canales asociados.
+- Utilizar dicho contenido con fines de promoción de la Plataforma (redes sociales, materiales institucionales, presentaciones a entidades públicas).
+- Adaptar el formato del contenido para diferentes dispositivos y medios.
+
+Esta licencia no implica transferencia de propiedad intelectual. El comerciante conserva todos los derechos sobre su contenido original y puede solicitar su eliminación en cualquier momento contactándonos en contacto@purranque.info.
+
+
+============================================================
+3. TÉRMINOS Y CONDICIONES — Agregar sección 2.1 (después de sección 2)
+============================================================
+
+## 2.1. Estado BETA
+
+La Plataforma se encuentra actualmente en etapa de validación territorial (BETA). Esto significa que:
+
+- Algunas funcionalidades pueden no estar completamente implementadas.
+- Pueden existir errores o interrupciones no previstos.
+- La disponibilidad del servicio no está garantizada al 100%.
+- Los datos y contenidos publicados durante la etapa BETA se conservarán al pasar a versión estable, salvo que se indique lo contrario.
+
+El uso de la Plataforma durante esta etapa implica la aceptación de estas condiciones.
+
+
+============================================================
+4. POLÍTICA DE PRIVACIDAD — Reemplazar sección 6 completa
+============================================================
+
+## 6. Derechos del Titular
+
+De acuerdo con la Ley 19.628, modificada por la Ley 21.719 sobre Protección de Datos Personales, y el Reglamento General de Protección de Datos (GDPR) para usuarios de la Unión Europea, usted tiene derecho a:
+
+- **Acceso:** Conocer qué datos personales tenemos sobre usted y cómo los utilizamos.
+- **Rectificación:** Solicitar la corrección de datos inexactos o incompletos.
+- **Cancelación (Supresión):** Solicitar la eliminación de sus datos personales cuando ya no sean necesarios para la finalidad para la cual fueron recopilados.
+- **Oposición:** Oponerse al tratamiento de sus datos para finalidades específicas.
+- **Portabilidad:** Recibir sus datos en un formato estructurado, de uso común y lectura mecánica.
+
+### Cómo ejercer tus derechos
+
+Puedes ejercer estos derechos de dos formas:
+
+1. **Formulario web:** Visita nuestra página de [Ejercicio de Derechos](/derechos) y completa el formulario con tu solicitud.
+2. **Correo electrónico:** Envía tu solicitud a [contacto@purranque.info](mailto:contacto@purranque.info) indicando:
+   - Tu nombre completo
+   - El derecho que deseas ejercer
+   - Una descripción de tu solicitud
+
+**Plazo de respuesta:** Nos comprometemos a responder tu solicitud dentro de **10 días hábiles** desde su recepción.
+
+**Registro:** Todas las solicitudes quedan registradas internamente para garantizar trazabilidad y cumplimiento normativo.
+
+
+============================================================
+5. POLÍTICA DE PRIVACIDAD — Agregar nueva sección 6.1
+============================================================
+
+## 6.1. Registro de Actividades de Tratamiento
+
+En cumplimiento de la Ley 21.719, mantenemos un registro interno de las actividades de tratamiento de datos personales que realizamos, que incluye:
+
+- Los tipos de datos personales tratados.
+- La finalidad de cada tratamiento.
+- La base legal que lo sustenta.
+- Los plazos de conservación aplicables.
+- Las medidas de seguridad implementadas.
+
+Este registro está disponible para consulta por parte de la autoridad de protección de datos competente.
+
+
+============================================================
+6. POLÍTICA DE PRIVACIDAD — Agregar nueva sección 12.1 (antes de Contacto)
+============================================================
+
+## 12.1. Delegado de Protección de Datos
+
+El responsable interno de la protección de datos personales en Regalos Purranque es:
+
+**Gustavo Sepúlveda Sánchez**
+Correo: contacto@purranque.info
+Ubicación: Purranque, Región de Los Lagos, Chile
+
+Puede dirigir cualquier consulta o solicitud relacionada con el tratamiento de sus datos personales a este contacto.
+
+
+============================================================
+7. FOOTER — Agregar enlace a /derechos en sección Legal
+============================================================
+
+Agregar en la sección "🛡 Legal" del footer, después de "Política de Contenidos":
+
+[Ejercicio de Derechos](/derechos)
+
+
+============================================================
+8. POLÍTICA DE PRIVACIDAD — Agregar referencia a Ley 21.719
+============================================================
+
+En la sección 1 (Responsable del Tratamiento), reemplazar:
+
+ACTUAL:
+"en conformidad con la Ley 19.628 sobre Protección de la Vida Privada."
+
+NUEVO:
+"en conformidad con la Ley 19.628 sobre Protección de la Vida Privada, modificada por la Ley 21.719 sobre Protección de Datos Personales."
+
+
+============================================================
+FIN DE TEXTOS LEGALES
+============================================================
