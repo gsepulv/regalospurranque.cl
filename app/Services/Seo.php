@@ -134,10 +134,8 @@ class Seo
         // Categoría principal como additionalType
         if (!empty($comercio['categorias'])) {
             foreach ($comercio['categorias'] as $cat) {
-                if (!empty($cat['es_principal']) || true) {
-                    $schema['additionalType'] = $cat['nombre'];
-                    break;
-                }
+                $schema['additionalType'] = $cat['nombre'];
+                if (!empty($cat['es_principal'])) break;
             }
         }
 

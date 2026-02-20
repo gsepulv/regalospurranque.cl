@@ -29,8 +29,8 @@ class CategoriaController extends Controller
         ];
 
         $this->render('public/categorias', [
-            'title'       => 'Categorias - ' . SITE_NAME,
-            'description' => 'Explora todas las categorias de comercios y servicios en Purranque',
+            'title'       => 'Categorías de Comercios en Purranque · ' . SITE_NAME,
+            'description' => 'Explora todas las categorías de comercios y servicios en Purranque, Chile. Gastronomía, flores, regalos y más.',
             'og_image'    => asset('img/og/categoria-default.jpg'),
             'categorias'  => $categorias,
             'breadcrumbs' => $breadcrumbs,
