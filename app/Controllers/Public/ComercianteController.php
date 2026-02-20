@@ -2,7 +2,12 @@
 namespace App\Controllers\Public;
 
 use App\Core\Controller;
-use App\Core\Database;
+use App\Models\AdminUsuario;
+use App\Models\CambioPendiente;
+use App\Models\Categoria;
+use App\Models\Comercio;
+use App\Models\FechaEspecial;
+use App\Models\PlanConfig;
 
 /**
  * Panel del Comerciante
@@ -54,10 +59,7 @@ class ComercianteController extends Controller
         }
 
         // Buscar usuario comerciante
-        $user = $this->db->fetch(
-            "SELECT * FROM admin_usuarios WHERE email = ? AND rol = 'comerciante'",
-            [$email]
-        );
+        $user = AdminUsuario::findByEmailAndRol($email, 'comerciante');
 
         if (!$user || !password_verify($password, $user['password_hash'])) {
             $_SESSION['flash_error'] = 'Credenciales incorrectas.';
@@ -81,7 +83,7 @@ class ComercianteController extends Controller
         ];
 
         // Actualizar último login
-        $this->db->update('admin_usuarios', ['last_login' => date('Y-m-d H:i:s')], 'id = ?', [$user['id']]);
+        AdminUsuario::updateById($user['id'], ['last_login' => date('Y-m-d H:i:s')]);
 
         header('Location: ' . url('/mi-comercio'));
         exit;
@@ -115,36 +117,18 @@ class ComercianteController extends Controller
         $uid = $_SESSION['comerciante']['id'];
 
         // Obtener comercio del usuario
-        $comercio = $this->db->fetch(
-            "SELECT c.*, 
-                    GROUP_CONCAT(DISTINCT cat.nombre SEPARATOR ', ') as categorias_nombres
-             FROM comercios c
-             LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
-             LEFT JOIN categorias cat ON cc.categoria_id = cat.id
-             WHERE c.registrado_por = ?
-             GROUP BY c.id
-             LIMIT 1",
-            [$uid]
-        );
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
 
         // Verificar si tiene cambios pendientes
         $pendientes = null;
         if ($comercio) {
-            $pendientes = $this->db->fetch(
-                "SELECT id, created_at FROM comercio_cambios_pendientes 
-                 WHERE comercio_id = ? AND estado = 'pendiente' 
-                 ORDER BY created_at DESC LIMIT 1",
-                [$comercio['id']]
-            );
+            $pendientes = CambioPendiente::getLatestPendiente($comercio['id']);
         }
 
         // Datos del plan
         $plan = null;
         if ($comercio) {
-            $plan = $this->db->fetch(
-                "SELECT * FROM planes_config WHERE slug = ?",
-                [$comercio['plan']]
-            );
+            $plan = PlanConfig::findBySlug($comercio['plan']);
         }
 
         $this->render('comerciante/dashboard', [
@@ -172,7 +156,7 @@ class ComercianteController extends Controller
         }
 
         $uid = $_SESSION['comerciante']['id'];
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE registrado_por = ? LIMIT 1", [$uid]);
+        $comercio = Comercio::findByRegistradoPor($uid);
 
         if (!$comercio) {
             $_SESSION['flash_error'] = 'No se encontró tu comercio.';
@@ -181,14 +165,11 @@ class ComercianteController extends Controller
         }
 
         // Categorías y fechas
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
         // Categorías actuales del comercio
-        $catActuales = $this->db->fetchAll(
-            "SELECT categoria_id, es_principal FROM comercio_categoria WHERE comercio_id = ?",
-            [$comercio['id']]
-        );
+        $catActuales = Comercio::getCategoriaIds($comercio['id']);
         $catIds = array_column($catActuales, 'categoria_id');
         $catPrincipal = 0;
         foreach ($catActuales as $ca) {
@@ -196,14 +177,11 @@ class ComercianteController extends Controller
         }
 
         // Fechas actuales
-        $fechaActuales = $this->db->fetchAll(
-            "SELECT fecha_id FROM comercio_fecha WHERE comercio_id = ?",
-            [$comercio['id']]
-        );
+        $fechaActuales = Comercio::getFechaIds($comercio['id']);
         $fechaIds = array_column($fechaActuales, 'fecha_id');
 
         // Plan actual para límites
-        $plan = $this->db->fetch("SELECT * FROM planes_config WHERE slug = ?", [$comercio['plan']]);
+        $plan = PlanConfig::findBySlug($comercio['plan']);
 
         // Determinar cuál red social tiene (para freemium con 1 sola)
         $redActual = ['tipo' => '', 'url' => ''];
@@ -241,7 +219,7 @@ class ComercianteController extends Controller
         }
 
         $uid = $_SESSION['comerciante']['id'];
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE registrado_por = ? LIMIT 1", [$uid]);
+        $comercio = Comercio::findByRegistradoPor($uid);
 
         if (!$comercio) {
             header('Location: ' . url('/mi-comercio'));
@@ -300,10 +278,8 @@ class ComercianteController extends Controller
 
         // Categorías
         $nuevasCats = array_map('intval', $_POST['categorias'] ?? []);
-        $actualesCats = array_map('intval', $this->db->fetchAll(
-            "SELECT categoria_id FROM comercio_categoria WHERE comercio_id = ?",
-            [$comercio['id']]
-        ) ? array_column($this->db->fetchAll("SELECT categoria_id FROM comercio_categoria WHERE comercio_id = ?", [$comercio['id']]), 'categoria_id') : []);
+        $catRows = Comercio::getCategoriaIds($comercio['id']);
+        $actualesCats = array_map('intval', array_column($catRows, 'categoria_id'));
         sort($nuevasCats);
         sort($actualesCats);
         if ($nuevasCats !== $actualesCats) {
@@ -316,10 +292,8 @@ class ComercianteController extends Controller
 
         // Fechas
         $nuevasFechas = array_map('intval', $_POST['fechas'] ?? []);
-        $actualesFechas = array_map('intval', $this->db->fetchAll(
-            "SELECT fecha_id FROM comercio_fecha WHERE comercio_id = ?",
-            [$comercio['id']]
-        ) ? array_column($this->db->fetchAll("SELECT fecha_id FROM comercio_fecha WHERE comercio_id = ?", [$comercio['id']]), 'fecha_id') : []);
+        $fechaRows = Comercio::getFechaIds($comercio['id']);
+        $actualesFechas = array_map('intval', array_column($fechaRows, 'fecha_id'));
         sort($nuevasFechas);
         sort($actualesFechas);
         if ($nuevasFechas !== $actualesFechas) {
@@ -333,7 +307,7 @@ class ComercianteController extends Controller
         }
 
         // Guardar cambios pendientes
-        $this->db->insert('comercio_cambios_pendientes', [
+        CambioPendiente::create([
             'comercio_id'  => $comercio['id'],
             'usuario_id'   => $uid,
             'cambios_json' => json_encode($cambios, JSON_UNESCAPED_UNICODE),
@@ -377,8 +351,8 @@ class ComercianteController extends Controller
     private function notificarCambios(int $comercioId, string $nombreComercio): void
     {
         try {
-            $admin = $this->db->fetch("SELECT email FROM admin_usuarios WHERE rol IN ('admin','superadmin') AND activo = 1 LIMIT 1");
-            if (!$admin) return;
+            $adminEmail = AdminUsuario::getFirstAdminEmail();
+            if (!$adminEmail) return;
 
             $asunto = "✏️ Cambios pendientes: {$nombreComercio}";
             $cuerpo  = "El comercio «{$nombreComercio}» ha enviado cambios para revisión.\n\n";
@@ -387,7 +361,7 @@ class ComercianteController extends Controller
             $headers  = "From: " . SITE_NAME . " <noreply@regalospurranque.cl>\r\n";
             $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-            mail($admin['email'], $asunto, $cuerpo, $headers);
+            mail($adminEmail, $asunto, $cuerpo, $headers);
         } catch (\Throwable $e) {}
     }
 }

@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\FechaEspecial;
 use App\Services\FileManager;
 
 /**
@@ -12,25 +13,9 @@ class FechaAdminController extends Controller
     public function index(): void
     {
         $tipo = $this->request->get('tipo', '');
+        $tipoFilter = in_array($tipo, ['personal', 'calendario', 'comercial'], true) ? $tipo : null;
 
-        $where = '1=1';
-        $params = [];
-        if (in_array($tipo, ['personal', 'calendario', 'comercial'], true)) {
-            $where .= ' AND fe.tipo = ?';
-            $params[] = $tipo;
-        }
-
-        $fechas = $this->db->fetchAll(
-            "SELECT fe.*,
-                    (SELECT COUNT(DISTINCT cf.comercio_id)
-                     FROM comercio_fecha cf
-                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
-                     WHERE cf.fecha_id = fe.id AND cf.activo = 1) as comercios_count
-             FROM fechas_especiales fe
-             WHERE {$where}
-             ORDER BY fe.tipo ASC, fe.nombre ASC",
-            $params
-        );
+        $fechas = FechaEspecial::getAdminFiltered($tipoFilter);
 
         $this->render('admin/fechas/index', [
             'title'     => 'Fechas Especiales — ' . SITE_NAME,
@@ -88,7 +73,7 @@ class FechaAdminController extends Controller
             $data['imagen'] = FileManager::subirImagen($imagen, 'fechas', 800);
         }
 
-        $id = $this->db->insert('fechas_especiales', $data);
+        $id = FechaEspecial::create($data);
         $this->log('fechas', 'crear', 'fecha', $id, "Fecha creada: {$data['nombre']}");
         $this->redirect('/admin/fechas', ['success' => 'Fecha especial creada correctamente']);
     }
@@ -96,7 +81,7 @@ class FechaAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $fecha = $this->db->fetch("SELECT * FROM fechas_especiales WHERE id = ?", [$id]);
+        $fecha = FechaEspecial::find($id);
         if (!$fecha) {
             $this->redirect('/admin/fechas', ['error' => 'Fecha no encontrada']);
             return;
@@ -111,7 +96,7 @@ class FechaAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $fecha = $this->db->fetch("SELECT * FROM fechas_especiales WHERE id = ?", [$id]);
+        $fecha = FechaEspecial::find($id);
         if (!$fecha) {
             $this->redirect('/admin/fechas', ['error' => 'Fecha no encontrada']);
             return;
@@ -160,7 +145,7 @@ class FechaAdminController extends Controller
             $data['imagen'] = FileManager::subirImagen($imagen, 'fechas', 800);
         }
 
-        $this->db->update('fechas_especiales', $data, 'id = ?', [$id]);
+        FechaEspecial::updateById($id, $data);
         $this->log('fechas', 'editar', 'fecha', $id, "Fecha editada: {$data['nombre']}");
         $this->redirect('/admin/fechas', ['success' => 'Fecha especial actualizada correctamente']);
     }
@@ -168,13 +153,13 @@ class FechaAdminController extends Controller
     public function delete(string $id): void
     {
         $id = (int) $id;
-        $fecha = $this->db->fetch("SELECT * FROM fechas_especiales WHERE id = ?", [$id]);
+        $fecha = FechaEspecial::find($id);
         if (!$fecha) {
             $this->redirect('/admin/fechas', ['error' => 'Fecha no encontrada']);
             return;
         }
 
-        $count = $this->db->count('comercio_fecha', 'fecha_id = ?', [$id]);
+        $count = FechaEspecial::countComerciosInFecha($id);
         if ($count > 0) {
             $this->redirect('/admin/fechas', ['error' => "No se puede eliminar: tiene {$count} comercio(s) vinculado(s)"]);
             return;
@@ -184,7 +169,7 @@ class FechaAdminController extends Controller
             FileManager::eliminarImagen('fechas', $fecha['imagen']);
         }
 
-        $this->db->delete('fechas_especiales', 'id = ?', [$id]);
+        FechaEspecial::deleteById($id);
         $this->log('fechas', 'eliminar', 'fecha', $id, "Fecha eliminada: {$fecha['nombre']}");
         $this->redirect('/admin/fechas', ['success' => 'Fecha especial eliminada correctamente']);
     }

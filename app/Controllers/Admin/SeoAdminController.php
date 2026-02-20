@@ -2,7 +2,9 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
-use App\Core\Database;
+use App\Models\Categoria;
+use App\Models\FechaEspecial;
+use App\Models\SeoRedirect;
 
 /**
  * Gestión de configuración SEO
@@ -31,9 +33,7 @@ class SeoAdminController extends Controller
                 break;
 
             case 'redirects':
-                $data['redirects'] = $this->db->fetchAll(
-                    "SELECT * FROM seo_redirects ORDER BY created_at DESC"
-                );
+                $data['redirects'] = SeoRedirect::getAll();
                 break;
 
             case 'sitemap':
@@ -67,11 +67,7 @@ class SeoAdminController extends Controller
 
         foreach ($keys as $key) {
             $value = trim($this->request->post($key, ''));
-            $this->db->execute(
-                "INSERT INTO seo_config (clave, valor) VALUES (?, ?)
-                 ON DUPLICATE KEY UPDATE valor = VALUES(valor)",
-                [$key, $value]
-            );
+            SeoRedirect::upsertConfig($key, $value);
         }
 
         $this->log('seo', 'config_update', 'seo_config', 0, 'Configuración SEO global actualizada');
@@ -102,11 +98,7 @@ class SeoAdminController extends Controller
         ];
 
         foreach ($fields as $clave => $valor) {
-            $this->db->execute(
-                "INSERT INTO seo_config (clave, valor) VALUES (?, ?)
-                 ON DUPLICATE KEY UPDATE valor = VALUES(valor)",
-                [$clave, $valor]
-            );
+            SeoRedirect::upsertConfig($clave, $valor);
         }
 
         $this->log('seo', 'metatags_update', 'seo_config', 0, "Meta tags actualizados para: {$page}");
@@ -127,11 +119,7 @@ class SeoAdminController extends Controller
 
         foreach ($keys as $key) {
             $value = trim($this->request->post($key, ''));
-            $this->db->execute(
-                "INSERT INTO seo_config (clave, valor) VALUES (?, ?)
-                 ON DUPLICATE KEY UPDATE valor = VALUES(valor)",
-                [$key, $value]
-            );
+            SeoRedirect::upsertConfig($key, $value);
         }
 
         $this->log('seo', 'schema_update', 'seo_config', 0, 'Configuración Schema.org actualizada');
@@ -157,17 +145,14 @@ class SeoAdminController extends Controller
         }
 
         // Verificar duplicado
-        $existing = $this->db->fetch(
-            "SELECT id FROM seo_redirects WHERE url_origen = ?",
-            [$urlOrigen]
-        );
+        $existing = SeoRedirect::findByUrlOrigen($urlOrigen);
 
         if ($existing) {
             $this->back(['error' => 'Ya existe una redirección para esa URL origen']);
             return;
         }
 
-        $this->db->insert('seo_redirects', [
+        SeoRedirect::create([
             'url_origen'  => $urlOrigen,
             'url_destino' => $urlDestino,
             'tipo'        => $tipo,
@@ -184,7 +169,7 @@ class SeoAdminController extends Controller
     public function deleteRedirect(string $id): void
     {
         $id = (int) $id;
-        $this->db->delete('seo_redirects', 'id = ?', [$id]);
+        SeoRedirect::deleteById($id);
         $this->log('seo', 'eliminar_redirect', 'seo_redirect', $id, "Redirect eliminado");
 
         $this->back(['success' => 'Redirección eliminada']);
@@ -196,13 +181,7 @@ class SeoAdminController extends Controller
     public function toggleRedirect(string $id): void
     {
         $id = (int) $id;
-        $redirect = $this->db->fetch("SELECT activo FROM seo_redirects WHERE id = ?", [$id]);
-
-        if ($redirect) {
-            $this->db->update('seo_redirects', [
-                'activo' => $redirect['activo'] ? 0 : 1
-            ], 'id = ?', [$id]);
-        }
+        SeoRedirect::toggleActive($id);
 
         $this->json(['ok' => true, 'csrf' => $_SESSION['csrf_token']]);
     }
@@ -298,7 +277,7 @@ class SeoAdminController extends Controller
             'canonical_base'         => SITE_URL,
         ];
 
-        $rows = $this->db->fetchAll("SELECT clave, valor FROM seo_config");
+        $rows = SeoRedirect::getConfig();
         $config = $defaults;
         foreach ($rows as $row) {
             if (array_key_exists($row['clave'], $config)) {
@@ -322,9 +301,7 @@ class SeoAdminController extends Controller
         ];
 
         // Cargar meta tags guardados desde seo_config
-        $rows = $this->db->fetchAll(
-            "SELECT clave, valor FROM seo_config WHERE clave LIKE 'page_%'"
-        );
+        $rows = SeoRedirect::getConfigPagesMeta();
         $savedMeta = [];
         foreach ($rows as $row) {
             $savedMeta[$row['clave']] = $row['valor'];
@@ -350,9 +327,7 @@ class SeoAdminController extends Controller
         }
 
         // Categorías activas
-        $categorias = $this->db->fetchAll(
-            "SELECT id, nombre, slug FROM categorias WHERE activo = 1 ORDER BY nombre"
-        );
+        $categorias = Categoria::getAll(true);
         foreach ($categorias as $cat) {
             $key = 'cat_' . $cat['id'];
             $title = $savedMeta["page_{$key}_title"] ?? '';
@@ -373,9 +348,7 @@ class SeoAdminController extends Controller
         }
 
         // Fechas especiales activas
-        $fechas = $this->db->fetchAll(
-            "SELECT id, nombre, slug FROM fechas_especiales WHERE activo = 1 ORDER BY nombre"
-        );
+        $fechas = FechaEspecial::getAll(true);
         foreach ($fechas as $f) {
             $key = 'fecha_' . $f['id'];
             $title = $savedMeta["page_{$key}_title"] ?? '';
@@ -454,9 +427,7 @@ class SeoAdminController extends Controller
             'schema_twitter'     => '',
         ];
 
-        $rows = $this->db->fetchAll(
-            "SELECT clave, valor FROM seo_config WHERE clave LIKE 'schema_%'"
-        );
+        $rows = SeoRedirect::getConfigSchema();
 
         $config = $defaults;
         foreach ($rows as $row) {

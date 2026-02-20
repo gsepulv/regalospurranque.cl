@@ -38,6 +38,53 @@ class Categoria
         );
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // CRUD y helpers admin
+    // ══════════════════════════════════════════════════════════════
+
+    public static function find(int $id): ?array
+    {
+        return Database::getInstance()->fetch("SELECT * FROM categorias WHERE id = ?", [$id]);
+    }
+
+    public static function create(array $data): int
+    {
+        return Database::getInstance()->insert('categorias', $data);
+    }
+
+    public static function updateById(int $id, array $data): int
+    {
+        return Database::getInstance()->update('categorias', $data, 'id = ?', [$id]);
+    }
+
+    public static function deleteById(int $id): int
+    {
+        return Database::getInstance()->delete('categorias', 'id = ?', [$id]);
+    }
+
+    public static function getActiveForSelect(): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden ASC, nombre ASC"
+        );
+    }
+
+    public static function getMaxOrden(): int
+    {
+        $r = Database::getInstance()->fetch("SELECT MAX(orden) as m FROM categorias");
+        return (int) ($r['m'] ?? 0);
+    }
+
+    public static function countActive(): int
+    {
+        return Database::getInstance()->count('categorias', 'activo = 1');
+    }
+
+    public static function countComerciosInCategoria(int $categoriaId): int
+    {
+        return Database::getInstance()->count('comercio_categoria', 'categoria_id = ?', [$categoriaId]);
+    }
+
     /**
      * Categorias con conteo de comercios activos
      */

@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\AdminLog;
 
 /**
  * Gestión del log de actividad del panel admin
@@ -58,68 +59,32 @@ class LogsController extends Controller
         $whereSql = implode(' AND ', $where);
 
         // --- Contar total ---
-        $totalResult = $this->db->fetch(
-            "SELECT COUNT(*) as total FROM admin_log WHERE {$whereSql}",
-            $params
-        );
-        $total      = (int) ($totalResult['total'] ?? 0);
+        $total      = AdminLog::countFiltered($whereSql, $params);
         $totalPages = max(1, (int) ceil($total / self::PER_PAGE));
         $pagina     = min($pagina, $totalPages);
         $offset     = ($pagina - 1) * self::PER_PAGE;
 
         // --- Registros paginados ---
-        $logs = $this->db->fetchAll(
-            "SELECT * FROM admin_log WHERE {$whereSql} ORDER BY created_at DESC LIMIT " . self::PER_PAGE . " OFFSET {$offset}",
-            $params
-        );
+        $logs = AdminLog::getFiltered($whereSql, $params, self::PER_PAGE, $offset);
 
         // --- Estadísticas generales ---
-        $totalRecords = $this->db->fetch("SELECT COUNT(*) as total FROM admin_log");
-        $totalRecords = (int) ($totalRecords['total'] ?? 0);
+        $totalRecords = AdminLog::countAll();
 
         // Top 5 acciones
-        $topAcciones = $this->db->fetchAll(
-            "SELECT accion, COUNT(*) as total
-             FROM admin_log
-             GROUP BY accion
-             ORDER BY total DESC
-             LIMIT 5"
-        );
+        $topAcciones = AdminLog::getTopAcciones();
 
         // Top 5 usuarios
-        $topUsuarios = $this->db->fetchAll(
-            "SELECT usuario_nombre, COUNT(*) as total
-             FROM admin_log
-             GROUP BY usuario_nombre
-             ORDER BY total DESC
-             LIMIT 5"
-        );
+        $topUsuarios = AdminLog::getTopUsuarios();
 
         // Top 5 módulos
-        $topModulos = $this->db->fetchAll(
-            "SELECT modulo, COUNT(*) as total
-             FROM admin_log
-             GROUP BY modulo
-             ORDER BY total DESC
-             LIMIT 5"
-        );
+        $topModulos = AdminLog::getTopModulos();
 
         // Actividad últimos 30 días
-        $actividad30d = $this->db->fetchAll(
-            "SELECT DATE(created_at) as fecha, COUNT(*) as total
-             FROM admin_log
-             WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
-             GROUP BY DATE(created_at)
-             ORDER BY fecha"
-        );
+        $actividad30d = AdminLog::getActividad30Dias();
 
         // Dropdowns de filtros: usuarios y módulos distintos
-        $usuarios = $this->db->fetchAll(
-            "SELECT DISTINCT usuario_nombre FROM admin_log ORDER BY usuario_nombre"
-        );
-        $modulos = $this->db->fetchAll(
-            "SELECT DISTINCT modulo FROM admin_log ORDER BY modulo"
-        );
+        $usuarios = AdminLog::getDistinctUsuarios();
+        $modulos  = AdminLog::getDistinctModulos();
 
         $this->render('admin/mantenimiento/logs', [
             'title'        => 'Logs de Actividad — ' . SITE_NAME,
@@ -155,7 +120,7 @@ class LogsController extends Controller
     public function show(string $id): void
     {
         $id  = (int) $id;
-        $log = $this->db->fetch("SELECT * FROM admin_log WHERE id = ?", [$id]);
+        $log = AdminLog::find($id);
 
         if (!$log) {
             $this->redirect('/admin/mantenimiento/logs', [
@@ -215,11 +180,7 @@ class LogsController extends Controller
 
         $whereSql = implode(' AND ', $where);
 
-        $logs = $this->db->fetchAll(
-            "SELECT created_at, usuario_nombre, modulo, accion, entidad_tipo, entidad_id, detalle, ip
-             FROM admin_log WHERE {$whereSql} ORDER BY created_at DESC",
-            $params
-        );
+        $logs = AdminLog::getForExport($whereSql, $params);
 
         $filename = 'logs_' . date('Y-m-d_His') . '.csv';
 
@@ -262,17 +223,10 @@ class LogsController extends Controller
         $dias = max(1, (int) $this->request->post('dias', 90));
 
         // Contar registros a eliminar
-        $countResult = $this->db->fetch(
-            "SELECT COUNT(*) as total FROM admin_log WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)",
-            [$dias]
-        );
-        $count = (int) ($countResult['total'] ?? 0);
+        $count = AdminLog::countOlderThan($dias);
 
         // Eliminar
-        $this->db->execute(
-            "DELETE FROM admin_log WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)",
-            [$dias]
-        );
+        AdminLog::deleteOlderThan($dias);
 
         // Registrar la limpieza
         $this->log('mantenimiento', 'limpiar_logs', 'admin_log', 0, "Eliminados {$count} registros anteriores a {$dias} días");

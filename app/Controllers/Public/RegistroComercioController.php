@@ -2,6 +2,10 @@
 namespace App\Controllers\Public;
 
 use App\Core\Controller;
+use App\Models\AdminUsuario;
+use App\Models\Categoria;
+use App\Models\Comercio;
+use App\Models\FechaEspecial;
 
 /**
  * Registro público de comercios (Plan Freemium)
@@ -49,7 +53,7 @@ class RegistroComercioController extends Controller
         if ($password !== $password2) $errores[] = 'Las contraseñas no coinciden.';
 
         if (empty($errores)) {
-            $existe = $this->db->fetch("SELECT id FROM admin_usuarios WHERE email = ?", [$email]);
+            $existe = AdminUsuario::findByEmail($email);
             if ($existe) {
                 $errores[] = 'Ya existe una cuenta con este email.';
             }
@@ -62,7 +66,7 @@ class RegistroComercioController extends Controller
             exit;
         }
 
-        $userId = $this->db->insert('admin_usuarios', [
+        $userId = AdminUsuario::create([
             'nombre'        => $nombre,
             'email'         => $email,
             'telefono'      => $telefono,
@@ -88,7 +92,7 @@ class RegistroComercioController extends Controller
         }
 
         $uid = $_SESSION['registro_uid'];
-        $yaRegistro = $this->db->fetch("SELECT id FROM comercios WHERE registrado_por = ?", [$uid]);
+        $yaRegistro = Comercio::findByRegistradoPor($uid);
         if ($yaRegistro) {
             $this->render('public/registro-comercio/ya-registrado', [
                 'title' => 'Comercio ya registrado — ' . SITE_NAME,
@@ -97,8 +101,8 @@ class RegistroComercioController extends Controller
             return;
         }
 
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
         $this->render('public/registro-comercio/datos', [
             'title'         => 'Datos de tu comercio — ' . SITE_NAME,
@@ -152,7 +156,7 @@ class RegistroComercioController extends Controller
             $redes[$redTipo] = $redUrl;
         }
 
-        $comercioId = $this->db->insert('comercios', [
+        $comercioId = Comercio::create([
             'nombre'         => $nombre,
             'slug'           => $slug,
             'descripcion'    => trim($_POST['descripcion'] ?? ''),
@@ -180,28 +184,15 @@ class RegistroComercioController extends Controller
         ]);
 
         // Categorías
-        foreach ($_POST['categorias'] ?? [] as $catId) {
-            $catId = (int)$catId;
-            if ($catId <= 0) continue;
-            $this->db->insert('comercio_categoria', [
-                'comercio_id'  => $comercioId,
-                'categoria_id' => $catId,
-                'es_principal' => ($catId === (int)($_POST['categoria_principal'] ?? 0)) ? 1 : 0,
-            ]);
-        }
+        $catIds = array_filter(array_map('intval', $_POST['categorias'] ?? []), fn($id) => $id > 0);
+        $principal = (int)($_POST['categoria_principal'] ?? 0);
+        Comercio::syncCategorias($comercioId, $catIds, $principal);
 
         // Fechas especiales
-        foreach ($_POST['fechas'] ?? [] as $fId) {
-            $fId = (int)$fId;
-            if ($fId <= 0) continue;
-            $this->db->insert('comercio_fecha', [
-                'comercio_id' => $comercioId,
-                'fecha_id'    => $fId,
-                'activo'      => 1,
-            ]);
-        }
+        $fechaIds = array_filter(array_map('intval', $_POST['fechas'] ?? []), fn($id) => $id > 0);
+        Comercio::syncFechas($comercioId, $fechaIds);
 
-        \App\Models\Comercio::recalcularCalidad($comercioId);
+        Comercio::recalcularCalidad($comercioId);
 
         // Notificar admin
         $this->notificarAdmin($comercioId, $nombre);
@@ -257,8 +248,8 @@ class RegistroComercioController extends Controller
     private function notificarAdmin(int $comercioId, string $nombreComercio): void
     {
         try {
-            $admin = $this->db->fetch("SELECT email FROM admin_usuarios WHERE rol IN ('admin','superadmin') AND activo = 1 LIMIT 1");
-            if (!$admin) return;
+            $adminEmail = AdminUsuario::getFirstAdminEmail();
+            if (!$adminEmail) return;
 
             $asunto = "🏪 Nuevo comercio registrado: {$nombreComercio}";
             $cuerpo  = "Se ha registrado un nuevo comercio en " . SITE_NAME . ".\n\n";
@@ -270,7 +261,7 @@ class RegistroComercioController extends Controller
             $headers  = "From: " . SITE_NAME . " <noreply@regalospurranque.cl>\r\n";
             $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 
-            mail($admin['email'], $asunto, $cuerpo, $headers);
+            mail($adminEmail, $asunto, $cuerpo, $headers);
         } catch (\Throwable $e) {}
     }
 }

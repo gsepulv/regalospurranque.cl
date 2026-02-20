@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Configuracion;
 
 /**
  * Gestión de configuración general del sitio
@@ -56,7 +57,7 @@ class ConfigController extends Controller
     public function index(): void
     {
         // Cargar toda la configuración desde BD
-        $rows    = $this->db->fetchAll("SELECT clave, valor, grupo FROM configuracion");
+        $rows    = Configuracion::getAll();
         $dbConfig = [];
         foreach ($rows as $row) {
             $dbConfig[$row['clave']] = $row['valor'];
@@ -106,11 +107,7 @@ class ConfigController extends Controller
                     $valor = trim($this->request->post($clave, $default));
                 }
 
-                $this->db->execute(
-                    "INSERT INTO configuracion (clave, valor, grupo) VALUES (?, ?, ?)
-                     ON DUPLICATE KEY UPDATE valor = VALUES(valor)",
-                    [$clave, $valor, $grupo]
-                );
+                Configuracion::upsert($clave, $valor, $grupo);
             }
         }
 

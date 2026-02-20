@@ -2,6 +2,8 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\CambioPendiente;
+use App\Models\Comercio;
 
 /**
  * Gestión de cambios pendientes de comerciantes
@@ -16,30 +18,14 @@ class CambiosPendientesController extends Controller
     {
         $estado = $this->request->get('estado', 'pendiente');
 
-        $where = '1=1';
-        $params = [];
-        if (in_array($estado, ['pendiente', 'aprobado', 'rechazado'])) {
-            $where .= ' AND cp.estado = ?';
-            $params[] = $estado;
-        }
-
-        $cambios = $this->db->fetchAll(
-            "SELECT cp.*, c.nombre as comercio_nombre, c.slug as comercio_slug,
-                    u.nombre as usuario_nombre, u.email as usuario_email
-             FROM comercio_cambios_pendientes cp
-             JOIN comercios c ON cp.comercio_id = c.id
-             JOIN admin_usuarios u ON cp.usuario_id = u.id
-             WHERE {$where}
-             ORDER BY cp.created_at DESC
-             LIMIT 50",
-            $params
-        );
+        $filtroEstado = in_array($estado, ['pendiente', 'aprobado', 'rechazado']) ? $estado : null;
+        $cambios = CambioPendiente::getFiltered($filtroEstado);
 
         // Contar por estado
         $conteos = [
-            'pendiente' => $this->db->fetch("SELECT COUNT(*) as n FROM comercio_cambios_pendientes WHERE estado = 'pendiente'")['n'] ?? 0,
-            'aprobado'  => $this->db->fetch("SELECT COUNT(*) as n FROM comercio_cambios_pendientes WHERE estado = 'aprobado'")['n'] ?? 0,
-            'rechazado' => $this->db->fetch("SELECT COUNT(*) as n FROM comercio_cambios_pendientes WHERE estado = 'rechazado'")['n'] ?? 0,
+            'pendiente' => CambioPendiente::countByEstado('pendiente'),
+            'aprobado'  => CambioPendiente::countByEstado('aprobado'),
+            'rechazado' => CambioPendiente::countByEstado('rechazado'),
         ];
 
         $this->render('admin/cambios-pendientes/index', [
@@ -56,15 +42,7 @@ class CambiosPendientesController extends Controller
     public function show(string $id): void
     {
         $id = (int)$id;
-        $cambio = $this->db->fetch(
-            "SELECT cp.*, c.nombre as comercio_nombre, c.id as comercio_id,
-                    u.nombre as usuario_nombre, u.email as usuario_email
-             FROM comercio_cambios_pendientes cp
-             JOIN comercios c ON cp.comercio_id = c.id
-             JOIN admin_usuarios u ON cp.usuario_id = u.id
-             WHERE cp.id = ?",
-            [$id]
-        );
+        $cambio = CambioPendiente::find($id);
 
         if (!$cambio) {
             $this->redirect('/admin/cambios-pendientes', ['error' => 'Cambio no encontrado']);
@@ -72,7 +50,7 @@ class CambiosPendientesController extends Controller
         }
 
         // Datos actuales del comercio para comparar
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [$cambio['comercio_id']]);
+        $comercio = Comercio::find($cambio['comercio_id']);
 
         // Decodificar JSON de cambios
         $cambiosData = json_decode($cambio['cambios_json'], true) ?: [];
@@ -104,7 +82,7 @@ class CambiosPendientesController extends Controller
     public function aprobar(string $id): void
     {
         $id = (int)$id;
-        $cambio = $this->db->fetch("SELECT * FROM comercio_cambios_pendientes WHERE id = ? AND estado = 'pendiente'", [$id]);
+        $cambio = CambioPendiente::getPendiente($id);
 
         if (!$cambio) {
             $this->redirect('/admin/cambios-pendientes', ['error' => 'Cambio no encontrado o ya procesado']);
@@ -131,44 +109,30 @@ class CambiosPendientesController extends Controller
             if (isset($update['nombre'])) {
                 $update['slug'] = $this->generarSlug($update['nombre'], $comercioId);
             }
-            $this->db->update('comercios', $update, 'id = ?', [$comercioId]);
+            Comercio::updateById($comercioId, $update);
         }
 
         // Aplicar categorías
         if (isset($cambiosData['categorias'])) {
-            $this->db->delete('comercio_categoria', 'comercio_id = ?', [$comercioId]);
-            $principal = $cambiosData['categorias']['principal'] ?? 0;
-            foreach ($cambiosData['categorias']['nuevo'] as $catId) {
-                $this->db->insert('comercio_categoria', [
-                    'comercio_id'  => $comercioId,
-                    'categoria_id' => (int)$catId,
-                    'es_principal' => ((int)$catId === (int)$principal) ? 1 : 0,
-                ]);
-            }
+            $principal = $cambiosData['categorias']['principal'] ?? null;
+            Comercio::syncCategorias($comercioId, $cambiosData['categorias']['nuevo'], $principal ? (int)$principal : null);
         }
 
         // Aplicar fechas
         if (isset($cambiosData['fechas'])) {
-            $this->db->delete('comercio_fecha', 'comercio_id = ?', [$comercioId]);
-            foreach ($cambiosData['fechas']['nuevo'] as $fId) {
-                $this->db->insert('comercio_fecha', [
-                    'comercio_id' => $comercioId,
-                    'fecha_id'    => (int)$fId,
-                    'activo'      => 1,
-                ]);
-            }
+            Comercio::syncFechas($comercioId, $cambiosData['fechas']['nuevo']);
         }
 
-        \App\Models\Comercio::recalcularCalidad($comercioId);
+        Comercio::recalcularCalidad($comercioId);
 
         // Marcar como aprobado
         $notas = trim($_POST['notas'] ?? '');
-        $this->db->update('comercio_cambios_pendientes', [
+        CambioPendiente::updateById($id, [
             'estado'      => 'aprobado',
             'notas'       => $notas,
             'revisado_por' => \App\Services\Auth::id(),
             'revisado_at'  => date('Y-m-d H:i:s'),
-        ], 'id = ?', [$id]);
+        ]);
 
         $this->log('cambios', 'aprobar', 'comercio', $comercioId, "Cambios aprobados para comercio ID {$comercioId}");
         $this->redirect('/admin/cambios-pendientes', ['success' => 'Cambios aprobados y aplicados correctamente']);
@@ -180,7 +144,7 @@ class CambiosPendientesController extends Controller
     public function rechazar(string $id): void
     {
         $id = (int)$id;
-        $cambio = $this->db->fetch("SELECT * FROM comercio_cambios_pendientes WHERE id = ? AND estado = 'pendiente'", [$id]);
+        $cambio = CambioPendiente::getPendiente($id);
 
         if (!$cambio) {
             $this->redirect('/admin/cambios-pendientes', ['error' => 'Cambio no encontrado o ya procesado']);
@@ -189,12 +153,12 @@ class CambiosPendientesController extends Controller
 
         $notas = trim($_POST['notas'] ?? '');
 
-        $this->db->update('comercio_cambios_pendientes', [
+        CambioPendiente::updateById($id, [
             'estado'      => 'rechazado',
             'notas'       => $notas,
             'revisado_por' => \App\Services\Auth::id(),
             'revisado_at'  => date('Y-m-d H:i:s'),
-        ], 'id = ?', [$id]);
+        ]);
 
         $this->log('cambios', 'rechazar', 'comercio', $cambio['comercio_id'], "Cambios rechazados para comercio ID {$cambio['comercio_id']}");
         $this->redirect('/admin/cambios-pendientes', ['success' => 'Cambios rechazados']);

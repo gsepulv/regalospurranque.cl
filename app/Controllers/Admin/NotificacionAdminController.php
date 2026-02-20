@@ -2,6 +2,8 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Configuracion;
+use App\Models\NotificacionLog;
 use App\Services\Notification;
 
 /**
@@ -55,20 +57,7 @@ class NotificacionAdminController extends Controller
                 $value = isset($_POST[$key]) ? '1' : '0';
             }
 
-            $exists = $this->db->fetch(
-                "SELECT clave FROM configuracion WHERE clave = ?",
-                [$key]
-            );
-
-            if ($exists) {
-                $this->db->update('configuracion', ['valor' => $value], 'clave = ?', [$key]);
-            } else {
-                $this->db->insert('configuracion', [
-                    'clave' => $key,
-                    'valor' => $value,
-                    'grupo' => 'notificaciones',
-                ]);
-            }
+            Configuracion::upsert($key, $value, 'notificaciones');
         }
 
         $this->log('notificaciones', 'configurar', 'configuracion', 0, 'Configuración de notificaciones actualizada');
@@ -114,28 +103,19 @@ class NotificacionAdminController extends Controller
             $params[] = $estado;
         }
 
-        $total = $this->db->fetch(
-            "SELECT COUNT(*) as total FROM notificaciones_log WHERE {$where}",
-            $params
-        )['total'] ?? 0;
+        $total = NotificacionLog::countFiltered($where, $params);
 
         $totalPages = max(1, (int) ceil($total / $limit));
         $page       = min($page, $totalPages);
         $offset     = ($page - 1) * $limit;
 
-        $logs = $this->db->fetchAll(
-            "SELECT * FROM notificaciones_log
-             WHERE {$where}
-             ORDER BY created_at DESC
-             LIMIT {$limit} OFFSET {$offset}",
-            $params
-        );
+        $logs = NotificacionLog::getFiltered($where, $params, $limit, $offset);
 
         // Estadísticas
         $stats = [
-            'total'   => $this->db->count('notificaciones_log'),
-            'enviado' => $this->db->count('notificaciones_log', "estado = 'enviado'"),
-            'fallido' => $this->db->count('notificaciones_log', "estado = 'fallido'"),
+            'total'   => NotificacionLog::countAll(),
+            'enviado' => NotificacionLog::countByEstado('enviado'),
+            'fallido' => NotificacionLog::countByEstado('fallido'),
         ];
 
         $this->render('admin/notificaciones/log', [
@@ -156,10 +136,7 @@ class NotificacionAdminController extends Controller
     {
         $dias = max(7, (int) $this->request->post('dias', 30));
 
-        $deleted = $this->db->execute(
-            "DELETE FROM notificaciones_log WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)",
-            [$dias]
-        );
+        $deleted = NotificacionLog::deleteOlderThan($dias);
 
         $this->log('notificaciones', 'limpiar_log', 'notificacion', 0, "{$deleted} registros eliminados (>{$dias} días)");
         $this->back(['success' => "{$deleted} registros eliminados del log"]);
@@ -170,9 +147,7 @@ class NotificacionAdminController extends Controller
      */
     private function getNotifConfig(): array
     {
-        $rows = $this->db->fetchAll(
-            "SELECT clave, valor FROM configuracion WHERE grupo = 'notificaciones'"
-        );
+        $rows = Configuracion::getByGroup('notificaciones');
 
         $config = [];
         foreach ($rows as $row) {

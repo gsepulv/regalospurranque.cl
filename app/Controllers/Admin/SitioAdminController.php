@@ -2,6 +2,8 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\AdminUsuario;
+use App\Models\Sitio;
 use App\Services\FileManager;
 
 /**
@@ -14,14 +16,14 @@ class SitioAdminController extends Controller
      */
     public function index(): void
     {
-        $sitios = $this->db->fetchAll("SELECT * FROM sitios ORDER BY id ASC");
+        $sitios = Sitio::getAll();
 
         // Estadísticas por sitio
         foreach ($sitios as &$sitio) {
             $sid = (int) $sitio['id'];
-            $sitio['total_comercios'] = $this->db->count('comercios', 'site_id = ?', [$sid]);
-            $sitio['total_categorias'] = $this->db->count('categorias', 'site_id = ?', [$sid]);
-            $sitio['total_usuarios'] = $this->db->count('admin_usuarios', 'site_id = ?', [$sid]);
+            $sitio['total_comercios'] = Sitio::countComerciosBySite($sid);
+            $sitio['total_categorias'] = Sitio::countCategoriasBySite($sid);
+            $sitio['total_usuarios'] = AdminUsuario::countBySite($sid);
         }
         unset($sitio);
 
@@ -80,7 +82,7 @@ class SitioAdminController extends Controller
             $data['logo'] = FileManager::subirImagen($logo, 'config', 400);
         }
 
-        $id = $this->db->insert('sitios', $data);
+        $id = Sitio::create($data);
         $this->log('sitios', 'crear', 'sitio', $id, "Sitio creado: {$data['nombre']}");
         $this->redirect('/admin/sitios', ['success' => 'Sitio creado correctamente']);
     }
@@ -91,7 +93,7 @@ class SitioAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $sitio = $this->db->fetch("SELECT * FROM sitios WHERE id = ?", [$id]);
+        $sitio = Sitio::find($id);
 
         if (!$sitio) {
             $this->redirect('/admin/sitios', ['error' => 'Sitio no encontrado']);
@@ -110,7 +112,7 @@ class SitioAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $sitio = $this->db->fetch("SELECT * FROM sitios WHERE id = ?", [$id]);
+        $sitio = Sitio::find($id);
 
         if (!$sitio) {
             $this->redirect('/admin/sitios', ['error' => 'Sitio no encontrado']);
@@ -153,7 +155,7 @@ class SitioAdminController extends Controller
             $data['logo'] = FileManager::subirImagen($logo, 'config', 400);
         }
 
-        $this->db->update('sitios', $data, 'id = ?', [$id]);
+        Sitio::updateById($id, $data);
         $this->log('sitios', 'editar', 'sitio', $id, "Sitio editado: {$data['nombre']}");
         $this->redirect('/admin/sitios', ['success' => 'Sitio actualizado correctamente']);
     }
@@ -171,14 +173,14 @@ class SitioAdminController extends Controller
             return;
         }
 
-        $sitio = $this->db->fetch("SELECT id, nombre, activo FROM sitios WHERE id = ?", [$id]);
+        $sitio = Sitio::find($id);
         if (!$sitio) {
             $this->json(['ok' => false, 'error' => 'No encontrado'], 404);
             return;
         }
 
         $newState = $sitio['activo'] ? 0 : 1;
-        $this->db->update('sitios', ['activo' => $newState], 'id = ?', [$id]);
+        Sitio::updateById($id, ['activo' => $newState]);
 
         $accion = $newState ? 'activar' : 'desactivar';
         $this->log('sitios', $accion, 'sitio', $id, $sitio['nombre']);
@@ -192,8 +194,8 @@ class SitioAdminController extends Controller
     {
         $siteId = (int) $this->request->post('site_id', 0);
 
-        $sitio = $this->db->fetch("SELECT id, nombre FROM sitios WHERE id = ? AND activo = 1", [$siteId]);
-        if (!$sitio) {
+        $sitio = Sitio::find($siteId);
+        if (!$sitio || !$sitio['activo']) {
             $this->back(['error' => 'Sitio no encontrado']);
             return;
         }

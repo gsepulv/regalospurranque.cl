@@ -2,6 +2,7 @@
 namespace App\Controllers\Public;
 
 use App\Core\Controller;
+use App\Models\MensajeContacto;
 use App\Services\Captcha;
 use App\Services\Notification;
 
@@ -49,7 +50,7 @@ class ContactoController extends Controller
         $data = $validator->validated();
 
         // Guardar mensaje en BD
-        $this->db->insert('mensajes_contacto', [
+        MensajeContacto::create([
             'nombre'  => $data['nombre'],
             'email'   => $data['email'],
             'asunto'  => $data['asunto'],

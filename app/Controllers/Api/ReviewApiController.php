@@ -2,6 +2,7 @@
 namespace App\Controllers\Api;
 
 use App\Core\Controller;
+use App\Models\Comercio;
 use App\Models\Resena;
 use App\Services\Captcha;
 use App\Services\Notification;
@@ -57,13 +58,10 @@ class ReviewApiController extends Controller
             return;
         }
 
-        // Verificar que el comercio existe
-        $comercio = $this->db->fetch(
-            "SELECT id FROM comercios WHERE id = ? AND activo = 1",
-            [(int) $data['comercio_id']]
-        );
+        // Verificar que el comercio existe y está activo
+        $comercio = Comercio::find((int) $data['comercio_id']);
 
-        if (!$comercio) {
+        if (!$comercio || !$comercio['activo']) {
             $this->json(['error' => 'Comercio no encontrado'], 404);
             return;
         }
@@ -111,7 +109,7 @@ class ReviewApiController extends Controller
         $id = Resena::crear($validated);
 
         // Notificar a admins
-        $comercioData = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [(int)$data['comercio_id']]);
+        $comercioData = Comercio::find((int) $data['comercio_id']);
         if ($comercioData) {
             Notification::nuevaResena(
                 array_merge($validated, ['id' => $id]),
@@ -173,10 +171,7 @@ class ReviewApiController extends Controller
         }
 
         // Verificar que la resena existe
-        $resena = $this->db->fetch(
-            "SELECT id FROM resenas WHERE id = ?",
-            [(int) $data['resena_id']]
-        );
+        $resena = Resena::getById((int) $data['resena_id']);
 
         if (!$resena) {
             $this->json(['error' => 'Reseña no encontrada'], 404);
@@ -192,7 +187,7 @@ class ReviewApiController extends Controller
         Resena::reportar((int) $data['resena_id'], $reporteData);
 
         // Notificar a admins
-        $resenaFull = $this->db->fetch("SELECT * FROM resenas WHERE id = ?", [(int)$data['resena_id']]);
+        $resenaFull = Resena::getById((int) $data['resena_id']);
         if ($resenaFull) {
             Notification::resenaReportada($resenaFull, $reporteData);
         }

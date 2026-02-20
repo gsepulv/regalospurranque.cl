@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Categoria;
 use App\Services\FileManager;
 
 /**
@@ -11,15 +12,7 @@ class CategoriaAdminController extends Controller
 {
     public function index(): void
     {
-        $categorias = $this->db->fetchAll(
-            "SELECT cat.*,
-                    (SELECT COUNT(DISTINCT cc.comercio_id)
-                     FROM comercio_categoria cc
-                     INNER JOIN comercios c ON cc.comercio_id = c.id AND c.activo = 1
-                     WHERE cc.categoria_id = cat.id) as comercios_count
-             FROM categorias cat
-             ORDER BY cat.orden ASC, cat.nombre ASC"
-        );
+        $categorias = Categoria::getWithComerciosCount();
 
         $this->render('admin/categorias/index', [
             'title'      => 'Categorías — ' . SITE_NAME,
@@ -29,7 +22,7 @@ class CategoriaAdminController extends Controller
 
     public function create(): void
     {
-        $maxOrden = $this->db->fetch("SELECT MAX(orden) as m FROM categorias")['m'] ?? 0;
+        $maxOrden = Categoria::getMaxOrden();
 
         $this->render('admin/categorias/form', [
             'title'    => 'Nueva Categoría — ' . SITE_NAME,
@@ -65,7 +58,7 @@ class CategoriaAdminController extends Controller
             $data['imagen'] = FileManager::subirImagen($imagen, 'categorias', 800);
         }
 
-        $id = $this->db->insert('categorias', $data);
+        $id = Categoria::create($data);
         $this->log('categorias', 'crear', 'categoria', $id, "Categoría creada: {$data['nombre']}");
         $this->redirect('/admin/categorias', ['success' => 'Categoría creada correctamente']);
     }
@@ -73,7 +66,7 @@ class CategoriaAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $categoria = $this->db->fetch("SELECT * FROM categorias WHERE id = ?", [$id]);
+        $categoria = Categoria::find($id);
         if (!$categoria) {
             $this->redirect('/admin/categorias', ['error' => 'Categoría no encontrada']);
             return;
@@ -88,7 +81,7 @@ class CategoriaAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $categoria = $this->db->fetch("SELECT * FROM categorias WHERE id = ?", [$id]);
+        $categoria = Categoria::find($id);
         if (!$categoria) {
             $this->redirect('/admin/categorias', ['error' => 'Categoría no encontrada']);
             return;
@@ -123,7 +116,7 @@ class CategoriaAdminController extends Controller
             $data['imagen'] = FileManager::subirImagen($imagen, 'categorias', 800);
         }
 
-        $this->db->update('categorias', $data, 'id = ?', [$id]);
+        Categoria::updateById($id, $data);
         $this->log('categorias', 'editar', 'categoria', $id, "Categoría editada: {$data['nombre']}");
         $this->redirect('/admin/categorias', ['success' => 'Categoría actualizada correctamente']);
     }
@@ -131,14 +124,14 @@ class CategoriaAdminController extends Controller
     public function delete(string $id): void
     {
         $id = (int) $id;
-        $categoria = $this->db->fetch("SELECT * FROM categorias WHERE id = ?", [$id]);
+        $categoria = Categoria::find($id);
         if (!$categoria) {
             $this->redirect('/admin/categorias', ['error' => 'Categoría no encontrada']);
             return;
         }
 
         // Verificar si tiene comercios vinculados
-        $count = $this->db->count('comercio_categoria', 'categoria_id = ?', [$id]);
+        $count = Categoria::countComerciosInCategoria($id);
         if ($count > 0) {
             $this->redirect('/admin/categorias', ['error' => "No se puede eliminar: tiene {$count} comercio(s) vinculado(s)"]);
             return;
@@ -148,7 +141,7 @@ class CategoriaAdminController extends Controller
             FileManager::eliminarImagen('categorias', $categoria['imagen']);
         }
 
-        $this->db->delete('categorias', 'id = ?', [$id]);
+        Categoria::deleteById($id);
         $this->log('categorias', 'eliminar', 'categoria', $id, "Categoría eliminada: {$categoria['nombre']}");
         $this->redirect('/admin/categorias', ['success' => 'Categoría eliminada correctamente']);
     }

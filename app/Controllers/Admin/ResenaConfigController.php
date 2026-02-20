@@ -2,7 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
-use App\Core\Database;
+use App\Models\Configuracion;
 
 /**
  * Configuración del módulo de reseñas
@@ -48,11 +48,7 @@ class ResenaConfigController extends Controller
                 $value = $this->request->post($key) !== null ? '1' : '0';
             }
 
-            $this->db->execute(
-                "INSERT INTO configuracion (clave, valor, grupo) VALUES (?, ?, 'resenas')
-                 ON DUPLICATE KEY UPDATE valor = VALUES(valor)",
-                [$key, $value]
-            );
+            Configuracion::upsert($key, $value, 'resenas');
         }
 
         $this->log('resenas', 'config_update', 'configuracion', 0, 'Configuración de reseñas actualizada');
@@ -65,9 +61,7 @@ class ResenaConfigController extends Controller
      */
     private function getConfig(): array
     {
-        $rows = $this->db->fetchAll(
-            "SELECT clave, valor FROM configuracion WHERE grupo = 'resenas'"
-        );
+        $rows = Configuracion::getByGroup('resenas');
 
         $config = $this->defaults;
         foreach ($rows as $row) {

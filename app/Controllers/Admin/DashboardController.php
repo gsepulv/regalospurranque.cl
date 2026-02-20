@@ -2,6 +2,13 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\AdminLog;
+use App\Models\Banner;
+use App\Models\Categoria;
+use App\Models\Comercio;
+use App\Models\FechaEspecial;
+use App\Models\Noticia;
+use App\Models\Resena;
 use App\Services\Backup;
 
 /**
@@ -34,26 +41,26 @@ class DashboardController extends Controller
         $visitasSemana    = [];
 
         try {
-            $stats['comercios_activos']   = $this->db->count('comercios', 'activo = 1');
-            $stats['comercios_inactivos'] = $this->db->count('comercios', 'activo = 0');
-            $stats['categorias']          = $this->db->count('categorias', 'activo = 1');
-            $stats['fechas_personal']     = $this->db->count('fechas_especiales', "activo = 1 AND tipo = 'personal'");
-            $stats['fechas_calendario']   = $this->db->count('fechas_especiales', "activo = 1 AND tipo = 'calendario'");
-            $stats['fechas_comercial']    = $this->db->count('fechas_especiales', "activo = 1 AND tipo = 'comercial'");
-            $stats['noticias']            = $this->db->count('noticias', 'activo = 1');
-            $stats['resenas_pendientes']  = $this->db->count('resenas', "estado = 'pendiente'");
-            $stats['resenas_aprobadas']   = $this->db->count('resenas', "estado = 'aprobada'");
-            $stats['resenas_rechazadas']  = $this->db->count('resenas', "estado = 'rechazada'");
+            $stats['comercios_activos']   = Comercio::countActive();
+            $stats['comercios_inactivos'] = Comercio::countInactive();
+            $stats['categorias']          = Categoria::countActive();
+            $stats['fechas_personal']     = FechaEspecial::countByTipo('personal');
+            $stats['fechas_calendario']   = FechaEspecial::countByTipo('calendario');
+            $stats['fechas_comercial']    = FechaEspecial::countByTipo('comercial');
+            $stats['noticias']            = Noticia::countActive();
+
+            $resenaCounts = Resena::countByEstado();
+            $stats['resenas_pendientes']  = $resenaCounts['pendiente'];
+            $stats['resenas_aprobadas']   = $resenaCounts['aprobada'];
+            $stats['resenas_rechazadas']  = $resenaCounts['rechazada'];
+
             $stats['visitas_hoy']         = $this->db->count('visitas_log', 'DATE(created_at) = CURDATE()');
             $stats['visitas_semana']      = $this->db->count('visitas_log', 'created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)');
             $stats['visitas_mes']         = $this->db->count('visitas_log', 'created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)');
-            $stats['banners_activos']     = $this->db->count('banners', 'activo = 1');
+            $stats['banners_activos']     = Banner::countActive();
 
             // Últimos 5 comercios
-            $ultimosComercios = $this->db->fetchAll(
-                "SELECT id, nombre, slug, plan, activo, created_at
-                 FROM comercios ORDER BY created_at DESC LIMIT 5"
-            );
+            $ultimosComercios = Comercio::getRecentLimit(5);
 
             // Últimas 5 reseñas pendientes
             $ultimasResenas = $this->db->fetchAll(
@@ -66,18 +73,10 @@ class DashboardController extends Controller
             );
 
             // Últimas 10 acciones
-            $ultimasAcciones = $this->db->fetchAll(
-                "SELECT * FROM admin_log ORDER BY created_at DESC LIMIT 10"
-            );
+            $ultimasAcciones = AdminLog::getRecentLimit(10);
 
             // Visitas últimos 7 días para gráfico
-            $visitasSemana = $this->db->fetchAll(
-                "SELECT DATE(created_at) as fecha, COUNT(*) as total
-                 FROM visitas_log
-                 WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
-                 GROUP BY DATE(created_at)
-                 ORDER BY fecha ASC"
-            );
+            $visitasSemana = AdminLog::getWeeklyStats();
         } catch (\Throwable $e) {
             // Sin BD, mostrar ceros
         }

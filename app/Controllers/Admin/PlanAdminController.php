@@ -2,6 +2,8 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Comercio;
+use App\Models\PlanConfig;
 
 /**
  * Gestión de Planes Comerciales + Validación de Comercios
@@ -17,12 +19,12 @@ class PlanAdminController extends Controller
         $tab = $this->request->get('tab', 'config');
 
         // Planes desde planes_config
-        $planes = $this->db->fetchAll("SELECT * FROM planes_config ORDER BY orden ASC");
+        $planes = PlanConfig::getAll();
 
         // Conteo por plan
         $conteos = [];
         foreach ($planes as $p) {
-            $conteos[$p['slug']] = $this->db->count('comercios', "plan = '{$p['slug']}' AND activo = 1");
+            $conteos[$p['slug']] = Comercio::countByPlan($p['slug']);
         }
 
         // Comercios para tab asignar
@@ -80,13 +82,13 @@ class PlanAdminController extends Controller
         }
 
         // Verificar slug único
-        $existe = $this->db->fetch("SELECT id FROM planes_config WHERE slug = ?", [$datos['slug']]);
+        $existe = PlanConfig::findBySlug($datos['slug']);
         if ($existe) {
             $this->redirect('/admin/planes/crear', ['error' => "Ya existe un plan con el slug '{$datos['slug']}'."]);
             return;
         }
 
-        $this->db->insert('planes_config', $datos);
+        PlanConfig::create($datos);
         $this->log('planes', 'crear_plan', 'plan', 0, "Plan creado: {$datos['nombre']}");
         $this->redirect('/admin/planes', ['success' => "Plan '{$datos['nombre']}' creado correctamente."]);
     }
@@ -96,7 +98,7 @@ class PlanAdminController extends Controller
      */
     public function edit(int $id): void
     {
-        $plan = $this->db->fetch("SELECT * FROM planes_config WHERE id = ?", [$id]);
+        $plan = PlanConfig::find($id);
         if (!$plan) {
             $this->redirect('/admin/planes', ['error' => 'Plan no encontrado.']);
             return;
@@ -113,7 +115,7 @@ class PlanAdminController extends Controller
      */
     public function update(int $id): void
     {
-        $plan = $this->db->fetch("SELECT * FROM planes_config WHERE id = ?", [$id]);
+        $plan = PlanConfig::find($id);
         if (!$plan) {
             $this->redirect('/admin/planes', ['error' => 'Plan no encontrado.']);
             return;
@@ -122,7 +124,7 @@ class PlanAdminController extends Controller
         $datos = $this->getPlanData();
         unset($datos['slug']); // No permitir cambiar slug
 
-        $this->db->update('planes_config', $datos, 'id = ?', [$id]);
+        PlanConfig::updateById($id, $datos);
         $this->log('planes', 'editar_plan', 'plan', $id, "Plan editado: {$plan['nombre']}");
         $this->redirect('/admin/planes', ['success' => "Plan '{$plan['nombre']}' actualizado."]);
     }
@@ -132,20 +134,20 @@ class PlanAdminController extends Controller
      */
     public function delete(int $id): void
     {
-        $plan = $this->db->fetch("SELECT * FROM planes_config WHERE id = ?", [$id]);
+        $plan = PlanConfig::find($id);
         if (!$plan) {
             $this->redirect('/admin/planes', ['error' => 'Plan no encontrado.']);
             return;
         }
 
         // Verificar que no haya comercios con este plan
-        $enUso = $this->db->count('comercios', "plan = '{$plan['slug']}' AND activo = 1");
+        $enUso = Comercio::countByPlan($plan['slug']);
         if ($enUso > 0) {
             $this->redirect('/admin/planes', ['error' => "No se puede eliminar: hay {$enUso} comercio(s) activo(s) con este plan."]);
             return;
         }
 
-        $this->db->delete('planes_config', 'id = ?', [$id]);
+        PlanConfig::deleteById($id);
         $this->log('planes', 'eliminar_plan', 'plan', $id, "Plan eliminado: {$plan['nombre']}");
         $this->redirect('/admin/planes', ['success' => "Plan '{$plan['nombre']}' eliminado."]);
     }
@@ -159,19 +161,19 @@ class PlanAdminController extends Controller
         $plan       = $_POST['plan'] ?? '';
 
         // Validar que el plan exista en planes_config
-        $planConfig = $this->db->fetch("SELECT * FROM planes_config WHERE slug = ?", [$plan]);
+        $planConfig = PlanConfig::findBySlug($plan);
         if (!$planConfig) {
             $this->json(['ok' => false, 'error' => 'Plan inválido'], 400);
             return;
         }
 
-        $comercio = $this->db->fetch("SELECT id, nombre, plan FROM comercios WHERE id = ?", [$comercioId]);
+        $comercio = Comercio::find($comercioId);
         if (!$comercio) {
             $this->json(['ok' => false, 'error' => 'Comercio no encontrado'], 404);
             return;
         }
 
-        $this->db->update('comercios', ['plan' => $plan], 'id = ?', [$comercioId]);
+        Comercio::updateById($comercioId, ['plan' => $plan]);
         $this->log('planes', 'cambiar_plan', 'comercio', $comercioId,
             "{$comercio['nombre']}: {$comercio['plan']} → {$plan}");
         $this->json(['ok' => true, 'plan' => $plan, 'csrf' => $_SESSION['csrf_token']]);
@@ -189,8 +191,8 @@ class PlanAdminController extends Controller
         $planFin    = !empty($_POST['plan_fin']) ? $_POST['plan_fin'] : null;
         $maxFotos   = !empty($_POST['max_fotos']) ? (int)$_POST['max_fotos'] : null;
 
-        $planConfig = $this->db->fetch("SELECT * FROM planes_config WHERE slug = ?", [$plan]);
-        $comercio = $this->db->fetch("SELECT id, nombre, plan FROM comercios WHERE id = ?", [$comercioId]);
+        $planConfig = PlanConfig::findBySlug($plan);
+        $comercio = Comercio::find($comercioId);
 
         if (!$planConfig || !$comercio) {
             $this->redirect('/admin/planes?tab=asignar', ['error' => 'Plan o comercio no encontrado.']);
@@ -201,13 +203,13 @@ class PlanAdminController extends Controller
             $maxFotos = $planConfig['max_fotos'];
         }
 
-        $this->db->update('comercios', [
+        Comercio::updateById($comercioId, [
             'plan'        => $plan,
             'plan_precio' => $planPrecio,
             'plan_inicio' => $planInicio,
             'plan_fin'    => $planFin,
             'max_fotos'   => $maxFotos,
-        ], 'id = ?', [$comercioId]);
+        ]);
 
         $this->log('planes', 'asignar_plan', 'comercio', $comercioId,
             "{$comercio['nombre']}: {$comercio['plan']} → {$plan}");
@@ -223,26 +225,26 @@ class PlanAdminController extends Controller
         $validar    = isset($_POST['validar']) ? 1 : 0;
         $notas      = trim($_POST['validado_notas'] ?? '');
 
-        $comercio = $this->db->fetch("SELECT id, nombre FROM comercios WHERE id = ?", [$comercioId]);
+        $comercio = Comercio::find($comercioId);
         if (!$comercio) {
             $this->redirect('/admin/planes?tab=validacion', ['error' => 'Comercio no encontrado.']);
             return;
         }
 
         if ($validar) {
-            $this->db->update('comercios', [
+            Comercio::updateById($comercioId, [
                 'validado'       => 1,
                 'validado_fecha' => date('Y-m-d H:i:s'),
                 'validado_notas' => $notas,
-            ], 'id = ?', [$comercioId]);
+            ]);
             $this->log('planes', 'validar_comercio', 'comercio', $comercioId, "Validado: {$comercio['nombre']}");
             $this->redirect('/admin/planes?tab=validacion', ['success' => "'{$comercio['nombre']}' marcado como validado."]);
         } else {
-            $this->db->update('comercios', [
+            Comercio::updateById($comercioId, [
                 'validado'       => 0,
                 'validado_fecha' => null,
                 'validado_notas' => null,
-            ], 'id = ?', [$comercioId]);
+            ]);
             $this->log('planes', 'desvalidar_comercio', 'comercio', $comercioId, "Desvalidado: {$comercio['nombre']}");
             $this->redirect('/admin/planes?tab=validacion', ['success' => "Validación de '{$comercio['nombre']}' removida."]);
         }
@@ -254,7 +256,7 @@ class PlanAdminController extends Controller
     public function toggleSello(): void
     {
         $planId = (int)($_POST['plan_id'] ?? 0);
-        $plan = $this->db->fetch("SELECT id, nombre, tiene_sello FROM planes_config WHERE id = ?", [$planId]);
+        $plan = PlanConfig::find($planId);
 
         if (!$plan) {
             $this->redirect('/admin/planes?tab=validacion', ['error' => 'Plan no encontrado.']);
@@ -262,7 +264,7 @@ class PlanAdminController extends Controller
         }
 
         $nuevoValor = $plan['tiene_sello'] ? 0 : 1;
-        $this->db->update('planes_config', ['tiene_sello' => $nuevoValor], 'id = ?', [$planId]);
+        PlanConfig::updateById($planId, ['tiene_sello' => $nuevoValor]);
         $estado = $nuevoValor ? 'activado' : 'desactivado';
         $this->log('planes', 'toggle_sello', 'plan', $planId, "Sello {$estado}: {$plan['nombre']}");
         $this->redirect('/admin/planes?tab=validacion', ['success' => "Sello verificado {$estado} para plan '{$plan['nombre']}'."]);

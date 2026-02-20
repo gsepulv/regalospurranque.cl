@@ -57,6 +57,69 @@ class FechaEspecial
         );
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // CRUD y helpers admin
+    // ══════════════════════════════════════════════════════════════
+
+    public static function find(int $id): ?array
+    {
+        return Database::getInstance()->fetch("SELECT * FROM fechas_especiales WHERE id = ?", [$id]);
+    }
+
+    public static function create(array $data): int
+    {
+        return Database::getInstance()->insert('fechas_especiales', $data);
+    }
+
+    public static function updateById(int $id, array $data): int
+    {
+        return Database::getInstance()->update('fechas_especiales', $data, 'id = ?', [$id]);
+    }
+
+    public static function deleteById(int $id): int
+    {
+        return Database::getInstance()->delete('fechas_especiales', 'id = ?', [$id]);
+    }
+
+    public static function getActiveForSelect(): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo ASC, nombre ASC"
+        );
+    }
+
+    public static function countByTipo(string $tipo): int
+    {
+        return Database::getInstance()->count('fechas_especiales', "activo = 1 AND tipo = ?", [$tipo]);
+    }
+
+    public static function countComerciosInFecha(int $fechaId): int
+    {
+        return Database::getInstance()->count('comercio_fecha', 'fecha_id = ?', [$fechaId]);
+    }
+
+    public static function getAdminFiltered(?string $tipo = null): array
+    {
+        $db = Database::getInstance();
+        $where = '1=1';
+        $params = [];
+        if ($tipo) {
+            $where = 'fe.tipo = ?';
+            $params[] = $tipo;
+        }
+        return $db->fetchAll(
+            "SELECT fe.*,
+                    (SELECT COUNT(DISTINCT cf.comercio_id)
+                     FROM comercio_fecha cf
+                     INNER JOIN comercios c ON cf.comercio_id = c.id AND c.activo = 1
+                     WHERE cf.fecha_id = fe.id) as comercios_count
+             FROM fechas_especiales fe
+             WHERE {$where}
+             ORDER BY fe.tipo ASC, fe.nombre ASC",
+            $params
+        );
+    }
+
     /**
      * Fechas activas en el periodo actual (o recurrentes)
      */

@@ -2,6 +2,8 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Banner;
+use App\Models\Comercio;
 use App\Services\FileManager;
 
 /**
@@ -27,14 +29,7 @@ class BannerAdminController extends Controller
             $where .= ' AND b.activo = 0';
         }
 
-        $banners = $this->db->fetchAll(
-            "SELECT b.*, c.nombre as comercio_nombre
-             FROM banners b
-             LEFT JOIN comercios c ON b.comercio_id = c.id
-             WHERE {$where}
-             ORDER BY b.tipo ASC, b.orden ASC",
-            $params
-        );
+        $banners = Banner::getAdminFiltered($where, $params);
 
         $this->render('admin/banners/index', [
             'title'   => 'Banners — ' . SITE_NAME,
@@ -45,7 +40,7 @@ class BannerAdminController extends Controller
 
     public function create(): void
     {
-        $comercios = $this->db->fetchAll("SELECT id, nombre FROM comercios WHERE activo = 1 ORDER BY nombre");
+        $comercios = Comercio::getActiveForSelect();
 
         $this->render('admin/banners/form', [
             'title'     => 'Nuevo Banner — ' . SITE_NAME,
@@ -89,7 +84,7 @@ class BannerAdminController extends Controller
             'orden'        => (int) ($_POST['orden'] ?? 0),
         ];
 
-        $id = $this->db->insert('banners', $data);
+        $id = Banner::create($data);
         $this->log('banners', 'crear', 'banner', $id, "Banner creado: {$data['titulo']}");
         $this->redirect('/admin/banners', ['success' => 'Banner creado correctamente']);
     }
@@ -97,13 +92,13 @@ class BannerAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $banner = $this->db->fetch("SELECT * FROM banners WHERE id = ?", [$id]);
+        $banner = Banner::find($id);
         if (!$banner) {
             $this->redirect('/admin/banners', ['error' => 'Banner no encontrado']);
             return;
         }
 
-        $comercios = $this->db->fetchAll("SELECT id, nombre FROM comercios WHERE activo = 1 ORDER BY nombre");
+        $comercios = Comercio::getActiveForSelect();
 
         $this->render('admin/banners/form', [
             'title'     => 'Editar Banner — ' . SITE_NAME,
@@ -115,7 +110,7 @@ class BannerAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $banner = $this->db->fetch("SELECT * FROM banners WHERE id = ?", [$id]);
+        $banner = Banner::find($id);
         if (!$banner) {
             $this->redirect('/admin/banners', ['error' => 'Banner no encontrado']);
             return;
@@ -150,7 +145,7 @@ class BannerAdminController extends Controller
             $data['imagen'] = FileManager::subirImagen($imagen, 'banners', 1920);
         }
 
-        $this->db->update('banners', $data, 'id = ?', [$id]);
+        Banner::updateById($id, $data);
         $this->log('banners', 'editar', 'banner', $id, "Banner editado: {$data['titulo']}");
         $this->redirect('/admin/banners', ['success' => 'Banner actualizado correctamente']);
     }
@@ -158,14 +153,14 @@ class BannerAdminController extends Controller
     public function toggleActive(string $id): void
     {
         $id = (int) $id;
-        $banner = $this->db->fetch("SELECT id, titulo, activo FROM banners WHERE id = ?", [$id]);
+        $banner = Banner::find($id);
         if (!$banner) {
             $this->json(['ok' => false, 'error' => 'No encontrado'], 404);
             return;
         }
 
         $newState = $banner['activo'] ? 0 : 1;
-        $this->db->update('banners', ['activo' => $newState], 'id = ?', [$id]);
+        Banner::updateById($id, ['activo' => $newState]);
 
         $this->log('banners', $newState ? 'activar' : 'desactivar', 'banner', $id, $banner['titulo']);
         $this->json(['ok' => true, 'activo' => $newState, 'csrf' => $_SESSION['csrf_token']]);
@@ -174,7 +169,7 @@ class BannerAdminController extends Controller
     public function delete(string $id): void
     {
         $id = (int) $id;
-        $banner = $this->db->fetch("SELECT * FROM banners WHERE id = ?", [$id]);
+        $banner = Banner::find($id);
         if (!$banner) {
             $this->redirect('/admin/banners', ['error' => 'Banner no encontrado']);
             return;
@@ -184,7 +179,7 @@ class BannerAdminController extends Controller
             FileManager::eliminarImagen('banners', $banner['imagen']);
         }
 
-        $this->db->delete('banners', 'id = ?', [$id]);
+        Banner::deleteById($id);
         $this->log('banners', 'eliminar', 'banner', $id, "Banner eliminado: {$banner['titulo']}");
         $this->redirect('/admin/banners', ['success' => 'Banner eliminado correctamente']);
     }
@@ -192,13 +187,13 @@ class BannerAdminController extends Controller
     public function resetStats(string $id): void
     {
         $id = (int) $id;
-        $banner = $this->db->fetch("SELECT id, titulo FROM banners WHERE id = ?", [$id]);
+        $banner = Banner::find($id);
         if (!$banner) {
             $this->redirect('/admin/banners', ['error' => 'Banner no encontrado']);
             return;
         }
 
-        $this->db->update('banners', ['clicks' => 0, 'impresiones' => 0], 'id = ?', [$id]);
+        Banner::resetStats($id);
         $this->log('banners', 'reset_stats', 'banner', $id, "Stats reseteadas: {$banner['titulo']}");
         $this->redirect('/admin/banners', ['success' => 'Estadísticas reseteadas']);
     }

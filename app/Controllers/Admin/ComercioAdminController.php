@@ -2,6 +2,9 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Categoria;
+use App\Models\Comercio;
+use App\Models\FechaEspecial;
 use App\Services\FileManager;
 use App\Services\Notification;
 
@@ -40,28 +43,14 @@ class ComercioAdminController extends Controller
             $where .= ' AND c.activo = 0';
         }
 
-        $total = $this->db->fetch(
-            "SELECT COUNT(*) as total FROM comercios c WHERE {$where}",
-            $params
-        )['total'] ?? 0;
+        $total = Comercio::countAdminFiltered($where, $params);
 
         $totalPages = max(1, (int) ceil($total / $perPage));
         $offset = ($page - 1) * $perPage;
 
-        $comercios = $this->db->fetchAll(
-            "SELECT c.*,
-                    GROUP_CONCAT(DISTINCT cat.nombre SEPARATOR ', ') as categorias_nombres
-             FROM comercios c
-             LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
-             LEFT JOIN categorias cat ON cc.categoria_id = cat.id
-             WHERE {$where}
-             GROUP BY c.id
-             ORDER BY c.created_at DESC
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
-        );
+        $comercios = Comercio::getAdminFiltered($where, $params, $perPage, $offset);
 
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
+        $categorias = Categoria::getActiveForSelect();
 
         $this->render('admin/comercios/index', [
             'title'        => 'Comercios — ' . SITE_NAME,
@@ -81,8 +70,8 @@ class ComercioAdminController extends Controller
 
     public function create(): void
     {
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
         $this->render('admin/comercios/form', [
             'title'       => 'Nuevo Comercio — ' . SITE_NAME,
@@ -161,20 +150,29 @@ class ComercioAdminController extends Controller
             $data['portada'] = FileManager::subirImagen($portada, 'portadas', 1200);
         }
 
-        $id = $this->db->insert('comercios', $data);
+        $id = Comercio::create($data);
 
         // Categorías
-        $this->syncCategorias($id, $_POST['categorias'] ?? [], $_POST['categoria_principal'] ?? 0);
+        Comercio::syncCategorias($id, $_POST['categorias'] ?? [], (int) ($_POST['categoria_principal'] ?? 0));
 
         // Fechas especiales
-        $this->syncFechas($id, $_POST['fechas'] ?? [], $_POST);
+        $fechaIds = $_POST['fechas'] ?? [];
+        $ofertas = [];
+        foreach ($fechaIds as $fId) {
+            $ofertas[$fId] = [
+                'oferta_especial' => trim($_POST["fecha_oferta_{$fId}"] ?? ''),
+                'precio_desde'    => !empty($_POST["fecha_precio_desde_{$fId}"]) ? (float) $_POST["fecha_precio_desde_{$fId}"] : null,
+                'precio_hasta'    => !empty($_POST["fecha_precio_hasta_{$fId}"]) ? (float) $_POST["fecha_precio_hasta_{$fId}"] : null,
+            ];
+        }
+        Comercio::syncFechas($id, $fechaIds, $ofertas);
 
-        \App\Models\Comercio::recalcularCalidad($id);
+        Comercio::recalcularCalidad($id);
 
         $this->log('comercios', 'crear', 'comercio', $id, "Comercio creado: {$data['nombre']}");
 
         // Notificaciones
-        $comercioCreado = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+        $comercioCreado = Comercio::find($id);
         if ($comercioCreado) {
             Notification::nuevoComercio($comercioCreado);
             Notification::bienvenidaComercio($comercioCreado);
@@ -186,20 +184,17 @@ class ComercioAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
         }
 
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
         // Categorías del comercio
-        $comercioCats = $this->db->fetchAll(
-            "SELECT categoria_id, es_principal FROM comercio_categoria WHERE comercio_id = ?",
-            [$id]
-        );
+        $comercioCats = Comercio::getCategoriaIds($id);
         $catIds = array_column($comercioCats, 'categoria_id');
         $catPrincipal = 0;
         foreach ($comercioCats as $cc) {
@@ -209,10 +204,7 @@ class ComercioAdminController extends Controller
         }
 
         // Fechas del comercio
-        $comercioFechas = $this->db->fetchAll(
-            "SELECT fecha_id, oferta_especial, precio_desde, precio_hasta FROM comercio_fecha WHERE comercio_id = ?",
-            [$id]
-        );
+        $comercioFechas = Comercio::getFechaIds($id);
         $fechaIds = array_column($comercioFechas, 'fecha_id');
         $fechaData = [];
         foreach ($comercioFechas as $cf) {
@@ -234,7 +226,7 @@ class ComercioAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
@@ -312,15 +304,24 @@ class ComercioAdminController extends Controller
             $data['portada'] = FileManager::subirImagen($portada, 'portadas', 1200);
         }
 
-        $this->db->update('comercios', $data, 'id = ?', [$id]);
+        Comercio::updateById($id, $data);
 
         // Categorías
-        $this->syncCategorias($id, $_POST['categorias'] ?? [], $_POST['categoria_principal'] ?? 0);
+        Comercio::syncCategorias($id, $_POST['categorias'] ?? [], (int) ($_POST['categoria_principal'] ?? 0));
 
         // Fechas especiales
-        $this->syncFechas($id, $_POST['fechas'] ?? [], $_POST);
+        $fechaIds = $_POST['fechas'] ?? [];
+        $ofertas = [];
+        foreach ($fechaIds as $fId) {
+            $ofertas[$fId] = [
+                'oferta_especial' => trim($_POST["fecha_oferta_{$fId}"] ?? ''),
+                'precio_desde'    => !empty($_POST["fecha_precio_desde_{$fId}"]) ? (float) $_POST["fecha_precio_desde_{$fId}"] : null,
+                'precio_hasta'    => !empty($_POST["fecha_precio_hasta_{$fId}"]) ? (float) $_POST["fecha_precio_hasta_{$fId}"] : null,
+            ];
+        }
+        Comercio::syncFechas($id, $fechaIds, $ofertas);
 
-        \App\Models\Comercio::recalcularCalidad($id);
+        Comercio::recalcularCalidad($id);
 
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio actualizado correctamente']);
@@ -329,14 +330,14 @@ class ComercioAdminController extends Controller
     public function toggleActive(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT id, nombre, activo FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->json(['ok' => false, 'error' => 'No encontrado'], 404);
             return;
         }
 
         $newState = $comercio['activo'] ? 0 : 1;
-        $this->db->update('comercios', ['activo' => $newState], 'id = ?', [$id]);
+        Comercio::updateById($id, ['activo' => $newState]);
 
         $accion = $newState ? 'activar' : 'desactivar';
         $this->log('comercios', $accion, 'comercio', $id, "{$comercio['nombre']}");
@@ -346,7 +347,7 @@ class ComercioAdminController extends Controller
     public function delete(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
@@ -361,12 +362,12 @@ class ComercioAdminController extends Controller
         }
 
         // Eliminar fotos de galería
-        $fotos = $this->db->fetchAll("SELECT ruta FROM comercio_fotos WHERE comercio_id = ?", [$id]);
+        $fotos = Comercio::getFotos($id);
         foreach ($fotos as $foto) {
             FileManager::eliminarImagen('galeria', $foto['ruta']);
         }
 
-        $this->db->delete('comercios', 'id = ?', [$id]);
+        Comercio::deleteById($id);
         $this->log('comercios', 'eliminar', 'comercio', $id, "Comercio eliminado: {$comercio['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio eliminado correctamente']);
     }
@@ -374,16 +375,13 @@ class ComercioAdminController extends Controller
     public function gallery(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT id, nombre, slug FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
         }
 
-        $fotos = $this->db->fetchAll(
-            "SELECT * FROM comercio_fotos WHERE comercio_id = ? ORDER BY orden ASC",
-            [$id]
-        );
+        $fotos = Comercio::getFotos($id);
 
         $this->render('admin/comercios/galeria', [
             'title'    => 'Galería — ' . e($comercio['nombre']),
@@ -395,7 +393,7 @@ class ComercioAdminController extends Controller
     public function storePhoto(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT id, nombre FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
@@ -413,17 +411,10 @@ class ComercioAdminController extends Controller
             return;
         }
 
-        $maxOrden = $this->db->fetch(
-            "SELECT MAX(orden) as m FROM comercio_fotos WHERE comercio_id = ?",
-            [$id]
-        )['m'] ?? 0;
-
-        $this->db->insert('comercio_fotos', [
-            'comercio_id' => $id,
-            'ruta'        => $fileName,
-            'ruta_thumb'  => $fileName,
-            'titulo'      => trim($_POST['titulo'] ?? ''),
-            'orden'       => $maxOrden + 1,
+        Comercio::addFoto($id, [
+            'ruta'       => $fileName,
+            'ruta_thumb' => $fileName,
+            'titulo'     => trim($_POST['titulo'] ?? ''),
         ]);
 
         $this->log('comercios', 'foto_agregar', 'comercio', $id, "Foto agregada a {$comercio['nombre']}");
@@ -435,10 +426,7 @@ class ComercioAdminController extends Controller
         $id = (int) $id;
         $fotoId = (int) ($_POST['foto_id'] ?? 0);
 
-        $foto = $this->db->fetch(
-            "SELECT * FROM comercio_fotos WHERE id = ? AND comercio_id = ?",
-            [$fotoId, $id]
-        );
+        $foto = Comercio::findFoto($fotoId, $id);
 
         if (!$foto) {
             $this->redirect("/admin/comercios/{$id}/galeria", ['error' => 'Foto no encontrada']);
@@ -446,7 +434,7 @@ class ComercioAdminController extends Controller
         }
 
         FileManager::eliminarImagen('galeria', $foto['ruta']);
-        $this->db->delete('comercio_fotos', 'id = ?', [$fotoId]);
+        Comercio::deleteFoto($fotoId);
 
         $this->log('comercios', 'foto_eliminar', 'comercio', $id, "Foto eliminada");
         $this->redirect("/admin/comercios/{$id}/galeria", ['success' => 'Foto eliminada']);
@@ -455,22 +443,13 @@ class ComercioAdminController extends Controller
     public function horarios(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT id, nombre, slug FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
         }
 
-        $horarios = $this->db->fetchAll(
-            "SELECT * FROM comercio_horarios WHERE comercio_id = ? ORDER BY dia ASC",
-            [$id]
-        );
-
-        // Indexar por día
-        $horariosPorDia = [];
-        foreach ($horarios as $h) {
-            $horariosPorDia[(int) $h['dia']] = $h;
-        }
+        $horariosPorDia = Comercio::getHorarios($id);
 
         $this->render('admin/comercios/horarios', [
             'title'     => 'Horarios — ' . e($comercio['nombre']),
@@ -482,67 +461,30 @@ class ComercioAdminController extends Controller
     public function updateHorarios(string $id): void
     {
         $id = (int) $id;
-        $comercio = $this->db->fetch("SELECT id, nombre FROM comercios WHERE id = ?", [$id]);
+        $comercio = Comercio::find($id);
         if (!$comercio) {
             $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
             return;
         }
 
-        // Eliminar horarios anteriores y reinsertar
-        $this->db->delete('comercio_horarios', 'comercio_id = ?', [$id]);
-
-        $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        // Construir array de horarios
+        $horarios = [];
         for ($dia = 0; $dia <= 6; $dia++) {
             $cerrado = isset($_POST['cerrado'][$dia]) ? 1 : 0;
             $apertura = $_POST['hora_apertura'][$dia] ?? null;
             $cierre = $_POST['hora_cierre'][$dia] ?? null;
 
-            $this->db->insert('comercio_horarios', [
-                'comercio_id'   => $id,
+            $horarios[] = [
                 'dia'           => $dia,
                 'hora_apertura' => $cerrado ? null : ($apertura ?: null),
                 'hora_cierre'   => $cerrado ? null : ($cierre ?: null),
                 'cerrado'       => $cerrado,
-            ]);
+            ];
         }
+        Comercio::saveHorarios($id, $horarios);
 
         $this->log('comercios', 'horarios', 'comercio', $id, "Horarios actualizados: {$comercio['nombre']}");
         $this->redirect("/admin/comercios/{$id}/horarios", ['success' => 'Horarios actualizados']);
     }
 
-    // ── Helpers privados ─────────────────────────────────────
-
-    private function syncCategorias(int $comercioId, array $catIds, int|string $principal = 0): void
-    {
-        $this->db->delete('comercio_categoria', 'comercio_id = ?', [$comercioId]);
-        $principal = (int) $principal;
-
-        foreach ($catIds as $catId) {
-            $catId = (int) $catId;
-            if ($catId <= 0) continue;
-            $this->db->insert('comercio_categoria', [
-                'comercio_id'  => $comercioId,
-                'categoria_id' => $catId,
-                'es_principal' => ($catId === $principal) ? 1 : 0,
-            ]);
-        }
-    }
-
-    private function syncFechas(int $comercioId, array $fechaIds, array $postData): void
-    {
-        $this->db->delete('comercio_fecha', 'comercio_id = ?', [$comercioId]);
-
-        foreach ($fechaIds as $fechaId) {
-            $fechaId = (int) $fechaId;
-            if ($fechaId <= 0) continue;
-            $this->db->insert('comercio_fecha', [
-                'comercio_id'    => $comercioId,
-                'fecha_id'       => $fechaId,
-                'oferta_especial'=> trim($postData["fecha_oferta_{$fechaId}"] ?? ''),
-                'precio_desde'   => !empty($postData["fecha_precio_desde_{$fechaId}"]) ? (float) $postData["fecha_precio_desde_{$fechaId}"] : null,
-                'precio_hasta'   => !empty($postData["fecha_precio_hasta_{$fechaId}"]) ? (float) $postData["fecha_precio_hasta_{$fechaId}"] : null,
-                'activo'         => 1,
-            ]);
-        }
-    }
 }

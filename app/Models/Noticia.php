@@ -84,6 +84,89 @@ class Noticia
         );
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // CRUD y helpers admin
+    // ══════════════════════════════════════════════════════════════
+
+    public static function find(int $id): ?array
+    {
+        return Database::getInstance()->fetch("SELECT * FROM noticias WHERE id = ?", [$id]);
+    }
+
+    public static function create(array $data): int
+    {
+        return Database::getInstance()->insert('noticias', $data);
+    }
+
+    public static function updateById(int $id, array $data): int
+    {
+        return Database::getInstance()->update('noticias', $data, 'id = ?', [$id]);
+    }
+
+    public static function deleteById(int $id): int
+    {
+        return Database::getInstance()->delete('noticias', 'id = ?', [$id]);
+    }
+
+    public static function countActive(): int
+    {
+        return Database::getInstance()->count('noticias', 'activo = 1');
+    }
+
+    public static function getAdminFiltered(string $where, array $params, int $limit, int $offset): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT n.* FROM noticias n WHERE {$where} ORDER BY n.fecha_publicacion DESC LIMIT {$limit} OFFSET {$offset}",
+            $params
+        );
+    }
+
+    public static function countAdminFiltered(string $where, array $params): int
+    {
+        $r = Database::getInstance()->fetch("SELECT COUNT(*) as total FROM noticias n WHERE {$where}", $params);
+        return (int) ($r['total'] ?? 0);
+    }
+
+    public static function syncCategorias(int $noticiaId, array $categoriaIds): void
+    {
+        $db = Database::getInstance();
+        $db->delete('noticia_categoria', 'noticia_id = ?', [$noticiaId]);
+        foreach ($categoriaIds as $catId) {
+            $db->insert('noticia_categoria', [
+                'noticia_id'   => $noticiaId,
+                'categoria_id' => (int) $catId,
+            ]);
+        }
+    }
+
+    public static function syncFechas(int $noticiaId, array $fechaIds): void
+    {
+        $db = Database::getInstance();
+        $db->delete('noticia_fecha', 'noticia_id = ?', [$noticiaId]);
+        foreach ($fechaIds as $fechaId) {
+            $db->insert('noticia_fecha', [
+                'noticia_id' => $noticiaId,
+                'fecha_id'   => (int) $fechaId,
+            ]);
+        }
+    }
+
+    public static function getCategoriaIds(int $noticiaId): array
+    {
+        $rows = Database::getInstance()->fetchAll(
+            "SELECT categoria_id FROM noticia_categoria WHERE noticia_id = ?", [$noticiaId]
+        );
+        return array_column($rows, 'categoria_id');
+    }
+
+    public static function getFechaIds(int $noticiaId): array
+    {
+        $rows = Database::getInstance()->fetchAll(
+            "SELECT fecha_id FROM noticia_fecha WHERE noticia_id = ?", [$noticiaId]
+        );
+        return array_column($rows, 'fecha_id');
+    }
+
     /**
      * Noticias relacionadas por categorias compartidas
      */

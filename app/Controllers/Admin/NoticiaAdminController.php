@@ -2,6 +2,9 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\Categoria;
+use App\Models\FechaEspecial;
+use App\Models\Noticia;
 use App\Services\FileManager;
 
 /**
@@ -29,21 +32,12 @@ class NoticiaAdminController extends Controller
             $where .= ' AND n.activo = 0';
         }
 
-        $total = $this->db->fetch(
-            "SELECT COUNT(*) as total FROM noticias n WHERE {$where}",
-            $params
-        )['total'] ?? 0;
+        $total = Noticia::countAdminFiltered($where, $params);
 
         $totalPages = max(1, (int) ceil($total / $perPage));
         $offset = ($page - 1) * $perPage;
 
-        $noticias = $this->db->fetchAll(
-            "SELECT n.* FROM noticias n
-             WHERE {$where}
-             ORDER BY n.fecha_publicacion DESC
-             LIMIT {$perPage} OFFSET {$offset}",
-            $params
-        );
+        $noticias = Noticia::getAdminFiltered($where, $params, $perPage, $offset);
 
         $this->render('admin/noticias/index', [
             'title'       => 'Noticias — ' . SITE_NAME,
@@ -57,8 +51,8 @@ class NoticiaAdminController extends Controller
 
     public function create(): void
     {
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
         $this->render('admin/noticias/form', [
             'title'      => 'Nueva Noticia — ' . SITE_NAME,
@@ -104,23 +98,13 @@ class NoticiaAdminController extends Controller
             $data['seo_imagen_og'] = FileManager::subirImagen($ogImagen, 'og', 1200);
         }
 
-        $id = $this->db->insert('noticias', $data);
+        $id = Noticia::create($data);
 
         // Categorías
-        foreach ($_POST['categorias'] ?? [] as $catId) {
-            $this->db->insert('noticia_categoria', [
-                'noticia_id'   => $id,
-                'categoria_id' => (int) $catId,
-            ]);
-        }
+        Noticia::syncCategorias($id, $_POST['categorias'] ?? []);
 
         // Fechas
-        foreach ($_POST['fechas'] ?? [] as $fechaId) {
-            $this->db->insert('noticia_fecha', [
-                'noticia_id' => $id,
-                'fecha_id'   => (int) $fechaId,
-            ]);
-        }
+        Noticia::syncFechas($id, $_POST['fechas'] ?? []);
 
         $this->log('noticias', 'crear', 'noticia', $id, "Noticia creada: {$data['titulo']}");
         $this->redirect('/admin/noticias', ['success' => 'Noticia creada correctamente']);
@@ -129,23 +113,17 @@ class NoticiaAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $noticia = $this->db->fetch("SELECT * FROM noticias WHERE id = ?", [$id]);
+        $noticia = Noticia::find($id);
         if (!$noticia) {
             $this->redirect('/admin/noticias', ['error' => 'Noticia no encontrada']);
             return;
         }
 
-        $categorias = $this->db->fetchAll("SELECT id, nombre, icono FROM categorias WHERE activo = 1 ORDER BY orden");
-        $fechas = $this->db->fetchAll("SELECT id, nombre, icono, tipo FROM fechas_especiales WHERE activo = 1 ORDER BY tipo, nombre");
+        $categorias = Categoria::getActiveForSelect();
+        $fechas = FechaEspecial::getActiveForSelect();
 
-        $catIds = array_column(
-            $this->db->fetchAll("SELECT categoria_id FROM noticia_categoria WHERE noticia_id = ?", [$id]),
-            'categoria_id'
-        );
-        $fechaIds = array_column(
-            $this->db->fetchAll("SELECT fecha_id FROM noticia_fecha WHERE noticia_id = ?", [$id]),
-            'fecha_id'
-        );
+        $catIds = Noticia::getCategoriaIds($id);
+        $fechaIds = Noticia::getFechaIds($id);
 
         $this->render('admin/noticias/form', [
             'title'      => 'Editar Noticia — ' . SITE_NAME,
@@ -160,7 +138,7 @@ class NoticiaAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $noticia = $this->db->fetch("SELECT * FROM noticias WHERE id = ?", [$id]);
+        $noticia = Noticia::find($id);
         if (!$noticia) {
             $this->redirect('/admin/noticias', ['error' => 'Noticia no encontrada']);
             return;
@@ -207,25 +185,13 @@ class NoticiaAdminController extends Controller
             $data['seo_imagen_og'] = FileManager::subirImagen($ogImagen, 'og', 1200);
         }
 
-        $this->db->update('noticias', $data, 'id = ?', [$id]);
+        Noticia::updateById($id, $data);
 
         // Sync categorías
-        $this->db->delete('noticia_categoria', 'noticia_id = ?', [$id]);
-        foreach ($_POST['categorias'] ?? [] as $catId) {
-            $this->db->insert('noticia_categoria', [
-                'noticia_id'   => $id,
-                'categoria_id' => (int) $catId,
-            ]);
-        }
+        Noticia::syncCategorias($id, $_POST['categorias'] ?? []);
 
         // Sync fechas
-        $this->db->delete('noticia_fecha', 'noticia_id = ?', [$id]);
-        foreach ($_POST['fechas'] ?? [] as $fechaId) {
-            $this->db->insert('noticia_fecha', [
-                'noticia_id' => $id,
-                'fecha_id'   => (int) $fechaId,
-            ]);
-        }
+        Noticia::syncFechas($id, $_POST['fechas'] ?? []);
 
         $this->log('noticias', 'editar', 'noticia', $id, "Noticia editada: {$data['titulo']}");
         $this->redirect('/admin/noticias', ['success' => 'Noticia actualizada correctamente']);
@@ -234,14 +200,14 @@ class NoticiaAdminController extends Controller
     public function toggleActive(string $id): void
     {
         $id = (int) $id;
-        $noticia = $this->db->fetch("SELECT id, titulo, activo FROM noticias WHERE id = ?", [$id]);
+        $noticia = Noticia::find($id);
         if (!$noticia) {
             $this->json(['ok' => false, 'error' => 'No encontrada'], 404);
             return;
         }
 
         $newState = $noticia['activo'] ? 0 : 1;
-        $this->db->update('noticias', ['activo' => $newState], 'id = ?', [$id]);
+        Noticia::updateById($id, ['activo' => $newState]);
 
         $this->log('noticias', $newState ? 'activar' : 'desactivar', 'noticia', $id, $noticia['titulo']);
         $this->json(['ok' => true, 'activo' => $newState, 'csrf' => $_SESSION['csrf_token']]);
@@ -351,7 +317,7 @@ class NoticiaAdminController extends Controller
     public function delete(string $id): void
     {
         $id = (int) $id;
-        $noticia = $this->db->fetch("SELECT * FROM noticias WHERE id = ?", [$id]);
+        $noticia = Noticia::find($id);
         if (!$noticia) {
             $this->redirect('/admin/noticias', ['error' => 'Noticia no encontrada']);
             return;
@@ -364,7 +330,7 @@ class NoticiaAdminController extends Controller
             FileManager::eliminarImagen('og', $noticia['seo_imagen_og']);
         }
 
-        $this->db->delete('noticias', 'id = ?', [$id]);
+        Noticia::deleteById($id);
         $this->log('noticias', 'eliminar', 'noticia', $id, "Noticia eliminada: {$noticia['titulo']}");
         $this->redirect('/admin/noticias', ['success' => 'Noticia eliminada correctamente']);
     }

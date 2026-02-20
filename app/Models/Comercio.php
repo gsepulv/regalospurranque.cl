@@ -59,6 +59,194 @@ class Comercio
         return $comercio;
     }
 
+    // ══════════════════════════════════════════════════════════════
+    // CRUD y helpers admin
+    // ══════════════════════════════════════════════════════════════
+
+    public static function find(int $id): ?array
+    {
+        return Database::getInstance()->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+    }
+
+    public static function create(array $data): int
+    {
+        return Database::getInstance()->insert('comercios', $data);
+    }
+
+    public static function updateById(int $id, array $data): int
+    {
+        return Database::getInstance()->update('comercios', $data, 'id = ?', [$id]);
+    }
+
+    public static function deleteById(int $id): int
+    {
+        return Database::getInstance()->delete('comercios', 'id = ?', [$id]);
+    }
+
+    public static function getActiveForSelect(): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT id, nombre FROM comercios WHERE activo = 1 ORDER BY nombre ASC"
+        );
+    }
+
+    public static function countActive(): int
+    {
+        return Database::getInstance()->count('comercios', 'activo = 1');
+    }
+
+    public static function countInactive(): int
+    {
+        return Database::getInstance()->count('comercios', 'activo = 0');
+    }
+
+    public static function getRecentLimit(int $limit): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT id, nombre, slug, plan, activo, created_at FROM comercios ORDER BY created_at DESC LIMIT ?",
+            [$limit]
+        );
+    }
+
+    public static function findByRegistradoPor(int $userId): ?array
+    {
+        return Database::getInstance()->fetch(
+            "SELECT * FROM comercios WHERE registrado_por = ? LIMIT 1", [$userId]
+        );
+    }
+
+    public static function findByRegistradoPorWithCategorias(int $userId): ?array
+    {
+        $db = Database::getInstance();
+        $comercio = $db->fetch(
+            "SELECT c.*,
+                    GROUP_CONCAT(DISTINCT cat.nombre SEPARATOR ', ') as categorias_nombres
+             FROM comercios c
+             LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
+             LEFT JOIN categorias cat ON cc.categoria_id = cat.id
+             WHERE c.registrado_por = ?
+             GROUP BY c.id
+             LIMIT 1",
+            [$userId]
+        );
+        return $comercio ?: null;
+    }
+
+    public static function countByPlan(string $planSlug): int
+    {
+        return Database::getInstance()->count('comercios', "plan = ? AND activo = 1", [$planSlug]);
+    }
+
+    public static function getAdminFiltered(string $where, array $params, int $limit, int $offset): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT c.*,
+                    GROUP_CONCAT(DISTINCT cat.nombre SEPARATOR ', ') as categorias_nombres
+             FROM comercios c
+             LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
+             LEFT JOIN categorias cat ON cc.categoria_id = cat.id AND cat.activo = 1
+             WHERE {$where}
+             GROUP BY c.id
+             ORDER BY c.created_at DESC
+             LIMIT {$limit} OFFSET {$offset}",
+            $params
+        );
+    }
+
+    public static function countAdminFiltered(string $where, array $params): int
+    {
+        $r = Database::getInstance()->fetch(
+            "SELECT COUNT(*) as total FROM comercios c WHERE {$where}", $params
+        );
+        return (int) ($r['total'] ?? 0);
+    }
+
+    public static function getCategoriaIds(int $comercioId): array
+    {
+        $rows = Database::getInstance()->fetchAll(
+            "SELECT categoria_id, es_principal FROM comercio_categoria WHERE comercio_id = ?", [$comercioId]
+        );
+        return $rows;
+    }
+
+    public static function getFechaIds(int $comercioId): array
+    {
+        $rows = Database::getInstance()->fetchAll(
+            "SELECT fecha_id, oferta_especial, precio_desde, precio_hasta FROM comercio_fecha WHERE comercio_id = ?",
+            [$comercioId]
+        );
+        return $rows;
+    }
+
+    public static function syncCategorias(int $comercioId, array $categorias, ?int $principal = null): void
+    {
+        $db = Database::getInstance();
+        $db->delete('comercio_categoria', 'comercio_id = ?', [$comercioId]);
+        foreach ($categorias as $catId) {
+            $db->insert('comercio_categoria', [
+                'comercio_id'  => $comercioId,
+                'categoria_id' => (int) $catId,
+                'es_principal' => ($principal !== null && (int) $catId === $principal) ? 1 : 0,
+            ]);
+        }
+    }
+
+    public static function syncFechas(int $comercioId, array $fechas, array $ofertas = []): void
+    {
+        $db = Database::getInstance();
+        $db->delete('comercio_fecha', 'comercio_id = ?', [$comercioId]);
+        foreach ($fechas as $fechaId) {
+            $data = [
+                'comercio_id' => $comercioId,
+                'fecha_id'    => (int) $fechaId,
+                'activo'      => 1,
+            ];
+            if (isset($ofertas[$fechaId])) {
+                $data['oferta_especial'] = $ofertas[$fechaId]['oferta_especial'] ?? null;
+                $data['precio_desde']    = $ofertas[$fechaId]['precio_desde'] ?? null;
+                $data['precio_hasta']    = $ofertas[$fechaId]['precio_hasta'] ?? null;
+            }
+            $db->insert('comercio_fecha', $data);
+        }
+    }
+
+    public static function addFoto(int $comercioId, array $data): int
+    {
+        $db = Database::getInstance();
+        $maxOrden = $db->fetch("SELECT MAX(orden) as m FROM comercio_fotos WHERE comercio_id = ?", [$comercioId]);
+        $data['comercio_id'] = $comercioId;
+        $data['orden'] = ($maxOrden['m'] ?? 0) + 1;
+        return $db->insert('comercio_fotos', $data);
+    }
+
+    public static function findFoto(int $fotoId, int $comercioId): ?array
+    {
+        return Database::getInstance()->fetch(
+            "SELECT * FROM comercio_fotos WHERE id = ? AND comercio_id = ?", [$fotoId, $comercioId]
+        );
+    }
+
+    public static function deleteFoto(int $fotoId): int
+    {
+        return Database::getInstance()->delete('comercio_fotos', 'id = ?', [$fotoId]);
+    }
+
+    public static function saveHorarios(int $comercioId, array $horarios): void
+    {
+        $db = Database::getInstance();
+        $db->delete('comercio_horarios', 'comercio_id = ?', [$comercioId]);
+        foreach ($horarios as $h) {
+            if (empty($h['dia'])) continue;
+            $db->insert('comercio_horarios', [
+                'comercio_id'    => $comercioId,
+                'dia'            => (int) $h['dia'],
+                'hora_apertura'  => $h['hora_apertura'] ?? null,
+                'hora_cierre'    => $h['hora_cierre'] ?? null,
+                'cerrado'        => !empty($h['cerrado']) ? 1 : 0,
+            ]);
+        }
+    }
+
     /**
      * Verificar completitud de una ficha de comercio
      * Retorna array con porcentaje y items faltantes

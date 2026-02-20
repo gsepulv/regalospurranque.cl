@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\AdminUsuario;
 use App\Services\Auth;
 
 /**
@@ -12,10 +13,7 @@ class UsuarioAdminController extends Controller
 {
     public function index(): void
     {
-        $usuarios = $this->db->fetchAll(
-            "SELECT id, nombre, email, telefono, rol, avatar, activo, last_login, created_at
-             FROM admin_usuarios ORDER BY created_at ASC"
-        );
+        $usuarios = AdminUsuario::getAll();
 
         $this->render('admin/usuarios/index', [
             'title'    => 'Usuarios — ' . SITE_NAME,
@@ -53,7 +51,7 @@ class UsuarioAdminController extends Controller
             'activo'        => isset($_POST['activo']) ? 1 : 0,
         ];
 
-        $id = $this->db->insert('admin_usuarios', $data);
+        $id = AdminUsuario::create($data);
         $this->log('usuarios', 'crear', 'usuario', $id, "Usuario creado: {$data['nombre']} ({$data['rol']})");
         $this->redirect('/admin/usuarios', ['success' => 'Usuario creado correctamente']);
     }
@@ -61,10 +59,7 @@ class UsuarioAdminController extends Controller
     public function edit(string $id): void
     {
         $id = (int) $id;
-        $usuario = $this->db->fetch(
-            "SELECT id, nombre, email, telefono, rol, avatar, activo FROM admin_usuarios WHERE id = ?",
-            [$id]
-        );
+        $usuario = AdminUsuario::find($id);
         if (!$usuario) {
             $this->redirect('/admin/usuarios', ['error' => 'Usuario no encontrado']);
             return;
@@ -79,7 +74,7 @@ class UsuarioAdminController extends Controller
     public function update(string $id): void
     {
         $id = (int) $id;
-        $usuario = $this->db->fetch("SELECT * FROM admin_usuarios WHERE id = ?", [$id]);
+        $usuario = AdminUsuario::find($id);
         if (!$usuario) {
             $this->redirect('/admin/usuarios', ['error' => 'Usuario no encontrado']);
             return;
@@ -113,7 +108,7 @@ class UsuarioAdminController extends Controller
             $data['password_hash'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
         }
 
-        $this->db->update('admin_usuarios', $data, 'id = ?', [$id]);
+        AdminUsuario::updateById($id, $data);
         $this->log('usuarios', 'editar', 'usuario', $id, "Usuario editado: {$data['nombre']}");
         $this->redirect('/admin/usuarios', ['success' => 'Usuario actualizado correctamente']);
     }
@@ -128,14 +123,14 @@ class UsuarioAdminController extends Controller
             return;
         }
 
-        $usuario = $this->db->fetch("SELECT id, nombre, activo FROM admin_usuarios WHERE id = ?", [$id]);
+        $usuario = AdminUsuario::find($id);
         if (!$usuario) {
             $this->json(['ok' => false, 'error' => 'No encontrado'], 404);
             return;
         }
 
         $newState = $usuario['activo'] ? 0 : 1;
-        $this->db->update('admin_usuarios', ['activo' => $newState], 'id = ?', [$id]);
+        AdminUsuario::updateById($id, ['activo' => $newState]);
 
         $this->log('usuarios', $newState ? 'activar' : 'desactivar', 'usuario', $id, $usuario['nombre']);
         $this->json(['ok' => true, 'activo' => $newState, 'csrf' => $_SESSION['csrf_token']]);
@@ -151,13 +146,13 @@ class UsuarioAdminController extends Controller
             return;
         }
 
-        $usuario = $this->db->fetch("SELECT * FROM admin_usuarios WHERE id = ?", [$id]);
+        $usuario = AdminUsuario::find($id);
         if (!$usuario) {
             $this->redirect('/admin/usuarios', ['error' => 'Usuario no encontrado']);
             return;
         }
 
-        $this->db->delete('admin_usuarios', 'id = ?', [$id]);
+        AdminUsuario::deleteById($id);
         $this->log('usuarios', 'eliminar', 'usuario', $id, "Usuario eliminado: {$usuario['nombre']}");
         $this->redirect('/admin/usuarios', ['success' => 'Usuario eliminado correctamente']);
     }
