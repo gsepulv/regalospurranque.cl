@@ -48,6 +48,23 @@ RewriteRule ^(app|config|storage|database|cron|deploy|views)/ - [F,L]
     AddType application/xml .xml
 </IfModule>
 
+# ── Forzar Content-Type en imágenes (override servidor) ───────────────────
+# HostGator puede ignorar AddType; Header set tiene mayor prioridad
+<IfModule mod_headers.c>
+    <FilesMatch "\.(?i:jpe?g)$">
+        Header set Content-Type "image/jpeg"
+    </FilesMatch>
+    <FilesMatch "\.(?i:png)$">
+        Header set Content-Type "image/png"
+    </FilesMatch>
+    <FilesMatch "\.(?i:gif)$">
+        Header set Content-Type "image/gif"
+    </FilesMatch>
+    <FilesMatch "\.(?i:webp)$">
+        Header set Content-Type "image/webp"
+    </FilesMatch>
+</IfModule>
+
 # ── Headers de seguridad y optimización ─────────────────────────────────────
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
