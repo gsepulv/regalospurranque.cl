@@ -91,12 +91,7 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'GDRIVE_FOLDER_ID no está configurado en config/backup.php'];
             }
 
-            // Archivos < 5MB: multipart upload
-            if ($fileSize < self::CHUNK_SIZE) {
-                return self::simpleUpload($filepath, $filename, $mimeType, $folderId, $token);
-            }
-
-            // Archivos >= 5MB: resumable upload
+            // Siempre resumable upload (multipart no funciona con file_get_contents)
             return self::resumableUpload($filepath, $filename, $fileSize, $mimeType, $folderId, $token);
         } catch (\Throwable $e) {
             return ['ok' => false, 'message' => $e->getMessage()];
@@ -213,60 +208,7 @@ class GoogleDrive
         return $deleted;
     }
 
-    // ─── Upload simple (multipart, < 5MB) ───────────────────────
-
-    /**
-     * @return array{ok: bool, message: string, fileId?: string, webViewLink?: string}
-     */
-    private static function simpleUpload(
-        string $filepath,
-        string $filename,
-        string $mimeType,
-        string $folderId,
-        string $token
-    ): array {
-        $metadata = json_encode([
-            'name'    => $filename,
-            'parents' => $folderId ? [$folderId] : [],
-        ]);
-
-        $boundary = 'backup_boundary_' . bin2hex(random_bytes(8));
-        $body = "--{$boundary}\r\n"
-            . "Content-Type: application/json; charset=UTF-8\r\n\r\n"
-            . $metadata . "\r\n"
-            . "--{$boundary}\r\n"
-            . "Content-Type: {$mimeType}\r\n\r\n"
-            . file_get_contents($filepath) . "\r\n"
-            . "--{$boundary}--";
-
-        $resp = self::curlRequest(
-            self::UPLOAD_BASE . '?uploadType=multipart&fields=id,name,webViewLink',
-            'POST',
-            $body,
-            [
-                'Authorization: Bearer ' . $token,
-                'Content-Type: multipart/related; boundary=' . $boundary,
-                'Content-Length: ' . strlen($body),
-            ],
-            60
-        );
-
-        if ($resp['httpCode'] === 200) {
-            $data = json_decode($resp['body'], true);
-            return [
-                'ok'          => true,
-                'message'     => 'Archivo subido',
-                'fileId'      => $data['id'] ?? '',
-                'webViewLink' => $data['webViewLink'] ?? '',
-            ];
-        }
-
-        $error = json_decode($resp['body'], true);
-        $msg = $error['error']['message'] ?? 'HTTP ' . $resp['httpCode'];
-        return ['ok' => false, 'message' => 'Error upload: ' . $msg];
-    }
-
-    // ─── Upload resumable (chunks, >= 5MB) ──────────────────────
+    // ─── Upload resumable ──────────────────────────────────────
 
     /**
      * @return array{ok: bool, message: string, fileId?: string, webViewLink?: string}
