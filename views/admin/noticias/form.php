@@ -8,7 +8,6 @@ $catIds   = $catIds ?? [];
 $fechaIds = $fechaIds ?? [];
 
 // TinyMCE config desde admin
-$tinymceApiKey     = \App\Services\RedesSociales::get('tinymce_api_key', '');
 $tinymceHeight     = \App\Services\RedesSociales::get('tinymce_height', '500');
 $tinymceLanguage   = \App\Services\RedesSociales::get('tinymce_language', 'es');
 $tinymceAutosave   = \App\Services\RedesSociales::get('tinymce_autosave', '1');
