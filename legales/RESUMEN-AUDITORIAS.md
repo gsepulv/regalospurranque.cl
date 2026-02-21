@@ -121,7 +121,7 @@ Reporte completo del sistema de autenticacion y los 17 modulos del dashboard.
 | 42 | saveMetaTags() whitelist | Validacion: solo home, mapa, buscar, noticias, cat_N, fecha_N |
 | 43 | Email config validacion | `filter_var(FILTER_VALIDATE_EMAIL)` en email_from y email_reply_to |
 | 44 | FileExplorer bloquear PHP | Blocklist de 16 extensiones peligrosas (php, phtml, phar, exe, sh, bat...) |
-| 45 | CHECKLIST.txt BD | purranque_regalos_v2 corregido a purranque_regalos_purranque |
+| 45 | CHECKLIST.txt BD | purranque_regalos_v2 corregido a purranque_regalos_v2 |
 | 46 | Password min store() | min:6 corregido a min:8 en validacion de crear usuario admin |
 | 47 | phpinfo() restriccion | Agregado Auth::role() !== 'admin' ademas de APP_ENV !== 'development' |
 
