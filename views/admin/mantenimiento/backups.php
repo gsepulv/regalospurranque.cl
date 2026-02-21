@@ -66,6 +66,9 @@ $tabs = [
             <?= ($driveStatus['ok'] ?? false) ? '&#9989; Conectado' : '&#10060; Desconectado' ?>
         </div>
         <div class="stat-card__label">Google Drive</div>
+        <?php if (!($driveStatus['ok'] ?? false)): ?>
+            <div style="font-size:0.75rem;margin-top:4px;color:var(--color-danger)"><?= e($driveStatus['message'] ?? 'Sin detalle') ?></div>
+        <?php endif; ?>
     </div>
     <?php endif; ?>
 </div>

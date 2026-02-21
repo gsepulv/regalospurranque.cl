@@ -439,7 +439,7 @@ class GoogleDrive
             'typ' => 'JWT',
         ]));
 
-        $now = time();
+        $now = self::getAccurateTime();
         $claims = self::base64urlEncode(json_encode([
             'iss'   => $credentials['client_email'],
             'scope' => self::SCOPE,
@@ -591,6 +591,32 @@ class GoogleDrive
             'body'     => $result,
             'headers'  => $responseHeaders,
         ];
+    }
+
+    /**
+     * Obtener timestamp preciso consultando el header Date de Google.
+     * Corrige desfase de reloj en hosting compartido.
+     */
+    private static function getAccurateTime(): int
+    {
+        $ch = curl_init('https://www.googleapis.com');
+        curl_setopt_array($ch, [
+            CURLOPT_NOBODY         => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 5,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$serverTime) {
+                if (stripos($header, 'Date:') === 0) {
+                    $serverTime = strtotime(trim(substr($header, 5)));
+                }
+                return strlen($header);
+            },
+        ]);
+        $serverTime = 0;
+        curl_exec($ch);
+        curl_close($ch);
+
+        return $serverTime > 0 ? $serverTime : time();
     }
 
     /**
