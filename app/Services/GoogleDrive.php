@@ -3,15 +3,18 @@ namespace App\Services;
 
 /**
  * Servicio de Google Drive via API REST v3
- * Autenticación con Service Account (JWT + cURL), sin Composer
+ * Autenticación OAuth 2.0 con refresh token (cuenta personal Gmail)
+ * Sin cURL ni Composer — usa file_get_contents + stream context
  */
 class GoogleDrive
 {
     private const TOKEN_URI   = 'https://oauth2.googleapis.com/token';
     private const API_BASE    = 'https://www.googleapis.com/drive/v3';
     private const UPLOAD_BASE = 'https://www.googleapis.com/upload/drive/v3/files';
-    private const SCOPE       = 'https://www.googleapis.com/auth/drive.file';
     private const CHUNK_SIZE  = 5 * 1024 * 1024; // 5MB
+
+    /** @var string Último error para diagnóstico */
+    private static string $lastError = '';
 
     // ─── Público ─────────────────────────────────────────────────
 
@@ -34,19 +37,18 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'Google Drive no está habilitado'];
             }
 
-            if (!defined('GDRIVE_CREDENTIALS_PATH') || !file_exists(GDRIVE_CREDENTIALS_PATH)) {
-                return ['ok' => false, 'message' => 'Archivo de credenciales no encontrado'];
+            if (!defined('GDRIVE_CLIENT_ID') || !defined('GDRIVE_CLIENT_SECRET') || !defined('GDRIVE_REFRESH_TOKEN')) {
+                return ['ok' => false, 'message' => 'Faltan credenciales OAuth (CLIENT_ID, CLIENT_SECRET o REFRESH_TOKEN)'];
             }
 
             self::$lastError = '';
             $token = self::getAccessToken();
             if (!$token) {
                 $msg = self::$lastError ?: 'No se pudo obtener token de acceso';
-                error_log('[GoogleDrive] verificarConexion falló: ' . $msg);
                 return ['ok' => false, 'message' => $msg];
             }
 
-            $resp = self::curlRequest(
+            $resp = self::httpRequest(
                 self::API_BASE . '/about?fields=user',
                 'GET',
                 null,
@@ -91,10 +93,9 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'GDRIVE_FOLDER_ID no está configurado en config/backup.php'];
             }
 
-            // Siempre resumable upload (multipart no funciona con file_get_contents)
             return self::resumableUpload($filepath, $filename, $fileSize, $mimeType, $folderId, $token);
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => 'Exception: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine()];
+            return ['ok' => false, 'message' => 'Exception: ' . $e->getMessage()];
         }
     }
 
@@ -114,9 +115,9 @@ class GoogleDrive
             $query = urlencode("'{$folderId}' in parents and trashed = false");
             $fields = urlencode('files(id,name,size,createdTime,webViewLink)');
 
-            $url = self::API_BASE . "/files?q={$query}&fields={$fields}&orderBy=createdTime+desc&pageSize=100&supportsAllDrives=true&includeItemsFromAllDrives=true";
+            $url = self::API_BASE . "/files?q={$query}&fields={$fields}&orderBy=createdTime+desc&pageSize=100";
 
-            $resp = self::curlRequest($url, 'GET', null, [
+            $resp = self::httpRequest($url, 'GET', null, [
                 'Authorization: Bearer ' . $token,
             ]);
 
@@ -161,7 +162,7 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'No se pudo obtener token de acceso'];
             }
 
-            $resp = self::curlRequest(
+            $resp = self::httpRequest(
                 self::API_BASE . '/files/' . $fileId,
                 'DELETE',
                 null,
@@ -221,28 +222,29 @@ class GoogleDrive
         string $folderId,
         string $token
     ): array {
-        // Paso 1: Iniciar sesión resumable
+        // Paso 1: Iniciar sesión resumable (metadata con parents)
         $metadata = json_encode([
             'name'    => $filename,
             'parents' => [$folderId],
         ]);
 
-        $uploadUrl = self::UPLOAD_BASE . '?uploadType=resumable&supportsAllDrives=true&fields=id,name,webViewLink';
-        $reqHeaders = [
-            'Authorization: Bearer ' . $token,
-            'Content-Type: application/json; charset=UTF-8',
-            'X-Upload-Content-Type: ' . $mimeType,
-            'X-Upload-Content-Length: ' . $fileSize,
-        ];
-
-        $resp = self::curlRequest($uploadUrl, 'POST', $metadata, $reqHeaders, 30);
+        $resp = self::httpRequest(
+            self::UPLOAD_BASE . '?uploadType=resumable&fields=id,name,webViewLink',
+            'POST',
+            $metadata,
+            [
+                'Authorization: Bearer ' . $token,
+                'Content-Type: application/json; charset=UTF-8',
+                'X-Upload-Content-Type: ' . $mimeType,
+                'X-Upload-Content-Length: ' . $fileSize,
+            ],
+            30
+        );
 
         if ($resp['httpCode'] !== 200) {
             $error = json_decode($resp['body'], true);
             $msg = $error['error']['message'] ?? 'HTTP ' . $resp['httpCode'];
-            // Debug: mostrar todo en el error para diagnosticar
-            $debug = ' [DEBUG metadata=' . $metadata . ' | HTTP=' . $resp['httpCode'] . ' | body=' . substr($resp['body'], 0, 300) . ']';
-            return ['ok' => false, 'message' => $msg . $debug];
+            return ['ok' => false, 'message' => 'Error al iniciar upload: ' . $msg];
         }
 
         // Extraer URI de upload de los headers
@@ -272,7 +274,7 @@ class GoogleDrive
             $chunkLen = strlen($chunkData);
             $rangeEnd = $offset + $chunkLen - 1;
 
-            $chunkResp = self::curlRequest(
+            $chunkResp = self::httpRequest(
                 $uploadUri,
                 'PUT',
                 $chunkData,
@@ -283,8 +285,6 @@ class GoogleDrive
                 120
             );
 
-            // 308 = chunk recibido, continuar
-            // 200/201 = upload completo
             if ($chunkResp['httpCode'] === 200 || $chunkResp['httpCode'] === 201) {
                 $lastResponse = $chunkResp;
                 break;
@@ -315,117 +315,24 @@ class GoogleDrive
         ];
     }
 
-    // ─── JWT / Auth ──────────────────────────────────────────────
-
-    /** @var string Último error para diagnóstico */
-    private static string $lastError = '';
+    // ─── OAuth 2.0 con Refresh Token ────────────────────────────
 
     /**
-     * Obtener access token (cacheado o nuevo)
+     * Obtener access token usando refresh token (cacheado o nuevo)
      */
     private static function getAccessToken(): string|false
     {
-        // Intentar cache
         $cached = self::getCachedToken();
         if ($cached) return $cached;
 
-        // Generar nuevo
-        $creds = self::readCredentials();
-        if (!$creds) {
-            self::$lastError = 'No se pudieron leer las credenciales (archivo inexistente, ilegible o JSON inválido)';
-            return false;
-        }
-
-        $jwt = self::generateJWT($creds);
-        if (!$jwt) {
-            self::$lastError = 'No se pudo generar el JWT (error en openssl_sign)';
-            return false;
-        }
-
-        $tokenData = self::exchangeJWTForToken($jwt);
-
-        if (!$tokenData || empty($tokenData['access_token'])) {
-            return false; // lastError ya fue seteado en exchangeJWTForToken
-        }
-
-        self::cacheToken($tokenData['access_token'], $tokenData['expires_in'] ?? 3600);
-
-        return $tokenData['access_token'];
-    }
-
-    /**
-     * Leer credenciales del JSON
-     */
-    private static function readCredentials(): array|false
-    {
-        $path = defined('GDRIVE_CREDENTIALS_PATH') ? GDRIVE_CREDENTIALS_PATH : '';
-
-        if (!$path || !file_exists($path) || !is_readable($path)) {
-            return false;
-        }
-
-        $json = file_get_contents($path);
-        $data = json_decode($json, true);
-
-        if (!$data || empty($data['private_key']) || empty($data['client_email'])) {
-            return false;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Generar JWT firmado para Google OAuth
-     */
-    private static function generateJWT(array $credentials): string|false
-    {
-        $header = self::base64urlEncode(json_encode([
-            'alg' => 'RS256',
-            'typ' => 'JWT',
-        ]));
-
-        $now = self::getAccurateTime();
-        $claims = self::base64urlEncode(json_encode([
-            'iss'   => $credentials['client_email'],
-            'scope' => self::SCOPE,
-            'aud'   => self::TOKEN_URI,
-            'iat'   => $now,
-            'exp'   => $now + 3600,
-        ]));
-
-        $input = $header . '.' . $claims;
-
-        $success = openssl_sign($input, $signature, $credentials['private_key'], OPENSSL_ALGO_SHA256);
-
-        if (!$success || empty($signature)) {
-            $opensslError = openssl_error_string() ?: 'desconocido';
-            self::$lastError = 'openssl_sign falló: ' . $opensslError;
-            error_log('[GoogleDrive] openssl_sign error: ' . $opensslError);
-            return false;
-        }
-
-        return $input . '.' . self::base64urlEncode($signature);
-    }
-
-    /**
-     * Base64url encode (RFC 4648, sin padding)
-     */
-    private static function base64urlEncode(string $data): string
-    {
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
-    }
-
-    /**
-     * Intercambiar JWT por access token
-     */
-    private static function exchangeJWTForToken(string $jwt): array|false
-    {
-        $resp = self::curlRequest(
+        $resp = self::httpRequest(
             self::TOKEN_URI,
             'POST',
             http_build_query([
-                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion'  => $jwt,
+                'client_id'     => GDRIVE_CLIENT_ID,
+                'client_secret' => GDRIVE_CLIENT_SECRET,
+                'refresh_token' => GDRIVE_REFRESH_TOKEN,
+                'grant_type'    => 'refresh_token',
             ]),
             ['Content-Type: application/x-www-form-urlencoded'],
             15
@@ -434,12 +341,20 @@ class GoogleDrive
         if ($resp['httpCode'] !== 200) {
             $body = json_decode($resp['body'], true);
             $errorMsg = $body['error_description'] ?? $body['error'] ?? 'HTTP ' . $resp['httpCode'];
-            self::$lastError = 'Token exchange falló: ' . $errorMsg;
-            error_log('[GoogleDrive] Token exchange HTTP ' . $resp['httpCode'] . ': ' . $errorMsg);
+            self::$lastError = 'Token refresh falló: ' . $errorMsg;
             return false;
         }
 
-        return json_decode($resp['body'], true);
+        $tokenData = json_decode($resp['body'], true);
+
+        if (empty($tokenData['access_token'])) {
+            self::$lastError = 'Respuesta sin access_token';
+            return false;
+        }
+
+        self::cacheToken($tokenData['access_token'], $tokenData['expires_in'] ?? 3600);
+
+        return $tokenData['access_token'];
     }
 
     /**
@@ -476,7 +391,6 @@ class GoogleDrive
             return false;
         }
 
-        // Margen de 60 segundos
         if ($data['expires_at'] <= time() + 60) {
             return false;
         }
@@ -484,14 +398,13 @@ class GoogleDrive
         return $data['access_token'];
     }
 
-    // ─── cURL ────────────────────────────────────────────────────
+    // ─── HTTP ───────────────────────────────────────────────────
 
     /**
      * Request HTTP genérico (file_get_contents + stream context)
-     * Compatible con hosting sin extensión cURL
      * @return array{httpCode: int, body: string, headers: array}
      */
-    private static function curlRequest(
+    private static function httpRequest(
         string $url,
         string $method = 'GET',
         ?string $body = null,
@@ -540,27 +453,6 @@ class GoogleDrive
             'body'     => $result !== false ? $result : '',
             'headers'  => $responseHeaders,
         ];
-    }
-
-    /**
-     * Obtener timestamp preciso consultando el header Date de Google.
-     * Corrige desfase de reloj en hosting compartido.
-     */
-    private static function getAccurateTime(): int
-    {
-        try {
-            $resp = self::curlRequest('https://www.googleapis.com', 'HEAD', null, [], 5);
-            foreach ($resp['headers'] as $header) {
-                if (stripos($header, 'Date:') === 0) {
-                    $ts = strtotime(trim(substr($header, 5)));
-                    if ($ts > 0) return $ts;
-                }
-            }
-        } catch (\Throwable $e) {
-            // fallback a time() local
-        }
-
-        return time();
     }
 
     /**

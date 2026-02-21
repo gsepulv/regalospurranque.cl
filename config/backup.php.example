@@ -2,16 +2,26 @@
 /**
  * Configuración de backups y Google Drive
  * Copiar como backup.php y configurar con los valores reales
+ *
+ * Para obtener las credenciales OAuth:
+ * 1. Google Cloud Console > APIs & Services > Credentials > Create OAuth Client ID (Web)
+ * 2. Agregar https://developers.google.com/oauthplayground como redirect URI
+ * 3. Ir a https://developers.google.com/oauthplayground
+ * 4. Settings (engranaje) > Use your own OAuth credentials > pegar Client ID y Secret
+ * 5. Paso 1: Autorizar scope https://www.googleapis.com/auth/drive.file
+ * 6. Paso 2: Exchange authorization code for tokens > copiar refresh_token
  */
 
 // Google Drive - Habilitar/deshabilitar subida a la nube
 define('GDRIVE_ENABLED', false);
 
-// Ruta al archivo JSON de credenciales del Service Account
-define('GDRIVE_CREDENTIALS_PATH', BASE_PATH . '/config/google-credentials.json');
+// OAuth 2.0 credentials (Google Cloud Console > OAuth Client ID)
+define('GDRIVE_CLIENT_ID', '');
+define('GDRIVE_CLIENT_SECRET', '');
+define('GDRIVE_REFRESH_TOKEN', '');
 
 // ID de la carpeta de destino en Google Drive
 define('GDRIVE_FOLDER_ID', '');
 
-// Días de retención de backups en Drive (eliminar automáticamente los más antiguos)
+// Días de retención de backups en Drive
 define('GDRIVE_RETENTION_DAYS', 30);
