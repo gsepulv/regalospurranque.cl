@@ -64,7 +64,7 @@ class NoticiaController extends Controller
         $description = $noticia['seo_descripcion'] ?: ($noticia['extracto'] ?? truncate($noticia['contenido'] ?? '', 160));
         $ogImage = null;
         if (!empty($noticia['seo_imagen_og'])) {
-            $ogImage = asset('img/noticias/' . $noticia['seo_imagen_og']);
+            $ogImage = asset('img/og/' . $noticia['seo_imagen_og']);
         } elseif (!empty($noticia['imagen'])) {
             $ogImage = asset('img/noticias/' . $noticia['imagen']);
         }
