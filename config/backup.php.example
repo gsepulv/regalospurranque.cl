@@ -1,0 +1,17 @@
+<?php
+/**
+ * Configuración de backups y Google Drive
+ * Copiar como backup.php y configurar con los valores reales
+ */
+
+// Google Drive - Habilitar/deshabilitar subida a la nube
+define('GDRIVE_ENABLED', false);
+
+// Ruta al archivo JSON de credenciales del Service Account
+define('GDRIVE_CREDENTIALS_PATH', BASE_PATH . '/config/google-credentials.json');
+
+// ID de la carpeta de destino en Google Drive
+define('GDRIVE_FOLDER_ID', '');
+
+// Días de retención de backups en Drive (eliminar automáticamente los más antiguos)
+define('GDRIVE_RETENTION_DAYS', 30);

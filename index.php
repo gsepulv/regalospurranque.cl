@@ -13,6 +13,9 @@ require BASE_PATH . '/config/database.php';
 if (file_exists(BASE_PATH . '/config/captcha.php')) {
     require BASE_PATH . '/config/captcha.php';
 }
+if (file_exists(BASE_PATH . '/config/backup.php')) {
+    require BASE_PATH . '/config/backup.php';
+}
 
 // Autoloader PSR-4 sin Composer
 spl_autoload_register(function (string $class): void {

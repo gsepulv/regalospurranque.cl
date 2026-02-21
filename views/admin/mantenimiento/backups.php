@@ -1,7 +1,7 @@
 <?php
 /**
  * Admin - Mantenimiento > Backups
- * Variables: $backups (array), $totalSize (int bytes), $diskFree (int bytes)
+ * Variables: $backups, $totalSize, $diskFreeSpace, $driveEnabled, $driveStatus, $driveFiles
  */
 
 function formatBytes($bytes, $precision = 2) {
@@ -47,7 +47,7 @@ $tabs = [
 </div>
 
 <!-- Stats -->
-<div class="stats-grid" style="grid-template-columns:repeat(3, 1fr);margin-bottom:var(--spacing-6)">
+<div class="stats-grid" style="grid-template-columns:repeat(<?= ($driveEnabled ?? false) ? 4 : 3 ?>, 1fr);margin-bottom:var(--spacing-6)">
     <div class="stat-card stat-card--primary">
         <div class="stat-card__number"><?= count($backups) ?></div>
         <div class="stat-card__label">Total Backups</div>
@@ -60,6 +60,14 @@ $tabs = [
         <div class="stat-card__number"><?= formatBytes($diskFreeSpace) ?></div>
         <div class="stat-card__label">Espacio Libre</div>
     </div>
+    <?php if ($driveEnabled ?? false): ?>
+    <div class="stat-card <?= ($driveStatus['ok'] ?? false) ? 'stat-card--success' : 'stat-card--danger' ?>">
+        <div class="stat-card__number" style="font-size:1.2rem">
+            <?= ($driveStatus['ok'] ?? false) ? '&#9989; Conectado' : '&#10060; Desconectado' ?>
+        </div>
+        <div class="stat-card__label">Google Drive</div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Action Cards -->
@@ -154,6 +162,17 @@ $tabs = [
                                     <a href="<?= url('/admin/mantenimiento/backup/descargar/' . urlencode($backup['nombre'])) ?>"
                                        class="btn btn--outline btn--sm"
                                        title="Descargar">Descargar</a>
+                                    <?php if ($driveEnabled ?? false): ?>
+                                    <form method="POST"
+                                          action="<?= url('/admin/mantenimiento/backup/drive/subir/' . urlencode($backup['nombre'])) ?>"
+                                          style="display:inline">
+                                        <?= csrf_field() ?>
+                                        <button type="submit"
+                                                class="btn btn--outline btn--sm"
+                                                style="border-color:#4285F4;color:#4285F4"
+                                                data-confirm="&iquest;Subir este backup a Google Drive?">&#9729; Drive</button>
+                                    </form>
+                                    <?php endif; ?>
                                     <form method="POST"
                                           action="<?= url('/admin/mantenimiento/backup/eliminar/' . urlencode($backup['nombre'])) ?>"
                                           style="display:inline">
@@ -176,8 +195,79 @@ $tabs = [
     <?php endif; ?>
 </div>
 
+<?php if ($driveEnabled ?? false): ?>
+<!-- Google Drive Backups -->
+<div class="admin-card" style="margin-top:var(--spacing-6)">
+    <div class="admin-card__header" style="padding:var(--spacing-4) var(--spacing-6);display:flex;align-items:center;justify-content:space-between">
+        <h3 style="margin:0">&#9729; Backups en Google Drive</h3>
+        <form method="POST" action="<?= url('/admin/mantenimiento/backup/drive/test') ?>" style="display:inline">
+            <?= csrf_field() ?>
+            <button type="submit" class="btn btn--outline btn--sm">Probar Conexi&oacute;n</button>
+        </form>
+    </div>
+    <?php if (!empty($driveFiles)): ?>
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Tama&ntilde;o</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($driveFiles as $df): ?>
+                        <tr>
+                            <td><strong><?= e($df['name']) ?></strong></td>
+                            <td><?= formatBytes($df['size'] ?? 0) ?></td>
+                            <td>
+                                <?php if (!empty($df['createdTime'])): ?>
+                                    <?= date('d/m/Y H:i', strtotime($df['createdTime'])) ?>
+                                <?php else: ?>
+                                    &mdash;
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="admin-table__actions">
+                                    <?php if (!empty($df['webViewLink'])): ?>
+                                    <a href="<?= e($df['webViewLink']) ?>"
+                                       target="_blank"
+                                       rel="noopener"
+                                       class="btn btn--outline btn--sm">Ver en Drive</a>
+                                    <?php endif; ?>
+                                    <form method="POST"
+                                          action="<?= url('/admin/mantenimiento/backup/drive/eliminar/' . urlencode($df['id'])) ?>"
+                                          style="display:inline">
+                                        <?= csrf_field() ?>
+                                        <button type="submit"
+                                                class="btn btn--danger btn--sm"
+                                                data-confirm="&iquest;Eliminar este backup de Google Drive?">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php else: ?>
+        <div style="padding:var(--spacing-6);text-align:center">
+            <p style="color:var(--color-gray);margin:0">
+                <?= ($driveStatus['ok'] ?? false)
+                    ? 'Sin backups en Google Drive.'
+                    : 'No se pudo conectar con Google Drive. Verifica la configuraci&oacute;n.' ?>
+            </p>
+        </div>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
 <p style="margin-top:var(--spacing-4);font-size:0.8125rem;color:var(--color-gray)">
     Los backups se almacenan en <code>storage/backups/</code> protegido por <code>.htaccess</code>
+    <?php if ($driveEnabled ?? false): ?>
+        — Google Drive habilitado como respaldo en la nube.
+    <?php endif; ?>
 </p>
 
 <style>

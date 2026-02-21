@@ -189,6 +189,11 @@ return [
     ['GET',  '/admin/mantenimiento/backup/descargar/{file}', 'Admin\\BackupController@downloadBackup',    ['auth']],
     ['POST', '/admin/mantenimiento/backup/eliminar/{file}',  'Admin\\BackupController@deleteBackup',      ['auth']],
 
+    // Google Drive backup operations
+    ['POST', '/admin/mantenimiento/backup/drive/subir/{file}',      'Admin\\BackupController@uploadToDrive',       ['auth']],
+    ['POST', '/admin/mantenimiento/backup/drive/eliminar/{fileId}', 'Admin\\BackupController@deleteDriveBackup',   ['auth']],
+    ['POST', '/admin/mantenimiento/backup/drive/test',              'Admin\\BackupController@testDriveConnection', ['auth']],
+
     // Explorador de archivos
     ['GET',  '/admin/mantenimiento/archivos',              'Admin\\FileExplorerController@browse',        ['auth']],
     ['GET',  '/admin/mantenimiento/archivos/ver',          'Admin\\FileExplorerController@viewFile',      ['auth']],
