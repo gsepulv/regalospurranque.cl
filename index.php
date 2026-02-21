@@ -7,11 +7,6 @@
 // Base path del proyecto (raíz — estructura flat para hosting compartido)
 define('BASE_PATH', __DIR__);
 
-// OPcache: invalidar archivos modificados (one-time fix, eliminar después)
-if (function_exists('opcache_invalidate')) {
-    opcache_invalidate(__DIR__ . '/app/Services/GoogleDrive.php', true);
-}
-
 // Cargar configuración
 require BASE_PATH . '/config/app.php';
 require BASE_PATH . '/config/database.php';
