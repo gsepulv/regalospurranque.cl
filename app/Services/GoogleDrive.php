@@ -542,7 +542,8 @@ class GoogleDrive
     // ─── cURL ────────────────────────────────────────────────────
 
     /**
-     * Request cURL genérico
+     * Request HTTP genérico (file_get_contents + stream context)
+     * Compatible con hosting sin extensión cURL
      * @return array{httpCode: int, body: string, headers: array}
      */
     private static function curlRequest(
@@ -552,43 +553,46 @@ class GoogleDrive
         array $headers = [],
         int $timeout = 30
     ): array {
-        $ch = curl_init();
-
-        curl_setopt_array($ch, [
-            CURLOPT_URL            => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => $timeout,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_CUSTOMREQUEST  => $method,
-            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$responseHeaders) {
-                $responseHeaders[] = $header;
-                return strlen($header);
-            },
-        ]);
-
-        if ($body !== null) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-        }
+        $opts = [
+            'http' => [
+                'method'          => $method,
+                'timeout'         => $timeout,
+                'ignore_errors'   => true,
+                'follow_location' => 0,
+            ],
+            'ssl' => [
+                'verify_peer'      => true,
+                'verify_peer_name' => true,
+            ],
+        ];
 
         if (!empty($headers)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            $opts['http']['header'] = implode("\r\n", $headers);
         }
 
-        $responseHeaders = [];
-        $result = curl_exec($ch);
-        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        if ($result === false) {
-            $error = curl_error($ch);
-            curl_close($ch);
-            throw new \RuntimeException('cURL error: ' . $error);
+        if ($body !== null) {
+            $opts['http']['content'] = $body;
         }
 
-        curl_close($ch);
+        $context = stream_context_create($opts);
+        $result = @file_get_contents($url, false, $context);
+
+        $responseHeaders = $http_response_header ?? [];
+        $httpCode = 0;
+
+        foreach ($responseHeaders as $h) {
+            if (preg_match('/^HTTP\/[\d.]+\s+(\d+)/', $h, $m)) {
+                $httpCode = (int) $m[1];
+            }
+        }
+
+        if ($result === false && $httpCode === 0) {
+            throw new \RuntimeException('HTTP request failed: ' . $url);
+        }
 
         return [
             'httpCode' => $httpCode,
-            'body'     => $result,
+            'body'     => $result !== false ? $result : '',
             'headers'  => $responseHeaders,
         ];
     }
