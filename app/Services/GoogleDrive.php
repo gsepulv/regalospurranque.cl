@@ -94,7 +94,7 @@ class GoogleDrive
             // Siempre resumable upload (multipart no funciona con file_get_contents)
             return self::resumableUpload($filepath, $filename, $fileSize, $mimeType, $folderId, $token);
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => $e->getMessage()];
+            return ['ok' => false, 'message' => 'Exception: ' . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine()];
         }
     }
 
@@ -235,22 +235,14 @@ class GoogleDrive
             'X-Upload-Content-Length: ' . $fileSize,
         ];
 
-        // Debug log
-        error_log('[GoogleDrive] Upload paso 1 - URL: ' . $uploadUrl);
-        error_log('[GoogleDrive] Upload paso 1 - Metadata: ' . $metadata);
-        error_log('[GoogleDrive] Upload paso 1 - Headers: ' . implode(' | ', $reqHeaders));
-
         $resp = self::curlRequest($uploadUrl, 'POST', $metadata, $reqHeaders, 30);
-
-        // Debug log response
-        error_log('[GoogleDrive] Upload paso 1 - Response HTTP: ' . $resp['httpCode']);
-        error_log('[GoogleDrive] Upload paso 1 - Response body: ' . substr($resp['body'], 0, 500));
-        error_log('[GoogleDrive] Upload paso 1 - Response headers: ' . implode(' | ', $resp['headers']));
 
         if ($resp['httpCode'] !== 200) {
             $error = json_decode($resp['body'], true);
             $msg = $error['error']['message'] ?? 'HTTP ' . $resp['httpCode'];
-            return ['ok' => false, 'message' => 'Error al iniciar upload (HTTP ' . $resp['httpCode'] . '): ' . $msg];
+            // Debug: mostrar todo en el error para diagnosticar
+            $debug = ' [DEBUG metadata=' . $metadata . ' | HTTP=' . $resp['httpCode'] . ' | body=' . substr($resp['body'], 0, 300) . ']';
+            return ['ok' => false, 'message' => $msg . $debug];
         }
 
         // Extraer URI de upload de los headers
