@@ -38,9 +38,12 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'Archivo de credenciales no encontrado'];
             }
 
+            self::$lastError = '';
             $token = self::getAccessToken();
             if (!$token) {
-                return ['ok' => false, 'message' => 'No se pudo obtener token de acceso'];
+                $msg = self::$lastError ?: 'No se pudo obtener token de acceso';
+                error_log('[GoogleDrive] verificarConexion falló: ' . $msg);
+                return ['ok' => false, 'message' => $msg];
             }
 
             $resp = self::curlRequest(
@@ -369,6 +372,9 @@ class GoogleDrive
 
     // ─── JWT / Auth ──────────────────────────────────────────────
 
+    /** @var string Último error para diagnóstico */
+    private static string $lastError = '';
+
     /**
      * Obtener access token (cacheado o nuevo)
      */
@@ -380,13 +386,21 @@ class GoogleDrive
 
         // Generar nuevo
         $creds = self::readCredentials();
-        if (!$creds) return false;
+        if (!$creds) {
+            self::$lastError = 'No se pudieron leer las credenciales (archivo inexistente, ilegible o JSON inválido)';
+            return false;
+        }
 
         $jwt = self::generateJWT($creds);
+        if (!$jwt) {
+            self::$lastError = 'No se pudo generar el JWT (error en openssl_sign)';
+            return false;
+        }
+
         $tokenData = self::exchangeJWTForToken($jwt);
 
         if (!$tokenData || empty($tokenData['access_token'])) {
-            return false;
+            return false; // lastError ya fue seteado en exchangeJWTForToken
         }
 
         self::cacheToken($tokenData['access_token'], $tokenData['expires_in'] ?? 3600);
@@ -418,7 +432,7 @@ class GoogleDrive
     /**
      * Generar JWT firmado para Google OAuth
      */
-    private static function generateJWT(array $credentials): string
+    private static function generateJWT(array $credentials): string|false
     {
         $header = self::base64urlEncode(json_encode([
             'alg' => 'RS256',
@@ -436,7 +450,14 @@ class GoogleDrive
 
         $input = $header . '.' . $claims;
 
-        openssl_sign($input, $signature, $credentials['private_key'], OPENSSL_ALGO_SHA256);
+        $success = openssl_sign($input, $signature, $credentials['private_key'], OPENSSL_ALGO_SHA256);
+
+        if (!$success || empty($signature)) {
+            $opensslError = openssl_error_string() ?: 'desconocido';
+            self::$lastError = 'openssl_sign falló: ' . $opensslError;
+            error_log('[GoogleDrive] openssl_sign error: ' . $opensslError);
+            return false;
+        }
 
         return $input . '.' . self::base64urlEncode($signature);
     }
@@ -466,6 +487,10 @@ class GoogleDrive
         );
 
         if ($resp['httpCode'] !== 200) {
+            $body = json_decode($resp['body'], true);
+            $errorMsg = $body['error_description'] ?? $body['error'] ?? 'HTTP ' . $resp['httpCode'];
+            self::$lastError = 'Token exchange falló: ' . $errorMsg;
+            error_log('[GoogleDrive] Token exchange HTTP ' . $resp['httpCode'] . ': ' . $errorMsg);
             return false;
         }
 
