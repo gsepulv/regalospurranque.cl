@@ -259,11 +259,17 @@ class Seo
      */
     public static function schemaEvent(array $fecha): array
     {
+        $image = !empty($fecha['imagen'])
+            ? asset('img/fechas/' . $fecha['imagen'])
+            : asset('img/og/og-regalos-purranque.jpg');
+
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'Event',
             'name' => $fecha['nombre'] . ' en Purranque',
             'description' => $fecha['descripcion'] ?: 'Encuentra comercios y regalos para ' . $fecha['nombre'] . ' en Purranque, Chile',
+            'image' => $image,
+            'eventStatus' => 'https://schema.org/EventScheduled',
             'eventAttendanceMode' => 'https://schema.org/OfflineEventAttendanceMode',
             'location' => [
                 '@type' => 'Place',
@@ -278,6 +284,17 @@ class Seo
             'organizer' => [
                 '@type' => 'Organization',
                 'name' => SITE_NAME,
+                'url' => SITE_URL,
+            ],
+            'performer' => [
+                '@type' => 'Organization',
+                'name' => 'Comercios de Purranque',
+            ],
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => '0',
+                'priceCurrency' => 'CLP',
+                'availability' => 'https://schema.org/InStock',
                 'url' => SITE_URL,
             ],
         ];
