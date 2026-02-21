@@ -33,9 +33,11 @@ class CategoriaAdminController extends Controller
     public function store(): void
     {
         $v = $this->validate($_POST, [
-            'nombre' => 'required|string|min:2|max:100',
-            'slug'   => 'required|slug|unique:categorias,slug',
-            'color'  => 'required|string|max:7',
+            'nombre'      => 'required|string|min:3|max:100',
+            'slug'        => 'required|slug|unique:categorias,slug',
+            'color'       => 'required|string|max:7',
+            'descripcion' => 'required|string|min:10|max:500',
+            'icono'       => 'required|string|min:1|max:10',
         ]);
 
         if ($v->fails()) {
@@ -88,9 +90,11 @@ class CategoriaAdminController extends Controller
         }
 
         $v = $this->validate($_POST, [
-            'nombre' => 'required|string|min:2|max:100',
-            'slug'   => "required|slug|unique:categorias,slug,{$id}",
-            'color'  => 'required|string|max:7',
+            'nombre'      => 'required|string|min:3|max:100',
+            'slug'        => "required|slug|unique:categorias,slug,{$id}",
+            'color'       => 'required|string|max:7',
+            'descripcion' => 'required|string|min:10|max:500',
+            'icono'       => 'required|string|min:1|max:10',
         ]);
 
         if ($v->fails()) {

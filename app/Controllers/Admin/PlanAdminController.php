@@ -74,10 +74,20 @@ class PlanAdminController extends Controller
      */
     public function store(): void
     {
+        $v = $this->validate($_POST, [
+            'nombre'      => 'required|string|min:3|max:50',
+            'descripcion' => 'required|string|min:10|max:500',
+        ]);
+
+        if ($v->fails()) {
+            $this->back(['errors' => $v->errors(), 'old' => $_POST]);
+            return;
+        }
+
         $datos = $this->getPlanData();
 
-        if (empty($datos['slug']) || empty($datos['nombre'])) {
-            $this->redirect('/admin/planes/crear', ['error' => 'El slug y nombre son obligatorios.']);
+        if (empty($datos['slug'])) {
+            $this->redirect('/admin/planes/crear', ['error' => 'El slug es obligatorio.']);
             return;
         }
 
@@ -118,6 +128,16 @@ class PlanAdminController extends Controller
         $plan = PlanConfig::find($id);
         if (!$plan) {
             $this->redirect('/admin/planes', ['error' => 'Plan no encontrado.']);
+            return;
+        }
+
+        $v = $this->validate($_POST, [
+            'nombre'      => 'required|string|min:3|max:50',
+            'descripcion' => 'required|string|min:10|max:500',
+        ]);
+
+        if ($v->fails()) {
+            $this->back(['errors' => $v->errors(), 'old' => $_POST]);
             return;
         }
 

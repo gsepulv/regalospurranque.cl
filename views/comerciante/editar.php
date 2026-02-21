@@ -56,12 +56,13 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                         Nombre del comercio <span style="color:#DC2626">*</span>
                     </label>
                     <input type="text" name="nombre" class="form-control"
-                           value="<?= e($comercio['nombre']) ?>" required>
+                           value="<?= e($comercio['nombre']) ?>" minlength="3" maxlength="100" required>
                 </div>
 
                 <div style="margin-bottom:1rem">
                     <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Descripción</label>
-                    <textarea name="descripcion" class="form-control" rows="4" maxlength="5000"><?= e($comercio['descripcion']) ?></textarea>
+                    <textarea name="descripcion" class="form-control" rows="4" minlength="20" maxlength="5000" required><?= e($comercio['descripcion']) ?></textarea>
+                    <small style="color:var(--color-gray)">Min. 20, max. 5000 caracteres.</small>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -70,12 +71,12 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                             WhatsApp <span style="color:#DC2626">*</span>
                         </label>
                         <input type="text" name="whatsapp" class="form-control"
-                               value="<?= e($comercio['whatsapp']) ?>" required>
+                               value="<?= e($comercio['whatsapp']) ?>" minlength="9" maxlength="15" required>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono</label>
                         <input type="text" name="telefono" class="form-control"
-                               value="<?= e($comercio['telefono']) ?>">
+                               value="<?= e($comercio['telefono']) ?>" minlength="9" maxlength="15" required>
                     </div>
                 </div>
 
@@ -83,19 +84,19 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Email del comercio</label>
                         <input type="email" name="email" class="form-control"
-                               value="<?= e($comercio['email']) ?>">
+                               value="<?= e($comercio['email']) ?>" maxlength="100" required>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web</label>
                         <input type="url" name="sitio_web" class="form-control"
-                               value="<?= e($comercio['sitio_web']) ?>">
+                               value="<?= e($comercio['sitio_web']) ?>" minlength="10" maxlength="255" required>
                     </div>
                 </div>
 
                 <div style="margin-bottom:1rem">
                     <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Dirección</label>
                     <input type="text" name="direccion" class="form-control"
-                           value="<?= e($comercio['direccion']) ?>">
+                           value="<?= e($comercio['direccion']) ?>" minlength="5" maxlength="255" required>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">

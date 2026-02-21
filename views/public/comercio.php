@@ -316,9 +316,9 @@ $hoy = (int) date('w');
                                 <label class="form-label" for="reviewComentario">Comentario *</label>
                                 <textarea name="comentario" id="reviewComentario" class="form-control"
                                           placeholder="Cuéntanos tu experiencia con este comercio..." required
-                                          minlength="10" maxlength="2000" rows="4"></textarea>
+                                          minlength="10" maxlength="1000" rows="4"></textarea>
                                 <div class="review-char-counter">
-                                    <span id="charCount">0</span> / 2000 caracteres
+                                    <span id="charCount">0</span> / 1000 caracteres
                                 </div>
                             </div>
 
@@ -519,8 +519,8 @@ function trackBanner(bannerId) {
         comentarioEl.addEventListener('input', function() {
             var len = this.value.length;
             charCountEl.textContent = len;
-            charCountEl.parentElement.classList.toggle('review-char-counter--warn', len > 1800);
-            charCountEl.parentElement.classList.toggle('review-char-counter--danger', len >= 2000);
+            charCountEl.parentElement.classList.toggle('review-char-counter--warn', len > 900);
+            charCountEl.parentElement.classList.toggle('review-char-counter--danger', len >= 1000);
         });
     }
 

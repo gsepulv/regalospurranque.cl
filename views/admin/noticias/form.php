@@ -51,7 +51,10 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                        class="form-control"
                        value="<?= e(old('titulo', $noticia['titulo'] ?? '')) ?>"
                        data-slug-source
+                       minlength="10"
+                       maxlength="200"
                        required>
+                <small style="color:var(--color-gray)">Min. 10, max. 200 caracteres.</small>
             </div>
 
             <div class="form-group">
@@ -62,25 +65,33 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                        class="form-control"
                        value="<?= e(old('slug', $noticia['slug'] ?? '')) ?>"
                        data-slug-target
+                       minlength="3"
+                       maxlength="200"
                        required>
                 <small style="color:var(--color-gray)">Se genera automaticamente desde el titulo.</small>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="contenido">Contenido</label>
+                <label class="form-label" for="contenido">Contenido *</label>
                 <textarea id="contenido"
                           name="contenido"
                           class="form-control tinymce-editor"
-                          rows="15"><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
+                          rows="15"
+                          required><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
+                <small style="color:var(--color-gray)">Min. 50 caracteres.</small>
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="extracto">Extracto</label>
+                <label class="form-label" for="extracto">Extracto *</label>
                 <textarea id="extracto"
                           name="extracto"
                           class="form-control"
                           rows="3"
-                          placeholder="Resumen breve para listados y SEO"><?= e(old('extracto', $noticia['extracto'] ?? '')) ?></textarea>
+                          minlength="20"
+                          maxlength="500"
+                          placeholder="Resumen breve para listados y SEO"
+                          required><?= e(old('extracto', $noticia['extracto'] ?? '')) ?></textarea>
+                <small style="color:var(--color-gray)">Min. 20, max. 500 caracteres.</small>
             </div>
         </div>
     </div>
@@ -250,8 +261,10 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                        class="form-control"
                        value="<?= e(old('seo_titulo', $noticia['seo_titulo'] ?? '')) ?>"
                        placeholder="Titulo para motores de búsqueda"
-                       maxlength="70">
-                <small style="color:var(--color-gray)">Maximo 70 caracteres. Si se deja vacio se usa el titulo de la noticia.</small>
+                       minlength="10"
+                       maxlength="70"
+                       required>
+                <small style="color:var(--color-gray)">Min. 10, max. 70 caracteres. Si se deja vacio se usa el titulo de la noticia.</small>
             </div>
 
             <div class="form-group">
@@ -261,8 +274,10 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                           class="form-control"
                           rows="2"
                           placeholder="Descripción para motores de búsqueda"
-                          maxlength="160"><?= e(old('seo_descripcion', $noticia['seo_descripcion'] ?? '')) ?></textarea>
-                <small style="color:var(--color-gray)">Maximo 160 caracteres.</small>
+                          minlength="50"
+                          maxlength="160"
+                          required><?= e(old('seo_descripcion', $noticia['seo_descripcion'] ?? '')) ?></textarea>
+                <small style="color:var(--color-gray)">Min. 50, max. 160 caracteres.</small>
             </div>
 
             <div class="form-group">
@@ -272,7 +287,11 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                        name="seo_keywords"
                        class="form-control"
                        value="<?= e(old('seo_keywords', $noticia['seo_keywords'] ?? '')) ?>"
-                       placeholder="palabra1, palabra2, palabra3">
+                       placeholder="palabra1, palabra2, palabra3"
+                       minlength="3"
+                       maxlength="255"
+                       required>
+                <small style="color:var(--color-gray)">Min. 3, max. 255 caracteres.</small>
             </div>
 
             <div class="form-group">
@@ -410,6 +429,19 @@ tinymce.init({
     },
     promotion: false,
     branding: false
+});
+
+// Validación TinyMCE antes de enviar
+document.querySelector('form').addEventListener('submit', function(e) {
+    var editor = tinymce.get('contenido');
+    if (editor) {
+        var text = editor.getContent({format: 'text'}).trim();
+        if (text.length < 50) {
+            e.preventDefault();
+            alert('El contenido debe tener al menos 50 caracteres (actualmente ' + text.length + ')');
+            editor.focus();
+        }
+    }
 });
 
 // Preview de imagen al seleccionar archivo

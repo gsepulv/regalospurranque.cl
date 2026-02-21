@@ -66,7 +66,8 @@ foreach ($fechas as $f) {
                     </label>
                     <input type="text" name="nombre" class="form-control"
                            value="<?= e($old['nombre'] ?? '') ?>"
-                           placeholder="Ej: Floristería Las Rosas" required>
+                           placeholder="Ej: Floristería Las Rosas" minlength="3" maxlength="100" required>
+                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
                 </div>
 
                 <div style="margin-bottom:1rem">
@@ -75,7 +76,8 @@ foreach ($fechas as $f) {
                     </label>
                     <textarea name="descripcion" class="form-control" rows="4"
                               placeholder="Cuéntanos qué ofrece tu comercio, qué productos o servicios tienes..."
-                              maxlength="5000"><?= e($old['descripcion'] ?? '') ?></textarea>
+                              minlength="20" maxlength="5000" required><?= e($old['descripcion'] ?? '') ?></textarea>
+                    <small style="color:var(--color-gray)">Min. 20, max. 5000 caracteres.</small>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -85,13 +87,15 @@ foreach ($fechas as $f) {
                         </label>
                         <input type="text" name="whatsapp" class="form-control"
                                value="<?= e($old['whatsapp'] ?? '') ?>"
-                               placeholder="+56 9 XXXX XXXX" required>
+                               placeholder="+56 9 XXXX XXXX" minlength="9" maxlength="15" required>
                         <small style="color:#6B7280;font-size:0.8rem">Contacto principal para tus clientes</small>
+                        <small style="color:var(--color-gray)">Min. 9, max. 15 caracteres.</small>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono fijo</label>
                         <input type="text" name="telefono" class="form-control"
-                               value="<?= e($old['telefono'] ?? '') ?>" placeholder="064 XXXXXX">
+                               value="<?= e($old['telefono'] ?? '') ?>" placeholder="064 XXXXXX"
+                               minlength="9" maxlength="15" required>
                     </div>
                 </div>
 
@@ -99,12 +103,14 @@ foreach ($fechas as $f) {
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Email del comercio</label>
                         <input type="email" name="email_comercio" class="form-control"
-                               value="<?= e($old['email_comercio'] ?? '') ?>" placeholder="contacto@micomercio.cl">
+                               value="<?= e($old['email_comercio'] ?? '') ?>" placeholder="contacto@micomercio.cl"
+                               maxlength="100" required>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web</label>
                         <input type="url" name="sitio_web" class="form-control"
-                               value="<?= e($old['sitio_web'] ?? '') ?>" placeholder="https://...">
+                               value="<?= e($old['sitio_web'] ?? '') ?>" placeholder="https://..."
+                               minlength="10" maxlength="255" required>
                     </div>
                 </div>
 
@@ -112,7 +118,8 @@ foreach ($fechas as $f) {
                     <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Dirección</label>
                     <input type="text" name="direccion" class="form-control"
                            value="<?= e($old['direccion'] ?? '') ?>"
-                           placeholder="Ej: Av. Bernardo O'Higgins 123, Purranque">
+                           placeholder="Ej: Av. Bernardo O'Higgins 123, Purranque"
+                           minlength="5" maxlength="255" required>
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">

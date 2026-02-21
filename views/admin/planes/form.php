@@ -28,6 +28,16 @@ $esEditar = !empty($plan);
 
 <h2><?= $esEditar ? '✏️ Editar plan: ' . e($plan['nombre']) : '➕ Nuevo Plan' ?></h2>
 
+<?php if (!empty($errors)): ?>
+    <div class="toast toast--error toast--inline" role="alert">
+        <span class="toast__message">
+            <?php foreach ($errors as $field => $msg): ?>
+                <?= e(is_array($msg) ? implode(', ', $msg) : $msg) ?><br>
+            <?php endforeach; ?>
+        </span>
+    </div>
+<?php endif; ?>
+
 <div class="admin-card">
     <div class="admin-card__body">
         <form method="POST"
@@ -42,14 +52,17 @@ $esEditar = !empty($plan);
                     <label class="form-label" for="slug">Slug (identificador único)</label>
                     <input type="text" id="slug" name="slug" class="form-control"
                            value="<?= e($plan['slug'] ?? '') ?>"
-                           placeholder="ej: premium" pattern="[a-z0-9_]+" required
+                           placeholder="ej: premium" pattern="[a-z0-9_]+"
+                           minlength="3" maxlength="50" required
                            <?= $esEditar ? 'readonly style="background:#f7fafc"' : '' ?>>
                     <div class="form-hint">Solo minúsculas, números y guión bajo. No se puede cambiar después.</div>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="nombre">Nombre visible</label>
                     <input type="text" id="nombre" name="nombre" class="form-control"
-                           value="<?= e($plan['nombre'] ?? '') ?>" placeholder="ej: Premium" required>
+                           value="<?= e($plan['nombre'] ?? '') ?>" placeholder="ej: Premium"
+                           minlength="3" maxlength="50" required>
+                    <small style="color:var(--color-gray)">Min. 3, max. 50 caracteres.</small>
                 </div>
             </div>
 
@@ -78,7 +91,9 @@ $esEditar = !empty($plan);
             <div class="form-group" style="margin-bottom:1rem">
                 <label class="form-label" for="descripcion">Descripción</label>
                 <textarea id="descripcion" name="descripcion" class="form-control" rows="2"
-                          placeholder="Descripción breve del plan..."><?= e($plan['descripcion'] ?? '') ?></textarea>
+                          placeholder="Descripción breve del plan..."
+                          minlength="10" maxlength="500" required><?= e($plan['descripcion'] ?? '') ?></textarea>
+                <small style="color:var(--color-gray)">Min. 10, max. 500 caracteres.</small>
             </div>
 
             <!-- Precios -->

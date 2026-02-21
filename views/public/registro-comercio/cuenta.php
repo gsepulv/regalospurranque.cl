@@ -44,7 +44,8 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                     </label>
                     <input type="text" name="nombre" class="form-control"
                            value="<?= e($old['nombre'] ?? '') ?>"
-                           placeholder="Ej: María González" required>
+                           placeholder="Ej: María González" minlength="3" maxlength="100" required>
+                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
                 </div>
 
                 <div style="margin-bottom:1rem">
@@ -53,7 +54,7 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                     </label>
                     <input type="email" name="email" class="form-control"
                            value="<?= e($old['email'] ?? '') ?>"
-                           placeholder="tu@email.com" required>
+                           placeholder="tu@email.com" maxlength="100" required>
                     <small style="color:#6B7280;font-size:0.8rem">Será tu usuario para acceder</small>
                 </div>
 
@@ -63,7 +64,8 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                     </label>
                     <input type="text" name="telefono" class="form-control"
                            value="<?= e($old['telefono'] ?? '') ?>"
-                           placeholder="+56 9 XXXX XXXX">
+                           placeholder="+56 9 XXXX XXXX" minlength="9" maxlength="15" required>
+                    <small style="color:var(--color-gray)">Min. 9, max. 15 caracteres.</small>
                 </div>
 
                 <div style="margin-bottom:1rem">

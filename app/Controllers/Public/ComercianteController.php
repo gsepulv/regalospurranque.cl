@@ -266,6 +266,48 @@ class ComercianteController extends Controller
             exit;
         }
 
+        // Validar campos antes de procesar
+        $nombre      = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $whatsapp    = trim($_POST['whatsapp'] ?? '');
+        $telefono    = trim($_POST['telefono'] ?? '');
+        $email       = trim($_POST['email'] ?? '');
+        $sitio_web   = trim($_POST['sitio_web'] ?? '');
+        $direccion   = trim($_POST['direccion'] ?? '');
+
+        $errors = [];
+        if (mb_strlen($nombre) < 3 || mb_strlen($nombre) > 100) {
+            $errors[] = 'El nombre debe tener entre 3 y 100 caracteres.';
+        }
+        if (mb_strlen($descripcion) < 20 || mb_strlen($descripcion) > 5000) {
+            $errors[] = 'La descripcion debe tener entre 20 y 5000 caracteres.';
+        }
+        if (mb_strlen($whatsapp) < 9 || mb_strlen($whatsapp) > 15) {
+            $errors[] = 'El WhatsApp debe tener entre 9 y 15 caracteres.';
+        }
+        if (mb_strlen($telefono) > 0 && (mb_strlen($telefono) < 9 || mb_strlen($telefono) > 15)) {
+            $errors[] = 'El teléfono debe tener entre 9 y 15 caracteres.';
+        }
+        if (mb_strlen($email) > 0 && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = 'Ingresa un email válido.';
+        }
+        if (mb_strlen($email) > 100) {
+            $errors[] = 'El email no puede superar los 100 caracteres.';
+        }
+        if (mb_strlen($sitio_web) > 255) {
+            $errors[] = 'El sitio web no puede superar los 255 caracteres.';
+        }
+        if (mb_strlen($direccion) < 5 || mb_strlen($direccion) > 255) {
+            $errors[] = 'La dirección debe tener entre 5 y 255 caracteres.';
+        }
+
+        if (!empty($errors)) {
+            $_SESSION['flash_errors'] = $errors;
+            $_SESSION['flash_old'] = $_POST;
+            header('Location: ' . url('/mi-comercio/editar'));
+            exit;
+        }
+
         // Recopilar todos los cambios
         $cambios = [];
 

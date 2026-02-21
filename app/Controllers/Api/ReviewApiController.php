@@ -43,7 +43,7 @@ class ReviewApiController extends Controller
             'nombre'       => 'required|string|min:2|max:100',
             'email'        => 'required|email',
             'calificacion' => 'required|integer',
-            'comentario'   => 'required|string|min:10|max:2000',
+            'comentario'   => 'required|string|min:10|max:1000',
         ]);
 
         if ($v->fails()) {

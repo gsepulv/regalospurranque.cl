@@ -64,8 +64,13 @@ class NoticiaAdminController extends Controller
     public function store(): void
     {
         $v = $this->validate($_POST, [
-            'titulo' => 'required|string|min:5|max:200',
-            'slug'   => 'required|slug|unique:noticias,slug',
+            'titulo'          => 'required|string|min:10|max:200',
+            'slug'            => 'required|slug|unique:noticias,slug',
+            'contenido'       => 'required|string|min:50',
+            'extracto'        => 'required|string|min:20|max:500',
+            'seo_titulo'      => 'required|string|min:10|max:70',
+            'seo_descripcion' => 'required|string|min:50|max:160',
+            'seo_keywords'    => 'required|string|min:3|max:255',
         ]);
 
         if ($v->fails()) {
@@ -145,8 +150,13 @@ class NoticiaAdminController extends Controller
         }
 
         $v = $this->validate($_POST, [
-            'titulo' => 'required|string|min:5|max:200',
-            'slug'   => "required|slug|unique:noticias,slug,{$id}",
+            'titulo'          => 'required|string|min:10|max:200',
+            'slug'            => "required|slug|unique:noticias,slug,{$id}",
+            'contenido'       => 'required|string|min:50',
+            'extracto'        => 'required|string|min:20|max:500',
+            'seo_titulo'      => 'required|string|min:10|max:70',
+            'seo_descripcion' => 'required|string|min:50|max:160',
+            'seo_keywords'    => 'required|string|min:3|max:255',
         ]);
 
         if ($v->fails()) {

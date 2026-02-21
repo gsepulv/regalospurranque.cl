@@ -44,7 +44,10 @@
                            class="form-control"
                            value="<?= e(old('nombre', $editing ? $fecha['nombre'] : '')) ?>"
                            data-slug-source
+                           minlength="3"
+                           maxlength="100"
                            required>
+                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="slug">Slug</label>
@@ -54,6 +57,8 @@
                            class="form-control"
                            value="<?= e(old('slug', $editing ? $fecha['slug'] : '')) ?>"
                            data-slug-target
+                           minlength="3"
+                           maxlength="100"
                            required>
                 </div>
             </div>
@@ -64,7 +69,11 @@
                 <textarea id="descripcion"
                           name="descripcion"
                           class="form-control"
-                          rows="3"><?= e(old('descripcion', $editing ? $fecha['descripcion'] ?? '' : '')) ?></textarea>
+                          rows="3"
+                          minlength="10"
+                          maxlength="500"
+                          required><?= e(old('descripcion', $editing ? $fecha['descripcion'] ?? '' : '')) ?></textarea>
+                <small style="color:var(--color-gray)">Min. 10, max. 500 caracteres.</small>
             </div>
 
             <!-- Tipo e Icono -->
@@ -89,7 +98,10 @@
                            name="icono"
                            class="form-control"
                            value="<?= e(old('icono', $editing ? $fecha['icono'] ?? '' : '')) ?>"
+                           minlength="1"
+                           maxlength="10"
                            placeholder="Ej: &#127873;">
+                    <small style="color:var(--color-gray)">Min. 1, max. 10 caracteres.</small>
                 </div>
             </div>
 
