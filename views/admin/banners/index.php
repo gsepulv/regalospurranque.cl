@@ -97,6 +97,7 @@
                                 <?php if (!empty($banner['imagen'])): ?>
                                     <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
                                          alt="<?= e($banner['titulo']) ?>"
+                                         loading="lazy"
                                          style="width:80px;height:40px;object-fit:cover;border-radius:4px">
                                 <?php else: ?>
                                     <div style="width:80px;height:40px;background:var(--color-light);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--color-gray);font-size:0.75rem">

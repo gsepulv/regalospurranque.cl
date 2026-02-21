@@ -51,7 +51,7 @@ $seoUrl = url('/noticia/' . $noticia['slug']);
 
                 <!-- Contenido -->
                 <div class="article-content tinymce-content">
-                    <?= $noticia['contenido'] ?>
+                    <?= sanitize_html($noticia['contenido']) ?>
                 </div>
 
                 <!-- Categorías y fechas -->

@@ -24,7 +24,6 @@
     </style>
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="dns-prefetch" href="https://cdn.tiny.cloud">
     <link rel="preload" href="<?= asset('css/main.css?v=202602170318') ?>" as="style">
     <link rel="stylesheet" href="<?= asset('css/main.css?v=202602170318') ?>">
     <?php if (!empty($extraCss)): ?>

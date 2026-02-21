@@ -206,10 +206,11 @@
                         <img src="<?= asset('img/fechas/' . $fecha['imagen']) ?>"
                              alt="<?= e($fecha['nombre']) ?>"
                              id="imagePreview"
+                             loading="lazy"
                              style="max-width:200px;max-height:120px;border-radius:var(--radius-md);border:1px solid var(--color-border)">
                     </div>
                 <?php else: ?>
-                    <img src="" alt="" id="imagePreview" style="display:none;max-width:200px;max-height:120px;border-radius:var(--radius-md);border:1px solid var(--color-border);margin-bottom:0.75rem">
+                    <img src="" alt="" id="imagePreview" loading="lazy" style="display:none;max-width:200px;max-height:120px;border-radius:var(--radius-md);border:1px solid var(--color-border);margin-bottom:0.75rem">
                 <?php endif; ?>
                 <input type="file"
                        id="imagen"

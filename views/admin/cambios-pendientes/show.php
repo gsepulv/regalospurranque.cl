@@ -41,7 +41,7 @@
                             <?php if ($campo === 'logo' || $campo === 'portada'): ?>
                                 <?php if (!empty($valores['anterior'])): ?>
                                     <img src="<?= asset('img/' . ($campo === 'logo' ? 'logos' : 'portadas') . '/' . $valores['anterior']) ?>"
-                                         alt="Actual" style="max-height:60px;border-radius:4px">
+                                         alt="Actual" loading="lazy" style="max-height:60px;border-radius:4px">
                                 <?php else: ?>
                                     <span style="color:var(--color-gray)">Sin imagen</span>
                                 <?php endif; ?>
@@ -61,7 +61,7 @@
                             <?php if ($campo === 'logo' || $campo === 'portada'): ?>
                                 <?php if (!empty($valores['nuevo'])): ?>
                                     <img src="<?= asset('img/' . ($campo === 'logo' ? 'logos' : 'portadas') . '/' . $valores['nuevo']) ?>"
-                                         alt="Nuevo" style="max-height:60px;border-radius:4px">
+                                         alt="Nuevo" loading="lazy" style="max-height:60px;border-radius:4px">
                                 <?php else: ?>
                                     <span style="color:var(--color-gray)">Sin imagen</span>
                                 <?php endif; ?>

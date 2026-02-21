@@ -131,6 +131,7 @@ $bannerSpecs = [
                     <div style="margin-bottom:0.5rem">
                         <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
                              alt="Imagen actual"
+                             loading="lazy"
                              style="max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--color-border)">
                         <p style="margin:0.25rem 0 0; font-size:0.8rem; color:var(--color-gray);">Imagen actual</p>
                     </div>
@@ -146,7 +147,7 @@ $bannerSpecs = [
 
             <!-- Preview de imagen nueva con validacion de dimensiones -->
             <div id="imagen-preview" style="display:none; margin-top:0.5rem; margin-bottom:1rem;">
-                <img src="" alt="Preview" style="max-width:100%;max-height:250px;border-radius:6px;border:1px solid var(--color-border)">
+                <img src="" alt="Preview" loading="lazy" style="max-width:100%;max-height:250px;border-radius:6px;border:1px solid var(--color-border)">
                 <div id="imagen-size-info" style="margin-top:0.35rem; font-size:0.8rem; padding:0.35rem 0.75rem; border-radius:4px; display:inline-block;"></div>
             </div>
 

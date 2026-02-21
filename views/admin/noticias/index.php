@@ -68,6 +68,7 @@
                                 <?php if (!empty($noticia['imagen'])): ?>
                                     <img src="<?= asset('img/noticias/' . $noticia['imagen']) ?>"
                                          alt="<?= e($noticia['titulo']) ?>"
+                                         loading="lazy"
                                          style="width:48px;height:48px;object-fit:cover;border-radius:4px">
                                 <?php else: ?>
                                     <div style="width:48px;height:48px;background:var(--color-light);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--color-gray);font-size:1.25rem">

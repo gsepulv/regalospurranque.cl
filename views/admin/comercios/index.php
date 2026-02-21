@@ -76,6 +76,7 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
                                         <img src="<?= asset('img/logos/' . $com['logo']) ?>"
                                              alt="<?= e($com['nombre']) ?>"
                                              width="32" height="32"
+                                             loading="lazy"
                                              style="border-radius:var(--radius-md);object-fit:cover">
                                     <?php else: ?>
                                         <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-md);background:var(--color-primary-light,#dbeafe);color:var(--color-primary,#2563eb);font-weight:600;font-size:0.875rem">

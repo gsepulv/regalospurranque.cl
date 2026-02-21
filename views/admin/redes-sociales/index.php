@@ -328,6 +328,7 @@ $c = function(string $key, string $default = '') use ($config) {
                 <?php if (!empty($c('og_default_image'))): ?>
                     <div style="margin-bottom:var(--spacing-3)">
                         <img src="<?= asset('img/og/' . $c('og_default_image')) ?>" alt="OG Image"
+                             loading="lazy"
                              style="max-width:400px;max-height:200px;border-radius:var(--radius-md);border:1px solid var(--color-border)">
                     </div>
                 <?php endif; ?>

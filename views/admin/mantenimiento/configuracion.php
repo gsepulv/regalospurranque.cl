@@ -72,7 +72,7 @@ $tabs = [
                     <label class="form-label">Logo del sitio</label>
                     <?php if (!empty($config['logo'])): ?>
                         <div class="config-file-preview">
-                            <img src="<?= asset($config['logo']) ?>" alt="Logo actual" style="max-height:60px;margin-bottom:var(--spacing-2)">
+                            <img src="<?= asset($config['logo']) ?>" alt="Logo actual" loading="lazy" style="max-height:60px;margin-bottom:var(--spacing-2)">
                             <small style="color:var(--color-gray);display:block">Logo actual</small>
                         </div>
                     <?php endif; ?>
@@ -83,7 +83,7 @@ $tabs = [
                     <label class="form-label">Favicon</label>
                     <?php if (!empty($config['favicon'])): ?>
                         <div class="config-file-preview">
-                            <img src="<?= asset($config['favicon']) ?>" alt="Favicon actual" style="max-height:32px;margin-bottom:var(--spacing-2)">
+                            <img src="<?= asset($config['favicon']) ?>" alt="Favicon actual" loading="lazy" style="max-height:32px;margin-bottom:var(--spacing-2)">
                             <small style="color:var(--color-gray);display:block">Favicon actual</small>
                         </div>
                     <?php endif; ?>

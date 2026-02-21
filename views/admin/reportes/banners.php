@@ -45,7 +45,7 @@
                                 <div style="display:flex;align-items:center;gap:var(--spacing-3)">
                                     <?php if (!empty($banner['imagen'])): ?>
                                         <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
-                                             alt="" style="width:48px;height:32px;object-fit:cover;border-radius:4px">
+                                             alt="" loading="lazy" style="width:48px;height:32px;object-fit:cover;border-radius:4px">
                                     <?php endif; ?>
                                     <span><?= e($banner['titulo'] ?? 'Banner #' . $banner['id']) ?></span>
                                 </div>

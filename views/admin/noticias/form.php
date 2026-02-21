@@ -108,6 +108,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                     <div>
                         <img src="<?= asset('img/noticias/' . $noticia['imagen']) ?>"
                              alt="Imagen actual"
+                             loading="lazy"
                              style="max-width:300px;max-height:200px;border-radius:6px;border:1px solid var(--color-border)">
                     </div>
                 </div>
@@ -124,7 +125,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
             </div>
 
             <div id="imagen-preview" style="display:none;margin-top:0.5rem">
-                <img src="" alt="Preview" style="max-width:300px;max-height:200px;border-radius:6px;border:1px solid var(--color-border)">
+                <img src="" alt="Preview" loading="lazy" style="max-width:300px;max-height:200px;border-radius:6px;border:1px solid var(--color-border)">
             </div>
         </div>
     </div>
@@ -300,6 +301,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                     <div style="margin-bottom:0.5rem">
                         <img src="<?= asset('img/og/' . $noticia['seo_imagen_og']) ?>"
                              alt="OG Image actual"
+                             loading="lazy"
                              style="max-width:200px;max-height:120px;border-radius:4px;border:1px solid var(--color-border)">
                     </div>
                 <?php endif; ?>

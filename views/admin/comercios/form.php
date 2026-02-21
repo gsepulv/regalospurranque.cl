@@ -330,6 +330,7 @@ $errors  = $flash['errors'] ?? [];
                         <div style="margin-bottom:0.5rem">
                             <img src="<?= asset('img/logos/' . $comercio['logo']) ?>"
                                  alt="Logo actual"
+                                 loading="lazy"
                                  style="max-height:80px;border-radius:var(--radius-md);border:1px solid var(--color-border)">
                             <br><small style="color:var(--color-gray)">Logo actual. Selecciona otro para reemplazar.</small>
                         </div>
@@ -340,7 +341,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            accept="image/*"
                            onchange="previewImage(this, 'logoPreview')">
-                    <img id="logoPreview" src="" alt="" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
+                    <img id="logoPreview" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="portada">Portada</label>
@@ -348,6 +349,7 @@ $errors  = $flash['errors'] ?? [];
                         <div style="margin-bottom:0.5rem">
                             <img src="<?= asset('img/portadas/' . $comercio['portada']) ?>"
                                  alt="Portada actual"
+                                 loading="lazy"
                                  style="max-height:80px;border-radius:var(--radius-md);border:1px solid var(--color-border)">
                             <br><small style="color:var(--color-gray)">Portada actual. Selecciona otra para reemplazar.</small>
                         </div>
@@ -358,7 +360,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            accept="image/*"
                            onchange="previewImage(this, 'portadaPreview')">
-                    <img id="portadaPreview" src="" alt="" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
+                    <img id="portadaPreview" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
                 </div>
             </div>
         </div>

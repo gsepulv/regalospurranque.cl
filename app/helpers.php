@@ -112,6 +112,53 @@ function truncate(string $text, int $length = 100): string
 }
 
 /**
+ * Sanitizar HTML de contenido WYSIWYG (TinyMCE)
+ * Permite solo tags y atributos seguros, elimina scripts y event handlers
+ */
+function sanitize_html(?string $html): string
+{
+    if ($html === null || $html === '') {
+        return '';
+    }
+
+    // Tags permitidos (lo que TinyMCE genera legítimamente)
+    $allowedTags = [
+        'h1','h2','h3','h4','h5','h6','p','br','hr',
+        'strong','b','em','i','u','s','strike','del',
+        'a','img','ul','ol','li','blockquote','pre','code',
+        'table','thead','tbody','tfoot','tr','th','td','caption','colgroup','col',
+        'div','span','figure','figcaption','video','source','iframe',
+        'sub','sup','small','abbr','mark','details','summary',
+    ];
+
+    // Atributos permitidos por tag
+    $allowedAttrs = [
+        'href','src','alt','title','class','style','width','height',
+        'target','rel','colspan','rowspan','id','name',
+        'type','controls','frameborder','allowfullscreen',
+        'data-*','aria-*','loading','decoding',
+    ];
+
+    // Paso 1: Eliminar tags <script>, <style>, <object>, <embed>, <applet>, <form>, <input>, <button>, <select>, <textarea>
+    $html = preg_replace('#<(script|style|object|embed|applet|form|input|button|select|textarea|meta|link|base)\b[^>]*>.*?</\1>#is', '', $html);
+    $html = preg_replace('#<(script|style|object|embed|applet|form|input|button|select|textarea|meta|link|base)\b[^>]*/?\s*>#is', '', $html);
+
+    // Paso 2: Eliminar event handlers (on*)
+    $html = preg_replace('#\s+on[a-z]+\s*=\s*["\'][^"\']*["\']#is', '', $html);
+    $html = preg_replace('#\s+on[a-z]+\s*=\s*\S+#is', '', $html);
+
+    // Paso 3: Eliminar javascript: y data: en href/src (excepto data:image)
+    $html = preg_replace('#(href|src)\s*=\s*["\']?\s*javascript\s*:#is', '$1="', $html);
+    $html = preg_replace('#(href)\s*=\s*["\']?\s*data\s*:#is', '$1="', $html);
+
+    // Paso 4: Eliminar expression() y url() peligrosos en atributos style
+    $html = preg_replace('#style\s*=\s*["\'][^"\']*expression\s*\([^"\']*["\']#is', '', $html);
+    $html = preg_replace('#style\s*=\s*["\'][^"\']*javascript\s*:[^"\']*["\']#is', '', $html);
+
+    return $html;
+}
+
+/**
  * Generar etiqueta <picture> con WebP y fallback, o <img> si no hay WebP
  *
  * @param string $imgPath Ruta relativa dentro de assets/ (ej: 'img/portadas/foto.jpg')

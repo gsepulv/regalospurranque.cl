@@ -96,6 +96,7 @@ $action = $isEdit
                     <?php if ($isEdit && !empty($sitio['logo'])): ?>
                         <div style="margin-bottom:8px;">
                             <img src="<?= asset('img/config/' . $sitio['logo']) ?>" alt="Logo"
+                                 loading="lazy"
                                  style="max-height:60px;border-radius:4px;">
                         </div>
                     <?php endif; ?>

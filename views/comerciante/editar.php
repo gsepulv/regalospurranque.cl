@@ -122,6 +122,7 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Logo</label>
                         <?php if ($comercio['logo']): ?>
                             <img src="<?= asset('img/logos/' . $comercio['logo']) ?>" alt="Logo actual"
+                                 loading="lazy"
                                  style="max-height:60px;border-radius:4px;margin-bottom:0.5rem;display:block">
                         <?php endif; ?>
                         <input type="file" name="logo" class="form-control" accept="image/jpeg,image/png,image/webp">
@@ -131,6 +132,7 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Portada</label>
                         <?php if ($comercio['portada']): ?>
                             <img src="<?= asset('img/portadas/' . $comercio['portada']) ?>" alt="Portada actual"
+                                 loading="lazy"
                                  style="max-height:60px;border-radius:4px;margin-bottom:0.5rem;display:block">
                         <?php endif; ?>
                         <input type="file" name="portada" class="form-control" accept="image/jpeg,image/png,image/webp">

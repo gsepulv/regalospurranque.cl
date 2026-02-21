@@ -10,7 +10,7 @@ class Permission
     private array $permissions;
 
     /** Módulos que requieren superadmin explícito */
-    private array $superadminOnly = ['sitios'];
+    private array $superadminOnly = ['sitios', 'mantenimiento'];
 
     public function __construct()
     {
