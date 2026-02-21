@@ -599,24 +599,19 @@ class GoogleDrive
      */
     private static function getAccurateTime(): int
     {
-        $ch = \curl_init('https://www.googleapis.com');
-        \curl_setopt_array($ch, [
-            CURLOPT_NOBODY         => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT        => 5,
-            CURLOPT_SSL_VERIFYPEER => true,
-            CURLOPT_HEADERFUNCTION => function ($ch, $header) use (&$serverTime) {
-                if (\stripos($header, 'Date:') === 0) {
-                    $serverTime = \strtotime(\trim(\substr($header, 5)));
+        try {
+            $resp = self::curlRequest('https://www.googleapis.com', 'HEAD', null, [], 5);
+            foreach ($resp['headers'] as $header) {
+                if (stripos($header, 'Date:') === 0) {
+                    $ts = strtotime(trim(substr($header, 5)));
+                    if ($ts > 0) return $ts;
                 }
-                return \strlen($header);
-            },
-        ]);
-        $serverTime = 0;
-        \curl_exec($ch);
-        \curl_close($ch);
+            }
+        } catch (\Throwable $e) {
+            // fallback a time() local
+        }
 
-        return $serverTime > 0 ? $serverTime : time();
+        return time();
     }
 
     /**
