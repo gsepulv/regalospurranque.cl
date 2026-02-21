@@ -155,6 +155,7 @@ class Backup
 
             return $filepath;
         } catch (\Throwable $e) {
+            error_log('[Backup] exportFull falló: ' . $e->getMessage());
             return false;
         }
     }

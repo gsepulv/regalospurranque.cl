@@ -98,6 +98,7 @@ class BackupController extends Controller
      */
     public function backupFull(): void
     {
+        @set_time_limit(600);
         $result = Backup::exportFull();
 
         if ($result) {
