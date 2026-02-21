@@ -12,7 +12,7 @@ class CambioPendiente
                     u.nombre as usuario_nombre
              FROM comercio_cambios_pendientes cp
              INNER JOIN comercios c ON cp.comercio_id = c.id
-             LEFT JOIN admin_usuarios u ON cp.solicitado_por = u.id
+             LEFT JOIN admin_usuarios u ON cp.usuario_id = u.id
              WHERE cp.id = ?",
             [$id]
         );
@@ -39,7 +39,7 @@ class CambioPendiente
                     u.nombre as usuario_nombre
              FROM comercio_cambios_pendientes cp
              INNER JOIN comercios c ON cp.comercio_id = c.id
-             LEFT JOIN admin_usuarios u ON cp.solicitado_por = u.id
+             LEFT JOIN admin_usuarios u ON cp.usuario_id = u.id
              WHERE {$where}
              ORDER BY cp.created_at DESC",
             $params

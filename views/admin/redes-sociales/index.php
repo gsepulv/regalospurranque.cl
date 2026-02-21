@@ -362,7 +362,7 @@ $c = function(string $key, string $default = '') use ($config) {
                     <tbody>
                         <?php foreach ($shareStats as $stat): ?>
                             <tr>
-                                <td><?= e($stat['red']) ?></td>
+                                <td><?= e($stat['red_social']) ?></td>
                                 <td style="text-align:right"><strong><?= number_format($stat['total']) ?></strong></td>
                             </tr>
                         <?php endforeach; ?>
@@ -384,16 +384,14 @@ $c = function(string $key, string $default = '') use ($config) {
                 <table class="admin-table">
                     <thead>
                         <tr>
-                            <th>Contenido</th>
-                            <th>Tipo</th>
+                            <th>Pagina</th>
                             <th style="text-align:right">Shares</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($topShared as $item): ?>
                             <tr>
-                                <td><a href="<?= url('/' . e($item['tipo']) . '/' . e($item['slug'])) ?>" target="_blank"><?= e($item['slug']) ?></a></td>
-                                <td><?= e($item['tipo']) ?></td>
+                                <td><a href="<?= url(e($item['pagina'])) ?>" target="_blank"><?= e($item['pagina']) ?></a></td>
                                 <td style="text-align:right"><strong><?= number_format($item['total']) ?></strong></td>
                             </tr>
                         <?php endforeach; ?>

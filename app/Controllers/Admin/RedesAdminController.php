@@ -19,10 +19,10 @@ class RedesAdminController extends Controller
         $shareStats = [];
         try {
             $shareStats = $this->db->fetchAll(
-                "SELECT red, COUNT(*) as total
+                "SELECT red_social, COUNT(*) as total
                  FROM share_log
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                 GROUP BY red
+                 GROUP BY red_social
                  ORDER BY total DESC"
             );
         } catch (\Throwable $e) {}
@@ -30,10 +30,10 @@ class RedesAdminController extends Controller
         $topShared = [];
         try {
             $topShared = $this->db->fetchAll(
-                "SELECT slug, tipo, COUNT(*) as total
+                "SELECT pagina, COUNT(*) as total
                  FROM share_log
                  WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
-                 GROUP BY slug, tipo
+                 GROUP BY pagina
                  ORDER BY total DESC
                  LIMIT 10"
             );
