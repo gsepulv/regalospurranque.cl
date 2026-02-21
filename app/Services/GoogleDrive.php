@@ -114,7 +114,7 @@ class GoogleDrive
             $query = urlencode("'{$folderId}' in parents and trashed = false");
             $fields = urlencode('files(id,name,size,createdTime,webViewLink)');
 
-            $url = self::API_BASE . "/files?q={$query}&fields={$fields}&orderBy=createdTime+desc&pageSize=100";
+            $url = self::API_BASE . "/files?q={$query}&fields={$fields}&orderBy=createdTime+desc&pageSize=100&supportsAllDrives=true&includeItemsFromAllDrives=true";
 
             $resp = self::curlRequest($url, 'GET', null, [
                 'Authorization: Bearer ' . $token,
@@ -224,26 +224,33 @@ class GoogleDrive
         // Paso 1: Iniciar sesión resumable
         $metadata = json_encode([
             'name'    => $filename,
-            'parents' => $folderId ? [$folderId] : [],
+            'parents' => [$folderId],
         ]);
 
-        $resp = self::curlRequest(
-            self::UPLOAD_BASE . '?uploadType=resumable&fields=id,name,webViewLink',
-            'POST',
-            $metadata,
-            [
-                'Authorization: Bearer ' . $token,
-                'Content-Type: application/json; charset=UTF-8',
-                'X-Upload-Content-Type: ' . $mimeType,
-                'X-Upload-Content-Length: ' . $fileSize,
-            ],
-            30
-        );
+        $uploadUrl = self::UPLOAD_BASE . '?uploadType=resumable&supportsAllDrives=true&fields=id,name,webViewLink';
+        $reqHeaders = [
+            'Authorization: Bearer ' . $token,
+            'Content-Type: application/json; charset=UTF-8',
+            'X-Upload-Content-Type: ' . $mimeType,
+            'X-Upload-Content-Length: ' . $fileSize,
+        ];
+
+        // Debug log
+        error_log('[GoogleDrive] Upload paso 1 - URL: ' . $uploadUrl);
+        error_log('[GoogleDrive] Upload paso 1 - Metadata: ' . $metadata);
+        error_log('[GoogleDrive] Upload paso 1 - Headers: ' . implode(' | ', $reqHeaders));
+
+        $resp = self::curlRequest($uploadUrl, 'POST', $metadata, $reqHeaders, 30);
+
+        // Debug log response
+        error_log('[GoogleDrive] Upload paso 1 - Response HTTP: ' . $resp['httpCode']);
+        error_log('[GoogleDrive] Upload paso 1 - Response body: ' . substr($resp['body'], 0, 500));
+        error_log('[GoogleDrive] Upload paso 1 - Response headers: ' . implode(' | ', $resp['headers']));
 
         if ($resp['httpCode'] !== 200) {
             $error = json_decode($resp['body'], true);
             $msg = $error['error']['message'] ?? 'HTTP ' . $resp['httpCode'];
-            return ['ok' => false, 'message' => 'Error al iniciar upload: ' . $msg];
+            return ['ok' => false, 'message' => 'Error al iniciar upload (HTTP ' . $resp['httpCode'] . '): ' . $msg];
         }
 
         // Extraer URI de upload de los headers
