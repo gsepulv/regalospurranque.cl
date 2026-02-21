@@ -82,6 +82,9 @@ Desktop.ini
 
 # Dependencias (no usamos, pero por si acaso)
 vendor/
+!assets/vendor/
+assets/vendor/*
+!assets/vendor/tinymce/
 node_modules/
 composer.lock
 package-lock.json

@@ -313,108 +313,105 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
     </div>
 </form>
 
-<!-- TinyMCE 6 (MIT, sin licencia requerida) -->
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
-<script src="https://cdn.jsdelivr.net/npm/tinymce-i18n@24/langs6/es.min.js" referrerpolicy="origin"></script>
+<!-- TinyMCE 6 self-hosted (MIT) -->
+<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>"></script>
 
 <script>
 // TinyMCE initialization
-if (typeof tinymce !== 'undefined') {
-    tinymce.init({
-        selector: '.tinymce-editor',
-        height: <?= (int)$tinymceHeight ?>,
-        language: '<?= e($tinymceLanguage) ?>',
-        plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount emoticons autoresize quickbars help',
-        toolbar: [
-            'undo redo | styles | bold italic underline strikethrough | forecolor backcolor | removeformat',
-            'alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table emoticons charmap | code fullscreen help'
-        ],
-        style_formats: [
-            { title: 'Encabezados', items: [
-                { title: 'Encabezado 2', block: 'h2' },
-                { title: 'Encabezado 3', block: 'h3' },
-                { title: 'Encabezado 4', block: 'h4' }
-            ]},
-            { title: 'Bloques', items: [
-                { title: 'Parrafo', block: 'p' },
-                { title: 'Cita', block: 'blockquote' },
-                { title: 'Código', block: 'pre' }
-            ]},
-            { title: 'Inline', items: [
-                { title: 'Destacado', inline: 'span', classes: 'text-highlight' },
-                { title: 'Código', inline: 'code' },
-                { title: 'Pequeño', inline: 'span', classes: 'text-small' }
-            ]}
-        ],
-        content_css: '<?= asset('css/main.css') ?>',
-        content_style: 'body { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.8; padding: 16px; color: #334155; }',
-        image_class_list: [
-            { title: 'Responsive', value: 'img-responsive' },
-            { title: 'Centrada', value: 'img-center' },
-            { title: 'Flotante izquierda', value: 'img-left' },
-            { title: 'Flotante derecha', value: 'img-right' }
-        ],
-        images_upload_url: '<?= url('/admin/noticias/upload-imagen') ?>',
-        images_upload_handler: function (blobInfo) {
-            return new Promise(function (resolve, reject) {
-                var maxMb = <?= (int)$tinymceMaxImgMb ?>;
-                if (blobInfo.blob().size > maxMb * 1024 * 1024) {
-                    reject('La imagen excede ' + maxMb + 'MB');
-                    return;
+tinymce.init({
+    selector: '.tinymce-editor',
+    height: <?= (int)$tinymceHeight ?>,
+    language: '<?= e($tinymceLanguage) ?>',
+    language_url: '<?= asset('vendor/tinymce/langs/' . e($tinymceLanguage) . '.js') ?>',
+    plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount emoticons autoresize quickbars help',
+    toolbar: [
+        'undo redo | styles | bold italic underline strikethrough | forecolor backcolor | removeformat',
+        'alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table emoticons charmap | code fullscreen help'
+    ],
+    style_formats: [
+        { title: 'Encabezados', items: [
+            { title: 'Encabezado 2', block: 'h2' },
+            { title: 'Encabezado 3', block: 'h3' },
+            { title: 'Encabezado 4', block: 'h4' }
+        ]},
+        { title: 'Bloques', items: [
+            { title: 'Parrafo', block: 'p' },
+            { title: 'Cita', block: 'blockquote' },
+            { title: 'Código', block: 'pre' }
+        ]},
+        { title: 'Inline', items: [
+            { title: 'Destacado', inline: 'span', classes: 'text-highlight' },
+            { title: 'Código', inline: 'code' },
+            { title: 'Pequeño', inline: 'span', classes: 'text-small' }
+        ]}
+    ],
+    content_css: '<?= asset('css/main.css') ?>',
+    content_style: 'body { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.8; padding: 16px; color: #334155; }',
+    image_class_list: [
+        { title: 'Responsive', value: 'img-responsive' },
+        { title: 'Centrada', value: 'img-center' },
+        { title: 'Flotante izquierda', value: 'img-left' },
+        { title: 'Flotante derecha', value: 'img-right' }
+    ],
+    images_upload_url: '<?= url('/admin/noticias/upload-imagen') ?>',
+    images_upload_handler: function (blobInfo) {
+        return new Promise(function (resolve, reject) {
+            var maxMb = <?= (int)$tinymceMaxImgMb ?>;
+            if (blobInfo.blob().size > maxMb * 1024 * 1024) {
+                reject('La imagen excede ' + maxMb + 'MB');
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+            formData.append('_csrf', '<?= csrf_token() ?>');
+
+            fetch('<?= url('/admin/noticias/upload-imagen') ?>', {
+                method: 'POST',
+                body: formData
+            })
+            .then(function(resp) { return resp.json(); })
+            .then(function(data) {
+                if (data.location) {
+                    resolve(data.location);
+                } else {
+                    reject(data.error || 'Error al subir imagen');
                 }
-
-                var formData = new FormData();
-                formData.append('file', blobInfo.blob(), blobInfo.filename());
-                formData.append('_csrf', '<?= csrf_token() ?>');
-
-                fetch('<?= url('/admin/noticias/upload-imagen') ?>', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(function(resp) { return resp.json(); })
-                .then(function(data) {
-                    if (data.location) {
-                        resolve(data.location);
-                    } else {
-                        reject(data.error || 'Error al subir imagen');
-                    }
-                })
-                .catch(function() {
-                    reject('Error de conexion al subir imagen');
-                });
+            })
+            .catch(function() {
+                reject('Error de conexion al subir imagen');
             });
-        },
-        image_dimensions: false,
-        paste_as_text: false,
-        paste_word_valid_elements: 'p,b,strong,i,em,h2,h3,h4,ul,ol,li,a[href],blockquote,br',
-        paste_retain_style_properties: 'none',
-        paste_strip_class_attributes: 'all',
-        automatic_uploads: true,
-        file_picker_types: 'image',
-        image_advtab: true,
-        image_caption: true,
-        quickbars_selection_toolbar: 'bold italic | link h2 h3 blockquote',
-        quickbars_insert_toolbar: 'image media table hr',
-        autoresize_bottom_margin: 20,
-        min_height: 300,
-        max_height: 800,
-        <?php if ($tinymceAutosave === '1'): ?>
-        autosave_interval: '<?= (int)(\App\Services\RedesSociales::get('tinymce_autosave_interval', '30')) ?>s',
-        autosave_restore_when_empty: true,
-        <?php endif; ?>
-        setup: function (editor) {
-            // Add lazy loading to inserted images
-            editor.on('NodeChange', function (e) {
-                var imgs = editor.getBody().querySelectorAll('img:not([loading])');
-                imgs.forEach(function(img) {
-                    img.setAttribute('loading', 'lazy');
-                });
+        });
+    },
+    image_dimensions: false,
+    paste_as_text: false,
+    paste_word_valid_elements: 'p,b,strong,i,em,h2,h3,h4,ul,ol,li,a[href],blockquote,br',
+    paste_retain_style_properties: 'none',
+    paste_strip_class_attributes: 'all',
+    automatic_uploads: true,
+    file_picker_types: 'image',
+    image_advtab: true,
+    image_caption: true,
+    quickbars_selection_toolbar: 'bold italic | link h2 h3 blockquote',
+    quickbars_insert_toolbar: 'image media table hr',
+    autoresize_bottom_margin: 20,
+    min_height: 300,
+    max_height: 800,
+    <?php if ($tinymceAutosave === '1'): ?>
+    autosave_interval: '<?= (int)(\App\Services\RedesSociales::get('tinymce_autosave_interval', '30')) ?>s',
+    autosave_restore_when_empty: true,
+    <?php endif; ?>
+    setup: function (editor) {
+        editor.on('NodeChange', function (e) {
+            var imgs = editor.getBody().querySelectorAll('img:not([loading])');
+            imgs.forEach(function(img) {
+                img.setAttribute('loading', 'lazy');
             });
-        },
-        promotion: false,
-        branding: false
-    });
-}
+        });
+    },
+    promotion: false,
+    branding: false
+});
 
 // Preview de imagen al seleccionar archivo
 document.getElementById('imagen').addEventListener('change', function(e) {
