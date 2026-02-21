@@ -10,7 +10,7 @@
 ## Paso 1: Backup de v1
 
 1. Entrar a **cPanel** > **phpMyAdmin**
-2. Seleccionar BD `purranque_regalos_purranque`
+2. Seleccionar BD `purranque_regalos_v2`
 3. **Exportar** > Formato SQL > Descargar (guardar como `backup_v1_FECHA.sql`)
 4. En cPanel > **File Manager** > Comprimir carpeta del sitio > descargar como `backup_v1_files.zip`
 5. Guardar ambos archivos en local como respaldo
@@ -19,7 +19,7 @@
 
 ## Paso 2: Preparar BD en produccion
 
-1. En cPanel > **phpMyAdmin** > seleccionar BD `purranque_regalos_purranque`
+1. En cPanel > **phpMyAdmin** > seleccionar BD `purranque_regalos_v2`
 2. **NO borrar tablas v1** — el script de migracion las renombra automaticamente con sufijo `_v1`
 3. Importar `database/schema.sql` (crea tablas v2 con `IF NOT EXISTS`)
    - El script de migracion tambien puede crear las tablas, pero es mas seguro importar schema.sql primero
@@ -113,7 +113,7 @@ define('BASE_PATH', '/home/purranqu/regalos-v2');
 ### config/database.php
 ```php
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'purranque_regalos_purranque');
+define('DB_NAME', 'purranque_regalos_v2');
 define('DB_USER', 'purranque_admin');
 define('DB_PASS', 'CONTRASEÑA_REAL');    // Completar
 define('DB_CHARSET', 'utf8mb4');

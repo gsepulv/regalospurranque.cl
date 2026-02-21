@@ -5,7 +5,7 @@ Directorio comercial de Purranque, Chile. PHP vanilla MVC, sin Composer ni frame
 ## Stack
 
 - **PHP 8.3** vanilla MVC (no Composer, no frameworks)
-- **MySQL 8.4** (local: `regalos_v2`, producción: `purranque_regalos_purranque`)
+- **MySQL 8.4** (local: `regalos_v2`, producción: `purranque_regalos_v2`)
 - **Hosting**: HostGator compartido, cPanel, sin SSH, sin `exec()`
 - **Frontend**: CSS vanilla (`assets/css/main.css`), JS vanilla (`assets/js/app.js`)
 - **PWA**: manifest.json + service worker (sw.js)

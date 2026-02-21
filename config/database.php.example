@@ -4,7 +4,7 @@
  * Copiar a database.php y completar con credenciales reales
  *
  * Desarrollo:  host=localhost, name=regalos_v2, user=root, pass=
- * Producción:  host=localhost, name=purranque_regalos_purranque, user=purranque_admin, pass=CONTRASEÑA
+ * Producción:  host=localhost, name=purranque_regalos_v2, user=purranque_admin, pass=CONTRASEÑA
  */
 
 define('DB_HOST', 'localhost');

@@ -36,7 +36,7 @@ sql/01_parche_legal.sql
 ### 1. BACKUP (obligatorio antes de cualquier cambio)
 
 En cPanel > phpMyAdmin:
-- Exportar BD `purranque_regalos_purranque` completa (SQL)
+- Exportar BD `purranque_regalos_v2` completa (SQL)
 - Guardar como `backup_pre_parche_legal_20260220.sql`
 
 En cPanel > File Manager:
@@ -44,7 +44,7 @@ En cPanel > File Manager:
 
 ### 2. Ejecutar SQL
 
-En cPanel > phpMyAdmin > seleccionar BD `purranque_regalos_purranque`:
+En cPanel > phpMyAdmin > seleccionar BD `purranque_regalos_v2`:
 1. Ir a pestaña "Importar"
 2. Subir `sql/01_parche_legal.sql`
 3. Ejecutar

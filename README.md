@@ -56,5 +56,5 @@ git push → cPanel "Update from Remote" → "Deploy HEAD Commit"
 
 | Entorno     | URL                              | BD                        |
 |-------------|----------------------------------|---------------------------|
-| Producción  | https://regalospurranque.cl       | purranque_regalos_purranque |
+| Producción  | https://regalospurranque.cl       | purranque_regalos_v2 |
 | Desarrollo  | http://regalos-v2.test            | regalos_v2                |

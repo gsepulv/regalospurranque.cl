@@ -24,7 +24,7 @@ $MIGRATION_KEY = 'regalos_migrate_2026_secure';
 
 // Credenciales BD (misma BD para v1 y v2)
 $DB_HOST    = 'localhost';
-$DB_NAME    = 'purranque_regalos_purranque';
+$DB_NAME    = 'purranque_regalos_v2';
 $DB_USER    = 'purranque_admin';
 $DB_PASS    = '';  // COMPLETAR con contraseña real
 $DB_CHARSET = 'utf8mb4';
