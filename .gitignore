@@ -47,6 +47,7 @@ assets/img/config/*
 # Archivos comprimidos y backups
 *.zip
 regalos_purranque/
+respaldos/
 .htaccess_bak
 
 # Scripts temporales / utilidades
