@@ -64,6 +64,14 @@ ver-tildes.php
 *_bk
 storage/diagnostico-*.json
 
+# Documentación y prompts locales
+legales/*.docx
+legales/prompt-*.md
+.cpanel.yml.txt
+
+# TypeScript definitions (no usamos TS)
+*.d.ts
+
 # Sistema
 .DS_Store
 Thumbs.db
