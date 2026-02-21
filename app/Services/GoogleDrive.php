@@ -87,6 +87,10 @@ class GoogleDrive
             $mimeType = self::getMimeType($filepath);
             $folderId = defined('GDRIVE_FOLDER_ID') ? GDRIVE_FOLDER_ID : '';
 
+            if (empty($folderId)) {
+                return ['ok' => false, 'message' => 'GDRIVE_FOLDER_ID no está configurado en config/backup.php'];
+            }
+
             // Archivos < 5MB: multipart upload
             if ($fileSize < self::CHUNK_SIZE) {
                 return self::simpleUpload($filepath, $filename, $mimeType, $folderId, $token);
