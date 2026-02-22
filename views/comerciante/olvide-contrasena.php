@@ -1,8 +1,9 @@
 <?php
-$error   = $_SESSION['flash_error'] ?? '';
-$success = $_SESSION['flash_success'] ?? '';
-$old     = $_SESSION['flash_old'] ?? [];
-unset($_SESSION['flash_error'], $_SESSION['flash_success'], $_SESSION['flash_old']);
+$error     = $_SESSION['flash_error'] ?? '';
+$success   = $_SESSION['flash_success'] ?? '';
+$infoExtra = $_SESSION['flash_info_extra'] ?? '';
+$old       = $_SESSION['flash_old'] ?? [];
+unset($_SESSION['flash_error'], $_SESSION['flash_success'], $_SESSION['flash_info_extra'], $_SESSION['flash_old']);
 ?>
 
 <section class="section">
@@ -24,6 +25,11 @@ unset($_SESSION['flash_error'], $_SESSION['flash_success'], $_SESSION['flash_old
             <div style="background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.9rem">
                 <?= e($success) ?>
             </div>
+            <?php if ($infoExtra): ?>
+                <div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;line-height:1.5">
+                    <?= e($infoExtra) ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
 
         <div style="background:var(--color-white);border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
