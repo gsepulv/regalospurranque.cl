@@ -43,6 +43,12 @@
             </div>
         </div>
 
+        <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:1rem;margin-bottom:1rem">
+            <p style="margin:0;font-size:0.9rem;color:#1E40AF;line-height:1.5">
+                📧 Si no encuentras nuestro correo en tu bandeja de entrada, revisa tu carpeta de <strong>Spam</strong> o <strong>Correo no deseado</strong>. El mensaje puede tardar unos minutos en llegar.
+            </p>
+        </div>
+
         <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:1rem;margin-bottom:1.5rem">
             <p style="margin:0;font-size:0.9rem;color:#166534">
                 💡 <strong>¿Quieres más visibilidad?</strong> Con nuestros planes pagados obtienes más fotos, todas las redes sociales, horarios, sello verificado y posición destacada.

@@ -28,6 +28,9 @@ $errors = $flash['errors'] ?? [];
                             <div class="alert alert--success" style="margin-bottom:var(--spacing-4)">
                                 <?= e($flash['success']) ?>
                             </div>
+                            <div style="background:#EFF6FF;border:1px solid #BFDBFE;color:#1E40AF;padding:0.75rem 1rem;border-radius:8px;margin-bottom:var(--spacing-4);font-size:0.85rem;line-height:1.5">
+                                📧 Si no encuentras nuestro correo en tu bandeja de entrada, revisa tu carpeta de <strong>Spam</strong> o <strong>Correo no deseado</strong>. El mensaje puede tardar unos minutos en llegar.
+                            </div>
                         <?php endif; ?>
 
                         <?php if (!empty($flash['error'])): ?>

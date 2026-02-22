@@ -209,7 +209,6 @@ class ComercianteController extends Controller
 
         // Siempre mensaje genérico (no revelar si el email existe)
         $_SESSION['flash_success'] = 'Si el email está registrado, recibirás instrucciones para restablecer tu contraseña.';
-        $_SESSION['flash_info_extra'] = 'Si no encuentras el correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.';
         header('Location: ' . url('/mi-comercio/olvide-contrasena'));
         exit;
     }
