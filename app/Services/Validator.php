@@ -137,8 +137,7 @@ class Validator
         if (is_string($value) && mb_strlen($value) < $min) {
             $this->errors[$field] = "El campo {$field} debe tener al menos {$min} caracteres";
             return false;
-        }
-        if (is_numeric($value) && (float) $value < $min) {
+        } elseif (!is_string($value) && is_numeric($value) && (float) $value < $min) {
             $this->errors[$field] = "El campo {$field} debe ser al menos {$min}";
             return false;
         }
@@ -151,8 +150,7 @@ class Validator
         if (is_string($value) && mb_strlen($value) > $max) {
             $this->errors[$field] = "El campo {$field} no debe exceder {$max} caracteres";
             return false;
-        }
-        if (is_numeric($value) && (float) $value > $max) {
+        } elseif (!is_string($value) && is_numeric($value) && (float) $value > $max) {
             $this->errors[$field] = "El campo {$field} no debe ser mayor que {$max}";
             return false;
         }
