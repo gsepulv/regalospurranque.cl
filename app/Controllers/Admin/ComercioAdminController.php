@@ -134,6 +134,8 @@ class ComercioAdminController extends Controller
         $data['lng']             = !empty($_POST['lng']) ? (float) $_POST['lng'] : null;
         $data['activo']          = isset($_POST['activo']) ? 1 : 0;
         $data['destacado']       = isset($_POST['destacado']) ? 1 : 0;
+        $data['validado']        = isset($_POST['validado']) ? 1 : 0;
+        $data['validado_fecha']  = isset($_POST['validado']) ? date('Y-m-d H:i:s') : null;
         $data['seo_titulo']      = trim($_POST['seo_titulo'] ?? '');
         $data['seo_descripcion'] = trim($_POST['seo_descripcion'] ?? '');
         $data['seo_keywords']    = trim($_POST['seo_keywords'] ?? '');
@@ -311,6 +313,8 @@ class ComercioAdminController extends Controller
             'plan'            => $_POST['plan'],
             'activo'          => isset($_POST['activo']) ? 1 : 0,
             'destacado'       => isset($_POST['destacado']) ? 1 : 0,
+            'validado'        => isset($_POST['validado']) ? 1 : 0,
+            'validado_fecha'  => isset($_POST['validado']) ? date('Y-m-d H:i:s') : null,
             'seo_titulo'      => trim($_POST['seo_titulo'] ?? ''),
             'seo_descripcion' => trim($_POST['seo_descripcion'] ?? ''),
             'seo_keywords'    => trim($_POST['seo_keywords'] ?? ''),

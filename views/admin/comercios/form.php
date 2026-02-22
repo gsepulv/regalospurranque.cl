@@ -539,6 +539,16 @@ $errors  = $flash['errors'] ?? [];
                         Destacado
                     </label>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">&nbsp;</label>
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;padding-top:0.5rem">
+                        <input type="checkbox"
+                               name="validado"
+                               value="1"
+                               <?= old('validado', $editing ? $comercio['validado'] : 0) ? 'checked' : '' ?>>
+                        ✅ Validado
+                    </label>
+                </div>
             </div>
         </div>
     </div>
