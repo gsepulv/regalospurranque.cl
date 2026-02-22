@@ -12,6 +12,10 @@
     Nuestro equipo lo revisar&aacute; y te responderemos a la brevedad.
 </p>
 
-<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+<p style="color:#94a3b8;font-size:13px;margin:0 0 12px;line-height:1.5;">
     Este es un correo autom&aacute;tico, no es necesario responder.
+</p>
+
+<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+    📧 Si no encuentras este correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.
 </p>

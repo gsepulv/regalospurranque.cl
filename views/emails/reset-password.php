@@ -23,7 +23,11 @@
     </tr>
 </table>
 
-<p style="color:#94a3b8;font-size:12px;margin:0;line-height:1.5;">
+<p style="color:#94a3b8;font-size:12px;margin:0 0 12px;line-height:1.5;">
     Si el botón no funciona, copia y pega este enlace en tu navegador:<br>
     <a href="<?= htmlspecialchars($resetUrl) ?>" style="color:#2563eb;word-break:break-all;"><?= htmlspecialchars($resetUrl) ?></a>
+</p>
+
+<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+    📧 Si no encuentras este correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.
 </p>

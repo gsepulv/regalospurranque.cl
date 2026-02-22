@@ -25,8 +25,12 @@
     Puedes corregir la informaci&oacute;n y contactarnos para que revisemos nuevamente tu solicitud.
 </p>
 
-<p style="text-align:center;margin:0;">
+<p style="text-align:center;margin:0 0 16px;">
     <a href="<?= $siteUrl ?>/contacto" style="display:inline-block;background:#2563eb;color:#ffffff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:14px;">
         Ir al formulario de contacto
     </a>
+</p>
+
+<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+    📧 Si no encuentras este correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.
 </p>

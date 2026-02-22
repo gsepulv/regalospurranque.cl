@@ -173,6 +173,10 @@
 
 <p style="color:#475569;margin:0 0 4px;line-height:1.6;">Saludos cordiales,</p>
 <p style="color:#475569;margin:0 0 4px;line-height:1.6;font-weight:bold;">Equipo Regalos Purranque</p>
-<p style="margin:0;">
+<p style="margin:0 0 16px;">
     <a href="https://regalospurranque.cl" style="color:#2563eb;text-decoration:underline;">https://regalospurranque.cl</a>
+</p>
+
+<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+    📧 Si no encuentras este correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.
 </p>

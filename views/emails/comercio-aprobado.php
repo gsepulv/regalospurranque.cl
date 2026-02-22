@@ -24,8 +24,12 @@
     </a>
 </p>
 
-<p style="text-align:center;margin:0;">
+<p style="text-align:center;margin:0 0 16px;">
     <a href="<?= $siteUrl ?>/mi-comercio/login" style="color:#2563eb;font-size:14px;text-decoration:underline;">
         Acceder a mi panel
     </a>
+</p>
+
+<p style="color:#94a3b8;font-size:13px;margin:0;line-height:1.5;">
+    📧 Si no encuentras este correo en tu bandeja de entrada, revisa tu carpeta de Spam o Correo no deseado. El mensaje puede tardar unos minutos en llegar.
 </p>
