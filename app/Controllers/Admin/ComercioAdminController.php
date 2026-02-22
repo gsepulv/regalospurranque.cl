@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controller;
+use App\Models\AdminUsuario;
 use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
@@ -392,6 +393,12 @@ class ComercioAdminController extends Controller
 
         Comercio::recalcularCalidad($id);
 
+        // Sincronizar estado del usuario comerciante asociado
+        if (!empty($comercio['registrado_por'])) {
+            $activarUsuario = ($data['validado'] && $data['activo']) ? 1 : 0;
+            AdminUsuario::updateById((int) $comercio['registrado_por'], ['activo' => $activarUsuario]);
+        }
+
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio actualizado correctamente']);
     }
@@ -407,6 +414,12 @@ class ComercioAdminController extends Controller
 
         $newState = $comercio['activo'] ? 0 : 1;
         Comercio::updateById($id, ['activo' => $newState]);
+
+        // Sincronizar estado del usuario comerciante asociado
+        if (!empty($comercio['registrado_por'])) {
+            $activarUsuario = ($newState && $comercio['validado']) ? 1 : 0;
+            AdminUsuario::updateById((int) $comercio['registrado_por'], ['activo' => $activarUsuario]);
+        }
 
         $accion = $newState ? 'activar' : 'desactivar';
         $this->log('comercios', $accion, 'comercio', $id, "{$comercio['nombre']}");
