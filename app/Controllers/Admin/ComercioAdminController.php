@@ -438,21 +438,32 @@ class ComercioAdminController extends Controller
             return;
         }
 
-        // Eliminar imágenes
+        $db = \App\Core\Database::getInstance();
+
+        // 1. Eliminar archivos físicos: logo, portada, galería
         if (!empty($comercio['logo'])) {
             FileManager::eliminarImagen('logos', $comercio['logo']);
         }
         if (!empty($comercio['portada'])) {
             FileManager::eliminarImagen('portadas', $comercio['portada']);
         }
-
-        // Eliminar fotos de galería
         $fotos = Comercio::getFotos($id);
         foreach ($fotos as $foto) {
             FileManager::eliminarImagen('galeria', $foto['ruta']);
         }
 
+        // 2. Eliminar registros huérfanos (tablas sin ON DELETE CASCADE)
+        $db->delete('comercio_cambios_pendientes', 'comercio_id = ?', [$id]);
+
+        // 3. Desactivar usuario comerciante vinculado
+        if (!empty($comercio['registrado_por'])) {
+            AdminUsuario::updateById((int) $comercio['registrado_por'], ['activo' => 0]);
+        }
+
+        // 4. Eliminar comercio (CASCADE limpia: categorias, fechas, fotos, horarios, resenas)
+        //    SET NULL limpia: banners, visitas_log, share_log
         Comercio::deleteById($id);
+
         $this->log('comercios', 'eliminar', 'comercio', $id, "Comercio eliminado: {$comercio['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio eliminado correctamente']);
     }
