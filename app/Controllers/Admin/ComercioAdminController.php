@@ -148,6 +148,7 @@ class ComercioAdminController extends Controller
         $data['destacado']       = isset($_POST['destacado']) ? 1 : 0;
         $data['validado']        = isset($_POST['validado']) ? 1 : 0;
         $data['validado_fecha']  = isset($_POST['validado']) ? date('Y-m-d H:i:s') : null;
+        $data['registrado_por']  = !empty($_POST['registrado_por']) ? (int) $_POST['registrado_por'] : null;
         $data['seo_titulo']      = trim($_POST['seo_titulo'] ?? '');
         $data['seo_descripcion'] = trim($_POST['seo_descripcion'] ?? '');
         $data['seo_keywords']    = trim($_POST['seo_keywords'] ?? '');
@@ -327,6 +328,7 @@ class ComercioAdminController extends Controller
             'destacado'       => isset($_POST['destacado']) ? 1 : 0,
             'validado'        => isset($_POST['validado']) ? 1 : 0,
             'validado_fecha'  => isset($_POST['validado']) ? date('Y-m-d H:i:s') : null,
+            'registrado_por'  => !empty($_POST['registrado_por']) ? (int) $_POST['registrado_por'] : null,
             'seo_titulo'      => trim($_POST['seo_titulo'] ?? ''),
             'seo_descripcion' => trim($_POST['seo_descripcion'] ?? ''),
             'seo_keywords'    => trim($_POST['seo_keywords'] ?? ''),
@@ -394,9 +396,10 @@ class ComercioAdminController extends Controller
         Comercio::recalcularCalidad($id);
 
         // Sincronizar estado del usuario comerciante asociado
-        if (!empty($comercio['registrado_por'])) {
+        $regPor = $data['registrado_por'] ?? $comercio['registrado_por'] ?? null;
+        if (!empty($regPor)) {
             $activarUsuario = ($data['validado'] && $data['activo']) ? 1 : 0;
-            AdminUsuario::updateById((int) $comercio['registrado_por'], ['activo' => $activarUsuario]);
+            AdminUsuario::updateById((int) $regPor, ['activo' => $activarUsuario]);
         }
 
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");

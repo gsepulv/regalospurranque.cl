@@ -55,4 +55,11 @@ class AdminUsuario
     {
         return Database::getInstance()->count('admin_usuarios', 'site_id = ?', [$siteId]);
     }
+
+    public static function getComerciantes(): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT id, nombre, email FROM admin_usuarios WHERE rol = 'comerciante' ORDER BY nombre ASC"
+        );
+    }
 }

@@ -549,6 +549,18 @@ $errors  = $flash['errors'] ?? [];
                         ✅ Validado
                     </label>
                 </div>
+                <div class="form-group">
+                    <label class="form-label" for="registrado_por">Cuenta comerciante</label>
+                    <select id="registrado_por" name="registrado_por" class="form-control">
+                        <option value="">— Sin vincular —</option>
+                        <?php foreach (\App\Models\AdminUsuario::getComerciantes() as $cu): ?>
+                            <option value="<?= $cu['id'] ?>"
+                                <?= (int) old('registrado_por', $editing ? ($comercio['registrado_por'] ?? '') : '') === (int) $cu['id'] ? 'selected' : '' ?>>
+                                <?= e($cu['nombre']) ?> (<?= e($cu['email']) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
             </div>
         </div>
     </div>
