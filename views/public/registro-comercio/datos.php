@@ -151,12 +151,14 @@ foreach ($fechas as $f) {
                         <input type="file" name="logo" class="form-control" accept="image/jpeg,image/png,image/webp"
                                onchange="previewImg(this,'logoP')">
                         <img id="logoP" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:4px">
+                        <small style="color:#6B7280;font-size:0.8rem">Ideal: 800x800px. Se muestra circular.</small>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Foto de portada</label>
                         <input type="file" name="portada" class="form-control" accept="image/jpeg,image/png,image/webp"
                                onchange="previewImg(this,'portP')">
                         <img id="portP" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:4px">
+                        <small style="color:#6B7280;font-size:0.8rem">Ideal: 1200x400px. Se muestra como banner.</small>
                     </div>
                 </div>
             </div>

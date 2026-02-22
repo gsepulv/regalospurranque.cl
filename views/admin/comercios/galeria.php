@@ -36,6 +36,7 @@
                            class="form-control"
                            accept="image/*"
                            required>
+                    <small style="color:var(--color-gray)">Ideal: 1200x900px (4:3). Máx. 5 MB.</small>
                 </div>
                 <div class="form-group" style="margin-bottom:0">
                     <label class="form-label" for="titulo">Titulo (opcional)</label>

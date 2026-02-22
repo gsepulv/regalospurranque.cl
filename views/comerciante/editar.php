@@ -126,7 +126,7 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                                  style="max-height:60px;border-radius:4px;margin-bottom:0.5rem;display:block">
                         <?php endif; ?>
                         <input type="file" name="logo" class="form-control" accept="image/jpeg,image/png,image/webp">
-                        <small style="color:#6B7280;font-size:0.8rem">Dejar vacío para mantener el actual</small>
+                        <small style="color:#6B7280;font-size:0.8rem">Ideal: 800x800px. Se muestra circular. Máx. 5 MB.</small>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Portada</label>
@@ -136,7 +136,7 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                                  style="max-height:60px;border-radius:4px;margin-bottom:0.5rem;display:block">
                         <?php endif; ?>
                         <input type="file" name="portada" class="form-control" accept="image/jpeg,image/png,image/webp">
-                        <small style="color:#6B7280;font-size:0.8rem">Dejar vacío para mantener la actual</small>
+                        <small style="color:#6B7280;font-size:0.8rem">Ideal: 1200x400px. Se muestra como banner. Máx. 5 MB.</small>
                     </div>
                 </div>
             </div>

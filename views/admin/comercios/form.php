@@ -342,6 +342,7 @@ $errors  = $flash['errors'] ?? [];
                            accept="image/*"
                            onchange="previewImage(this, 'logoPreview')">
                     <img id="logoPreview" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
+                    <small style="color:var(--color-gray)">Ideal: 800x800px. Se muestra circular 80x80.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="portada">Portada</label>
@@ -361,6 +362,7 @@ $errors  = $flash['errors'] ?? [];
                            accept="image/*"
                            onchange="previewImage(this, 'portadaPreview')">
                     <img id="portadaPreview" src="" alt="" loading="lazy" style="display:none;max-height:80px;margin-top:0.5rem;border-radius:var(--radius-md)">
+                    <small style="color:var(--color-gray)">Ideal: 1200x400px. Se muestra como banner a 300px de alto.</small>
                 </div>
             </div>
         </div>
