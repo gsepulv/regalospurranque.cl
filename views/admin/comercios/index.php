@@ -7,6 +7,7 @@ $q         = $filters['q'] ?? '';
 $catFilter = $filters['categoria'] ?? '';
 $planFilter = $filters['plan'] ?? '';
 $estadoFilter = $filters['estado'] ?? '';
+$validacionFilter = $filters['validacion'] ?? '';
 
 // Cargar planes dinámicamente
 $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, nombre, icono FROM planes_config WHERE activo = 1 ORDER BY orden ASC");
@@ -46,8 +47,24 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
             <option value="1" <?= $estadoFilter === '1' ? 'selected' : '' ?>>Activo</option>
             <option value="0" <?= $estadoFilter === '0' ? 'selected' : '' ?>>Inactivo</option>
         </select>
+        <select name="validacion" class="form-control" style="max-width:180px" onchange="document.getElementById('filtrosForm').submit()">
+            <option value="">Validacion: Todos</option>
+            <option value="pendiente" <?= $validacionFilter === 'pendiente' ? 'selected' : '' ?>>Pendientes de validacion</option>
+            <option value="validado" <?= $validacionFilter === 'validado' ? 'selected' : '' ?>>Validados</option>
+        </select>
     </form>
 </div>
+<?php if (($pendientesCount ?? 0) > 0): ?>
+<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:var(--radius-md);padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem">
+    <span style="font-size:1.25rem">&#9888;&#65039;</span>
+    <span>
+        <strong><?= $pendientesCount ?> comercio<?= $pendientesCount !== 1 ? 's' : '' ?> pendiente<?= $pendientesCount !== 1 ? 's' : '' ?> de validacion.</strong>
+        <?php if ($validacionFilter !== 'pendiente'): ?>
+            <a href="<?= url('/admin/comercios?validacion=pendiente') ?>" style="color:#d97706;font-weight:600">Ver pendientes</a>
+        <?php endif; ?>
+    </span>
+</div>
+<?php endif; ?>
 <p style="margin-bottom:1rem;color:var(--color-gray);font-size:var(--font-size-sm)">
     <?= number_format($total) ?> comercio<?= $total !== 1 ? 's' : '' ?> encontrado<?= $total !== 1 ? 's' : '' ?>
 </p>
@@ -87,6 +104,12 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
                                 <!-- Nombre -->
                                 <td>
                                     <strong><?= e($com['nombre']) ?></strong>
+                                    <?php if (!$com['validado']): ?>
+                                        <span style="display:inline-block;background:#fef3c7;color:#92400e;font-size:0.7rem;padding:1px 6px;border-radius:9999px;font-weight:600;margin-left:4px;vertical-align:middle">Pendiente</span>
+                                    <?php endif; ?>
+                                    <?php if (!$com['calidad_ok']): ?>
+                                        <span style="display:inline-block;background:#fee2e2;color:#991b1b;font-size:0.7rem;padding:1px 6px;border-radius:9999px;font-weight:600;margin-left:4px;vertical-align:middle">Calidad</span>
+                                    <?php endif; ?>
                                     <br><small style="color:var(--color-gray)">/<?= e($com['slug']) ?></small>
                                 </td>
                                 <!-- Categorías -->

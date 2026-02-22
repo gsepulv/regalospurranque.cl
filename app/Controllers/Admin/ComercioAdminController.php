@@ -21,6 +21,7 @@ class ComercioAdminController extends Controller
         $catFilter  = (int) $this->request->get('categoria', 0);
         $planFilter = $this->request->get('plan', '');
         $estadoFilter = $this->request->get('estado', '');
+        $validacionFilter = $this->request->get('validacion', '');
 
         $where  = '1=1';
         $params = [];
@@ -42,6 +43,11 @@ class ComercioAdminController extends Controller
         } elseif ($estadoFilter === '0') {
             $where .= ' AND c.activo = 0';
         }
+        if ($validacionFilter === 'pendiente') {
+            $where .= ' AND c.validado = 0';
+        } elseif ($validacionFilter === 'validado') {
+            $where .= ' AND c.validado = 1';
+        }
 
         $total = Comercio::countAdminFiltered($where, $params);
 
@@ -52,18 +58,23 @@ class ComercioAdminController extends Controller
 
         $categorias = Categoria::getActiveForSelect();
 
+        // Contar pendientes de validación para badge
+        $pendientesCount = Comercio::countAdminFiltered('c.validado = 0', []);
+
         $this->render('admin/comercios/index', [
-            'title'        => 'Comercios — ' . SITE_NAME,
-            'comercios'    => $comercios,
-            'categorias'   => $categorias,
-            'currentPage'  => $page,
-            'totalPages'   => $totalPages,
-            'total'        => $total,
-            'filters'      => [
-                'q'         => $buscar,
-                'categoria' => $catFilter,
-                'plan'      => $planFilter,
-                'estado'    => $estadoFilter,
+            'title'           => 'Comercios — ' . SITE_NAME,
+            'comercios'       => $comercios,
+            'categorias'      => $categorias,
+            'currentPage'     => $page,
+            'totalPages'      => $totalPages,
+            'total'           => $total,
+            'pendientesCount' => $pendientesCount,
+            'filters'         => [
+                'q'          => $buscar,
+                'categoria'  => $catFilter,
+                'plan'       => $planFilter,
+                'estado'     => $estadoFilter,
+                'validacion' => $validacionFilter,
             ],
         ]);
     }
