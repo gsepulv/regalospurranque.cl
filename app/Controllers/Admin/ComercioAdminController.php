@@ -84,7 +84,7 @@ class ComercioAdminController extends Controller
     {
         $v = $this->validate($_POST, [
             'nombre'      => 'required|string|min:3|max:150',
-            'slug'        => 'required|slug|unique:comercios,slug',
+            'slug'        => 'required|slug|max:170|unique:comercios,slug',
             'descripcion' => 'required|string|min:20|max:5000',
             'telefono'    => 'required|string|min:9|max:20',
             'whatsapp'    => 'required|string|min:9|max:20',
@@ -92,6 +92,30 @@ class ComercioAdminController extends Controller
             'sitio_web'   => 'required|url|max:255',
             'direccion'   => 'required|string|min:5|max:255',
             'plan'        => 'required|in:freemium,basico,premium,sponsor,banner',
+            // Redes sociales
+            'facebook'            => 'url|max:300',
+            'instagram'           => 'url|max:300',
+            'tiktok'              => 'url|max:300',
+            'youtube'             => 'url|max:300',
+            'x_twitter'           => 'url|max:300',
+            'linkedin'            => 'url|max:300',
+            'telegram'            => 'url|max:300',
+            'pinterest'           => 'url|max:300',
+            // SEO
+            'seo_titulo'          => 'string|max:160',
+            'seo_descripcion'     => 'string|max:320',
+            'seo_keywords'        => 'string|max:255',
+            // Datos tributarios
+            'razon_social'        => 'string|max:200',
+            'rut_empresa'         => 'string|max:15',
+            'giro'                => 'string|max:200',
+            'direccion_tributaria' => 'string|max:300',
+            'comuna_tributaria'   => 'string|max:100',
+            // Contacto propietario
+            'contacto_nombre'     => 'string|max:150',
+            'contacto_rut'        => 'string|max:15',
+            'contacto_telefono'   => 'string|max:20',
+            'contacto_email'      => 'email|max:200',
         ]);
 
         if ($v->fails()) {
@@ -234,7 +258,7 @@ class ComercioAdminController extends Controller
 
         $v = $this->validate($_POST, [
             'nombre'      => 'required|string|min:3|max:150',
-            'slug'        => "required|slug|unique:comercios,slug,{$id}",
+            'slug'        => "required|slug|max:170|unique:comercios,slug,{$id}",
             'descripcion' => 'required|string|min:20|max:5000',
             'telefono'    => 'required|string|min:9|max:20',
             'whatsapp'    => 'required|string|min:9|max:20',
@@ -242,6 +266,30 @@ class ComercioAdminController extends Controller
             'sitio_web'   => 'required|url|max:255',
             'direccion'   => 'required|string|min:5|max:255',
             'plan'        => 'required|in:freemium,basico,premium,sponsor,banner',
+            // Redes sociales
+            'facebook'            => 'url|max:300',
+            'instagram'           => 'url|max:300',
+            'tiktok'              => 'url|max:300',
+            'youtube'             => 'url|max:300',
+            'x_twitter'           => 'url|max:300',
+            'linkedin'            => 'url|max:300',
+            'telegram'            => 'url|max:300',
+            'pinterest'           => 'url|max:300',
+            // SEO
+            'seo_titulo'          => 'string|max:160',
+            'seo_descripcion'     => 'string|max:320',
+            'seo_keywords'        => 'string|max:255',
+            // Datos tributarios
+            'razon_social'        => 'string|max:200',
+            'rut_empresa'         => 'string|max:15',
+            'giro'                => 'string|max:200',
+            'direccion_tributaria' => 'string|max:300',
+            'comuna_tributaria'   => 'string|max:100',
+            // Contacto propietario
+            'contacto_nombre'     => 'string|max:150',
+            'contacto_rut'        => 'string|max:15',
+            'contacto_telefono'   => 'string|max:20',
+            'contacto_email'      => 'email|max:200',
         ]);
 
         if ($v->fails()) {

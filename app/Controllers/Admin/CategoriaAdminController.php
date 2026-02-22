@@ -34,7 +34,7 @@ class CategoriaAdminController extends Controller
     {
         $v = $this->validate($_POST, [
             'nombre'      => 'required|string|min:3|max:100',
-            'slug'        => 'required|slug|unique:categorias,slug',
+            'slug'        => 'required|slug|max:120|unique:categorias,slug',
             'color'       => 'required|string|max:7',
             'descripcion' => 'required|string|min:10|max:500',
             'icono'       => 'required|string|min:1|max:50',
@@ -91,7 +91,7 @@ class CategoriaAdminController extends Controller
 
         $v = $this->validate($_POST, [
             'nombre'      => 'required|string|min:3|max:100',
-            'slug'        => "required|slug|unique:categorias,slug,{$id}",
+            'slug'        => "required|slug|max:120|unique:categorias,slug,{$id}",
             'color'       => 'required|string|max:7',
             'descripcion' => 'required|string|min:10|max:500',
             'icono'       => 'required|string|min:1|max:50',

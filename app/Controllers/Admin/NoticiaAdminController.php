@@ -65,7 +65,7 @@ class NoticiaAdminController extends Controller
     {
         $v = $this->validate($_POST, [
             'titulo'          => 'required|string|min:10|max:200',
-            'slug'            => 'required|slug|unique:noticias,slug',
+            'slug'            => 'required|slug|max:220|unique:noticias,slug',
             'contenido'       => 'required|string|min:50',
             'extracto'        => 'required|string|min:20|max:500',
             'seo_titulo'      => 'required|string|min:10|max:70',
@@ -151,7 +151,7 @@ class NoticiaAdminController extends Controller
 
         $v = $this->validate($_POST, [
             'titulo'          => 'required|string|min:10|max:200',
-            'slug'            => "required|slug|unique:noticias,slug,{$id}",
+            'slug'            => "required|slug|max:220|unique:noticias,slug,{$id}",
             'contenido'       => 'required|string|min:50',
             'extracto'        => 'required|string|min:20|max:500',
             'seo_titulo'      => 'required|string|min:10|max:70',
