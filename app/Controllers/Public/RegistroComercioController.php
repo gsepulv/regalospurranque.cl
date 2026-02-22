@@ -6,6 +6,7 @@ use App\Models\AdminUsuario;
 use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
+use App\Models\PoliticaAceptacion;
 use App\Services\Captcha;
 use App\Services\FileManager;
 
@@ -42,10 +43,16 @@ class RegistroComercioController extends Controller
 
         // CSRF ya validado por middleware global
 
+        // Recopilar valores de políticas para repoblar
+        $politicasOld = [];
+        foreach (PoliticaAceptacion::POLITICAS as $p) {
+            $politicasOld['politica_' . $p] = $_POST['politica_' . $p] ?? '';
+        }
+
         // Validar Turnstile
         if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
             $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
-            $_SESSION['flash_old'] = ['nombre' => $_POST['nombre'] ?? '', 'email' => $_POST['email'] ?? '', 'telefono' => $_POST['telefono'] ?? ''];
+            $_SESSION['flash_old'] = array_merge(['nombre' => $_POST['nombre'] ?? '', 'email' => $_POST['email'] ?? '', 'telefono' => $_POST['telefono'] ?? ''], $politicasOld);
             header('Location: ' . url('/registrar-comercio'));
             exit;
         }
@@ -64,6 +71,14 @@ class RegistroComercioController extends Controller
         if (strlen($password) < 8) $errores[] = 'La contraseña debe tener al menos 8 caracteres.';
         if ($password !== $password2) $errores[] = 'Las contraseñas no coinciden.';
 
+        // Validar políticas
+        $decisiones = [];
+        foreach (PoliticaAceptacion::POLITICAS as $p) {
+            $decisiones[$p] = $_POST['politica_' . $p] ?? '';
+        }
+        $erroresPoliticas = PoliticaAceptacion::validarAceptaciones($decisiones);
+        $errores = array_merge($errores, $erroresPoliticas);
+
         if (empty($errores)) {
             $existe = AdminUsuario::findByEmail($email);
             if ($existe) {
@@ -73,7 +88,7 @@ class RegistroComercioController extends Controller
 
         if (!empty($errores)) {
             $_SESSION['flash_errors'] = $errores;
-            $_SESSION['flash_old'] = ['nombre' => $nombre, 'email' => $email, 'telefono' => $telefono];
+            $_SESSION['flash_old'] = array_merge(['nombre' => $nombre, 'email' => $email, 'telefono' => $telefono], $politicasOld);
             header('Location: ' . url('/registrar-comercio'));
             exit;
         }
@@ -87,6 +102,11 @@ class RegistroComercioController extends Controller
             'activo'        => 0,
             'site_id'       => 1,
         ]);
+
+        // Registrar aceptación de políticas
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $userAgent = mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
+        PoliticaAceptacion::registrarDecisiones($userId, $email, $decisiones, $ip, $userAgent);
 
         $_SESSION['registro_uid']    = $userId;
         $_SESSION['registro_nombre'] = $nombre;

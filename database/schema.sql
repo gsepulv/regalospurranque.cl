@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Base de Datos: purranque_regalos_purranque
 -- Proyecto: Regalos Purranque v2 - Directorio Comercial
--- Descripcion: Esquema completo con las 29 tablas del sistema
+-- Descripcion: Esquema completo con las 30 tablas del sistema
 -- Motor: InnoDB | Charset: utf8mb4 | Collation: utf8mb4_unicode_ci
 -- ============================================================================
 
@@ -640,6 +640,26 @@ CREATE TABLE IF NOT EXISTS `sitios` (
     KEY `idx_sitios_activo` (`activo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------------------------------
+-- Tabla 30: politicas_aceptacion
+-- Registro de aceptacion/rechazo de politicas al registrar comercio
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `politicas_aceptacion` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `usuario_id` INT DEFAULT NULL,
+    `email` VARCHAR(150) NOT NULL,
+    `politica` ENUM('terminos','privacidad','contenidos','derechos','cookies') NOT NULL,
+    `decision` ENUM('acepto','rechazo') NOT NULL,
+    `ip_address` VARCHAR(45) NOT NULL,
+    `user_agent` VARCHAR(500) DEFAULT NULL,
+    `fecha_decision` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_politicas_usuario` (`usuario_id`),
+    INDEX `idx_politicas_email` (`email`),
+    CONSTRAINT `fk_politicas_usuario` FOREIGN KEY (`usuario_id`)
+        REFERENCES `admin_usuarios` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================================
 -- Restaurar verificacion de claves foraneas
 -- ============================================================================
@@ -647,5 +667,5 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================================================
 -- FIN DEL ESQUEMA - purranque_regalos_purranque
--- Total de tablas: 29
+-- Total de tablas: 30
 -- ============================================================================
