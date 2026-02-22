@@ -455,9 +455,12 @@ class ComercioAdminController extends Controller
         // 2. Eliminar registros huérfanos (tablas sin ON DELETE CASCADE)
         $db->delete('comercio_cambios_pendientes', 'comercio_id = ?', [$id]);
 
-        // 3. Desactivar usuario comerciante vinculado
+        // 3. Eliminar usuario comerciante vinculado
         if (!empty($comercio['registrado_por'])) {
-            AdminUsuario::updateById((int) $comercio['registrado_por'], ['activo' => 0]);
+            $usuario = AdminUsuario::find((int) $comercio['registrado_por']);
+            if ($usuario && $usuario['rol'] === 'comerciante') {
+                AdminUsuario::deleteById((int) $comercio['registrado_por']);
+            }
         }
 
         // 4. Eliminar comercio (CASCADE limpia: categorias, fechas, fotos, horarios, resenas)
