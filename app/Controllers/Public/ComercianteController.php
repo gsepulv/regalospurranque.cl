@@ -10,6 +10,7 @@ use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
 use App\Services\Captcha;
 use App\Services\FileManager;
+use App\Services\Mailer;
 
 /**
  * Panel del Comerciante
@@ -136,6 +137,142 @@ class ComercianteController extends Controller
     {
         unset($_SESSION['comerciante']);
         $_SESSION['flash_success'] = 'Has cerrado sesión correctamente.';
+        header('Location: ' . url('/mi-comercio/login'));
+        exit;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // RECUPERACIÓN DE CONTRASEÑA
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Formulario "Olvidé mi contraseña"
+     */
+    public function forgotPasswordForm(): void
+    {
+        if ($this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        $this->render('comerciante/olvide-contrasena', [
+            'title'   => 'Recuperar contraseña — ' . SITE_NAME,
+            'noindex' => true,
+        ]);
+    }
+
+    /**
+     * Enviar link de recuperación
+     */
+    public function sendResetLink(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        $email = strtolower(trim($_POST['email'] ?? ''));
+
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['flash_error'] = 'Ingresa un email válido.';
+            $_SESSION['flash_old'] = ['email' => $email];
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
+            $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
+            $_SESSION['flash_old'] = ['email' => $email];
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        // Buscar usuario comerciante
+        $user = AdminUsuario::findByEmailAndRol($email, 'comerciante');
+
+        if ($user && $user['activo']) {
+            // Anti-flood: no generar nuevo token si ya tiene uno vigente
+            if (empty($user['reset_token']) || empty($user['reset_expira']) || strtotime($user['reset_expira']) < time()) {
+                $token  = bin2hex(random_bytes(32));
+                $expira = date('Y-m-d H:i:s', strtotime('+1 hour'));
+                AdminUsuario::setResetToken($user['id'], $token, $expira);
+
+                $resetUrl = SITE_URL . '/mi-comercio/reset/' . $token;
+                $mailer = new Mailer();
+                $mailer->send($user['email'], 'Recuperar contraseña — ' . SITE_NAME, 'reset-password', [
+                    'nombre'   => $user['nombre'],
+                    'resetUrl' => $resetUrl,
+                ]);
+            }
+        }
+
+        // Siempre mensaje genérico (no revelar si el email existe)
+        $_SESSION['flash_success'] = 'Si el email está registrado, recibirás instrucciones para restablecer tu contraseña.';
+        header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+        exit;
+    }
+
+    /**
+     * Formulario para establecer nueva contraseña
+     */
+    public function resetPasswordForm(string $token): void
+    {
+        $user = AdminUsuario::findByResetToken($token);
+
+        if (!$user) {
+            $_SESSION['flash_error'] = 'El enlace es inválido o ha expirado. Solicita uno nuevo.';
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        $this->render('comerciante/nueva-contrasena', [
+            'title'   => 'Nueva contraseña — ' . SITE_NAME,
+            'noindex' => true,
+            'token'   => $token,
+        ]);
+    }
+
+    /**
+     * Procesar nueva contraseña
+     */
+    public function resetPassword(string $token): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        $user = AdminUsuario::findByResetToken($token);
+
+        if (!$user) {
+            $_SESSION['flash_error'] = 'El enlace es inválido o ha expirado. Solicita uno nuevo.';
+            header('Location: ' . url('/mi-comercio/olvide-contrasena'));
+            exit;
+        }
+
+        $password = $_POST['password'] ?? '';
+        $confirm  = $_POST['password_confirm'] ?? '';
+
+        if (mb_strlen($password) < 8) {
+            $_SESSION['flash_error'] = 'La contraseña debe tener al menos 8 caracteres.';
+            header('Location: ' . url('/mi-comercio/reset/' . $token));
+            exit;
+        }
+
+        if ($password !== $confirm) {
+            $_SESSION['flash_error'] = 'Las contraseñas no coinciden.';
+            header('Location: ' . url('/mi-comercio/reset/' . $token));
+            exit;
+        }
+
+        // Actualizar contraseña y limpiar token
+        AdminUsuario::updateById($user['id'], [
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+        ]);
+        AdminUsuario::clearResetToken($user['id']);
+
+        $_SESSION['flash_success'] = '¡Contraseña actualizada! Ya puedes ingresar con tu nueva contraseña.';
         header('Location: ' . url('/mi-comercio/login'));
         exit;
     }

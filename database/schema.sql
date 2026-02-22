@@ -27,12 +27,15 @@ CREATE TABLE IF NOT EXISTS `admin_usuarios` (
     `avatar` VARCHAR(255) DEFAULT NULL,
     `activo` TINYINT(1) NOT NULL DEFAULT 1,
     `last_login` DATETIME DEFAULT NULL,
+    `reset_token` VARCHAR(64) DEFAULT NULL,
+    `reset_expira` DATETIME DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_admin_usuarios_email` (`email`),
     INDEX `idx_admin_usuarios_rol` (`rol`),
-    INDEX `idx_admin_usuarios_activo` (`activo`)
+    INDEX `idx_admin_usuarios_activo` (`activo`),
+    INDEX `idx_reset_token` (`reset_token`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------------------------------------------------------

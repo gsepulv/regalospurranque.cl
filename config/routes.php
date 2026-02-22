@@ -262,6 +262,10 @@ return [
     ['GET',  '/mi-comercio/login',          'Public\\ComercianteController@loginForm',    []],
     ['POST', '/mi-comercio/login',          'Public\\ComercianteController@login',        []],
     ['GET',  '/mi-comercio/logout',         'Public\\ComercianteController@logout',       []],
-    ['GET',  '/mi-comercio/editar',         'Public\\ComercianteController@editar',       []],
-    ['POST', '/mi-comercio/guardar',        'Public\\ComercianteController@guardar',      []],
+    ['GET',  '/mi-comercio/editar',             'Public\\ComercianteController@editar',            []],
+    ['POST', '/mi-comercio/guardar',            'Public\\ComercianteController@guardar',           []],
+    ['GET',  '/mi-comercio/olvide-contrasena',  'Public\\ComercianteController@forgotPasswordForm', []],
+    ['POST', '/mi-comercio/olvide-contrasena',  'Public\\ComercianteController@sendResetLink',      []],
+    ['GET',  '/mi-comercio/reset/{token}',      'Public\\ComercianteController@resetPasswordForm',  []],
+    ['POST', '/mi-comercio/reset/{token}',      'Public\\ComercianteController@resetPassword',      []],
 ];

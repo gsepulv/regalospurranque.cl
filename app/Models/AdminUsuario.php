@@ -62,4 +62,32 @@ class AdminUsuario
             "SELECT id, nombre, email FROM admin_usuarios WHERE rol = 'comerciante' ORDER BY nombre ASC"
         );
     }
+
+    public static function findByResetToken(string $token): ?array
+    {
+        return Database::getInstance()->fetch(
+            "SELECT * FROM admin_usuarios WHERE reset_token = ? AND reset_expira > NOW()",
+            [$token]
+        );
+    }
+
+    public static function setResetToken(int $id, string $token, string $expira): int
+    {
+        return Database::getInstance()->update(
+            'admin_usuarios',
+            ['reset_token' => $token, 'reset_expira' => $expira],
+            'id = ?',
+            [$id]
+        );
+    }
+
+    public static function clearResetToken(int $id): int
+    {
+        return Database::getInstance()->update(
+            'admin_usuarios',
+            ['reset_token' => null, 'reset_expira' => null],
+            'id = ?',
+            [$id]
+        );
+    }
 }
