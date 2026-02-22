@@ -180,7 +180,7 @@ class ComercioAdminController extends Controller
         // Logo
         $logo = $this->request->file('logo');
         if ($logo && $logo['error'] === UPLOAD_ERR_OK) {
-            $data['logo'] = FileManager::subirImagen($logo, 'logos', 400);
+            $data['logo'] = FileManager::subirImagen($logo, 'logos', 800);
         }
 
         // Portada
@@ -364,7 +364,7 @@ class ComercioAdminController extends Controller
             if (!empty($comercio['logo'])) {
                 FileManager::eliminarImagen('logos', $comercio['logo']);
             }
-            $data['logo'] = FileManager::subirImagen($logo, 'logos', 400);
+            $data['logo'] = FileManager::subirImagen($logo, 'logos', 800);
         }
 
         // Portada

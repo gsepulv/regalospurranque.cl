@@ -79,7 +79,7 @@ class SitioAdminController extends Controller
         // Logo
         $logo = $this->request->file('logo');
         if ($logo && $logo['error'] === UPLOAD_ERR_OK) {
-            $data['logo'] = FileManager::subirImagen($logo, 'config', 400);
+            $data['logo'] = FileManager::subirImagen($logo, 'config', 800);
         }
 
         $id = Sitio::create($data);
@@ -152,7 +152,7 @@ class SitioAdminController extends Controller
             if (!empty($sitio['logo'])) {
                 FileManager::eliminarImagen('config', $sitio['logo']);
             }
-            $data['logo'] = FileManager::subirImagen($logo, 'config', 400);
+            $data['logo'] = FileManager::subirImagen($logo, 'config', 800);
         }
 
         Sitio::updateById($id, $data);
