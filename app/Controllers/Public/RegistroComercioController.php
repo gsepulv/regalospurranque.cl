@@ -103,10 +103,14 @@ class RegistroComercioController extends Controller
             'site_id'       => 1,
         ]);
 
-        // Registrar aceptación de políticas
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-        $userAgent = mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
-        PoliticaAceptacion::registrarDecisiones($userId, $email, $decisiones, $ip, $userAgent);
+        // Registrar aceptación de políticas (no debe bloquear el registro si falla)
+        try {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+            $userAgent = mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
+            PoliticaAceptacion::registrarDecisiones($userId, $email, $decisiones, $ip, $userAgent);
+        } catch (\Throwable $e) {
+            error_log("Error registrando políticas para usuario {$userId}: " . $e->getMessage());
+        }
 
         $_SESSION['registro_uid']    = $userId;
         $_SESSION['registro_nombre'] = $nombre;
