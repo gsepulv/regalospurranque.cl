@@ -567,7 +567,7 @@ $errors  = $flash['errors'] ?? [];
                                class="form-control"
                                value="<?= e(old('razon_social', $editing ? ($comercio['razon_social'] ?? '') : '')) ?>"
                                placeholder="Ej: Comercial Los Andes SpA"
-                               maxlength="255">
+                               maxlength="200">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="rut_empresa">RUT Empresa</label>
@@ -589,7 +589,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('giro', $editing ? ($comercio['giro'] ?? '') : '')) ?>"
                            placeholder="Ej: Venta al por menor de flores y plantas"
-                           maxlength="255">
+                           maxlength="200">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -610,7 +610,7 @@ $errors  = $flash['errors'] ?? [];
                                class="form-control"
                                value="<?= e(old('comuna_tributaria', $editing ? ($comercio['comuna_tributaria'] ?? '') : '')) ?>"
                                placeholder="Ej: Purranque"
-                               maxlength="255">
+                               maxlength="100">
                     </div>
                 </div>
             </div>
