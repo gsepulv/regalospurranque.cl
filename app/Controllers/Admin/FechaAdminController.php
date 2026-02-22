@@ -34,7 +34,7 @@ class FechaAdminController extends Controller
     public function store(): void
     {
         $v = $this->validate($_POST, [
-            'nombre'      => 'required|string|min:3|max:100',
+            'nombre'      => 'required|string|min:3|max:150',
             'slug'        => 'required|slug|unique:fechas_especiales,slug',
             'descripcion' => 'required|string|min:10|max:500',
             'tipo'        => 'required|in:personal,calendario,comercial',
@@ -104,7 +104,7 @@ class FechaAdminController extends Controller
         }
 
         $v = $this->validate($_POST, [
-            'nombre'      => 'required|string|min:3|max:100',
+            'nombre'      => 'required|string|min:3|max:150',
             'slug'        => "required|slug|unique:fechas_especiales,slug,{$id}",
             'descripcion' => 'required|string|min:10|max:500',
             'tipo'        => 'required|in:personal,calendario,comercial',

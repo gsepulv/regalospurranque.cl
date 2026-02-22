@@ -87,9 +87,9 @@
                            value="<?= e(old('icono', $editing ? $categoria['icono'] ?? '' : '')) ?>"
                            placeholder="Ej: &#127861;"
                            minlength="1"
-                           maxlength="10"
+                           maxlength="50"
                            required>
-                    <small style="color:var(--color-gray)">Min. 1, max. 10 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 1, max. 50 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="color">Color</label>

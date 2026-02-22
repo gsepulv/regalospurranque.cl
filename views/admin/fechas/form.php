@@ -45,9 +45,9 @@
                            value="<?= e(old('nombre', $editing ? $fecha['nombre'] : '')) ?>"
                            data-slug-source
                            minlength="3"
-                           maxlength="100"
+                           maxlength="150"
                            required>
-                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 3, max. 150 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="slug">Slug</label>
@@ -99,9 +99,9 @@
                            class="form-control"
                            value="<?= e(old('icono', $editing ? $fecha['icono'] ?? '' : '')) ?>"
                            minlength="1"
-                           maxlength="10"
+                           maxlength="50"
                            placeholder="Ej: &#127873;">
-                    <small style="color:var(--color-gray)">Min. 1, max. 10 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 1, max. 50 caracteres.</small>
                 </div>
             </div>
 

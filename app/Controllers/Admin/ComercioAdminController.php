@@ -83,12 +83,12 @@ class ComercioAdminController extends Controller
     public function store(): void
     {
         $v = $this->validate($_POST, [
-            'nombre'      => 'required|string|min:3|max:100',
+            'nombre'      => 'required|string|min:3|max:150',
             'slug'        => 'required|slug|unique:comercios,slug',
             'descripcion' => 'required|string|min:20|max:5000',
-            'telefono'    => 'required|string|min:9|max:15',
-            'whatsapp'    => 'required|string|min:9|max:15',
-            'email'       => 'required|email|max:100',
+            'telefono'    => 'required|string|min:9|max:20',
+            'whatsapp'    => 'required|string|min:9|max:20',
+            'email'       => 'required|email|max:150',
             'sitio_web'   => 'required|url|max:255',
             'direccion'   => 'required|string|min:5|max:255',
             'plan'        => 'required|in:freemium,basico,premium,sponsor,banner',
@@ -233,12 +233,12 @@ class ComercioAdminController extends Controller
         }
 
         $v = $this->validate($_POST, [
-            'nombre'      => 'required|string|min:3|max:100',
+            'nombre'      => 'required|string|min:3|max:150',
             'slug'        => "required|slug|unique:comercios,slug,{$id}",
             'descripcion' => 'required|string|min:20|max:5000',
-            'telefono'    => 'required|string|min:9|max:15',
-            'whatsapp'    => 'required|string|min:9|max:15',
-            'email'       => 'required|email|max:100',
+            'telefono'    => 'required|string|min:9|max:20',
+            'whatsapp'    => 'required|string|min:9|max:20',
+            'email'       => 'required|email|max:150',
             'sitio_web'   => 'required|url|max:255',
             'direccion'   => 'required|string|min:5|max:255',
             'plan'        => 'required|in:freemium,basico,premium,sponsor,banner',

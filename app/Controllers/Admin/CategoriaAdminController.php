@@ -37,7 +37,7 @@ class CategoriaAdminController extends Controller
             'slug'        => 'required|slug|unique:categorias,slug',
             'color'       => 'required|string|max:7',
             'descripcion' => 'required|string|min:10|max:500',
-            'icono'       => 'required|string|min:1|max:10',
+            'icono'       => 'required|string|min:1|max:50',
         ]);
 
         if ($v->fails()) {
@@ -94,7 +94,7 @@ class CategoriaAdminController extends Controller
             'slug'        => "required|slug|unique:categorias,slug,{$id}",
             'color'       => 'required|string|max:7',
             'descripcion' => 'required|string|min:10|max:500',
-            'icono'       => 'required|string|min:1|max:10',
+            'icono'       => 'required|string|min:1|max:50',
         ]);
 
         if ($v->fails()) {

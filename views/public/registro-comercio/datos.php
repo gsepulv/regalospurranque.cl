@@ -66,8 +66,8 @@ foreach ($fechas as $f) {
                     </label>
                     <input type="text" name="nombre" class="form-control"
                            value="<?= e($old['nombre'] ?? '') ?>"
-                           placeholder="Ej: Floristería Las Rosas" minlength="3" maxlength="100" required>
-                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
+                           placeholder="Ej: Floristería Las Rosas" minlength="3" maxlength="150" required>
+                    <small style="color:var(--color-gray)">Min. 3, max. 150 caracteres.</small>
                 </div>
 
                 <div style="margin-bottom:1rem">
@@ -87,15 +87,15 @@ foreach ($fechas as $f) {
                         </label>
                         <input type="text" name="whatsapp" class="form-control"
                                value="<?= e($old['whatsapp'] ?? '') ?>"
-                               placeholder="+56 9 XXXX XXXX" minlength="9" maxlength="15" required>
+                               placeholder="+56 9 XXXX XXXX" minlength="9" maxlength="20" required>
                         <small style="color:#6B7280;font-size:0.8rem">Contacto principal para tus clientes</small>
-                        <small style="color:var(--color-gray)">Min. 9, max. 15 caracteres.</small>
+                        <small style="color:var(--color-gray)">Min. 9, max. 20 caracteres.</small>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono fijo</label>
                         <input type="text" name="telefono" class="form-control"
                                value="<?= e($old['telefono'] ?? '') ?>" placeholder="064 XXXXXX"
-                               minlength="9" maxlength="15" required>
+                               minlength="9" maxlength="20" required>
                     </div>
                 </div>
 
@@ -104,7 +104,7 @@ foreach ($fechas as $f) {
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Email del comercio</label>
                         <input type="email" name="email_comercio" class="form-control"
                                value="<?= e($old['email_comercio'] ?? '') ?>" placeholder="contacto@micomercio.cl"
-                               maxlength="100" required>
+                               maxlength="150" required>
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web</label>

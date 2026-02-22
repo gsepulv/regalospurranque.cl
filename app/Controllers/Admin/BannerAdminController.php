@@ -51,9 +51,9 @@ class BannerAdminController extends Controller
     public function store(): void
     {
         $v = $this->validate($_POST, [
-            'titulo' => 'required|string|min:3|max:100',
+            'titulo' => 'required|string|min:3|max:150',
             'tipo'   => 'required|in:hero,sidebar,entre_comercios,footer',
-            'url'    => 'url|min:10|max:255',
+            'url'    => 'url|min:10|max:500',
         ]);
 
         if ($v->fails()) {
@@ -119,9 +119,9 @@ class BannerAdminController extends Controller
         }
 
         $v = $this->validate($_POST, [
-            'titulo' => 'required|string|min:3|max:100',
+            'titulo' => 'required|string|min:3|max:150',
             'tipo'   => 'required|in:hero,sidebar,entre_comercios,footer',
-            'url'    => 'url|min:10|max:255',
+            'url'    => 'url|min:10|max:500',
         ]);
 
         if ($v->fails()) {

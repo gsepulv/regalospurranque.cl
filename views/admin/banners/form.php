@@ -77,8 +77,8 @@ $bannerSpecs = [
                        class="form-control"
                        value="<?= e(old('titulo', $banner['titulo'] ?? '')) ?>"
                        placeholder="Titulo descriptivo del banner (uso interno)"
-                       minlength="3" maxlength="100" required>
-                <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
+                       minlength="3" maxlength="150" required>
+                <small style="color:var(--color-gray)">Min. 3, max. 150 caracteres.</small>
             </div>
 
             <div class="form-row">
@@ -102,8 +102,8 @@ $bannerSpecs = [
                            class="form-control"
                            value="<?= e(old('url', $banner['url'] ?? '')) ?>"
                            placeholder="https://ejemplo.com"
-                           minlength="10" maxlength="255" required>
-                    <small style="color:var(--color-gray)">Min. 10, max. 255 caracteres.</small>
+                           minlength="10" maxlength="500" required>
+                    <small style="color:var(--color-gray)">Min. 10, max. 500 caracteres.</small>
                 </div>
             </div>
 

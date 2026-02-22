@@ -53,10 +53,10 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control <?= isset($errors['nombre']) ? 'form-control--error' : '' ?>"
                            value="<?= e(old('nombre', $editing ? $comercio['nombre'] : '')) ?>"
                            minlength="3"
-                           maxlength="100"
+                           maxlength="150"
                            required
                            data-slug-source>
-                    <small style="color:var(--color-gray)">Min. 3, max. 100 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 3, max. 150 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="slug">Slug <span style="color:var(--color-danger)">*</span></label>
@@ -94,9 +94,9 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('telefono', $editing ? $comercio['telefono'] : '')) ?>"
                            minlength="9"
-                           maxlength="15"
+                           maxlength="20"
                            required>
-                    <small style="color:var(--color-gray)">Min. 9, max. 15 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 9, max. 20 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="whatsapp">WhatsApp</label>
@@ -106,9 +106,9 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('whatsapp', $editing ? $comercio['whatsapp'] : '')) ?>"
                            minlength="9"
-                           maxlength="15"
+                           maxlength="20"
                            required>
-                    <small style="color:var(--color-gray)">Min. 9, max. 15 caracteres.</small>
+                    <small style="color:var(--color-gray)">Min. 9, max. 20 caracteres.</small>
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="email">Email</label>
@@ -117,7 +117,7 @@ $errors  = $flash['errors'] ?? [];
                            name="email"
                            class="form-control"
                            value="<?= e(old('email', $editing ? $comercio['email'] : '')) ?>"
-                           maxlength="100"
+                           maxlength="150"
                            required>
                 </div>
             </div>
@@ -197,7 +197,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('facebook', $editing ? ($comercio['facebook'] ?? '') : '')) ?>"
                            placeholder="https://www.facebook.com/mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="instagram">
@@ -212,7 +212,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('instagram', $editing ? ($comercio['instagram'] ?? '') : '')) ?>"
                            placeholder="https://www.instagram.com/mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
             </div>
 
@@ -230,7 +230,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('tiktok', $editing ? ($comercio['tiktok'] ?? '') : '')) ?>"
                            placeholder="https://www.tiktok.com/@mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="youtube">
@@ -245,7 +245,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('youtube', $editing ? ($comercio['youtube'] ?? '') : '')) ?>"
                            placeholder="https://www.youtube.com/@mi-canal"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
             </div>
 
@@ -263,7 +263,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('x_twitter', $editing ? ($comercio['x_twitter'] ?? '') : '')) ?>"
                            placeholder="https://x.com/mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="linkedin">
@@ -278,7 +278,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('linkedin', $editing ? ($comercio['linkedin'] ?? '') : '')) ?>"
                            placeholder="https://www.linkedin.com/company/mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
             </div>
 
@@ -296,7 +296,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('telegram', $editing ? ($comercio['telegram'] ?? '') : '')) ?>"
                            placeholder="https://t.me/mi-canal"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="pinterest">
@@ -311,7 +311,7 @@ $errors  = $flash['errors'] ?? [];
                            class="form-control"
                            value="<?= e(old('pinterest', $editing ? ($comercio['pinterest'] ?? '') : '')) ?>"
                            placeholder="https://www.pinterest.com/mi-comercio"
-                           maxlength="255">
+                           maxlength="300">
                 </div>
             </div>
         </div>
@@ -630,7 +630,7 @@ $errors  = $flash['errors'] ?? [];
                                value="<?= e(old('contacto_nombre', $editing ? ($comercio['contacto_nombre'] ?? '') : '')) ?>"
                                placeholder="Nombre del propietario o representante"
                                minlength="3"
-                               maxlength="100">
+                               maxlength="150">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="contacto_rut">RUT Personal</label>
@@ -654,7 +654,7 @@ $errors  = $flash['errors'] ?? [];
                                value="<?= e(old('contacto_telefono', $editing ? ($comercio['contacto_telefono'] ?? '') : '')) ?>"
                                placeholder="+56 9 XXXX XXXX"
                                minlength="9"
-                               maxlength="15">
+                               maxlength="20">
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="contacto_email">Email Facturacion</label>
@@ -664,7 +664,7 @@ $errors  = $flash['errors'] ?? [];
                                class="form-control"
                                value="<?= e(old('contacto_email', $editing ? ($comercio['contacto_email'] ?? '') : '')) ?>"
                                placeholder="email@privado.cl"
-                               maxlength="100">
+                               maxlength="200">
                     </div>
                 </div>
             </div>
