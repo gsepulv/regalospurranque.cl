@@ -452,10 +452,28 @@ class ComercioAdminController extends Controller
             FileManager::eliminarImagen('galeria', $foto['ruta']);
         }
 
-        // 2. Eliminar registros huérfanos (tablas sin ON DELETE CASCADE)
+        // 2. Eliminar TODAS las tablas hijas (explícito, sin depender de CASCADE)
         $db->delete('comercio_cambios_pendientes', 'comercio_id = ?', [$id]);
+        $db->delete('comercio_horarios', 'comercio_id = ?', [$id]);
+        $db->delete('comercio_fotos', 'comercio_id = ?', [$id]);
+        $db->delete('comercio_categoria', 'comercio_id = ?', [$id]);
+        $db->delete('comercio_fecha', 'comercio_id = ?', [$id]);
 
-        // 3. Eliminar usuario comerciante vinculado
+        // 3. Eliminar reseñas y sus reportes
+        $resenas = $db->fetchAll("SELECT id FROM resenas WHERE comercio_id = ?", [$id]);
+        if (!empty($resenas)) {
+            $resenaIds = array_column($resenas, 'id');
+            $placeholders = implode(',', array_fill(0, count($resenaIds), '?'));
+            $db->execute("DELETE FROM resenas_reportes WHERE resena_id IN ({$placeholders})", $resenaIds);
+            $db->delete('resenas', 'comercio_id = ?', [$id]);
+        }
+
+        // 4. Desvincular banners, visitas y shares (SET NULL)
+        $db->execute("UPDATE banners SET comercio_id = NULL WHERE comercio_id = ?", [$id]);
+        $db->execute("UPDATE visitas_log SET comercio_id = NULL WHERE comercio_id = ?", [$id]);
+        $db->execute("UPDATE share_log SET comercio_id = NULL WHERE comercio_id = ?", [$id]);
+
+        // 5. Eliminar usuario comerciante vinculado
         if (!empty($comercio['registrado_por'])) {
             $usuario = AdminUsuario::find((int) $comercio['registrado_por']);
             if ($usuario && $usuario['rol'] === 'comerciante') {
@@ -463,8 +481,7 @@ class ComercioAdminController extends Controller
             }
         }
 
-        // 4. Eliminar comercio (CASCADE limpia: categorias, fechas, fotos, horarios, resenas)
-        //    SET NULL limpia: banners, visitas_log, share_log
+        // 6. Eliminar el comercio
         Comercio::deleteById($id);
 
         $this->log('comercios', 'eliminar', 'comercio', $id, "Comercio eliminado: {$comercio['nombre']}");
