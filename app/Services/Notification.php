@@ -227,6 +227,80 @@ class Notification
     }
 
     /**
+     * Acuse de recibo de contacto (al remitente)
+     */
+    public static function acuseReciboContacto(array $datos): void
+    {
+        if (!self::isEventEnabled('notif_acuse_contacto')) return;
+
+        self::mailer()->send(
+            $datos['email'],
+            "Hemos recibido tu mensaje — " . SITE_NAME,
+            'contacto-acuse',
+            ['datos' => $datos]
+        );
+    }
+
+    /**
+     * Instrucciones de registro (al remitente que consulta sobre registro)
+     */
+    public static function instruccionesRegistro(array $datos): void
+    {
+        if (!self::isEventEnabled('notif_instrucciones_registro')) return;
+
+        self::mailer()->send(
+            $datos['email'],
+            "Cómo registrar tu comercio — " . SITE_NAME,
+            'contacto-instrucciones-registro',
+            [
+                'datos'       => $datos,
+                'registroUrl' => SITE_URL . '/registrar-comercio',
+            ]
+        );
+    }
+
+    /**
+     * Comercio aprobado (al comerciante que lo registró)
+     */
+    public static function comercioAprobado(array $comercio): void
+    {
+        if (!self::isEventEnabled('notif_comercio_aprobado')) return;
+        if (empty($comercio['registrado_por'])) return;
+
+        $usuario = \App\Models\AdminUsuario::find((int)$comercio['registrado_por']);
+        if (!$usuario || empty($usuario['email'])) return;
+
+        self::mailer()->send(
+            $usuario['email'],
+            "Tu comercio ha sido aprobado — " . SITE_NAME,
+            'comercio-aprobado',
+            ['comercio' => $comercio]
+        );
+    }
+
+    /**
+     * Comercio rechazado (al comerciante que lo registró)
+     */
+    public static function comercioRechazado(array $comercio, string $motivo = ''): void
+    {
+        if (!self::isEventEnabled('notif_comercio_rechazado')) return;
+        if (empty($comercio['registrado_por'])) return;
+
+        $usuario = \App\Models\AdminUsuario::find((int)$comercio['registrado_por']);
+        if (!$usuario || empty($usuario['email'])) return;
+
+        self::mailer()->send(
+            $usuario['email'],
+            "Sobre tu comercio en " . SITE_NAME,
+            'comercio-rechazado',
+            [
+                'comercio' => $comercio,
+                'motivo'   => $motivo,
+            ]
+        );
+    }
+
+    /**
      * Solicitud ARCO — notifica a admins
      */
     public static function solicitudArcoAdmin(array $solicitud): void

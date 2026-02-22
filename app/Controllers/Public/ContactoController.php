@@ -61,6 +61,19 @@ class ContactoController extends Controller
         // Notificar a admins
         Notification::nuevoMensajeContacto($data);
 
+        // Acuse de recibo al remitente
+        Notification::acuseReciboContacto($data);
+
+        // Si el mensaje menciona registro, enviar instrucciones
+        $texto = mb_strtolower($data['asunto'] . ' ' . $data['mensaje']);
+        $keywords = ['registro', 'registrar', 'inscribir', 'incluir', 'publicar mi negocio', 'agregar mi', 'añadir mi', 'aparecer en'];
+        foreach ($keywords as $kw) {
+            if (str_contains($texto, $kw)) {
+                Notification::instruccionesRegistro($data);
+                break;
+            }
+        }
+
         $this->redirect('/contacto', [
             'success' => 'Tu mensaje ha sido enviado correctamente. Te responderemos a la brevedad.',
         ]);

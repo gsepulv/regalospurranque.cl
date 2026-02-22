@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 use App\Core\Controller;
 use App\Models\Comercio;
 use App\Models\PlanConfig;
+use App\Services\Notification;
 
 /**
  * Gestión de Planes Comerciales + Validación de Comercios
@@ -257,6 +258,8 @@ class PlanAdminController extends Controller
                 'validado_fecha' => date('Y-m-d H:i:s'),
                 'validado_notas' => $notas,
             ]);
+            $comercioActualizado = Comercio::find($comercioId);
+            Notification::comercioAprobado($comercioActualizado);
             $this->log('planes', 'validar_comercio', 'comercio', $comercioId, "Validado: {$comercio['nombre']}");
             $this->redirect('/admin/planes?tab=validacion', ['success' => "'{$comercio['nombre']}' marcado como validado."]);
         } else {
@@ -265,6 +268,7 @@ class PlanAdminController extends Controller
                 'validado_fecha' => null,
                 'validado_notas' => null,
             ]);
+            Notification::comercioRechazado($comercio, $notas);
             $this->log('planes', 'desvalidar_comercio', 'comercio', $comercioId, "Desvalidado: {$comercio['nombre']}");
             $this->redirect('/admin/planes?tab=validacion', ['success' => "Validación de '{$comercio['nombre']}' removida."]);
         }
