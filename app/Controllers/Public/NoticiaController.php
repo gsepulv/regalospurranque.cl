@@ -29,9 +29,14 @@ class NoticiaController extends Controller
 
         VisitTracker::track(null, '/noticias', 'noticias');
 
+        $breadcrumbs = [
+            ['label' => 'Inicio', 'url' => '/'],
+            ['label' => 'Noticias'],
+        ];
+
         $this->render('public/noticias', [
-            'title'       => 'Noticias - ' . SITE_NAME,
-            'description' => 'Las ultimas noticias y novedades del comercio local de Purranque',
+            'title'       => 'Noticias · ' . SITE_NAME,
+            'description' => 'Noticias y novedades del comercio local de Purranque, Chile. Nuevos locales, ofertas especiales y eventos de la comuna.',
             'og_image'    => asset('img/og/noticia-default.jpg'),
             'noticias'    => $noticias,
             'destacadas'  => $destacadas,
@@ -40,6 +45,8 @@ class NoticiaController extends Controller
             'currentPage' => $page,
             'totalPages'  => $totalPages,
             'baseUrl'     => '/noticias',
+            'breadcrumbs' => $breadcrumbs,
+            'schemas'     => [Seo::schemaBreadcrumbs($breadcrumbs)],
         ]);
     }
 

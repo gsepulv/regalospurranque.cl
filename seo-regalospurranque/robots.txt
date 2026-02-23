@@ -1,0 +1,29 @@
+# =========================================================
+# robots.txt — Regalos Purranque
+# Dominio: https://regalospurranque.cl
+# Actualizado: 2026-02-23
+# =========================================================
+
+User-agent: *
+Allow: /
+
+# Áreas privadas y técnicas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/
+Disallow: /config/
+
+# Páginas sin valor SEO
+Disallow: /buscar
+Disallow: /mis-resenas
+Disallow: /mi-comercio
+Disallow: /mi-comercio/
+Disallow: /compartir/
+Disallow: /registrar-comercio
+
+# Bloquear parámetros de búsqueda duplicados
+Disallow: /*?q=
+Disallow: /*?page=
+
+# Sitemap
+Sitemap: https://regalospurranque.cl/sitemap.xml

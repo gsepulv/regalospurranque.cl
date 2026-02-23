@@ -56,6 +56,14 @@ class App
             $this->runMiddleware($mw);
         }
 
+        // Cache-Control: páginas públicas cacheables, admin/API no
+        $uri = $this->request->uri();
+        if (str_starts_with($uri, '/admin') || str_starts_with($uri, '/api')) {
+            header('Cache-Control: no-store, no-cache, must-revalidate');
+        } else {
+            header('Cache-Control: public, max-age=300, s-maxage=600');
+        }
+
         // Despachar al controlador
         $this->router->dispatch($route, $this->request);
     }
@@ -66,6 +74,8 @@ class App
     private function startSession(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
+            // Evitar que session_start() envíe Cache-Control: no-store
+            session_cache_limiter('');
             session_name(SESSION_NAME);
             session_start([
                 'cookie_lifetime' => SESSION_LIFETIME,

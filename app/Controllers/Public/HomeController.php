@@ -64,21 +64,25 @@ class HomeController extends Controller
 
         $urls = [
             ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'daily', 'lastmod' => $today],
-            ['loc' => url('/categorias'), 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['loc' => url('/celebraciones'), 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['loc' => url('/comercios'), 'priority' => '0.8', 'changefreq' => 'weekly'],
-            ['loc' => url('/noticias'), 'priority' => '0.8', 'changefreq' => 'daily'],
-            ['loc' => url('/mapa'), 'priority' => '0.7', 'changefreq' => 'weekly'],
-            ['loc' => url('/buscar'), 'priority' => '0.6', 'changefreq' => 'weekly'],
+            ['loc' => url('/categorias'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => $today],
+            ['loc' => url('/celebraciones'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => $today],
+            ['loc' => url('/comercios'), 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => $today],
+            ['loc' => url('/noticias'), 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => $today],
+            ['loc' => url('/mapa'), 'priority' => '0.7', 'changefreq' => 'weekly', 'lastmod' => $today],
+            ['loc' => url('/contacto'), 'priority' => '0.6', 'changefreq' => 'monthly', 'lastmod' => $today],
+            ['loc' => url('/planes'), 'priority' => '0.5', 'changefreq' => 'monthly', 'lastmod' => $today],
             ['loc' => url('/terminos'), 'priority' => '0.3', 'changefreq' => 'yearly'],
             ['loc' => url('/privacidad'), 'priority' => '0.3', 'changefreq' => 'yearly'],
-            ['loc' => url('/cookies'), 'priority' => '0.3', 'changefreq' => 'yearly'],
-            ['loc' => url('/contenidos'), 'priority' => '0.3', 'changefreq' => 'yearly'],
         ];
 
         try {
-            // Categorias
-            $categorias = $this->db->fetchAll("SELECT slug, updated_at FROM categorias WHERE activo = 1");
+            // Categorias (solo las que tienen al menos 1 comercio activo)
+            $categorias = $this->db->fetchAll(
+                "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
+                 AND EXISTS (SELECT 1 FROM comercios_categorias cc
+                             JOIN comercios co ON co.id = cc.comercio_id
+                             WHERE cc.categoria_id = c.id AND co.activo = 1)"
+            );
             foreach ($categorias as $cat) {
                 $urls[] = [
                     'loc' => url('/categoria/' . $cat['slug']),

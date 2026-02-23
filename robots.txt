@@ -1,8 +1,22 @@
 User-agent: *
 Allow: /
+
+# Areas privadas y tecnicas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /storage/
 Disallow: /config/
+
+# Paginas sin valor SEO
+Disallow: /buscar
+Disallow: /mis-resenas
+Disallow: /mi-comercio
+Disallow: /mi-comercio/
+Disallow: /compartir/
+Disallow: /registrar-comercio
+
+# Bloquear parametros de busqueda duplicados
+Disallow: /*?q=
+Disallow: /*?page=
 
 Sitemap: https://regalospurranque.cl/sitemap.xml

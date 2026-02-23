@@ -1,0 +1,135 @@
+# =========================================================
+# .htaccess MEJORADO — Regalos Purranque
+# Cambios respecto al actual marcados con [NUEVO] o [MODIFICADO]
+# =========================================================
+RewriteEngine On
+
+# ── 1) Forzar HTTPS (excepto localhost) ───────────────────────────────────
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^localhost$ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── 2) Redirigir www → sin www ────────────────────────────────────────────
+RewriteCond %{HTTP_HOST} ^www\.regalospurranque\.cl$ [NC]
+RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
+
+# ── 3) [MODIFICADO] Redirigir v2.regalos.purranque.info → regalospurranque.cl
+#       Ahora maneja HTTP y HTTPS en un solo salto (evita cadena de redirección)
+RewriteCond %{HTTP_HOST} ^v2\.regalos\.purranque\.info$ [NC]
+RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
+
+# ── [NUEVO] 3b) Redirigir URLs v1 a v2 ──────────────────────────────────
+# Si Google o usuarios tienen URLs antiguas de v1 con query strings
+RewriteCond %{QUERY_STRING} ^slug=(.+)$ [NC]
+RewriteRule ^comercio\.php$ /comercio/%1? [R=301,L]
+RewriteCond %{QUERY_STRING} ^slug=(.+)$ [NC]
+RewriteRule ^categoria\.php$ /categoria/%1? [R=301,L]
+RewriteCond %{QUERY_STRING} ^slug=(.+)$ [NC]
+RewriteRule ^fecha\.php$ /fecha/%1? [R=301,L]
+RewriteCond %{QUERY_STRING} ^slug=(.+)$ [NC]
+RewriteRule ^noticia\.php$ /noticia/%1? [R=301,L]
+
+# ── Front Controller ─────────────────────────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L,QSA]
+
+# ── Bloquear carpetas del framework ─────────────────────────────────────────
+RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal)/ - [F,L]
+
+# ── MIME Types explícitos ───────────────────────────────────────────────────
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/webp .webp
+    AddType image/gif .gif
+    AddType image/svg+xml .svg
+    AddType image/x-icon .ico
+    AddType text/css .css
+    AddType application/javascript .js
+    AddType application/json .json
+    AddType font/woff2 .woff2
+    AddType font/woff .woff
+    AddType application/xml .xml
+</IfModule>
+
+# ── Forzar Content-Type en imágenes ─────────────────────────────────────────
+<IfModule mod_headers.c>
+    <FilesMatch "\.(?i:jpe?g)$">
+        Header set Content-Type "image/jpeg"
+    </FilesMatch>
+    <FilesMatch "\.(?i:png)$">
+        Header set Content-Type "image/png"
+    </FilesMatch>
+    <FilesMatch "\.(?i:gif)$">
+        Header set Content-Type "image/gif"
+    </FilesMatch>
+    <FilesMatch "\.(?i:webp)$">
+        Header set Content-Type "image/webp"
+    </FilesMatch>
+</IfModule>
+
+# ── Headers de seguridad ─────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://unpkg.com https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.google-analytics.com https://*.googletagmanager.com https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com https://www.googletagmanager.com;"
+    Header unset X-Powered-By
+</IfModule>
+
+# ── Bloquear archivos ocultos ───────────────────────────────────────────────
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ── Bloquear archivos sensibles ─────────────────────────────────────────────
+<FilesMatch "\.(sql|md|log|sh|bak|env|yml|yaml|lock|ini|php~)$">
+    Require all denied
+</FilesMatch>
+
+# ── Bloquear scripts de desarrollo ──────────────────────────────────────────
+<FilesMatch "^(restaurar-backups|extractor-archivos|extractor-publico|rastreo-planes-validacion|ver-tildes|generate-assets|verificar-controller|testcorreo|diagnostico)\.php$">
+    Require all denied
+</FilesMatch>
+
+# ── Permitir archivos públicos ──────────────────────────────────────────────
+<FilesMatch "^(robots\.txt|sitemap\.xml|manifest\.json|favicon\.ico|sw\.js)$">
+    Require all granted
+</FilesMatch>
+
+# ── Caché de assets estáticos ───────────────────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType font/woff2 "access plus 1 month"
+    # [NUEVO] Cache para XML (sitemap)
+    ExpiresByType application/xml "access plus 1 hour"
+    # [NUEVO] Cache para JSON
+    ExpiresByType application/json "access plus 1 day"
+</IfModule>
+
+# ── Compresión Gzip ─────────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+    # [NUEVO] Comprimir XML también
+    AddOutputFilterByType DEFLATE application/xml text/xml
+</IfModule>
+
+# ── [NUEVO] ETags ───────────────────────────────────────────────────────────
+# Habilitar ETags para assets estáticos (mejora caching)
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|jpg|jpeg|png|webp|gif|svg|ico|woff2|woff)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>

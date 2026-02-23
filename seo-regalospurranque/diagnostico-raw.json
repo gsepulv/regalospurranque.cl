@@ -1,0 +1,235 @@
+{
+  "fecha_diagnostico": "2026-02-23",
+  "dominio": "regalospurranque.cl",
+
+  "tecnologia": {
+    "stack": "PHP 8.3 vanilla MVC (sin framework, sin Composer)",
+    "servidor": "Apache (HostGator compartido, cPanel)",
+    "ssl": "Activo (HSTS habilitado, max-age=31536000)",
+    "cms": "Custom PHP MVC",
+    "cdn": "Ninguno",
+    "analytics": "Google Tag Manager (GTM-56D8422F)",
+    "css_framework": "Tailwind CSS (inline/custom)",
+    "js_libraries": ["unpkg.com", "cdn.jsdelivr.net", "Cloudflare Turnstile"]
+  },
+
+  "headers_seguridad": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-XSS-Protection": "1; mode=block",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=(self)",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "Content-Security-Policy": "Configurado (self + GTM + unpkg + jsdelivr + cloudflare)",
+    "X-Powered-By": "Removido"
+  },
+
+  "robots_txt": {
+    "status_code": 200,
+    "contenido": "User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\nDisallow: /storage/\nDisallow: /config/\n\nSitemap: https://regalospurranque.cl/sitemap.xml"
+  },
+
+  "sitemap": {
+    "url": "https://regalospurranque.cl/sitemap.xml",
+    "status_code_GET": 200,
+    "status_code_HEAD": 404,
+    "total_urls": 49,
+    "urls_con_lastmod": 33,
+    "urls_sin_lastmod": 16,
+    "formato": "urlset (no index)"
+  },
+
+  "redirecciones": {
+    "http_to_https": {
+      "from": "http://regalospurranque.cl",
+      "to": "https://regalospurranque.cl/",
+      "status": 301
+    },
+    "www_to_non_www": {
+      "from": "https://www.regalospurranque.cl",
+      "to": "https://regalospurranque.cl/",
+      "status": 301
+    },
+    "v2_to_main": {
+      "from": "https://v2.regalos.purranque.info",
+      "to": "https://regalospurranque.cl/",
+      "status": 301
+    }
+  },
+
+  "bug_critico_HEAD": {
+    "descripcion": "TODAS las peticiones HEAD devuelven HTTP 404",
+    "causa": "Router.php linea 31 compara method estrictamente: routeMethod !== method. Rutas definidas como GET no matchean HEAD.",
+    "impacto": "Googlebot usa HEAD para verificar status. Google interpreta que las paginas no existen.",
+    "paginas_afectadas": "TODAS (homepage, categorias, comercios, fechas, noticias, sitemap.xml)"
+  },
+
+  "compresion": {
+    "gzip": true,
+    "content_encoding": "gzip",
+    "tipos_comprimidos": ["text/html", "text/css", "application/javascript", "application/json", "image/svg+xml"]
+  },
+
+  "cache": {
+    "html_pages": "no-store, no-cache, must-revalidate",
+    "assets_estaticos": {
+      "imagenes": "1 month",
+      "css_js": "1 week",
+      "favicon": "1 year",
+      "fonts": "1 month"
+    },
+    "problema": "Las paginas HTML no tienen cache, obligando re-crawl constante"
+  },
+
+  "paginas_principales": [
+    {
+      "url": "/",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Regalos Purranque \u2014 Directorio Comercial de Purranque",
+      "meta_description": "Directorio comercial de Purranque, Chile. Encuentra los mejores comercios, ofertas y servicios.",
+      "canonical": "https://regalospurranque.cl/",
+      "meta_robots": "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+      "og_title": "Regalos Purranque \u2014 Directorio Comercial de Purranque",
+      "og_description": "Directorio comercial de Purranque, Chile. Encuentra los mejores comercios, ofertas y servicios.",
+      "og_image": "https://regalospurranque.cl/assets/img/og/og-regalos-purranque.jpg",
+      "og_type": "website",
+      "h1": "D\u00eda de la Mujer. Celebra con un detalle especial. (din\u00e1mico seg\u00fan fecha)",
+      "schemas": ["WebSite (con SearchAction)", "Organization"],
+      "lang": "es",
+      "charset": "UTF-8",
+      "viewport": "width=device-width, initial-scale=1.0",
+      "hreflang": ["es-CL", "x-default"],
+      "page_size_bytes": 46747,
+      "enlaces_internos": "~60+"
+    },
+    {
+      "url": "/categorias",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Categor\u00edas de Comercios en Purranque . Regalos Purranque",
+      "meta_description": "Explora todas las categor\u00edas de comercios y servicios en Purranque, Chile. Gastronom\u00eda, flores, regalos y m\u00e1s.",
+      "canonical": "https://regalospurranque.cl/categorias",
+      "schemas": ["BreadcrumbList", "Organization"],
+      "page_size_bytes": 21771,
+      "enlaces_internos": "~20+"
+    },
+    {
+      "url": "/comercios",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Comercios en Purranque . Directorio Comercial . Regalos Purranque",
+      "meta_description": "Directorio completo de comercios y servicios en Purranque, Chile. Encuentra tiendas, restaurantes y m\u00e1s con contacto y ubicaci\u00f3n.",
+      "canonical": "https://regalospurranque.cl/comercios",
+      "schemas": ["ItemList", "BreadcrumbList", "Organization"],
+      "page_size_bytes": 29258,
+      "enlaces_internos": "~18"
+    },
+    {
+      "url": "/celebraciones",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Celebraciones y Fechas Especiales en Purranque . Regalos Purranque",
+      "meta_description": "Descubre las mejores ofertas y comercios para cada celebraci\u00f3n y fecha especial en Purranque, Chile.",
+      "canonical": "https://regalospurranque.cl/celebraciones",
+      "schemas": ["BreadcrumbList", "Organization"],
+      "page_size_bytes": 31689,
+      "enlaces_internos": "~35+"
+    },
+    {
+      "url": "/noticias",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Noticias - Regalos Purranque",
+      "meta_description": "Las \u00faltimas noticias y novedades del comercio local de Purranque",
+      "canonical": "https://regalospurranque.cl/noticias",
+      "schemas": ["Organization"],
+      "schema_faltante": "BreadcrumbList",
+      "page_size_bytes": "~25000",
+      "separador_titulo_inconsistente": "usa '-' en vez de ' . '"
+    },
+    {
+      "url": "/categoria/gastronomia",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Gastronom\u00eda en Purranque . Comercios y Regalos . Regalos Purranque",
+      "meta_description": "Los mejores comercios de Gastronom\u00eda en Purranque, Chile. Encuentra 0 opciones con ubicaci\u00f3n, contacto y rese\u00f1as.",
+      "problema": "Meta description dice 'Encuentra 0 opciones' - contenido vac\u00edo",
+      "schemas": ["ItemList (vac\u00eda)", "BreadcrumbList", "Organization"],
+      "page_size_bytes": 26518
+    },
+    {
+      "url": "/fecha/cumpleanos",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Cumplea\u00f1os en Purranque . Regalos y Comercios . Regalos Purranque",
+      "schemas": ["Event", "BreadcrumbList", "Organization"],
+      "page_size_bytes": "~30000"
+    },
+    {
+      "url": "/comercio/flores-y-plantas-ornamentales",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Flores y Plantas Ornamentales . [Categor\u00eda] en Purranque . Regalos Purranque",
+      "schemas": ["LocalBusiness", "BreadcrumbList", "Organization"],
+      "og_type": "business.business",
+      "page_size_bytes": 56938
+    },
+    {
+      "url": "/comercio/joyeria-la-hermosura",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "title": "Joyer\u00eda La Hermosura . Joyer\u00eda y Accesorios en Purranqu . Regalos Purranque",
+      "bug_titulo": "Truncado a 55 chars: 'Purranque' queda como 'Purranqu'",
+      "schemas": ["LocalBusiness", "BreadcrumbList", "Organization"],
+      "og_type": "business.business",
+      "page_size_bytes": 54963
+    },
+    {
+      "url": "/noticia/nace-regalospurranque-cl-...",
+      "status_GET": 200,
+      "status_HEAD": 404,
+      "schemas": ["NewsArticle", "BreadcrumbList", "Organization"],
+      "og_type": "article",
+      "article_tags": "published_time, modified_time"
+    }
+  ],
+
+  "archivos_comunes": {
+    "favicon.ico": 200,
+    "apple-touch-icon.png": 404,
+    "robots.txt": 200,
+    "sitemap.xml": "200 GET / 404 HEAD",
+    "feed/rss.xml": 200,
+    ".well-known/security.txt": 404,
+    "manifest.json": "No verificado"
+  },
+
+  "urls_no_en_sitemap": [
+    "/contacto",
+    "/planes",
+    "/registrar-comercio",
+    "/derechos",
+    "/feed/rss.xml",
+    "/compartir/{tipo}/{slug}"
+  ],
+
+  "url_sospechosa": {
+    "url": "/fecha/ostermontag",
+    "nota": "Palabra en alem\u00e1n ('Lunes de Pascua') en un sitio chileno. Posible entrada de prueba."
+  },
+
+  "lang_html": "es",
+  "hreflang": ["es-CL", "x-default"],
+  "charset": "UTF-8",
+
+  "google_search_console_reportado": {
+    "bloqueada_por_robots": 1,
+    "redireccion_problematica": 1,
+    "descubiertas_no_indexadas": 16,
+    "rastreadas_no_indexadas": 13,
+    "indexadas": 25,
+    "total_conocidas": 56,
+    "impresiones_diarias": "1-5"
+  }
+}

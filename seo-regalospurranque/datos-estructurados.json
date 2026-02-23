@@ -1,0 +1,277 @@
+{
+  "_comentario": "Schema.org JSON-LD para regalospurranque.cl — Febrero 2026",
+  "_nota": "Estos schemas ya están parcialmente implementados en el sitio. Este archivo documenta la versión completa y corregida de cada uno.",
+
+  "1_WebSite": {
+    "_ubicacion": "Homepage (/) — YA IMPLEMENTADO, verificar que coincida",
+    "_archivo": "views/partials/seo-head.php o HomeController",
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Regalos Purranque",
+      "alternateName": "Directorio Comercial de Purranque",
+      "url": "https://regalospurranque.cl",
+      "description": "Directorio de regalos y comercios de Purranque, Chile. Flores, joyería, moda y más para cumpleaños, bodas y celebraciones.",
+      "inLanguage": "es-CL",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://regalospurranque.cl/buscar?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Regalos Purranque",
+        "url": "https://regalospurranque.cl",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://regalospurranque.cl/assets/img/logo.png"
+        }
+      }
+    }
+  },
+
+  "2_Organization": {
+    "_ubicacion": "Todas las páginas — YA IMPLEMENTADO en seo-head.php",
+    "_archivo": "views/partials/seo-head.php (auto-inject)",
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Regalos Purranque",
+      "url": "https://regalospurranque.cl",
+      "description": "Directorio comercial de regalos y servicios en Purranque, región de Los Lagos, Chile.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Purranque",
+        "addressRegion": "Los Lagos",
+        "addressCountry": "CL"
+      },
+      "sameAs": [
+        "https://www.facebook.com/regalospurranque",
+        "https://www.instagram.com/regalospurranque"
+      ],
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://regalospurranque.cl/assets/img/logo.png"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "url": "https://regalospurranque.cl/contacto",
+        "availableLanguage": "es"
+      }
+    }
+  },
+
+  "3_LocalBusiness_template": {
+    "_ubicacion": "Páginas de comercio individual (/comercio/{slug}) — YA IMPLEMENTADO",
+    "_archivo": "ComercioController@show",
+    "_nota": "Template para cada comercio. Los valores se rellenan dinámicamente.",
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "{comercio.nombre}",
+      "description": "{comercio.descripcion}",
+      "url": "https://regalospurranque.cl/comercio/{comercio.slug}",
+      "image": "https://regalospurranque.cl/assets/img/portadas/{comercio.portada}",
+      "telephone": "{comercio.telefono}",
+      "email": "{comercio.email}",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "{comercio.direccion}",
+        "addressLocality": "Purranque",
+        "addressRegion": "Los Lagos",
+        "addressCountry": "CL"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "{comercio.latitud}",
+        "longitude": "{comercio.longitud}"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{promedio_resenas}",
+        "reviewCount": "{total_resenas}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "priceRange": "$$",
+      "isAccessibleForFree": true,
+      "currenciesAccepted": "CLP"
+    }
+  },
+
+  "4_BreadcrumbList_template": {
+    "_ubicacion": "Todas las páginas internas — PARCIALMENTE IMPLEMENTADO",
+    "_archivo": "Cada controller pasa el array de breadcrumbs",
+    "_faltante": "/noticias (listing) no tiene BreadcrumbList",
+    "schema_ejemplo_comercio": {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://regalospurranque.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Comercios",
+          "item": "https://regalospurranque.cl/comercios"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{comercio.nombre}",
+          "item": "https://regalospurranque.cl/comercio/{comercio.slug}"
+        }
+      ]
+    },
+    "schema_noticias_faltante": {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Inicio",
+          "item": "https://regalospurranque.cl/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Noticias",
+          "item": "https://regalospurranque.cl/noticias"
+        }
+      ]
+    }
+  },
+
+  "5_ItemList_template": {
+    "_ubicacion": "Páginas de listado (/comercios, /categoria/{slug}) — YA IMPLEMENTADO",
+    "_archivo": "ComercioController@index, CategoriaController@show",
+    "schema_ejemplo": {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Comercios en Purranque",
+      "description": "Directorio completo de comercios en Purranque, Chile",
+      "numberOfItems": "{total}",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "{comercio.nombre}",
+          "url": "https://regalospurranque.cl/comercio/{comercio.slug}"
+        }
+      ]
+    }
+  },
+
+  "6_NewsArticle_template": {
+    "_ubicacion": "Páginas de noticia individual (/noticia/{slug}) — YA IMPLEMENTADO",
+    "_archivo": "NoticiaController@show",
+    "schema": {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": "{noticia.titulo}",
+      "datePublished": "{noticia.fecha_publicacion_ISO}",
+      "dateModified": "{noticia.updated_at_ISO}",
+      "author": {
+        "@type": "Person",
+        "name": "{noticia.autor}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Regalos Purranque",
+        "url": "https://regalospurranque.cl",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://regalospurranque.cl/assets/img/logo.png"
+        }
+      },
+      "image": "https://regalospurranque.cl/assets/img/noticias/{noticia.imagen}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://regalospurranque.cl/noticia/{noticia.slug}"
+      },
+      "inLanguage": "es-CL"
+    }
+  },
+
+  "7_Event_template": {
+    "_ubicacion": "Páginas de fecha especial (/fecha/{slug}) — YA IMPLEMENTADO",
+    "_archivo": "FechaController@show",
+    "_mejora_sugerida": "Agregar 'startDate' y 'endDate' reales para fechas del calendario (Navidad, Día de la Madre, etc.)",
+    "schema_mejorado": {
+      "@context": "https://schema.org",
+      "@type": "Event",
+      "name": "{fecha.nombre} en Purranque",
+      "description": "{fecha.descripcion}",
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "startDate": "{fecha_inicio_ISO}",
+      "location": {
+        "@type": "Place",
+        "name": "Purranque",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Purranque",
+          "addressRegion": "Los Lagos",
+          "addressCountry": "CL"
+        }
+      },
+      "organizer": {
+        "@type": "Organization",
+        "name": "Regalos Purranque",
+        "url": "https://regalospurranque.cl"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "CLP",
+        "availability": "https://schema.org/InStock",
+        "url": "https://regalospurranque.cl/fecha/{fecha.slug}"
+      },
+      "inLanguage": "es-CL"
+    }
+  },
+
+  "8_NUEVO_FAQPage": {
+    "_ubicacion": "SUGERIDO para páginas de fecha especial con contenido",
+    "_nota": "Agregar preguntas frecuentes en las páginas de celebraciones populares para rich snippets FAQ",
+    "schema_ejemplo": {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Dónde comprar regalos de cumpleaños en Purranque?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "En Purranque puedes encontrar regalos de cumpleaños en comercios como Flores y Plantas Ornamentales, Joyería La Hermosura y Diseño y Tejidos Kauak. Visita el directorio completo en regalospurranque.cl."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué tipos de regalos puedo encontrar en Purranque?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "En el directorio de Regalos Purranque encuentras flores, joyería, moda, accesorios y más. Cada comercio incluye dirección, teléfono y horarios."
+          }
+        }
+      ]
+    }
+  }
+}

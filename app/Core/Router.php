@@ -28,7 +28,8 @@ class Router
             $routeHandler    = $route[2];
             $routeMiddleware = $route[3] ?? [];
 
-            if ($routeMethod !== $method) {
+            // HEAD debe matchear rutas GET (HTTP spec: HEAD = GET sin body)
+            if ($routeMethod !== $method && !($routeMethod === 'GET' && $method === 'HEAD')) {
                 continue;
             }
 

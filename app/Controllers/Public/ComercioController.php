@@ -90,7 +90,13 @@ class ComercioController extends Controller
                 if (!empty($cat['es_principal'])) break;
             }
         }
-        $title = $comercio['seo_titulo'] ?: mb_substr($comercio['nombre'] . ($catPrincipal ? ' · ' . $catPrincipal : '') . ' en Purranque', 0, 55) . ' · ' . SITE_NAME;
+        $titleBase = $comercio['nombre'] . ($catPrincipal ? ' · ' . $catPrincipal : '') . ' en Purranque';
+        if (mb_strlen($titleBase) > 55) {
+            $titleBase = mb_substr($titleBase, 0, 55);
+            $lastSpace = mb_strrpos($titleBase, ' ');
+            if ($lastSpace) $titleBase = mb_substr($titleBase, 0, $lastSpace);
+        }
+        $title = $comercio['seo_titulo'] ?: $titleBase . ' · ' . SITE_NAME;
         $description = $comercio['seo_descripcion'] ?: mb_substr($comercio['nombre'] . ': ' . ($comercio['descripcion'] ?? ''), 0, 120) . '. ' . ($catPrincipal ? $catPrincipal . ' en Purranque.' : 'Comercio en Purranque.');
         $ogImage = $comercio['portada'] ? asset('img/portadas/' . $comercio['portada']) : null;
 

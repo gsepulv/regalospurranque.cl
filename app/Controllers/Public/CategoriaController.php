@@ -67,10 +67,18 @@ class CategoriaController extends Controller
             ['label' => $categoria['nombre']],
         ];
 
+        // noindex para categorías sin comercios (thin content)
+        $noindex = $total === 0;
+        $seoDesc = $categoria['descripcion']
+            ?: ($total > 0
+                ? "Los mejores comercios de {$categoria['nombre']} en Purranque, Chile. Encuentra {$total} opciones con ubicación, contacto y reseñas."
+                : "Próximamente: comercios de {$categoria['nombre']} en Purranque, Chile. Directorio en crecimiento.");
+
         $this->render('public/categoria', [
             'title'       => $categoria['nombre'] . ' en Purranque · Comercios y Regalos · ' . SITE_NAME,
-            'description' => $categoria['descripcion'] ?: "Los mejores comercios de {$categoria['nombre']} en Purranque, Chile. Encuentra {$total} opciones con ubicación, contacto y reseñas.",
+            'description' => $seoDesc,
             'og_image'    => asset('img/og/categoria-default.jpg'),
+            'noindex'     => $noindex,
             'categoria'   => $categoria,
             'comercios'   => $comercios,
             'categorias'  => $categorias,
