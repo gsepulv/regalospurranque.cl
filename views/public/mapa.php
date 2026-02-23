@@ -90,11 +90,30 @@
     var siteUrl = '<?= rtrim(SITE_URL, '/') ?>';
     var assetBase = siteUrl + '/assets/img/logos/';
 
+    // Ícono personalizado de caja de regalo
+    var giftIcon = L.divIcon({
+        className: 'gift-marker',
+        html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 44" width="36" height="44">' +
+            '<defs><filter id="ms" x="-20%" y="-10%" width="140%" height="140%">' +
+            '<feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-opacity="0.3"/></filter></defs>' +
+            '<path d="M18 44 C18 44 0 28 0 16 A18 18 0 0 1 36 16 C36 28 18 44 18 44Z" fill="#c53030" filter="url(#ms)"/>' +
+            '<rect x="8" y="17" width="20" height="14" rx="2" fill="#e53e3e"/>' +
+            '<rect x="8" y="12" width="20" height="7" rx="2" fill="#fc8181"/>' +
+            '<rect x="16.5" y="12" width="3" height="19" fill="#fff" opacity="0.9"/>' +
+            '<rect x="8" y="15" width="20" height="3" fill="#fff" opacity="0.9"/>' +
+            '<path d="M18 12 C18 12 14 6 10.5 8 C7 10 12 12 18 12Z" fill="#fc8181" stroke="#e53e3e" stroke-width="0.5"/>' +
+            '<path d="M18 12 C18 12 22 6 25.5 8 C29 10 24 12 18 12Z" fill="#fc8181" stroke="#e53e3e" stroke-width="0.5"/>' +
+            '</svg>',
+        iconSize: [36, 44],
+        iconAnchor: [18, 44],
+        popupAnchor: [0, -40]
+    });
+
     // Crear marcadores
     comercios.forEach(function(com) {
         if (!com.lat || !com.lng) return;
 
-        var marker = L.marker([com.lat, com.lng]).addTo(map);
+        var marker = L.marker([com.lat, com.lng], {icon: giftIcon}).addTo(map);
 
         var popup = '<div style="text-align:center;min-width:150px">' +
             '<h4 style="margin:0 0 4px;font-size:14px">' + com.nombre + '</h4>' +
@@ -176,6 +195,15 @@
 
 .map-list h2 {
     margin-bottom: var(--spacing-6);
+}
+
+.gift-marker {
+    background: none !important;
+    border: none !important;
+    transition: transform 0.2s ease;
+}
+.gift-marker:hover {
+    transform: scale(1.2);
 }
 
 @media (max-width: 768px) {
