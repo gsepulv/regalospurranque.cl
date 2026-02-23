@@ -143,7 +143,15 @@ $errors = $flash['errors'] ?? [];
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    L.marker([-40.91305, -73.15913])
+    var giftIcon = L.divIcon({
+        className: 'gift-marker',
+        html: '<div class="gift-pin"><span class="gift-pin__emoji">🎁</span><div class="gift-pin__arrow"></div></div>',
+        iconSize: [40, 48],
+        iconAnchor: [20, 48],
+        popupAnchor: [0, -44]
+    });
+
+    L.marker([-40.91305, -73.15913], {icon: giftIcon})
         .addTo(map)
         .bindPopup('<strong><?= e(SITE_NAME) ?></strong><br>Purranque, Chile')
         .openPopup();

@@ -497,7 +497,15 @@ function trackBanner(bannerId) {
         maxZoom: 19
     }).addTo(map);
 
-    var marker = L.marker([lat, lng]).addTo(map);
+    var giftIcon = L.divIcon({
+        className: 'gift-marker',
+        html: '<div class="gift-pin"><span class="gift-pin__emoji">🎁</span><div class="gift-pin__arrow"></div></div>',
+        iconSize: [40, 48],
+        iconAnchor: [20, 48],
+        popupAnchor: [0, -44]
+    });
+
+    var marker = L.marker([lat, lng], {icon: giftIcon}).addTo(map);
     marker.bindPopup('<strong><?= addslashes(e($comercio['nombre'])) ?></strong><?= !empty($comercio['direccion']) ? '<br>' . addslashes(e($comercio['direccion'])) : '' ?>').openPopup();
 
     setTimeout(function() { map.invalidateSize(); }, 300);

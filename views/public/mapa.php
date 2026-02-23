@@ -187,45 +187,6 @@
     margin-bottom: var(--spacing-6);
 }
 
-.gift-marker {
-    background: none !important;
-    border: none !important;
-}
-.gift-pin {
-    position: relative;
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #9b59b6, #e91e8f);
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 2px solid #fff;
-}
-.gift-pin:hover {
-    transform: rotate(-45deg) scale(1.15);
-    box-shadow: 0 4px 12px rgba(155,89,182,0.5);
-}
-.gift-pin__emoji {
-    transform: rotate(45deg);
-    font-size: 20px;
-    line-height: 1;
-}
-.gift-pin__arrow {
-    position: absolute;
-    bottom: -6px;
-    left: -2px;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 8px solid #e91e8f;
-    transform: rotate(45deg);
-}
-
 @media (max-width: 768px) {
     .map-container {
         height: 350px;
