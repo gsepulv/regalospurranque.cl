@@ -88,6 +88,37 @@ class Backup
     }
 
     /**
+     * Exportar BD comprimida a .sql.gz
+     */
+    public static function exportDatabaseGz(): string|false
+    {
+        $sqlPath = self::exportDatabase();
+        if (!$sqlPath) return false;
+
+        try {
+            $gzPath = preg_replace('/\.sql$/', '.sql.gz', $sqlPath);
+            $gzHandle = gzopen($gzPath, 'wb9');
+            if (!$gzHandle) {
+                @unlink($sqlPath);
+                return false;
+            }
+
+            $sqlHandle = fopen($sqlPath, 'rb');
+            while (!feof($sqlHandle)) {
+                gzwrite($gzHandle, fread($sqlHandle, 524288)); // 512KB chunks
+            }
+            fclose($sqlHandle);
+            gzclose($gzHandle);
+
+            @unlink($sqlPath);
+            return $gzPath;
+        } catch (\Throwable $e) {
+            @unlink($sqlPath);
+            return false;
+        }
+    }
+
+    /**
      * Exportar archivos del sitio a ZIP (sin exec)
      */
     public static function exportFiles(array $exclude = []): string|false
@@ -145,7 +176,7 @@ class Backup
             $zip->addFile($sqlPath, 'database/' . basename($sqlPath));
 
             // Agregar archivos del sitio
-            $exclude = ['storage/backups', '.git', 'vendor', 'node_modules'];
+            $exclude = ['storage/backups', 'storage/logs', 'storage/cache', '.git', 'vendor', 'node_modules'];
             self::addDirToZip($zip, BASE_PATH, BASE_PATH, $exclude);
 
             $zip->close();
