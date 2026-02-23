@@ -75,57 +75,65 @@ class HomeController extends Controller
             ['loc' => url('/privacidad'), 'priority' => '0.3', 'changefreq' => 'yearly'],
         ];
 
-        try {
-            // Categorias (solo las que tienen al menos 1 comercio activo)
-            $categorias = $this->db->fetchAll(
-                "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
-                 AND EXISTS (SELECT 1 FROM comercio_categoria cc
-                             JOIN comercios co ON co.id = cc.comercio_id
-                             WHERE cc.categoria_id = c.id AND co.activo = 1)"
-            );
-            foreach ($categorias as $cat) {
-                $urls[] = [
-                    'loc' => url('/categoria/' . $cat['slug']),
-                    'priority' => '0.8',
-                    'changefreq' => 'weekly',
-                    'lastmod' => $cat['updated_at'] ? date('Y-m-d', strtotime($cat['updated_at'])) : null,
-                ];
-            }
+        // Cada sección aislada: si una falla, las demás siguen generándose
+        $sections = [
+            'categorias' => function () use (&$urls) {
+                $rows = $this->db->fetchAll(
+                    "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
+                     AND EXISTS (SELECT 1 FROM comercio_categoria cc
+                                 JOIN comercios co ON co.id = cc.comercio_id
+                                 WHERE cc.categoria_id = c.id AND co.activo = 1)"
+                );
+                foreach ($rows as $r) {
+                    $urls[] = [
+                        'loc' => url('/categoria/' . $r['slug']),
+                        'priority' => '0.8',
+                        'changefreq' => 'weekly',
+                        'lastmod' => $r['updated_at'] ? date('Y-m-d', strtotime($r['updated_at'])) : null,
+                    ];
+                }
+            },
+            'fechas' => function () use (&$urls) {
+                $rows = $this->db->fetchAll("SELECT slug, updated_at FROM fechas_especiales WHERE activo = 1");
+                foreach ($rows as $r) {
+                    $urls[] = [
+                        'loc' => url('/fecha/' . $r['slug']),
+                        'priority' => '0.7',
+                        'changefreq' => 'weekly',
+                        'lastmod' => $r['updated_at'] ? date('Y-m-d', strtotime($r['updated_at'])) : null,
+                    ];
+                }
+            },
+            'comercios' => function () use (&$urls) {
+                $rows = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1");
+                foreach ($rows as $r) {
+                    $urls[] = [
+                        'loc' => url('/comercio/' . $r['slug']),
+                        'priority' => '0.7',
+                        'changefreq' => 'weekly',
+                        'lastmod' => $r['updated_at'] ? date('Y-m-d', strtotime($r['updated_at'])) : null,
+                    ];
+                }
+            },
+            'noticias' => function () use (&$urls) {
+                $rows = $this->db->fetchAll("SELECT slug, updated_at FROM noticias WHERE activo = 1");
+                foreach ($rows as $r) {
+                    $urls[] = [
+                        'loc' => url('/noticia/' . $r['slug']),
+                        'priority' => '0.6',
+                        'changefreq' => 'monthly',
+                        'lastmod' => $r['updated_at'] ? date('Y-m-d', strtotime($r['updated_at'])) : null,
+                    ];
+                }
+            },
+        ];
 
-            // Fechas especiales
-            $fechas = $this->db->fetchAll("SELECT slug, updated_at FROM fechas_especiales WHERE activo = 1");
-            foreach ($fechas as $fe) {
-                $urls[] = [
-                    'loc' => url('/fecha/' . $fe['slug']),
-                    'priority' => '0.7',
-                    'changefreq' => 'weekly',
-                    'lastmod' => $fe['updated_at'] ? date('Y-m-d', strtotime($fe['updated_at'])) : null,
-                ];
+        foreach ($sections as $name => $fn) {
+            try {
+                $fn();
+            } catch (\Throwable $e) {
+                error_log("Sitemap error [{$name}]: " . $e->getMessage());
             }
-
-            // Comercios
-            $comercios = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1");
-            foreach ($comercios as $com) {
-                $urls[] = [
-                    'loc' => url('/comercio/' . $com['slug']),
-                    'priority' => '0.7',
-                    'changefreq' => 'weekly',
-                    'lastmod' => $com['updated_at'] ? date('Y-m-d', strtotime($com['updated_at'])) : null,
-                ];
-            }
-
-            // Noticias
-            $noticias = $this->db->fetchAll("SELECT slug, updated_at FROM noticias WHERE activo = 1");
-            foreach ($noticias as $not) {
-                $urls[] = [
-                    'loc' => url('/noticia/' . $not['slug']),
-                    'priority' => '0.6',
-                    'changefreq' => 'monthly',
-                    'lastmod' => $not['updated_at'] ? date('Y-m-d', strtotime($not['updated_at'])) : null,
-                ];
-            }
-        } catch (\Throwable $e) {
-            // Sin BD, solo URLs estaticas
         }
 
         echo '<?xml version="1.0" encoding="UTF-8"?>';
