@@ -1,0 +1,14 @@
+<?php
+/**
+ * Configuración SMTP — NO subir al repositorio
+ *
+ * Para Gmail:
+ * 1. Ir a myaccount.google.com → Seguridad → Verificación en 2 pasos (activar)
+ * 2. Buscar "Contraseñas de aplicaciones" → Generar para "Correo"
+ * 3. Copiar la contraseña de 16 caracteres y pegarla abajo
+ *
+ * Copiar este archivo como config/mail.php y completar:
+ */
+return [
+    'smtp_password' => '', // ← Pegar aquí la contraseña de aplicación de Gmail
+];

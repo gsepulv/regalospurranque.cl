@@ -326,6 +326,38 @@ class Notification
     }
 
     /**
+     * Registro de comercio por comerciante (notifica a admins)
+     */
+    public static function registroComercianteAdmin(int $comercioId, string $nombreComercio): void
+    {
+        if (!self::isEventEnabled('notif_nuevo_comercio')) return;
+
+        self::mailer()->sendToAdmins(
+            "Nuevo comercio registrado: {$nombreComercio}",
+            'registro-comerciante-admin',
+            [
+                'comercioId'     => $comercioId,
+                'nombreComercio' => $nombreComercio,
+            ]
+        );
+    }
+
+    /**
+     * Cambios pendientes de comerciante (notifica a admins)
+     */
+    public static function cambiosPendientesAdmin(int $comercioId, string $nombreComercio): void
+    {
+        self::mailer()->sendToAdmins(
+            "Cambios pendientes: {$nombreComercio}",
+            'cambios-pendientes-admin',
+            [
+                'comercioId'     => $comercioId,
+                'nombreComercio' => $nombreComercio,
+            ]
+        );
+    }
+
+    /**
      * Email de prueba
      */
     public static function test(string $email): bool

@@ -282,20 +282,7 @@ class RegistroComercioController extends Controller
     private function notificarAdmin(int $comercioId, string $nombreComercio): void
     {
         try {
-            $adminEmail = AdminUsuario::getFirstAdminEmail();
-            if (!$adminEmail) return;
-
-            $asunto = "🏪 Nuevo comercio registrado: {$nombreComercio}";
-            $cuerpo  = "Se ha registrado un nuevo comercio en " . SITE_NAME . ".\n\n";
-            $cuerpo .= "Comercio: {$nombreComercio}\n";
-            $cuerpo .= "ID: {$comercioId}\n";
-            $cuerpo .= "Estado: Pendiente de aprobación\n\n";
-            $cuerpo .= "Revísalo en: " . SITE_URL . "/admin/comercios/editar/{$comercioId}\n";
-
-            $headers  = "From: " . SITE_NAME . " <noreply@regalospurranque.cl>\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            mail($adminEmail, $asunto, $cuerpo, $headers);
+            \App\Services\Notification::registroComercianteAdmin($comercioId, $nombreComercio);
         } catch (\Throwable $e) {}
     }
 }

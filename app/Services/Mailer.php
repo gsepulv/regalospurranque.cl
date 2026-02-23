@@ -1,9 +1,17 @@
 <?php
 namespace App\Services;
 
+// PHPMailer (incluido manualmente, sin Composer)
+require_once BASE_PATH . '/lib/PHPMailer/Exception.php';
+require_once BASE_PATH . '/lib/PHPMailer/PHPMailer.php';
+require_once BASE_PATH . '/lib/PHPMailer/SMTP.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception as PHPMailerException;
+
 /**
- * Servicio de envío de emails usando PHP mail()
- * Compatible con hosting compartido (HostGator)
+ * Servicio de envío de emails
+ * Soporta SMTP (PHPMailer) con fallback a mail() de PHP
  */
 class Mailer
 {
@@ -13,9 +21,11 @@ class Mailer
 
     public function __construct()
     {
-        $this->fromName  = SITE_NAME;
-        $this->fromEmail = $this->getConfig('email_from', 'no-reply@' . $this->getDomain());
-        $this->replyTo   = $this->getConfig('email_reply_to', $this->fromEmail);
+        $this->fromName  = $this->getConfig('mail_from_name', SITE_NAME);
+        $this->fromEmail = $this->getConfig('mail_from_address',
+            $this->getConfig('email_from', 'no-reply@' . $this->getDomain())
+        );
+        $this->replyTo = $this->getConfig('email_reply_to', $this->fromEmail);
     }
 
     /**
@@ -23,7 +33,6 @@ class Mailer
      */
     public function send(string $to, string $subject, string $template, array $data = []): bool
     {
-        // Verificar que las notificaciones estén habilitadas
         if (!$this->isEnabled()) {
             return false;
         }
@@ -34,14 +43,27 @@ class Mailer
             return false;
         }
 
-        $headers = $this->buildHeaders();
+        $driver = $this->getConfig('mail_driver', 'mail');
 
-        $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+        $sent = false;
+        $method = 'mail()';
 
-        $sent = @mail($to, $subject, $body, $headers);
+        // Intentar SMTP si está configurado
+        if ($driver === 'smtp') {
+            $sent = $this->sendSmtp($to, $subject, $body);
+            $method = 'smtp';
 
-        // Registrar en log
-        $this->logNotification($to, $subject, $template, $sent, $data);
+            // Fallback a mail() si SMTP falla
+            if (!$sent) {
+                $this->logError("SMTP falló para {$to}, intentando fallback con mail()");
+                $sent = $this->sendNative($to, $subject, $body);
+                $method = $sent ? 'mail()-fallback' : 'fallido';
+            }
+        } else {
+            $sent = $this->sendNative($to, $subject, $body);
+        }
+
+        $this->logNotification($to, $subject, $template, $sent, $data, $method);
 
         return $sent;
     }
@@ -64,6 +86,88 @@ class Mailer
         }
 
         return $sent;
+    }
+
+    /**
+     * Enviar vía SMTP con PHPMailer
+     */
+    private function sendSmtp(string $to, string $subject, string $body): bool
+    {
+        try {
+            $smtpConfig = $this->loadSmtpConfig();
+            if (empty($smtpConfig['password'])) {
+                $this->logError("SMTP: contraseña no configurada en config/mail.php");
+                return false;
+            }
+
+            $mail = new PHPMailer(true);
+
+            // Configuración SMTP
+            $mail->isSMTP();
+            $mail->Host       = $smtpConfig['host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $smtpConfig['username'];
+            $mail->Password   = $smtpConfig['password'];
+            $mail->SMTPSecure = $smtpConfig['encryption'];
+            $mail->Port       = (int) $smtpConfig['port'];
+            $mail->CharSet    = 'UTF-8';
+            $mail->Encoding   = 'base64';
+
+            // Remitente y destinatario
+            $mail->setFrom($this->fromEmail, $this->fromName);
+            $mail->addReplyTo($this->replyTo, $this->fromName);
+            $mail->addAddress($to);
+
+            // Contenido
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
+
+            $mail->send();
+            return true;
+
+        } catch (PHPMailerException $e) {
+            $this->logError("SMTP Error [{$to}]: " . $e->getMessage());
+            return false;
+        } catch (\Throwable $e) {
+            $this->logError("SMTP Error inesperado [{$to}]: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Enviar con mail() nativo de PHP
+     */
+    private function sendNative(string $to, string $subject, string $body): bool
+    {
+        $headers = $this->buildHeaders();
+        $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+        return @mail($to, $encodedSubject, $body, $headers);
+    }
+
+    /**
+     * Cargar configuración SMTP desde BD + archivo local
+     */
+    private function loadSmtpConfig(): array
+    {
+        $config = [
+            'host'       => $this->getConfig('mail_host', 'smtp.gmail.com'),
+            'port'       => $this->getConfig('mail_port', '587'),
+            'encryption' => $this->getConfig('mail_encryption', 'tls'),
+            'username'   => $this->getConfig('mail_username', ''),
+            'password'   => '',
+        ];
+
+        // La contraseña se lee del archivo local (fuera del repo)
+        $mailConfigFile = BASE_PATH . '/config/mail.php';
+        if (file_exists($mailConfigFile)) {
+            $fileConfig = include $mailConfigFile;
+            if (is_array($fileConfig) && !empty($fileConfig['smtp_password'])) {
+                $config['password'] = $fileConfig['smtp_password'];
+            }
+        }
+
+        return $config;
     }
 
     /**
@@ -102,7 +206,7 @@ class Mailer
     }
 
     /**
-     * Construir headers del email
+     * Construir headers del email (para mail() nativo)
      */
     private function buildHeaders(): string
     {
@@ -151,7 +255,7 @@ class Mailer
     /**
      * Registrar notificación en BD
      */
-    private function logNotification(string $to, string $subject, string $template, bool $sent, array $data): void
+    private function logNotification(string $to, string $subject, string $template, bool $sent, array $data, string $method = ''): void
     {
         try {
             $db = \App\Core\Database::getInstance();
@@ -160,7 +264,10 @@ class Mailer
                 'asunto'       => mb_substr($subject, 0, 255),
                 'template'     => $template,
                 'estado'       => $sent ? 'enviado' : 'fallido',
-                'datos'        => json_encode($data, JSON_UNESCAPED_UNICODE),
+                'datos'        => json_encode(
+                    array_merge($data, $method ? ['_metodo' => $method] : []),
+                    JSON_UNESCAPED_UNICODE
+                ),
             ]);
         } catch (\Throwable $e) {
             $this->logError("Error registrando notificación: " . $e->getMessage());
@@ -168,7 +275,7 @@ class Mailer
     }
 
     /**
-     * Registrar error en log de PHP
+     * Registrar error en log
      */
     private function logError(string $message): void
     {

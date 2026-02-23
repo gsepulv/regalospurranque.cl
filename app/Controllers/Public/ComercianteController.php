@@ -554,17 +554,7 @@ class ComercianteController extends Controller
     private function notificarCambios(int $comercioId, string $nombreComercio): void
     {
         try {
-            $adminEmail = AdminUsuario::getFirstAdminEmail();
-            if (!$adminEmail) return;
-
-            $asunto = "✏️ Cambios pendientes: {$nombreComercio}";
-            $cuerpo  = "El comercio «{$nombreComercio}» ha enviado cambios para revisión.\n\n";
-            $cuerpo .= "Revísalos en: " . SITE_URL . "/admin/comercios/editar/{$comercioId}\n";
-
-            $headers  = "From: " . SITE_NAME . " <noreply@regalospurranque.cl>\r\n";
-            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-            mail($adminEmail, $asunto, $cuerpo, $headers);
+            \App\Services\Notification::cambiosPendientesAdmin($comercioId, $nombreComercio);
         } catch (\Throwable $e) {}
     }
 }

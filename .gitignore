@@ -4,6 +4,7 @@ config/database.php.production
 config/captcha.php
 config/backup.php
 config/google-credentials.json
+config/mail.php
 .env
 .user.ini
 
