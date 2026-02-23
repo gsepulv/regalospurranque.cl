@@ -90,23 +90,13 @@
     var siteUrl = '<?= rtrim(SITE_URL, '/') ?>';
     var assetBase = siteUrl + '/assets/img/logos/';
 
-    // Ícono personalizado de caja de regalo
+    // Ícono personalizado de caja de regalo (emoji sobre pin morado)
     var giftIcon = L.divIcon({
         className: 'gift-marker',
-        html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 44" width="36" height="44">' +
-            '<defs><filter id="ms" x="-20%" y="-10%" width="140%" height="140%">' +
-            '<feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-opacity="0.3"/></filter></defs>' +
-            '<path d="M18 44 C18 44 0 28 0 16 A18 18 0 0 1 36 16 C36 28 18 44 18 44Z" fill="#c53030" filter="url(#ms)"/>' +
-            '<rect x="8" y="17" width="20" height="14" rx="2" fill="#e53e3e"/>' +
-            '<rect x="8" y="12" width="20" height="7" rx="2" fill="#fc8181"/>' +
-            '<rect x="16.5" y="12" width="3" height="19" fill="#fff" opacity="0.9"/>' +
-            '<rect x="8" y="15" width="20" height="3" fill="#fff" opacity="0.9"/>' +
-            '<path d="M18 12 C18 12 14 6 10.5 8 C7 10 12 12 18 12Z" fill="#fc8181" stroke="#e53e3e" stroke-width="0.5"/>' +
-            '<path d="M18 12 C18 12 22 6 25.5 8 C29 10 24 12 18 12Z" fill="#fc8181" stroke="#e53e3e" stroke-width="0.5"/>' +
-            '</svg>',
-        iconSize: [36, 44],
-        iconAnchor: [18, 44],
-        popupAnchor: [0, -40]
+        html: '<div class="gift-pin"><span class="gift-pin__emoji">🎁</span><div class="gift-pin__arrow"></div></div>',
+        iconSize: [40, 48],
+        iconAnchor: [20, 48],
+        popupAnchor: [0, -44]
     });
 
     // Crear marcadores
@@ -200,10 +190,40 @@
 .gift-marker {
     background: none !important;
     border: none !important;
-    transition: transform 0.2s ease;
 }
-.gift-marker:hover {
-    transform: scale(1.2);
+.gift-pin {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #9b59b6, #e91e8f);
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 2px solid #fff;
+}
+.gift-pin:hover {
+    transform: rotate(-45deg) scale(1.15);
+    box-shadow: 0 4px 12px rgba(155,89,182,0.5);
+}
+.gift-pin__emoji {
+    transform: rotate(45deg);
+    font-size: 20px;
+    line-height: 1;
+}
+.gift-pin__arrow {
+    position: absolute;
+    bottom: -6px;
+    left: -2px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #e91e8f;
+    transform: rotate(45deg);
 }
 
 @media (max-width: 768px) {
