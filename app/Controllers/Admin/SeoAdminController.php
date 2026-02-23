@@ -205,31 +205,44 @@ class SeoAdminController extends Controller
         $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        // Home
-        $xml .= $this->sitemapUrl('/', '1.0', 'daily');
+        // Páginas principales
+        $today = date('Y-m-d');
+        $xml .= $this->sitemapUrl('/', '1.0', 'daily', $today);
+        $xml .= $this->sitemapUrl('/categorias', '0.8', 'weekly', $today);
+        $xml .= $this->sitemapUrl('/celebraciones', '0.8', 'weekly', $today);
+        $xml .= $this->sitemapUrl('/comercios', '0.8', 'weekly', $today);
+        $xml .= $this->sitemapUrl('/noticias', '0.8', 'daily', $today);
+        $xml .= $this->sitemapUrl('/mapa', '0.7', 'weekly', $today);
+        $xml .= $this->sitemapUrl('/contacto', '0.6', 'monthly', $today);
+        $xml .= $this->sitemapUrl('/planes', '0.5', 'monthly', $today);
+        $xml .= $this->sitemapUrl('/terminos', '0.3', 'yearly');
+        $xml .= $this->sitemapUrl('/privacidad', '0.3', 'yearly');
 
-        // Comercios
-        $comercios = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM comercios WHERE activo = 1"
-        );
-        foreach ($comercios as $c) {
-            $xml .= $this->sitemapUrl('/comercio/' . $c['slug'], '0.8', 'weekly', $c['updated_at']);
-        }
-
-        // Categorías
+        // Categorías (solo con comercios activos y calidad_ok)
         $categorias = $this->db->fetchAll(
-            "SELECT slug FROM categorias WHERE activo = 1"
+            "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
+             AND EXISTS (SELECT 1 FROM comercio_categoria cc
+                         JOIN comercios co ON co.id = cc.comercio_id
+                         WHERE cc.categoria_id = c.id AND co.activo = 1 AND co.calidad_ok = 1)"
         );
         foreach ($categorias as $c) {
-            $xml .= $this->sitemapUrl('/categoria/' . $c['slug'], '0.7', 'weekly');
+            $xml .= $this->sitemapUrl('/categoria/' . $c['slug'], '0.8', 'weekly', $c['updated_at']);
         }
 
-        // Fechas
+        // Fechas especiales
         $fechas = $this->db->fetchAll(
-            "SELECT slug FROM fechas_especiales WHERE activo = 1"
+            "SELECT slug, updated_at FROM fechas_especiales WHERE activo = 1"
         );
         foreach ($fechas as $f) {
-            $xml .= $this->sitemapUrl('/fecha/' . $f['slug'], '0.6', 'monthly');
+            $xml .= $this->sitemapUrl('/fecha/' . $f['slug'], '0.7', 'weekly', $f['updated_at']);
+        }
+
+        // Comercios (solo calidad_ok)
+        $comercios = $this->db->fetchAll(
+            "SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1"
+        );
+        foreach ($comercios as $c) {
+            $xml .= $this->sitemapUrl('/comercio/' . $c['slug'], '0.7', 'weekly', $c['updated_at']);
         }
 
         // Noticias
@@ -239,11 +252,6 @@ class SeoAdminController extends Controller
         foreach ($noticias as $n) {
             $xml .= $this->sitemapUrl('/noticia/' . $n['slug'], '0.6', 'monthly', $n['updated_at']);
         }
-
-        // Páginas estáticas
-        $xml .= $this->sitemapUrl('/mapa', '0.5', 'monthly');
-        $xml .= $this->sitemapUrl('/buscar', '0.3', 'weekly');
-        $xml .= $this->sitemapUrl('/noticias', '0.6', 'daily');
 
         $xml .= '</urlset>';
 
