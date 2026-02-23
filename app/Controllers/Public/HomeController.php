@@ -79,7 +79,7 @@ class HomeController extends Controller
             // Categorias (solo las que tienen al menos 1 comercio activo)
             $categorias = $this->db->fetchAll(
                 "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
-                 AND EXISTS (SELECT 1 FROM comercios_categorias cc
+                 AND EXISTS (SELECT 1 FROM comercio_categoria cc
                              JOIN comercios co ON co.id = cc.comercio_id
                              WHERE cc.categoria_id = c.id AND co.activo = 1)"
             );
