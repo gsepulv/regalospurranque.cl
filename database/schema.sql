@@ -558,6 +558,7 @@ CREATE TABLE IF NOT EXISTS `mensajes_contacto` (
     `mensaje` TEXT NOT NULL,
     `ip` VARCHAR(45) DEFAULT '',
     `leido` TINYINT(1) NOT NULL DEFAULT 0,
+    `instrucciones_enviadas` TINYINT(1) NOT NULL DEFAULT 0,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

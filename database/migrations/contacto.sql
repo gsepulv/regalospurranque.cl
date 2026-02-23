@@ -7,8 +7,15 @@ CREATE TABLE IF NOT EXISTS mensajes_contacto (
     mensaje TEXT NOT NULL,
     ip VARCHAR(45) DEFAULT '',
     leido TINYINT(1) NOT NULL DEFAULT 0,
+    instrucciones_enviadas TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Configuración de notificación de contacto
 INSERT IGNORE INTO configuracion (clave, valor) VALUES ('notif_contacto', '1');
+
+-- Configuración de notificación de instrucciones de registro
+INSERT IGNORE INTO configuracion (clave, valor) VALUES ('notif_instrucciones_registro', '1');
+
+-- Columna para cron de instrucciones de registro (si la tabla ya existe sin ella)
+-- Ejecutar manualmente: ALTER TABLE mensajes_contacto ADD COLUMN instrucciones_enviadas TINYINT(1) NOT NULL DEFAULT 0 AFTER leido;
