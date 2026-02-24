@@ -4,6 +4,7 @@
  */
 ?>
 
+<script>if(typeof fbq==='function')fbq('track','CompleteRegistration');</script>
 <section class="section">
     <div class="container" style="max-width:520px;text-align:center">
 

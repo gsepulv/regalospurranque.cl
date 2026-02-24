@@ -5,6 +5,9 @@
  */
 $pageType = 'comercio';
 $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+?>
+<script>if(typeof fbq==='function')fbq('track','ViewContent',{content_name:'<?= addslashes($comercio['nombre'] ?? '') ?>',content_type:'comercio'});</script>
+<?php
 $hoy = (int) date('w');
 ?>
 

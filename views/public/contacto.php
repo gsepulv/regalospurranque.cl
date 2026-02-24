@@ -25,6 +25,7 @@ $errors = $flash['errors'] ?? [];
                         <h2 style="margin:0 0 var(--spacing-4)">Envíanos un mensaje</h2>
 
                         <?php if (!empty($flash['success'])): ?>
+                            <script>if(typeof fbq==='function')fbq('track','Contact');</script>
                             <div class="alert alert--success" style="margin-bottom:var(--spacing-4)">
                                 <?= e($flash['success']) ?>
                             </div>
