@@ -18,6 +18,8 @@ return [
         'share',
         'resenas',
         'planes',
+        'contacto',
+        'correos',
         'notificaciones',
         'redes',
         'apariencia',

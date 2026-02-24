@@ -158,6 +158,14 @@ return [
     ['POST', '/admin/seo/redirects/toggle/{id}',    'Admin\\SeoAdminController@toggleRedirect', ['auth']],
     ['POST', '/admin/seo/sitemap',                  'Admin\\SeoAdminController@generateSitemap',['auth']],
 
+    // ── Contacto (admin) ────────────────────────────────────
+    ['GET',  '/admin/contacto',        'Admin\\ContactoAdminController@index',   ['auth']],
+
+    // ── Correos (admin) ─────────────────────────────────────
+    ['GET',  '/admin/correos/enviar',  'Admin\\CorreoAdminController@enviar',    ['auth']],
+    ['POST', '/admin/correos/enviar',  'Admin\\CorreoAdminController@send',      ['auth']],
+    ['POST', '/admin/correos/preview', 'Admin\\CorreoAdminController@preview',   ['auth']],
+
     // ── Notificaciones ──────────────────────────────────────
     ['GET',  '/admin/notificaciones',                'Admin\\NotificacionAdminController@index',      ['auth']],
     ['POST', '/admin/notificaciones/config',         'Admin\\NotificacionAdminController@saveConfig', ['auth']],

@@ -21,6 +21,10 @@
         try {
         $cambiosPendientes = \App\Core\Database::getInstance()->count('comercio_cambios_pendientes', "estado = 'pendiente'");
         } catch (\Throwable $e) {}
+        $mensajesNoLeidos = 0;
+        try {
+            $mensajesNoLeidos = \App\Core\Database::getInstance()->count('mensajes_contacto', 'leido = 0');
+        } catch (\Throwable $e) {}
 
         // Contar comercios para badge
         $totalComercios = 0;
@@ -38,6 +42,8 @@
             ['resenas',      'Reseñas',           '/admin/resenas',       '&#11088;',  $pendientes ?: null],
             ['planes',       'Planes',            '/admin/planes',        '&#128176;', null],
             ['cambios',      'Cambios Pendientes','/admin/cambios-pendientes', '&#128221;', $cambiosPendientes ?: null],
+            ['contacto',     'Contacto',          '/admin/contacto',      '&#128233;', $mensajesNoLeidos ?: null],
+            ['correos',      'Enviar Correo',     '/admin/correos',       '&#9993;',   null],
             ['reportes',     'Reportes',          '/admin/reportes',      '&#128200;', null],
             ['share',        'Compartidos',       '/admin/share',         '&#128279;', null],
             ['redes',        'Redes Sociales',    '/admin/redes-sociales','&#128241;', null],

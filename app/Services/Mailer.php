@@ -69,6 +69,63 @@ class Mailer
     }
 
     /**
+     * Enviar email con contenido HTML directo (sin template de archivo)
+     */
+    public function sendHtml(string $to, string $subject, string $htmlContent, string $templateLabel = 'respuesta-manual', array $extraData = []): bool
+    {
+        if (!$this->isEnabled()) {
+            return false;
+        }
+
+        $body = $this->wrapInLayout($htmlContent);
+        if ($body === null) {
+            $body = $htmlContent;
+        }
+
+        $driver = $this->getConfig('mail_driver', 'mail');
+
+        $sent = false;
+        $method = 'mail()';
+
+        if ($driver === 'smtp') {
+            $sent = $this->sendSmtp($to, $subject, $body);
+            $method = 'smtp';
+
+            if (!$sent) {
+                $this->logError("SMTP falló para {$to}, intentando fallback con mail()");
+                $sent = $this->sendNative($to, $subject, $body);
+                $method = $sent ? 'mail()-fallback' : 'fallido';
+            }
+        } else {
+            $sent = $this->sendNative($to, $subject, $body);
+        }
+
+        $this->logNotification($to, $subject, $templateLabel, $sent, $extraData, $method);
+
+        return $sent;
+    }
+
+    /**
+     * Envolver HTML en el layout de email
+     */
+    private function wrapInLayout(string $htmlContent): ?string
+    {
+        $layoutPath = BASE_PATH . '/views/emails/layout.php';
+        if (!file_exists($layoutPath)) {
+            return null;
+        }
+
+        $siteName     = SITE_NAME;
+        $siteUrl      = SITE_URL;
+        $year         = date('Y');
+        $emailContent = $htmlContent;
+
+        ob_start();
+        include $layoutPath;
+        return ob_get_clean();
+    }
+
+    /**
      * Enviar email a todos los admins
      */
     public function sendToAdmins(string $subject, string $template, array $data = []): int
