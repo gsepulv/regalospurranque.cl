@@ -216,114 +216,217 @@ function applyTemplate(tpl) {
 
 function tplConsultaInscripcion(nombre, comercio, categoria, inclFecha) {
     var siteUrl = '<?= SITE_URL ?>';
+    var regUrl = siteUrl + '/registrar-comercio';
     var html = '';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Muchas gracias por escribirnos y por tu inter&eacute;s en ser parte de <strong>Regalos Purranque</strong>.</p>';
 
-    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;margin:0 0 16px;">';
-    html += '<tr><td style="padding:16px;">';
-    html += '<p style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#1e40af;">&#128640; Estamos en etapa Beta</p>';
-    html += '<p style="margin:0;color:#1e40af;font-size:14px;line-height:1.5;">Tu negocio podr&aacute; ser publicado en nuestro <strong>Plan Gratuito</strong> (sin costo), con una duraci&oacute;n de 30 d&iacute;as.</p>';
-    html += '</td></tr></table>';
+    // ── EDITABLE: Saludo personalizado ──
+    html += '<p style="color:#2D2D2D;margin:0 0 16px;line-height:1.6;font-size:16px;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
 
-    html += '<p style="color:#475569;margin:0 0 12px;line-height:1.6;">Algunos beneficios de estar en la plataforma:</p>';
-    html += '<ul style="color:#475569;margin:0 0 16px;padding-left:20px;line-height:1.8;">';
-    html += '<li>Visibilidad en b&uacute;squedas locales de regalos</li>';
-    html += '<li>P&aacute;gina exclusiva de tu negocio con fotos, contacto y horarios</li>';
-    html += '<li>Aparici&oacute;n en fechas especiales (D&iacute;a de la Madre, Navidad, etc.)</li>';
-    html += '<li>Enlace directo a tu WhatsApp y redes sociales</li>';
-    html += '</ul>';
+    // ── EDITABLE: Parrafo de apertura personalizado ──
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Muchas gracias por escribirnos y por su inter&eacute;s en ser parte de <strong>Regalos Purranque</strong>. La respuesta es s&iacute;, &iexcl;por supuesto que puede incluirse!</p>';
 
+    // ── EDITABLE: Mencion de categoria especial ──
     if (categoria) {
-        html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Seg&uacute;n lo que nos comentas, te sugerimos registrarte en la categor&iacute;a <strong>&ldquo;' + esc(categoria) + '&rdquo;</strong>.</p>';
+        html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">';
+        html += '<tr><td style="background:#FFF8F0;border:2px solid #D4A017;border-radius:8px;padding:18px 20px;">';
+        html += '<p style="margin:0 0 6px;font-size:16px;font-weight:bold;color:#CC0000;">&#127991; Categor&iacute;a: ' + esc(categoria) + '</p>';
+        html += '<p style="margin:0;color:#4A4A4A;font-size:14px;line-height:1.6;">Le sugerimos registrarse en esta categor&iacute;a.</p>';
+        html += '</td></tr></table>';
     }
 
-    html += '<p style="color:#1e293b;font-size:15px;font-weight:bold;margin:0 0 8px;">Pasos para registrarte:</p>';
-    html += '<ol style="color:#475569;margin:0 0 16px;padding-left:20px;line-height:1.8;">';
-    html += '<li>Ingresa a <a href="' + siteUrl + '/registrar-comercio" style="color:#2563eb;">' + siteUrl + '/registrar-comercio</a></li>';
-    html += '<li>Crea tu cuenta con email y contrase&ntilde;a</li>';
-    html += '<li>Completa la informaci&oacute;n de tu negocio (nombre, descripci&oacute;n, contacto)</li>';
-    html += '<li>Sube tu logo y foto de portada</li>';
-    html += '<li>Selecciona tus categor&iacute;as y fechas especiales</li>';
-    html += '</ol>';
+    // ── EDITABLE: Parrafo de fecha especial ──
+    if (inclFecha && proximaFecha) {
+        html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">';
+        html += '<tr><td style="background:#FFF8F0;border-left:4px solid #CC0000;border-radius:4px;padding:16px 20px;">';
+        html += '<p style="margin:0;color:#4A4A4A;font-size:15px;line-height:1.7;">Se acerca <strong>' + esc(proximaFecha.nombre) + '</strong> (' + proximaFecha.fecha_inicio + '). Si registra su emprendimiento ahora, estar&aacute; visible cuando la gente busque regalos para esta fecha.</p>';
+        html += '</td></tr></table>';
+    }
 
-    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin:0 0 16px;">';
-    html += '<tr><td style="padding:16px;text-align:center;">';
-    html += '<p style="margin:0;font-size:16px;font-weight:bold;color:#15803d;">&#127881; La inscripci&oacute;n es 100% gratuita</p>';
+    // ── ESTANDAR: Que es Regalos Purranque ──
+    html += seccionTitulo('&#127873; &iquest;Qu&eacute; es Regalos Purranque?');
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Regalos Purranque es una plataforma web que re&uacute;ne a los comercios, emprendedores y artesanos de Purranque y la provincia en un solo lugar. Nuestro objetivo es que las personas encuentren f&aacute;cilmente d&oacute;nde comprar regalos para cada ocasi&oacute;n especial, apoyando al comercio local.</p>';
+
+    // ── ESTANDAR: Beneficios ──
+    html += seccionTitulo('&#11088; Beneficios de estar en la plataforma');
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;border:1px solid #E8D5B0;border-radius:8px;overflow:hidden;">';
+    var beneficios = [
+        'P&aacute;gina exclusiva de su negocio con fotos, contacto y horarios',
+        'Visibilidad en b&uacute;squedas locales de regalos en Purranque',
+        'Aparici&oacute;n en fechas especiales (D&iacute;a de la Madre, Navidad, etc.)',
+        'Enlace directo a su WhatsApp y redes sociales',
+        'Panel de administraci&oacute;n para gestionar su informaci&oacute;n'
+    ];
+    for (var i = 0; i < beneficios.length; i++) {
+        var bg = i % 2 === 0 ? '#FFF8F0' : '#FFFFFF';
+        var brd = i < beneficios.length - 1 ? 'border-bottom:1px solid #E8D5B0;' : '';
+        html += '<tr><td style="background:' + bg + ';padding:12px 16px;' + brd + '">';
+        html += '<p style="margin:0;color:#2D2D2D;font-size:14px;">&#10004;&#65039; <strong>' + beneficios[i].split('</strong>')[0].replace(/<strong>/, '') + '</strong>' + (beneficios[i].includes('</strong>') ? beneficios[i].split('</strong>')[1] : '') + '</p>';
+        html += '</td></tr>';
+    }
+    html += '</table>';
+
+    // Caja Plan Gratuito
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">';
+    html += '<tr><td style="background:#FFF8F0;border:3px solid #D4A017;border-radius:10px;padding:20px;text-align:center;">';
+    html += '<p style="margin:0 0 6px;font-size:20px;font-weight:bold;color:#CC0000;">&#127881; Plan Gratuito &mdash; Sin Costo por 30 d&iacute;as</p>';
+    html += '<p style="margin:0;font-size:15px;color:#4A4A4A;">Estamos en etapa Beta. Su negocio ser&aacute; publicado sin ning&uacute;n costo durante 30 d&iacute;as.</p>';
     html += '</td></tr></table>';
 
-    if (inclFecha && proximaFecha) {
-        html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Adem&aacute;s, se acerca <strong>' + esc(proximaFecha.nombre) + '</strong> (' + proximaFecha.fecha_inicio + '), as&iacute; que es un excelente momento para registrarte y aparecer en las b&uacute;squedas de esa fecha.</p>';
-    }
+    // ── ESTANDAR: Como registrarse ──
+    html += seccionTitulo('&#128221; &iquest;C&oacute;mo registrarse?');
+    html += '<p style="color:#4A4A4A;margin:0 0 12px;line-height:1.6;font-size:15px;">Ingrese a la siguiente direcci&oacute;n y complete el formulario:</p>';
+    html += '<p style="margin:0 0 20px;text-align:center;"><a href="' + regUrl + '" style="display:inline-block;background:#CC0000;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:16px;font-weight:bold;">Registrar mi comercio</a></p>';
 
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Si tienes cualquier duda durante el registro, no dudes en responder a este correo.</p>';
-    html += firma();
+    var pasos = [
+        'Ingrese a <a href="' + regUrl + '" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + regUrl + '</a>',
+        'Cree su cuenta con email y contrase&ntilde;a',
+        'Complete la informaci&oacute;n de su negocio',
+        'Suba su logo y foto de portada',
+        'Seleccione sus categor&iacute;as y fechas especiales'
+    ];
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">';
+    for (var j = 0; j < pasos.length; j++) {
+        html += '<tr><td style="padding:8px 0;"><p style="margin:0;font-size:15px;color:#2D2D2D;line-height:1.7;">';
+        html += '<span style="display:inline-block;width:28px;height:28px;background:#CC0000;color:#ffffff;border-radius:50%;text-align:center;line-height:28px;font-weight:bold;font-size:14px;margin-right:8px;">' + (j+1) + '</span>';
+        html += pasos[j] + '</p></td></tr>';
+    }
+    html += '</table>';
+
+    // ── ESTANDAR: Datos requeridos ──
+    html += seccionTitulo('&#128203; Datos que necesitar&aacute;');
+    html += seccionDatos('&#128100; DATOS PERSONALES (para crear su cuenta)', [
+        'Su nombre completo',
+        'Email (ser&aacute; su usuario para acceder a la plataforma)',
+        'Tel&eacute;fono / WhatsApp',
+        'Contrase&ntilde;a'
+    ]);
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8F0;border:1px solid #D4A017;border-radius:6px;margin:0 0 12px;"><tr><td style="padding:12px 16px;">';
+    html += '<p style="margin:0 0 6px;color:#CC0000;font-size:14px;font-weight:bold;">&#128274; Importante sobre su contrase&ntilde;a:</p>';
+    html += '<p style="margin:0;color:#4A4A4A;font-size:14px;line-height:1.5;">Gu&aacute;rdela en un lugar seguro. Si la olvida: <a href="' + siteUrl + '/mi-comercio/olvide-contrasena" style="color:#CC0000;text-decoration:underline;">' + siteUrl + '/mi-comercio/olvide-contrasena</a></p>';
+    html += '</td></tr></table>';
+
+    html += seccionDatos('&#127978; INFORMACI&Oacute;N DE SU NEGOCIO', [
+        'Nombre del comercio',
+        'Descripci&oacute;n de su negocio',
+        'WhatsApp de contacto para sus clientes',
+        'Tel&eacute;fono fijo',
+        'Email del comercio',
+        'Sitio web o enlace a su red social',
+        'Direcci&oacute;n f&iacute;sica (si tiene)'
+    ]);
+    html += seccionDatos('&#128444; IM&Aacute;GENES (JPG o PNG, m&aacute;x. 2 MB)', [
+        '<strong>Logo</strong> &mdash; ideal 800 &times; 800 px',
+        '<strong>Portada</strong> &mdash; ideal 1200 &times; 400 px'
+    ]);
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5F5;border:1px solid #E8B0B0;border-radius:6px;margin:0 0 12px;"><tr><td style="padding:10px 16px;">';
+    html += '<p style="margin:0;color:#CC0000;font-size:13px;font-weight:bold;">&#9888;&#65039; Solo se publicar&aacute;n im&aacute;genes de productos o servicios. No se aceptar&aacute;n fotos de personas.</p>';
+    html += '</td></tr></table>';
+
+    html += seccionDatos('&#128241; RED SOCIAL', ['El Plan Gratuito permite incluir 1 red social (Facebook, Instagram, TikTok, etc.)']);
+    html += seccionDatos('&#128194; CATEGOR&Iacute;AS', ['Seleccione las categor&iacute;as de su negocio y marque la principal']);
+    html += seccionDatos('&#127873; FECHAS ESPECIALES', ['Seleccione las fechas para las que ofrece productos especiales']);
+
+    // ── ESTANDAR: Politicas ──
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0 8px;"><tr><td style="border-bottom:3px solid #CC0000;padding:0 0 8px;">';
+    html += '<p style="margin:0;font-size:18px;font-weight:bold;color:#CC0000;">&#9888;&#65039; Lectura Obligatoria Antes de Registrarse</p>';
+    html += '</td></tr></table>';
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5F5;border:2px solid #CC0000;border-radius:8px;margin:0 0 24px;"><tr><td style="padding:20px;">';
+    html += '<p style="margin:0 0 14px;color:#CC0000;font-size:14px;line-height:1.6;">Para completar su registro es <strong>OBLIGATORIO</strong> leer los siguientes documentos:</p>';
+    var politicas = ['T&eacute;rminos y Condiciones', 'Pol&iacute;tica de Privacidad', 'Pol&iacute;tica de Contenidos', 'Derechos de Autor', 'Pol&iacute;tica de Cookies'];
+    var politicasUrls = ['/terminos', '/privacidad', '/contenidos', '/derechos', '/cookies'];
+    for (var k = 0; k < politicas.length; k++) {
+        html += '<p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; ' + (k+1) + '. <a href="' + siteUrl + politicasUrls[k] + '" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + politicas[k] + '</a></p>';
+    }
+    html += '<p style="margin:14px 0 0;color:#CC0000;font-size:14px;font-weight:bold;">&#128683; El rechazo de cualquiera de estas pol&iacute;ticas impide la publicaci&oacute;n.</p>';
+    html += '</td></tr></table>';
+
+    // ── ESTANDAR: Que pasa despues ──
+    html += seccionTitulo('&#128203; &iquest;Qu&eacute; pasa despu&eacute;s?');
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Una vez que complete el formulario, nuestro equipo revisar&aacute; los datos. Si se ajustan a los t&eacute;rminos, su negocio ser&aacute; publicado y le notificaremos por email.</p>';
+
+    // ── ESTANDAR: Edicion ──
+    html += seccionTitulo('&#9998;&#65039; Edici&oacute;n de su publicaci&oacute;n');
+    html += '<p style="color:#4A4A4A;margin:0 0 8px;line-height:1.7;font-size:15px;">Una vez publicado, podr&aacute; editar su informaci&oacute;n desde:</p>';
+    html += '<p style="margin:0 0 20px;">&#128073; <a href="' + siteUrl + '/mi-comercio/" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + siteUrl + '/mi-comercio/</a></p>';
+
+    // ── ESTANDAR: Contacto ──
+    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8F0;border:1px solid #E8D5B0;border-radius:8px;margin:0 0 24px;"><tr><td style="padding:16px 20px;">';
+    html += '<p style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#CC0000;">&#128172; &iquest;Tiene dudas?</p>';
+    html += '<p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">Puede responder directamente a este correo o escribirnos a:</p>';
+    html += '<p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">&#128233; <a href="mailto:contacto@regalospurranque.cl" style="color:#CC0000;">contacto@regalospurranque.cl</a></p>';
+    html += '<p style="margin:0;color:#4A4A4A;font-size:14px;">&#127760; <a href="' + siteUrl + '/contacto" style="color:#CC0000;">' + siteUrl + '/contacto</a></p>';
+    html += '</td></tr></table>';
+
+    html += firmaCorporativa();
     return html;
+}
+
+// Helpers para HTML corporativo
+function seccionTitulo(titulo) {
+    return '<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr><td style="border-bottom:3px solid #D4A017;padding:0 0 8px;">' +
+           '<p style="margin:0;font-size:18px;font-weight:bold;color:#CC0000;">' + titulo + '</p>' +
+           '</td></tr></table>';
+}
+
+function seccionDatos(titulo, items) {
+    var h = '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFFBF5;border:1px solid #E8D5B0;border-radius:8px;margin:0 0 12px;">';
+    h += '<tr><td style="background:#D4A017;padding:10px 16px;border-radius:8px 8px 0 0;">';
+    h += '<p style="margin:0;font-size:15px;font-weight:bold;color:#ffffff;">' + titulo + '</p></td></tr>';
+    h += '<tr><td style="padding:14px 16px;">';
+    for (var i = 0; i < items.length; i++) {
+        h += '<p style="margin:0' + (i < items.length - 1 ? ' 0 4px' : '') + ';color:#4A4A4A;font-size:14px;">&#8226; ' + items[i] + '</p>';
+    }
+    h += '</td></tr></table>';
+    return h;
+}
+
+function firmaCorporativa() {
+    var siteUrl = '<?= SITE_URL ?>';
+    return '<table width="100%" cellpadding="0" cellspacing="0" style="border-top:2px solid #D4A017;margin:0;">' +
+        '<tr><td style="padding:20px 0 0;text-align:center;">' +
+        '<p style="margin:0 0 4px;color:#4A4A4A;font-size:15px;">&iexcl;Bienvenida/o a la comunidad de Regalos Purranque! &#127873;</p>' +
+        '<p style="margin:0 0 4px;color:#4A4A4A;font-size:15px;">Saludos cordiales,</p>' +
+        '<p style="margin:0 0 8px;color:#2D2D2D;font-size:16px;font-weight:bold;">Equipo Regalos Purranque</p>' +
+        '<p style="margin:0 0 4px;"><a href="' + siteUrl + '" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + siteUrl + '</a></p>' +
+        '</td></tr></table>' +
+        '<p style="color:#999999;font-size:12px;margin:16px 0 0;line-height:1.5;text-align:center;">&#128231; Si no encuentra este correo en su bandeja, revise Spam o Correo no deseado.</p>';
 }
 
 function tplBienvenida(nombre, comercio) {
     var siteUrl = '<?= SITE_URL ?>';
     var html = '';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">&iexcl;Felicitaciones! Tu negocio' + (comercio ? ' <strong>' + esc(comercio) + '</strong>' : '') + ' ya est&aacute; publicado en Regalos Purranque.</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Puedes administrar tu informaci&oacute;n en cualquier momento desde:</p>';
-    html += '<p style="margin:0 0 16px;"><a href="' + siteUrl + '/mi-comercio" style="color:#2563eb;text-decoration:underline;">' + siteUrl + '/mi-comercio</a></p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Desde ah&iacute; podr&aacute;s actualizar tu descripci&oacute;n, fotos, horarios y datos de contacto.</p>';
-    html += firma();
+    html += '<p style="color:#2D2D2D;margin:0 0 16px;line-height:1.6;font-size:16px;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">&iexcl;Felicitaciones! Su negocio' + (comercio ? ' <strong>' + esc(comercio) + '</strong>' : '') + ' ya est&aacute; publicado en Regalos Purranque.</p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 8px;line-height:1.7;font-size:15px;">Puede administrar su informaci&oacute;n en cualquier momento desde:</p>';
+    html += '<p style="margin:0 0 20px;">&#128073; <a href="' + siteUrl + '/mi-comercio" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + siteUrl + '/mi-comercio</a></p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Desde ah&iacute; podr&aacute; actualizar su descripci&oacute;n, fotos, horarios y datos de contacto.</p>';
+    html += firmaCorporativa();
     return html;
 }
 
 function tplInstrucciones(nombre) {
     var siteUrl = '<?= SITE_URL ?>';
+    var regUrl = siteUrl + '/registrar-comercio';
     var html = '';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">A continuaci&oacute;n te enviamos las instrucciones detalladas para registrar tu negocio en Regalos Purranque:</p>';
-    html += '<p style="margin:0 0 16px;">&#128073; <a href="' + siteUrl + '/registrar-comercio" style="color:#2563eb;text-decoration:underline;">' + siteUrl + '/registrar-comercio</a></p>';
+    html += '<p style="color:#2D2D2D;margin:0 0 16px;line-height:1.6;font-size:16px;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">A continuaci&oacute;n le enviamos las instrucciones detalladas para registrar su negocio en Regalos Purranque:</p>';
+    html += '<p style="margin:0 0 20px;text-align:center;"><a href="' + regUrl + '" style="display:inline-block;background:#CC0000;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:6px;font-size:16px;font-weight:bold;">Registrar mi comercio</a></p>';
 
-    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin:0 0 16px;">';
-    html += '<tr><td style="padding:16px;">';
-    html += '<p style="margin:0 0 10px;font-size:15px;font-weight:bold;color:#15803d;">&#128100; DATOS PERSONALES (para crear tu cuenta)</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Tu nombre completo</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Email (ser&aacute; tu usuario)</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Tel&eacute;fono / WhatsApp</p>';
-    html += '<p style="margin:0;color:#166534;font-size:14px;">&#8226; Contrase&ntilde;a</p>';
-    html += '</td></tr></table>';
-
-    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin:0 0 16px;">';
-    html += '<tr><td style="padding:16px;">';
-    html += '<p style="margin:0 0 10px;font-size:15px;font-weight:bold;color:#15803d;">&#127978; INFORMACI&Oacute;N DEL NEGOCIO</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Nombre del comercio</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Descripci&oacute;n (qu&eacute; vendes, marcas, etc.)</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; WhatsApp, tel&eacute;fono, email del comercio</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; Sitio web o red social</p>';
-    html += '<p style="margin:0;color:#166534;font-size:14px;">&#8226; Direcci&oacute;n f&iacute;sica (si tienes)</p>';
-    html += '</td></tr></table>';
-
-    html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;margin:0 0 16px;">';
-    html += '<tr><td style="padding:16px;">';
-    html += '<p style="margin:0 0 10px;font-size:15px;font-weight:bold;color:#15803d;">&#128444; IM&Aacute;GENES (JPG o PNG, m&aacute;x. 2 MB)</p>';
-    html += '<p style="margin:0 0 4px;color:#166534;font-size:14px;">&#8226; <strong>Logo</strong> &mdash; ideal 800 x 800 px</p>';
-    html += '<p style="margin:0;color:#166534;font-size:14px;">&#8226; <strong>Portada</strong> &mdash; ideal 1200 x 400 px</p>';
-    html += '</td></tr></table>';
-
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Tambi&eacute;n podr&aacute;s seleccionar tus categor&iacute;as y fechas especiales en el formulario.</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">Si tienes cualquier duda, responde a este correo.</p>';
-    html += firma();
+    html += seccionDatos('&#128100; DATOS PERSONALES', ['Nombre completo', 'Email', 'Tel&eacute;fono / WhatsApp', 'Contrase&ntilde;a']);
+    html += seccionDatos('&#127978; INFORMACI&Oacute;N DEL NEGOCIO', ['Nombre del comercio', 'Descripci&oacute;n', 'WhatsApp, tel&eacute;fono, email', 'Sitio web o red social', 'Direcci&oacute;n f&iacute;sica']);
+    html += seccionDatos('&#128444; IM&Aacute;GENES (m&aacute;x. 2 MB)', ['<strong>Logo</strong> &mdash; 800 &times; 800 px', '<strong>Portada</strong> &mdash; 1200 &times; 400 px']);
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Tambi&eacute;n podr&aacute; seleccionar sus categor&iacute;as y fechas especiales en el formulario.</p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;">Si tiene cualquier duda, responda a este correo.</p>';
+    html += firmaCorporativa();
     return html;
 }
 
 function tplCorreoLibre(nombre) {
     var html = '';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
-    html += '<p style="color:#475569;margin:0 0 16px;line-height:1.6;"></p>';
-    html += firma();
+    html += '<p style="color:#2D2D2D;margin:0 0 16px;line-height:1.6;font-size:16px;">&iexcl;Hola <strong>' + esc(nombre) + '</strong>!</p>';
+    html += '<p style="color:#4A4A4A;margin:0 0 20px;line-height:1.7;font-size:15px;"></p>';
+    html += firmaCorporativa();
     return html;
-}
-
-function firma() {
-    return '<p style="color:#475569;margin:0 0 4px;line-height:1.6;">Saludos cordiales,</p>' +
-           '<p style="color:#475569;margin:0 0 4px;line-height:1.6;font-weight:bold;">Equipo Regalos Purranque</p>' +
-           '<p style="margin:0 0 16px;"><a href="<?= SITE_URL ?>" style="color:#2563eb;text-decoration:underline;"><?= SITE_URL ?></a></p>';
 }
 
 function esc(str) {
