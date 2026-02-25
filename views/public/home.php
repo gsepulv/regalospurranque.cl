@@ -150,33 +150,6 @@
 </section>
 <?php endif; ?>
 
-<!-- CTA Comerciantes -->
-<section class="section" style="background:linear-gradient(135deg,#1a0000 0%,#3d0000 50%,#1a0000 100%);padding:2.5rem 0;">
-    <div class="container" style="max-width:800px;text-align:center;">
-        <p style="margin:0 0 .4rem;font-size:2rem;line-height:1;">&#127978;</p>
-        <h2 style="margin:0 0 .5rem;color:#D4A017;font-size:1.4rem;font-weight:700;">
-            &iquest;Tienes un comercio en Purranque?
-        </h2>
-        <p style="margin:0 0 1.25rem;color:#e8d5b0;font-size:.95rem;line-height:1.5;">
-            Registra tu negocio gratis y aparece cuando la gente busque regalos para cada ocasi&oacute;n especial.
-        </p>
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.75rem;">
-            <a href="<?= url('/registrar-comercio') ?>"
-               style="display:inline-block;background:#CC0000;color:#fff;font-weight:700;font-size:1rem;padding:.75rem 1.75rem;border-radius:6px;text-decoration:none;border:2px solid #CC0000;transition:background .2s,transform .2s;">
-                Registrar mi comercio
-            </a>
-            <a href="<?= url('/mi-comercio/login') ?>"
-               style="display:inline-block;background:transparent;color:#D4A017;font-weight:600;font-size:.9rem;padding:.6rem 1.25rem;border-radius:6px;text-decoration:none;border:2px solid #D4A017;transition:background .2s,color .2s;">
-                Acceder a mi comercio
-            </a>
-            <a href="<?= url('/mi-comercio/olvide-contrasena') ?>"
-               style="color:#e8d5b0;font-size:.8rem;text-decoration:underline;text-underline-offset:3px;">
-                &iquest;Olvidaste tu contrase&ntilde;a?
-            </a>
-        </div>
-    </div>
-</section>
-
 <!-- Celebraciones Personales -->
 <?php if (!empty($fechasPersonales)): ?>
 <section class="section section--alt section-celebraciones-home">
