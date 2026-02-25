@@ -140,6 +140,7 @@
 <script>
 tinymce.init({
     selector: '#contenido',
+    license_key: 'gpl',
     height: 500,
     language: 'es',
     language_url: '<?= asset('vendor/tinymce/langs/es.js') ?>',

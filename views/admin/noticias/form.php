@@ -340,6 +340,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
 // TinyMCE initialization
 tinymce.init({
     selector: '.tinymce-editor',
+    license_key: 'gpl',
     height: <?= (int)$tinymceHeight ?>,
     language: '<?= e($tinymceLanguage) ?>',
     language_url: '<?= asset('vendor/tinymce/langs/' . e($tinymceLanguage) . '.js') ?>',
