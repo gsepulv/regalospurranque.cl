@@ -7,10 +7,18 @@
 <section class="cta-section">
     <div class="container" style="text-align:center;max-width:800px;">
         <p style="margin:0 0 .3rem;font-size:2rem;line-height:1;">&#127978;</p>
-        <h2 style="color:#D4A017;margin-bottom:.4rem;">&iquest;Tienes un comercio en Purranque?</h2>
-        <p style="color:rgba(255,255,255,.75);margin:0 auto 1.5rem;max-width:520px;">
-            Reg&iacute;strate gratis, administra tu publicaci&oacute;n y aparece cuando la gente busque regalos para cada ocasi&oacute;n especial.
+        <h2 style="color:#D4A017;margin-bottom:.75rem;">&iquest;Tienes un comercio en Purranque?</h2>
+        <p style="color:#D4A017;font-weight:600;font-size:1rem;margin:0 0 .75rem;">
+            Reg&iacute;strate gratis por 30 d&iacute;as y obt&eacute;n:
         </p>
+        <div style="display:inline-block;text-align:left;margin:0 auto 1.5rem;line-height:1.9;font-size:.9rem;color:rgba(255,255,255,.9);">
+            <span style="color:#38a169;">&#10004;</span> P&aacute;gina exclusiva de tu negocio en la plataforma<br>
+            <span style="color:#38a169;">&#10004;</span> Logo (800&times;800 px) y foto de portada (1200&times;400 px)<br>
+            <span style="color:#38a169;">&#10004;</span> Bot&oacute;n directo a tu WhatsApp<br>
+            <span style="color:#38a169;">&#10004;</span> Enlace a Google Maps<br>
+            <span style="color:#38a169;">&#10004;</span> 1 red social (Facebook, Instagram, TikTok, etc.)<br>
+            <span style="color:#38a169;">&#10004;</span> Visibilidad en fechas especiales (D&iacute;a de la Madre, Navidad, etc.)
+        </div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.75rem;margin-bottom:1rem;">
             <a href="<?= url('/registrar-comercio') ?>" class="btn--cta" style="background:#CC0000;border:2px solid #CC0000;">
                 Registrar mi comercio
