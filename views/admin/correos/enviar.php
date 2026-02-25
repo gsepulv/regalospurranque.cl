@@ -154,6 +154,10 @@ tinymce.init({
     menubar: false,
     branding: false,
     promotion: false,
+    // Preservar URLs absolutas — sin esto TinyMCE convierte
+    // https://regalospurranque.cl/registrar-comercio a ../../../registrar-comercio
+    relative_urls: false,
+    remove_script_host: false,
     setup: function(editor) {
         editor.on('init', function() {
             <?php if ($mensaje): ?>
