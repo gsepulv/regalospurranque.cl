@@ -357,6 +357,77 @@ class Notification
         );
     }
 
+    // ══════════════════════════════════════════════════════════
+    // RENOVACIONES
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Nueva solicitud de renovación (notifica a admins)
+     */
+    public static function renovacionNuevaAdmin(array $comercio, array $plan): void
+    {
+        if (!self::isEventEnabled('notif_renovacion_nueva')) return;
+
+        self::mailer()->sendToAdmins(
+            "Solicitud de renovación: {$comercio['nombre']}",
+            'renovacion-nueva-admin',
+            [
+                'comercio' => $comercio,
+                'plan'     => $plan,
+            ]
+        );
+    }
+
+    /**
+     * Renovación aprobada (notifica al comerciante)
+     */
+    public static function renovacionAprobada(array $renovacion): void
+    {
+        if (!self::isEventEnabled('notif_renovacion_aprobada')) return;
+
+        $usuario = \App\Models\AdminUsuario::find((int)$renovacion['usuario_id']);
+        if (!$usuario || empty($usuario['email'])) return;
+
+        $comercio = self::getComercio($renovacion['comercio_id']);
+        $plan = \App\Models\PlanConfig::findBySlug($renovacion['plan_solicitado']);
+
+        self::mailer()->send(
+            $usuario['email'],
+            "Tu renovación ha sido aprobada — " . SITE_NAME,
+            'renovacion-aprobada',
+            [
+                'renovacion' => $renovacion,
+                'comercio'   => $comercio,
+                'plan'       => $plan,
+                'usuario'    => $usuario,
+            ]
+        );
+    }
+
+    /**
+     * Renovación rechazada (notifica al comerciante)
+     */
+    public static function renovacionRechazada(array $renovacion): void
+    {
+        if (!self::isEventEnabled('notif_renovacion_rechazada')) return;
+
+        $usuario = \App\Models\AdminUsuario::find((int)$renovacion['usuario_id']);
+        if (!$usuario || empty($usuario['email'])) return;
+
+        $comercio = self::getComercio($renovacion['comercio_id']);
+
+        self::mailer()->send(
+            $usuario['email'],
+            "Sobre tu solicitud de renovación — " . SITE_NAME,
+            'renovacion-rechazada',
+            [
+                'renovacion' => $renovacion,
+                'comercio'   => $comercio,
+                'usuario'    => $usuario,
+            ]
+        );
+    }
+
     /**
      * Email de prueba
      */

@@ -1,7 +1,7 @@
 <?php
 /**
  * Dashboard del comerciante
- * Variables: $comercio, $pendientes, $plan, $usuario
+ * Variables: $comercio, $pendientes, $plan, $usuario, $renovacion, $renovacionesActivas, $planesDisponibles, $metodosPago, $datosBanco
  */
 $success = $_SESSION['flash_success'] ?? '';
 $error   = $_SESSION['flash_error'] ?? '';
@@ -118,6 +118,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
                     </p>
                 </div>
             <?php endif; ?>
+
+            <!-- Renovación de plan -->
+            <?php include __DIR__ . '/_renovacion.php'; ?>
 
             <!-- Resumen rápido -->
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;margin-bottom:1.25rem">

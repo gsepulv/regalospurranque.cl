@@ -113,6 +113,14 @@ $esEditar = !empty($plan);
                 </div>
             </div>
 
+            <!-- Duración -->
+            <div class="form-group">
+                <label class="form-label" for="duracion_dias">Duraci&oacute;n del plan (d&iacute;as)</label>
+                <input type="number" id="duracion_dias" name="duracion_dias" class="form-control"
+                       value="<?= e($plan['duracion_dias'] ?? 30) ?>" min="1" max="365" step="1">
+                <div class="form-hint">Cu&aacute;ntos d&iacute;as dura el plan al renovar (por defecto 30)</div>
+            </div>
+
             <!-- Límites -->
             <div class="section-title">📏 Límites (vacío = sin límite)</div>
             <div class="form-row-3">

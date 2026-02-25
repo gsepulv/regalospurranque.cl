@@ -34,4 +34,14 @@ class PlanConfig
     {
         return Database::getInstance()->delete('planes_config', 'id = ?', [$id]);
     }
+
+    /**
+     * Planes activos disponibles para renovación (excluye banner)
+     */
+    public static function getActiveForRenewal(): array
+    {
+        return Database::getInstance()->fetchAll(
+            "SELECT * FROM planes_config WHERE activo = 1 AND slug != 'banner' ORDER BY orden ASC"
+        );
+    }
 }

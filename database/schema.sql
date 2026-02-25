@@ -509,6 +509,7 @@ CREATE TABLE IF NOT EXISTS `planes_config` (
     `descripcion` TEXT DEFAULT NULL,
     `precio_intro` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Precio introductorio CLP',
     `precio_regular` INT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Precio regular CLP',
+    `duracion_dias` SMALLINT UNSIGNED NOT NULL DEFAULT 30 COMMENT 'Duracion del plan en dias',
     `max_fotos` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     `max_redes` TINYINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '1=solo 1 red, 99=todas',
     `tiene_mapa` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '0=boton GMaps, 1=mapa integrado',
@@ -526,6 +527,33 @@ CREATE TABLE IF NOT EXISTS `planes_config` (
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================================
+-- Renovaciones de planes (solicitudes de comerciantes)
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS `comercio_renovaciones` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `comercio_id` INT NOT NULL,
+    `usuario_id` INT NOT NULL,
+    `plan_actual` VARCHAR(20) NOT NULL,
+    `plan_solicitado` VARCHAR(20) NOT NULL,
+    `estado` ENUM('pendiente','aprobada','rechazada') NOT NULL DEFAULT 'pendiente',
+    `motivo_rechazo` TEXT DEFAULT NULL,
+    `aprobado_por` INT DEFAULT NULL,
+    `monto` DECIMAL(10,2) DEFAULT NULL,
+    `comprobante_pago` VARCHAR(255) DEFAULT NULL,
+    `fecha_pago` DATE DEFAULT NULL,
+    `metodo_pago` ENUM('transferencia','efectivo','webpay','flow','mercadopago') DEFAULT NULL,
+    `notas_admin` TEXT DEFAULT NULL,
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_renovacion_comercio` (`comercio_id`),
+    INDEX `idx_renovacion_estado` (`estado`),
+    INDEX `idx_renovacion_fecha` (`created_at`),
+    CONSTRAINT `fk_renovacion_comercio` FOREIGN KEY (`comercio_id`)
+        REFERENCES `comercios`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================

@@ -126,6 +126,12 @@ return [
     ['POST', '/admin/cambios-pendientes/aprobar/{id}', 'Admin\\CambiosPendientesController@aprobar',  ['auth']],
     ['POST', '/admin/cambios-pendientes/rechazar/{id}','Admin\\CambiosPendientesController@rechazar', ['auth']],
 
+    // ── Renovaciones de planes ──────────────────────────────
+    ['GET',  '/admin/renovaciones',               'Admin\\RenovacionAdminController@index',    ['auth']],
+    ['GET',  '/admin/renovaciones/ver/{id}',      'Admin\\RenovacionAdminController@show',     ['auth']],
+    ['POST', '/admin/renovaciones/aprobar/{id}',  'Admin\\RenovacionAdminController@aprobar',  ['auth']],
+    ['POST', '/admin/renovaciones/rechazar/{id}', 'Admin\\RenovacionAdminController@rechazar', ['auth']],
+
     // ── Reseñas ───────────────────────────────────────────────
     ['GET',  '/admin/resenas',                         'Admin\\ResenaAdminController@index',        ['auth']],
     ['GET',  '/admin/resenas/reportes',                'Admin\\ResenaAdminController@reportes',     ['auth']],
@@ -272,6 +278,7 @@ return [
     ['GET',  '/mi-comercio/logout',         'Public\\ComercianteController@logout',       []],
     ['GET',  '/mi-comercio/editar',             'Public\\ComercianteController@editar',            []],
     ['POST', '/mi-comercio/guardar',            'Public\\ComercianteController@guardar',           []],
+    ['POST', '/mi-comercio/solicitar-renovacion', 'Public\\ComercianteController@solicitarRenovacion', []],
     ['GET',  '/mi-comercio/olvide-contrasena',  'Public\\ComercianteController@forgotPasswordForm', []],
     ['POST', '/mi-comercio/olvide-contrasena',  'Public\\ComercianteController@sendResetLink',      []],
     ['GET',  '/mi-comercio/reset/{token}',      'Public\\ComercianteController@resetPasswordForm',  []],

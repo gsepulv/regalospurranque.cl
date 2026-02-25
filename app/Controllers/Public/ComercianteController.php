@@ -6,8 +6,10 @@ use App\Models\AdminUsuario;
 use App\Models\CambioPendiente;
 use App\Models\Categoria;
 use App\Models\Comercio;
+use App\Models\Configuracion;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Models\RenovacionComercio;
 use App\Services\Captcha;
 use App\Services\FileManager;
 use App\Services\Mailer;
@@ -308,13 +310,36 @@ class ComercianteController extends Controller
             $plan = PlanConfig::findBySlug($comercio['plan']);
         }
 
+        // Datos de renovación
+        $renovacion = null;
+        $renovacionesActivas = false;
+        $planesDisponibles = [];
+        $metodosPago = [];
+        $datosBanco = [];
+        if ($comercio) {
+            $confRenov = Configuracion::getByKey('renovaciones_activas');
+            $renovacionesActivas = $confRenov && $confRenov['valor'] === '1';
+            if ($renovacionesActivas) {
+                $renovacion = RenovacionComercio::getLatestPendienteByComercio($comercio['id']);
+                $planesDisponibles = PlanConfig::getActiveForRenewal();
+                $metodosPago = \App\Services\PasarelaPago::getMetodosActivos();
+                $pago = new \App\Services\PagoTransferencia();
+                $datosBanco = $pago->getDatosBancarios();
+            }
+        }
+
         $this->render('comerciante/dashboard', [
-            'title'      => 'Mi comercio — ' . SITE_NAME,
-            'noindex'    => true,
-            'comercio'   => $comercio,
-            'pendientes' => $pendientes,
-            'plan'       => $plan,
-            'usuario'    => $_SESSION['comerciante'],
+            'title'               => 'Mi comercio — ' . SITE_NAME,
+            'noindex'             => true,
+            'comercio'            => $comercio,
+            'pendientes'          => $pendientes,
+            'plan'                => $plan,
+            'usuario'             => $_SESSION['comerciante'],
+            'renovacion'          => $renovacion,
+            'renovacionesActivas' => $renovacionesActivas,
+            'planesDisponibles'   => $planesDisponibles,
+            'metodosPago'         => $metodosPago,
+            'datosBanco'          => $datosBanco,
         ]);
     }
 
@@ -538,6 +563,103 @@ class ComercianteController extends Controller
         $this->notificarCambios($comercio['id'], $comercio['nombre']);
 
         $_SESSION['flash_success'] = '¡Cambios enviados! Serán revisados por nuestro equipo antes de publicarse.';
+        header('Location: ' . url('/mi-comercio'));
+        exit;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // RENOVACIÓN DE PLAN
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Procesar solicitud de renovación de plan
+     */
+    public function solicitarRenovacion(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPor($uid);
+
+        if (!$comercio) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        // Verificar que renovaciones están activas
+        $confRenov = Configuracion::getByKey('renovaciones_activas');
+        if (!$confRenov || $confRenov['valor'] !== '1') {
+            $_SESSION['flash_error'] = 'El sistema de renovaciones no está habilitado.';
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        // Verificar que no tenga solicitud pendiente
+        if (RenovacionComercio::hasPendiente($comercio['id'])) {
+            $_SESSION['flash_error'] = 'Ya tienes una solicitud de renovación pendiente.';
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        // Validar plan solicitado
+        $planSlug = trim($_POST['plan_solicitado'] ?? '');
+        $planSolicitado = PlanConfig::findBySlug($planSlug);
+        if (!$planSolicitado || !$planSolicitado['activo'] || $planSlug === 'banner') {
+            $_SESSION['flash_error'] = 'Plan no válido.';
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        // Validar método de pago
+        $metodoPago = trim($_POST['metodo_pago'] ?? '');
+        $metodosActivos = \App\Services\PasarelaPago::getMetodosActivos();
+        if (!in_array($metodoPago, $metodosActivos)) {
+            $_SESSION['flash_error'] = 'Método de pago no válido.';
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        // Subir comprobante si es transferencia
+        $comprobante = null;
+        if ($metodoPago === 'transferencia' && !empty($_FILES['comprobante']['tmp_name']) && $_FILES['comprobante']['error'] === UPLOAD_ERR_OK) {
+            $comprobante = FileManager::subirImagen($_FILES['comprobante'], 'comprobantes', 1200);
+            if (!$comprobante) {
+                $_SESSION['flash_error'] = 'No se pudo subir el comprobante. Verifica que sea una imagen válida (JPG, PNG, WebP) de máximo 2 MB.';
+                header('Location: ' . url('/mi-comercio'));
+                exit;
+            }
+        }
+
+        // Fecha de pago
+        $fechaPago = !empty($_POST['fecha_pago']) ? $_POST['fecha_pago'] : null;
+        if ($fechaPago && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fechaPago)) {
+            $fechaPago = null;
+        }
+
+        // Monto desde el plan
+        $monto = (float)($planSolicitado['precio_regular'] ?? 0);
+
+        // Crear solicitud
+        RenovacionComercio::create([
+            'comercio_id'      => $comercio['id'],
+            'usuario_id'       => $uid,
+            'plan_actual'      => $comercio['plan'] ?? 'freemium',
+            'plan_solicitado'  => $planSlug,
+            'monto'            => $monto > 0 ? $monto : null,
+            'comprobante_pago' => $comprobante,
+            'fecha_pago'       => $fechaPago,
+            'metodo_pago'      => $metodoPago,
+        ]);
+
+        // Notificar admins
+        try {
+            \App\Services\Notification::renovacionNuevaAdmin($comercio, $planSolicitado);
+        } catch (\Throwable $e) {}
+
+        $_SESSION['flash_success'] = '¡Solicitud de renovación enviada! Nuestro equipo la revisará pronto.';
         header('Location: ' . url('/mi-comercio'));
         exit;
     }

@@ -316,6 +316,7 @@ class PlanAdminController extends Controller
             'max_cupos_categoria' => !empty($_POST['max_cupos_categoria']) ? (int)$_POST['max_cupos_categoria'] : null,
             'color'               => $_POST['color'] ?? '#6B7280',
             'icono'               => trim($_POST['icono'] ?? ''),
+            'duracion_dias'       => max(1, (int)($_POST['duracion_dias'] ?? 30)),
             'orden'               => (int)($_POST['orden'] ?? 0),
             'activo'              => isset($_POST['activo']) ? 1 : 0,
         ];

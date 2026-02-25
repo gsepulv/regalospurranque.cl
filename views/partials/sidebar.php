@@ -21,6 +21,10 @@
         try {
         $cambiosPendientes = \App\Core\Database::getInstance()->count('comercio_cambios_pendientes', "estado = 'pendiente'");
         } catch (\Throwable $e) {}
+        $renovacionesPendientes = 0;
+        try {
+            $renovacionesPendientes = \App\Core\Database::getInstance()->count('comercio_renovaciones', "estado = 'pendiente'");
+        } catch (\Throwable $e) {}
         $mensajesNoLeidos = 0;
         try {
             $mensajesNoLeidos = \App\Core\Database::getInstance()->count('mensajes_contacto', 'leido = 0');
@@ -42,6 +46,7 @@
             ['resenas',      'Reseñas',           '/admin/resenas',       '&#11088;',  $pendientes ?: null],
             ['planes',       'Planes',            '/admin/planes',        '&#128176;', null],
             ['cambios',      'Cambios Pendientes','/admin/cambios-pendientes', '&#128221;', $cambiosPendientes ?: null],
+            ['renovaciones', 'Renovaciones',      '/admin/renovaciones',      '&#128260;', $renovacionesPendientes ?: null],
             ['contacto',     'Contacto',          '/admin/contacto',      '&#128233;', $mensajesNoLeidos ?: null],
             ['correos',      'Enviar Correo',     '/admin/correos',       '&#9993;',   null],
             ['reportes',     'Reportes',          '/admin/reportes',      '&#128200;', null],
