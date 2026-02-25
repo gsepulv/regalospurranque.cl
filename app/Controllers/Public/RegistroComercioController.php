@@ -220,6 +220,8 @@ class RegistroComercioController extends Controller
             'logo'           => $logoPath,
             'portada'        => $portadaPath,
             'plan'           => 'freemium',
+            'plan_inicio'    => date('Y-m-d'),
+            'plan_fin'       => date('Y-m-d', strtotime('+30 days')),
             'activo'         => 0,
             'destacado'      => 0,
             'registrado_por' => $uid,

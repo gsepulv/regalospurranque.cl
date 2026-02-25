@@ -82,7 +82,8 @@ class HomeController extends Controller
                     "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
                      AND EXISTS (SELECT 1 FROM comercio_categoria cc
                                  JOIN comercios co ON co.id = cc.comercio_id
-                                 WHERE cc.categoria_id = c.id AND co.activo = 1 AND co.calidad_ok = 1)"
+                                 WHERE cc.categoria_id = c.id AND co.activo = 1 AND co.calidad_ok = 1
+                                       AND (co.plan_fin IS NULL OR co.plan_fin >= CURDATE()))"
                 );
                 foreach ($rows as $r) {
                     $urls[] = [
@@ -105,7 +106,7 @@ class HomeController extends Controller
                 }
             },
             'comercios' => function () use (&$urls) {
-                $rows = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1");
+                $rows = $this->db->fetchAll("SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1 AND (plan_fin IS NULL OR plan_fin >= CURDATE())");
                 foreach ($rows as $r) {
                     $urls[] = [
                         'loc' => url('/comercio/' . $r['slug']),
