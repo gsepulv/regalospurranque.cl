@@ -34,9 +34,9 @@ function asset(string $path): string
 /**
  * Obtener valor anterior de formulario (para repoblar tras error)
  */
-function old(string $field, string $default = ''): string
+function old(string $field, ?string $default = ''): string
 {
-    return e($_SESSION['flash']['old'][$field] ?? $default);
+    return e($_SESSION['flash']['old'][$field] ?? $default ?? '');
 }
 
 /**
