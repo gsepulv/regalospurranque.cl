@@ -352,7 +352,7 @@ $regUrl = $registroUrl ?? ($siteUrl . '/registrar-comercio');
             <p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; 1. <a href="<?= $siteUrl ?>/terminos" style="color:#CC0000;text-decoration:underline;font-weight:bold;">T&eacute;rminos y Condiciones</a></p>
             <p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; 2. <a href="<?= $siteUrl ?>/privacidad" style="color:#CC0000;text-decoration:underline;font-weight:bold;">Pol&iacute;tica de Privacidad</a></p>
             <p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; 3. <a href="<?= $siteUrl ?>/contenidos" style="color:#CC0000;text-decoration:underline;font-weight:bold;">Pol&iacute;tica de Contenidos</a></p>
-            <p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; 4. <a href="<?= $siteUrl ?>/derechos" style="color:#CC0000;text-decoration:underline;font-weight:bold;">Derechos de Autor</a></p>
+            <p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; 4. <a href="<?= $siteUrl ?>/derechos" style="color:#CC0000;text-decoration:underline;font-weight:bold;">Ejercicio de Derechos</a></p>
             <p style="margin:0 0 14px;color:#CC0000;font-size:14px;">&#128209; 5. <a href="<?= $siteUrl ?>/cookies" style="color:#CC0000;text-decoration:underline;font-weight:bold;">Pol&iacute;tica de Cookies</a></p>
             <p style="margin:0;color:#CC0000;font-size:14px;font-weight:bold;">&#128683; El rechazo de cualquiera de estas pol&iacute;ticas impide la publicaci&oacute;n de su negocio en la plataforma.</p>
         </td>

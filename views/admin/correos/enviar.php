@@ -336,7 +336,7 @@ function tplConsultaInscripcion(nombre, comercio, categoria, inclFecha) {
     html += '</td></tr></table>';
     html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF5F5;border:2px solid #CC0000;border-radius:8px;margin:0 0 24px;"><tr><td style="padding:20px;">';
     html += '<p style="margin:0 0 14px;color:#CC0000;font-size:14px;line-height:1.6;">Para completar su registro es <strong>OBLIGATORIO</strong> leer los siguientes documentos:</p>';
-    var politicas = ['T&eacute;rminos y Condiciones', 'Pol&iacute;tica de Privacidad', 'Pol&iacute;tica de Contenidos', 'Derechos de Autor', 'Pol&iacute;tica de Cookies'];
+    var politicas = ['T&eacute;rminos y Condiciones', 'Pol&iacute;tica de Privacidad', 'Pol&iacute;tica de Contenidos', 'Ejercicio de Derechos', 'Pol&iacute;tica de Cookies'];
     var politicasUrls = ['/terminos', '/privacidad', '/contenidos', '/derechos', '/cookies'];
     for (var k = 0; k < politicas.length; k++) {
         html += '<p style="margin:0 0 6px;color:#CC0000;font-size:14px;">&#128209; ' + (k+1) + '. <a href="' + siteUrl + politicasUrls[k] + '" style="color:#CC0000;text-decoration:underline;font-weight:bold;">' + politicas[k] + '</a></p>';
