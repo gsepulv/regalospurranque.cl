@@ -39,7 +39,7 @@ class RenovacionAdminController extends Controller
             'renovaciones' => $renovaciones,
             'conteos'      => $conteos,
             'estadoActual' => $estado,
-            'page'         => $page,
+            'currentPage'  => $page,
             'totalPages'   => max(1, ceil($total / $limit)),
             'total'        => $total,
         ]);

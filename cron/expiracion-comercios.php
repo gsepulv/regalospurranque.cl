@@ -55,6 +55,21 @@ try {
 
     echo "[" . date('Y-m-d H:i:s') . "] Total desactivados: {$count}\n";
 
+    // Registrar en admin_log
+    if ($count > 0) {
+        $nombres = array_column($vencidos, 'nombre');
+        $db->insert('admin_log', [
+            'usuario_id'     => null,
+            'usuario_nombre' => 'cron',
+            'modulo'         => 'comercios',
+            'accion'         => 'expiracion_automatica',
+            'entidad_tipo'   => 'comercio',
+            'entidad_id'     => null,
+            'detalle'        => "Desactivados {$count} comercios vencidos: " . implode(', ', $nombres),
+            'ip'             => '127.0.0.1',
+        ]);
+    }
+
 } catch (\Throwable $e) {
     echo "[ERROR] " . $e->getMessage() . "\n";
     error_log("[cron/expiracion-comercios] " . $e->getMessage());

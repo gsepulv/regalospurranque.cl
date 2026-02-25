@@ -1,5 +1,5 @@
 -- ============================================================================
--- Base de Datos: purranque_regalos_purranque
+-- Base de Datos: purranque_regalos_v2
 -- Proyecto: Regalos Purranque v2 - Directorio Comercial
 -- Descripcion: Esquema completo con las 30 tablas del sistema
 -- Motor: InnoDB | Charset: utf8mb4 | Collation: utf8mb4_unicode_ci
@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS `admin_log` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `configuracion` (
     `clave` VARCHAR(100) NOT NULL,
+    `site_id` INT NOT NULL DEFAULT 1,
     `valor` TEXT DEFAULT NULL,
     `grupo` VARCHAR(50) NOT NULL DEFAULT 'general',
     PRIMARY KEY (`clave`),
@@ -130,6 +131,7 @@ CREATE TABLE IF NOT EXISTS `comercios` (
     `plan_fin` DATE DEFAULT NULL,
     `max_fotos` TINYINT UNSIGNED NOT NULL DEFAULT 1,
     `activo` TINYINT(1) NOT NULL DEFAULT 1,
+    `calidad_ok` TINYINT(1) NOT NULL DEFAULT 0,
     `registrado_por` INT DEFAULT NULL,
     `destacado` TINYINT(1) NOT NULL DEFAULT 0,
     `validado` TINYINT(1) NOT NULL DEFAULT 0,
@@ -169,6 +171,7 @@ CREATE TABLE IF NOT EXISTS `comercios` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `categorias` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `nombre` VARCHAR(100) NOT NULL,
     `slug` VARCHAR(120) NOT NULL,
     `descripcion` TEXT DEFAULT NULL,
@@ -206,6 +209,7 @@ CREATE TABLE IF NOT EXISTS `comercio_categoria` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `fechas_especiales` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `nombre` VARCHAR(150) NOT NULL,
     `slug` VARCHAR(170) NOT NULL,
     `descripcion` TEXT DEFAULT NULL,
@@ -292,6 +296,7 @@ CREATE TABLE IF NOT EXISTS `comercio_horarios` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `noticias` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `titulo` VARCHAR(200) NOT NULL,
     `slug` VARCHAR(220) NOT NULL,
     `contenido` LONGTEXT DEFAULT NULL,
@@ -350,6 +355,7 @@ CREATE TABLE IF NOT EXISTS `noticia_fecha` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `banners` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `titulo` VARCHAR(150) DEFAULT NULL,
     `tipo` ENUM('hero','sidebar','entre_comercios','footer') NOT NULL DEFAULT 'sidebar',
     `imagen` VARCHAR(255) NOT NULL,
@@ -382,6 +388,7 @@ CREATE TABLE IF NOT EXISTS `banners` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `resenas` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `comercio_id` INT NOT NULL,
     `nombre_autor` VARCHAR(100) NOT NULL,
     `email_autor` VARCHAR(150) DEFAULT NULL,
@@ -428,6 +435,7 @@ CREATE TABLE IF NOT EXISTS `resenas_reportes` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `seo_config` (
     `clave` VARCHAR(100) NOT NULL,
+    `site_id` INT NOT NULL DEFAULT 1,
     `valor` TEXT DEFAULT NULL,
     PRIMARY KEY (`clave`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -438,6 +446,7 @@ CREATE TABLE IF NOT EXISTS `seo_config` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `seo_redirects` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `url_origen` VARCHAR(500) NOT NULL,
     `url_destino` VARCHAR(500) NOT NULL,
     `tipo` SMALLINT NOT NULL DEFAULT 301,
@@ -456,6 +465,7 @@ CREATE TABLE IF NOT EXISTS `seo_redirects` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `visitas_log` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `comercio_id` INT DEFAULT NULL,
     `pagina` VARCHAR(500) DEFAULT NULL,
     `tipo` VARCHAR(50) DEFAULT NULL,
@@ -477,6 +487,7 @@ CREATE TABLE IF NOT EXISTS `visitas_log` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `analytics_diario` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `fecha` DATE NOT NULL,
     `pagina` VARCHAR(500) DEFAULT NULL,
     `visitas` INT NOT NULL DEFAULT 0,
@@ -529,6 +540,21 @@ CREATE TABLE IF NOT EXISTS `planes_config` (
     UNIQUE KEY `uk_slug` (`slug`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------------------------------
+-- Tabla: login_intentos
+-- Registro de intentos de login (exitosos y fallidos) para rate limiting
+-- ----------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `login_intentos` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `ip` VARCHAR(45) NOT NULL,
+    `email` VARCHAR(255) DEFAULT NULL,
+    `exitoso` TINYINT(1) NOT NULL DEFAULT 0,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_ip_fecha` (`ip`, `created_at`),
+    INDEX `idx_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- ============================================================================
 -- Renovaciones de planes (solicitudes de comerciantes)
 -- ============================================================================
@@ -553,7 +579,11 @@ CREATE TABLE IF NOT EXISTS `comercio_renovaciones` (
     INDEX `idx_renovacion_estado` (`estado`),
     INDEX `idx_renovacion_fecha` (`created_at`),
     CONSTRAINT `fk_renovacion_comercio` FOREIGN KEY (`comercio_id`)
-        REFERENCES `comercios`(`id`) ON DELETE CASCADE
+        REFERENCES `comercios`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_renovacion_usuario` FOREIGN KEY (`usuario_id`)
+        REFERENCES `admin_usuarios`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_renovacion_aprobador` FOREIGN KEY (`aprobado_por`)
+        REFERENCES `admin_usuarios`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -572,7 +602,13 @@ CREATE TABLE IF NOT EXISTS `comercio_cambios_pendientes` (
     PRIMARY KEY (`id`),
     KEY `idx_comercio` (`comercio_id`),
     KEY `idx_estado` (`estado`),
-    KEY `idx_usuario` (`usuario_id`)
+    KEY `idx_usuario` (`usuario_id`),
+    CONSTRAINT `fk_cambios_comercio` FOREIGN KEY (`comercio_id`)
+        REFERENCES `comercios`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_cambios_usuario` FOREIGN KEY (`usuario_id`)
+        REFERENCES `admin_usuarios`(`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_cambios_revisor` FOREIGN KEY (`revisado_por`)
+        REFERENCES `admin_usuarios`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================================
@@ -587,6 +623,7 @@ CREATE TABLE IF NOT EXISTS `mensajes_contacto` (
     `ip` VARCHAR(45) DEFAULT '',
     `leido` TINYINT(1) NOT NULL DEFAULT 0,
     `instrucciones_enviadas` TINYINT(1) NOT NULL DEFAULT 0,
+    `respondido` TINYINT(1) NOT NULL DEFAULT 0,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -698,6 +735,6 @@ CREATE TABLE IF NOT EXISTS `politicas_aceptacion` (
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================================================
--- FIN DEL ESQUEMA - purranque_regalos_purranque
--- Total de tablas: 30
+-- FIN DEL ESQUEMA - purranque_regalos_v2
+-- Total de tablas: 31
 -- ============================================================================

@@ -4,6 +4,7 @@
  * Variables: $comercios, optionally $banner
  */
 $editing = isset($banner);
+$errors  = $flash['errors'] ?? [];
 
 // Especificaciones por tipo de banner
 $bannerSpecs = [

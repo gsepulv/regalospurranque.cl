@@ -109,7 +109,7 @@
         <?php
         $baseUrl = '/admin/renovaciones';
         $queryParams = ['estado' => $estadoActual];
-        include __DIR__ . '/../../partials/pagination.php';
+        include BASE_PATH . '/views/partials/pagination.php';
         ?>
     <?php endif; ?>
 <?php endif; ?>

@@ -321,6 +321,7 @@ class Mailer
                 'asunto'       => mb_substr($subject, 0, 255),
                 'template'     => $template,
                 'estado'       => $sent ? 'enviado' : 'fallido',
+                'site_id'      => \App\Services\SiteManager::getInstance()->getSiteId(),
                 'datos'        => json_encode(
                     array_merge($data, $method ? ['_metodo' => $method] : []),
                     JSON_UNESCAPED_UNICODE

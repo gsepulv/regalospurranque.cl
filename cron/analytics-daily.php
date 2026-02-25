@@ -2,7 +2,7 @@
 /**
  * Cron: Consolidación diaria de analytics
  * Ejecutar vía cPanel: una vez al día a las 00:05
- * Comando: php /home/user/public_html/cron/analytics-daily.php
+ * Comando: php /home/purranque/v2.regalos.purranque.info/cron/analytics-daily.php
  */
 
 // Solo ejecución desde CLI

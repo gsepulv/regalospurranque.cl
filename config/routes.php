@@ -176,7 +176,7 @@ return [
     ['GET',  '/admin/notificaciones',                'Admin\\NotificacionAdminController@index',      ['auth']],
     ['POST', '/admin/notificaciones/config',         'Admin\\NotificacionAdminController@saveConfig', ['auth']],
     ['POST', '/admin/notificaciones/test',           'Admin\\NotificacionAdminController@test',       ['auth']],
-    ['GET',  '/admin/notificaciones/log',            'Admin\\NotificacionAdminController@logview',        ['auth']],
+    ['GET',  '/admin/notificaciones/log',            'Admin\\NotificacionAdminController@logView',        ['auth']],
     ['POST', '/admin/notificaciones/log/limpiar',    'Admin\\NotificacionAdminController@cleanLog',   ['auth']],
 
     // ── Compartidos ─────────────────────────────────────────

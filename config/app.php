@@ -6,12 +6,13 @@
  * Detección automática de entorno — no requiere cambios manuales para deploy
  */
 
-// Detección automática: producción si el host es el dominio oficial o el subdominio v2
+// Detección automática: producción si el host es el dominio oficial, subdominio v2, o CLI en servidor
 $isProduction = isset($_SERVER['HTTP_HOST'])
-    && (
+    ? (
         str_contains($_SERVER['HTTP_HOST'], 'regalospurranque.cl')
         || str_contains($_SERVER['HTTP_HOST'], 'regalos.purranque.info')
-    );
+    )
+    : is_dir('/home/purranque');
 
 // Entorno: development | production
 define('APP_ENV', $isProduction ? 'production' : 'development');

@@ -81,7 +81,7 @@ $errors  = $flash['errors'] ?? [];
                           rows="6"
                           minlength="20"
                           maxlength="5000"
-                          required><?= e(old('descripcion', $editing ? $comercio['descripcion'] : '')) ?></textarea>
+                          required><?= e(old('descripcion', $editing ? ($comercio['descripcion'] ?? '') : '')) ?></textarea>
                 <small style="color:var(--color-gray)">Min. 20, max. 5000 caracteres.</small>
             </div>
 
@@ -92,7 +92,7 @@ $errors  = $flash['errors'] ?? [];
                            id="telefono"
                            name="telefono"
                            class="form-control"
-                           value="<?= e(old('telefono', $editing ? $comercio['telefono'] : '')) ?>"
+                           value="<?= e(old('telefono', $editing ? ($comercio['telefono'] ?? '') : '')) ?>"
                            minlength="9"
                            maxlength="20"
                            required>
@@ -104,7 +104,7 @@ $errors  = $flash['errors'] ?? [];
                            id="whatsapp"
                            name="whatsapp"
                            class="form-control"
-                           value="<?= e(old('whatsapp', $editing ? $comercio['whatsapp'] : '')) ?>"
+                           value="<?= e(old('whatsapp', $editing ? ($comercio['whatsapp'] ?? '') : '')) ?>"
                            minlength="9"
                            maxlength="20"
                            required>
@@ -116,7 +116,7 @@ $errors  = $flash['errors'] ?? [];
                            id="email"
                            name="email"
                            class="form-control"
-                           value="<?= e(old('email', $editing ? $comercio['email'] : '')) ?>"
+                           value="<?= e(old('email', $editing ? ($comercio['email'] ?? '') : '')) ?>"
                            maxlength="150"
                            required>
                 </div>
@@ -129,7 +129,7 @@ $errors  = $flash['errors'] ?? [];
                            id="sitio_web"
                            name="sitio_web"
                            class="form-control"
-                           value="<?= e(old('sitio_web', $editing ? $comercio['sitio_web'] : '')) ?>"
+                           value="<?= e(old('sitio_web', $editing ? ($comercio['sitio_web'] ?? '') : '')) ?>"
                            placeholder="https://"
                            minlength="10"
                            maxlength="255"
@@ -142,7 +142,7 @@ $errors  = $flash['errors'] ?? [];
                            id="direccion"
                            name="direccion"
                            class="form-control"
-                           value="<?= e(old('direccion', $editing ? $comercio['direccion'] : '')) ?>"
+                           value="<?= e(old('direccion', $editing ? ($comercio['direccion'] ?? '') : '')) ?>"
                            minlength="5"
                            maxlength="255"
                            required>

@@ -6,6 +6,7 @@
 $editing  = isset($noticia);
 $catIds   = $catIds ?? [];
 $fechaIds = $fechaIds ?? [];
+$errors  = $flash['errors'] ?? [];
 
 // TinyMCE config desde admin
 $tinymceHeight     = \App\Services\RedesSociales::get('tinymce_height', '500');

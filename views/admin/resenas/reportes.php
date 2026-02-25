@@ -83,7 +83,7 @@
                     <?php
                     $baseUrl     = '/admin/resenas/reportes';
                     $queryParams = [];
-                    include BASE_PATH . '/views/partials/págination.php';
+                    include BASE_PATH . '/views/partials/pagination.php';
                     ?>
                 </div>
             </div>

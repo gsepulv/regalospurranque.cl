@@ -4,6 +4,7 @@
  * Variables: optionally $usuario
  */
 $editing = isset($usuario);
+$errors  = $flash['errors'] ?? [];
 ?>
 <div class="admin-breadcrumb">
     <a href="<?= url('/admin/dashboard') ?>">Dashboard</a> &rsaquo;

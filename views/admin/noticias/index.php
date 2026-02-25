@@ -135,7 +135,7 @@
                 <?php
                 $baseUrl    = '/admin/noticias';
                 $queryParams = array_filter($filters, fn($v) => $v !== '');
-                include BASE_PATH . '/views/partials/págination.php';
+                include BASE_PATH . '/views/partials/pagination.php';
                 ?>
             </div>
         </div>

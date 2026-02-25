@@ -106,7 +106,11 @@ class AdminLog
         );
     }
 
-    public static function getWeeklyStats(): array
+    /**
+     * Estadísticas de visitas de los últimos 7 días.
+     * Nota: consulta visitas_log (no admin_log) para el gráfico del dashboard.
+     */
+    public static function getWeeklyVisitStats(): array
     {
         return Database::getInstance()->fetchAll(
             "SELECT DATE(created_at) as fecha, COUNT(*) as total
@@ -114,5 +118,11 @@ class AdminLog
              WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
              GROUP BY DATE(created_at) ORDER BY fecha ASC"
         );
+    }
+
+    /** @deprecated Usar getWeeklyVisitStats() */
+    public static function getWeeklyStats(): array
+    {
+        return self::getWeeklyVisitStats();
     }
 }

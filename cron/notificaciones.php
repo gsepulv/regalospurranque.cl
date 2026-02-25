@@ -4,7 +4,7 @@
  * - Resumen semanal (ejecutar los lunes)
  * - Fechas especiales próximas (7 días antes)
  * Ejecutar vía cPanel: una vez al día
- * Comando: php /home/user/regalos-v2/cron/notificaciones.php
+ * Comando: php /home/purranque/v2.regalos.purranque.info/cron/notificaciones.php
  */
 
 // Solo ejecución desde CLI

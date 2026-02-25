@@ -4,6 +4,7 @@
  * Variables: $plan (null si crear, array si editar)
  */
 $esEditar = !empty($plan);
+$errors   = $flash['errors'] ?? [];
 ?>
 <style>
 .plan-form{max-width:780px}
