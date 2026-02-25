@@ -9,7 +9,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Política de Contenidos</h1>
-            <p class="legal-updated">Última actualización: 20/02/2026</p>
+            <p class="legal-updated">Última actualización: 24 de febrero de 2026, 22:00 hrs.</p>
 
             <h2>1. Naturaleza y Alcance</h2>
             <p>PurranQUE.INFO y la plataforma Regalos Purranque (regalospurranque.cl) constituyen plataformas digitales de carácter comunitario, informativo y de acceso público, cuyo contenido está destinado a audiencias de todas las edades.</p>

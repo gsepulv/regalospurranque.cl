@@ -9,7 +9,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Términos y Condiciones de Uso</h1>
-            <p class="legal-updated">Última actualización: <?= date('d/m/Y') ?></p>
+            <p class="legal-updated">Última actualización: 24 de febrero de 2026, 22:00 hrs.</p>
 
             <h2>1. Aceptación de los Términos</h2>
             <p>Al acceder y utilizar el sitio web <?= e(SITE_NAME) ?> (en adelante, "la Plataforma"), usted acepta cumplir y estar sujeto a los siguientes términos y condiciones de uso. Si no está de acuerdo con alguno de estos términos, le solicitamos que no utilice la Plataforma.</p>

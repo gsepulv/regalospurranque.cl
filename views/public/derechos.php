@@ -1,6 +1,7 @@
 <div class="page-content derechos-page">
 
   <h1>Ejercicio de Derechos sobre Datos Personales</h1>
+  <p class="legal-updated">Última actualización: 24 de febrero de 2026, 22:00 hrs.</p>
 
   <div class="derechos-intro">
     <p>

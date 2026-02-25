@@ -9,7 +9,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Política de Privacidad</h1>
-            <p class="legal-updated">Última actualización: 20/02/2026</p>
+            <p class="legal-updated">Última actualización: 24 de febrero de 2026, 22:00 hrs.</p>
 
             <h2>1. Responsable del Tratamiento</h2>
             <p><?= e(SITE_NAME) ?>, con domicilio en Purranque, Región de Los Lagos, Chile, es responsable del tratamiento de los datos personales recopilados a través de esta plataforma, en conformidad con la Ley 19.628 sobre Protección de la Vida Privada, modificada por la Ley 21.719 sobre Protección de Datos Personales.</p>

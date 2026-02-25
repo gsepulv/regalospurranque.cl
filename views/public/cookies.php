@@ -8,7 +8,7 @@
     <div class="container">
         <div class="legal-content">
             <h1>Política de Cookies</h1>
-            <p class="legal-updated">Última actualización: 20/02/2026</p>
+            <p class="legal-updated">Última actualización: 24 de febrero de 2026, 22:00 hrs.</p>
 
             <h2>1. ¿Qué son las Cookies?</h2>
             <p>Las cookies son pequeños archivos de texto que los sitios web almacenan en su dispositivo (computador, tablet o teléfono) cuando los visita. Se utilizan ampliamente para hacer que los sitios web funcionen de manera más eficiente y para proporcionar información a los propietarios del sitio.</p>
