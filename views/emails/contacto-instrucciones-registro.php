@@ -404,7 +404,7 @@ $regUrl = $registroUrl ?? ($siteUrl . '/registrar-comercio');
         <td style="padding:16px 20px;">
             <p style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#CC0000;">&#128172; &iquest;Tiene dudas?</p>
             <p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;line-height:1.6;">Puede responder directamente a este correo o escribirnos a trav&eacute;s de:</p>
-            <p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">&#128233; Email: <a href="mailto:contacto@regalospurranque.cl" style="color:#CC0000;">contacto@regalospurranque.cl</a></p>
+            <p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">&#128233; Email: <a href="mailto:regalospurranque@gmail.com" style="color:#CC0000;">regalospurranque@gmail.com</a></p>
             <p style="margin:0;color:#4A4A4A;font-size:14px;">&#127760; Web: <a href="<?= $siteUrl ?>/contacto" style="color:#CC0000;"><?= $siteUrl ?>/contacto</a></p>
         </td>
     </tr>

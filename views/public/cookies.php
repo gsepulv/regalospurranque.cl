@@ -81,7 +81,7 @@
             <h2>5. Contacto</h2>
             <p>Para consultas sobre nuestra política de cookies:</p>
             <ul>
-                <li>Correo electrónico: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></li>
+                <li>Correo electrónico: <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a></li>
             </ul>
             <p>Para más información sobre el tratamiento de datos personales, consulte nuestra <a href="<?= url('/privacidad') ?>">Política de Privacidad</a>.</p>
         </div>

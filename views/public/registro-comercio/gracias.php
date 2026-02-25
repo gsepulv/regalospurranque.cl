@@ -62,7 +62,7 @@
         </a>
 
         <p style="font-size:0.8rem;color:#9CA3AF;margin-top:1rem">
-            Si tienes dudas, escríbenos por WhatsApp o a contacto@purranque.info
+            Si tienes dudas, escríbenos por WhatsApp o a regalospurranque@gmail.com
         </p>
 
     </div>

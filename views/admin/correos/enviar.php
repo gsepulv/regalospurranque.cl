@@ -357,7 +357,7 @@ function tplConsultaInscripcion(nombre, comercio, categoria, inclFecha) {
     html += '<table width="100%" cellpadding="0" cellspacing="0" style="background:#FFF8F0;border:1px solid #E8D5B0;border-radius:8px;margin:0 0 24px;"><tr><td style="padding:16px 20px;">';
     html += '<p style="margin:0 0 8px;font-size:15px;font-weight:bold;color:#CC0000;">&#128172; &iquest;Tiene dudas?</p>';
     html += '<p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">Puede responder directamente a este correo o escribirnos a:</p>';
-    html += '<p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">&#128233; <a href="mailto:contacto@regalospurranque.cl" style="color:#CC0000;">contacto@regalospurranque.cl</a></p>';
+    html += '<p style="margin:0 0 4px;color:#4A4A4A;font-size:14px;">&#128233; <a href="mailto:regalospurranque@gmail.com" style="color:#CC0000;">regalospurranque@gmail.com</a></p>';
     html += '<p style="margin:0;color:#4A4A4A;font-size:14px;">&#127760; <a href="' + siteUrl + '/contacto" style="color:#CC0000;">' + siteUrl + '/contacto</a></p>';
     html += '</td></tr></table>';
 

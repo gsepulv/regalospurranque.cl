@@ -55,7 +55,7 @@
                 <li><strong>Reseñas:</strong> Se conservan mientras estén publicadas en la plataforma.</li>
                 <li><strong>Datos de navegación:</strong> Se conservan por un máximo de 12 meses.</li>
                 <li><strong>Datos de contacto:</strong> Se conservan mientras sea necesario para atender su solicitud.</li>
-                <li><strong>Datos de cuenta de comerciante:</strong> Se conservan mientras la cuenta esté activa. El comerciante puede solicitar la eliminación de su cuenta en cualquier momento contactándonos en <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>.</li>
+                <li><strong>Datos de cuenta de comerciante:</strong> Se conservan mientras la cuenta esté activa. El comerciante puede solicitar la eliminación de su cuenta en cualquier momento contactándonos en <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a>.</li>
             </ul>
 
             <h2>6. Derechos del Titular</h2>
@@ -72,7 +72,7 @@
             <p>Puedes ejercer estos derechos de dos formas:</p>
             <ol>
                 <li><strong>Formulario web:</strong> Visita nuestra página de <a href="<?= url('/derechos') ?>">Ejercicio de Derechos</a> y completa el formulario con tu solicitud.</li>
-                <li><strong>Correo electrónico:</strong> Envía tu solicitud a <a href="mailto:contacto@purranque.info">contacto@purranque.info</a> indicando tu nombre completo, el derecho que deseas ejercer y una descripción de tu solicitud.</li>
+                <li><strong>Correo electrónico:</strong> Envía tu solicitud a <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a> indicando tu nombre completo, el derecho que deseas ejercer y una descripción de tu solicitud.</li>
             </ol>
             <p><strong>Plazo de respuesta:</strong> Nos comprometemos a responder tu solicitud dentro de <strong>10 días hábiles</strong> desde su recepción.</p>
             <p><strong>Registro:</strong> Todas las solicitudes quedan registradas internamente para garantizar trazabilidad y cumplimiento normativo.</p>
@@ -113,7 +113,7 @@
                 <li>Documentar el incidente, incluyendo: naturaleza de la brecha, datos afectados, consecuencias probables y medidas adoptadas.</li>
                 <li>Implementar medidas correctivas para evitar la recurrencia del incidente.</li>
             </ul>
-            <p>Para reportar un incidente de seguridad: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></p>
+            <p>Para reportar un incidente de seguridad: <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a></p>
 
             <h3>8.2. Política de Respaldo y Retención</h3>
             <p><?= e(SITE_NAME) ?> realiza respaldos automáticos diarios de la base de datos y archivos del sitio. Los respaldos se almacenan de forma cifrada y se retienen por un máximo de 30 días, tras lo cual son eliminados automáticamente. En caso de restauración, solo se utiliza el respaldo más reciente disponible.</p>
@@ -131,7 +131,7 @@
             <p>El responsable interno de la protección de datos personales en <?= e(SITE_NAME) ?> es:</p>
             <p>
                 <strong>Gustavo Sepúlveda Sánchez</strong><br>
-                Correo: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a><br>
+                Correo: <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a><br>
                 Ubicación: Purranque, Región de Los Lagos, Chile
             </p>
             <p>Puede dirigir cualquier consulta o solicitud relacionada con el tratamiento de sus datos personales a este contacto.</p>
@@ -139,7 +139,7 @@
             <h2>13. Contacto</h2>
             <p>Para consultas sobre privacidad y protección de datos:</p>
             <ul>
-                <li>Correo electrónico: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></li>
+                <li>Correo electrónico: <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a></li>
                 <li>Ubicación: Purranque, Región de Los Lagos, Chile</li>
             </ul>
         </div>

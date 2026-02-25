@@ -106,7 +106,7 @@ $errors = $flash['errors'] ?? [];
 
                         <div class="contact-item">
                             <span class="contact-item__icon">&#9993;</span>
-                            <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>
+                            <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a>
                         </div>
 
                         <?php // Profiles: sidebar position ?>

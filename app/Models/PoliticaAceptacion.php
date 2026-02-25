@@ -48,7 +48,7 @@ class PoliticaAceptacion
             'terminos'    => 'Términos y Condiciones',
             'privacidad'  => 'Política de Privacidad',
             'contenidos'  => 'Política de Contenidos',
-            'derechos'    => 'Derechos del Usuario',
+            'derechos'    => 'Ejercicio de Derechos',
             'cookies'     => 'Política de Cookies',
         ];
 

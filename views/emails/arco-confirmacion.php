@@ -34,5 +34,5 @@
 
 <p style="color:#475569;margin:0 0 16px;line-height:1.6;">
     Si necesita comunicarse antes, puede escribirnos a
-    <a href="mailto:contacto@purranque.info" style="color:#2563eb">contacto@purranque.info</a>
+    <a href="mailto:regalospurranque@gmail.com" style="color:#2563eb">regalospurranque@gmail.com</a>
 </p>

@@ -73,7 +73,7 @@
                 <li>Utilizar dicho contenido con fines de promoción de la Plataforma (redes sociales, materiales institucionales, presentaciones a entidades públicas).</li>
                 <li>Adaptar el formato del contenido para diferentes dispositivos y medios.</li>
             </ul>
-            <p>Esta licencia no implica transferencia de propiedad intelectual. El comerciante conserva todos los derechos sobre su contenido original y puede solicitar su eliminación en cualquier momento contactándonos en <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>.</p>
+            <p>Esta licencia no implica transferencia de propiedad intelectual. El comerciante conserva todos los derechos sobre su contenido original y puede solicitar su eliminación en cualquier momento contactándonos en <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a>.</p>
 
             <h2>7. Propiedad Intelectual</h2>
             <p>Todo el contenido original de la Plataforma (diseño, logotipos, textos, código fuente) es propiedad de <?= e(SITE_NAME) ?> y está protegido por la Ley 17.336 sobre Propiedad Intelectual de Chile. Queda prohibida su reproducción sin autorización expresa.</p>
@@ -103,7 +103,7 @@
             <h2>12. Contacto</h2>
             <p>Para consultas sobre estos términos, puede contactarnos a través de:</p>
             <ul>
-                <li>Correo electrónico: <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></li>
+                <li>Correo electrónico: <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a></li>
                 <li>Ubicación: Purranque, Región de Los Lagos, Chile</li>
             </ul>
         </div>

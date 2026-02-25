@@ -43,7 +43,7 @@ unset($_SESSION['flash_errors'], $_SESSION['flash_old'], $_SESSION['flash_error'
                     'terminos'    => ['nombre' => 'Términos y Condiciones',  'url' => url('/terminos')],
                     'privacidad'  => ['nombre' => 'Política de Privacidad',  'url' => url('/privacidad')],
                     'contenidos'  => ['nombre' => 'Política de Contenidos',  'url' => url('/contenidos')],
-                    'derechos'    => ['nombre' => 'Derechos del Usuario',    'url' => url('/derechos')],
+                    'derechos'    => ['nombre' => 'Ejercicio de Derechos',   'url' => url('/derechos')],
                     'cookies'     => ['nombre' => 'Política de Cookies',     'url' => url('/cookies')],
                 ];
                 ?>

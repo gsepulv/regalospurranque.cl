@@ -10,7 +10,7 @@
     </p>
     <p>
       <strong>Plazo de respuesta:</strong> 10 días hábiles desde la recepción.<br>
-      <strong>Contacto alternativo:</strong> <a href="mailto:contacto@purranque.info">contacto@purranque.info</a>
+      <strong>Contacto alternativo:</strong> <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a>
     </p>
   </div>
 
@@ -256,7 +256,7 @@
         modificada por Ley 21.719 sobre Protección de Datos Personales.<br>
         <strong>Responsable:</strong> Regalos Purranque — PurranQUE.INFO<br>
         <strong>Delegado de Protección de Datos:</strong> Gustavo Sepúlveda Sánchez<br>
-        <strong>Contacto:</strong> <a href="mailto:contacto@purranque.info">contacto@purranque.info</a><br>
+        <strong>Contacto:</strong> <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a><br>
         <strong>Jurisdicción:</strong> Tribunales de Osorno, Región de Los Lagos, Chile.
       </p>
     </div>

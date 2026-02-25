@@ -77,7 +77,7 @@
             <h2>6. Contacto y Denuncias</h2>
             <p>Si detecta contenido que infrinja esta política, puede denunciarlo a través de los siguientes canales:</p>
             <ul>
-                <li><strong>Correo electrónico:</strong> <a href="mailto:contacto@purranque.info">contacto@purranque.info</a></li>
+                <li><strong>Correo electrónico:</strong> <a href="mailto:regalospurranque@gmail.com">regalospurranque@gmail.com</a></li>
                 <li><strong>PDI (Policía de Investigaciones):</strong> 134</li>
                 <li><strong>Fiscalía:</strong> 600 333 0000</li>
                 <li><strong>Fono Niños:</strong> 147</li>

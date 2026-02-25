@@ -32,7 +32,7 @@
                 <h4 class="footer__title">&#128222; Contacto</h4>
                 <div class="footer__links">
                     <span>&#128205; Purranque, Región de Los Lagos, Chile</span>
-                    <a href="mailto:contacto@purranque.info">&#9993; contacto@purranque.info</a>
+                    <a href="mailto:regalospurranque@gmail.com">&#9993; regalospurranque@gmail.com</a>
                 </div>
                 <?php $position = 'footer'; include BASE_PATH . '/views/partials/social-profiles.php'; ?>
             </div>
