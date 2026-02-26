@@ -21,8 +21,6 @@ foreach ($fechas as $f) {
 $maxRedes = (int)($plan['max_redes'] ?? 1);
 ?>
 
-<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
-
 <section class="section">
     <div class="container" style="max-width:680px">
 

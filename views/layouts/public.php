@@ -56,6 +56,8 @@
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager -->
 
+    <?php include BASE_PATH . '/views/partials/session-bar.php'; ?>
+
     <a href="#main-content" class="skip-to-content">Ir al contenido principal</a>
 
     <?php include BASE_PATH . '/views/partials/nav.php'; ?>

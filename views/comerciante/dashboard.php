@@ -9,8 +9,6 @@ $info    = $_SESSION['flash_info'] ?? '';
 unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_info']);
 ?>
 
-<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
-
 <section class="section">
     <div class="container" style="max-width:720px">
 

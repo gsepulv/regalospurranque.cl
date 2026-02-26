@@ -10,8 +10,6 @@ $old     = $_SESSION['flash_old'] ?? [];
 unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_errors'], $_SESSION['flash_old']);
 ?>
 
-<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
-
 <section class="section">
     <div class="container" style="max-width:600px">
 

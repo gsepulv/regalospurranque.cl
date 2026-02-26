@@ -22,10 +22,6 @@ foreach ($fechas as $f) {
 }
 ?>
 
-<?php if (!empty($_SESSION['comerciante']['id'])): ?>
-<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
-<?php endif; ?>
-
 <section class="section">
     <div class="container" style="max-width:680px">
 
