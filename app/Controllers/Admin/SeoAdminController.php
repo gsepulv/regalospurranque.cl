@@ -202,82 +202,11 @@ class SeoAdminController extends Controller
      */
     public function generateSitemap(): void
     {
-        $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $service   = new \App\Services\SitemapService();
+        $totalUrls = $service->generateAndSave();
 
-        // Páginas principales
-        $today = date('Y-m-d');
-        $xml .= $this->sitemapUrl('/', '1.0', 'daily', $today);
-        $xml .= $this->sitemapUrl('/categorias', '0.8', 'weekly', $today);
-        $xml .= $this->sitemapUrl('/celebraciones', '0.8', 'weekly', $today);
-        $xml .= $this->sitemapUrl('/comercios', '0.8', 'weekly', $today);
-        $xml .= $this->sitemapUrl('/noticias', '0.8', 'daily', $today);
-        $xml .= $this->sitemapUrl('/mapa', '0.7', 'weekly', $today);
-        $xml .= $this->sitemapUrl('/contacto', '0.6', 'monthly', $today);
-        $xml .= $this->sitemapUrl('/planes', '0.5', 'monthly', $today);
-        $xml .= $this->sitemapUrl('/terminos', '0.3', 'yearly');
-        $xml .= $this->sitemapUrl('/privacidad', '0.3', 'yearly');
-
-        // Categorías (solo con comercios activos y calidad_ok)
-        $categorias = $this->db->fetchAll(
-            "SELECT c.slug, c.updated_at FROM categorias c WHERE c.activo = 1
-             AND EXISTS (SELECT 1 FROM comercio_categoria cc
-                         JOIN comercios co ON co.id = cc.comercio_id
-                         WHERE cc.categoria_id = c.id AND co.activo = 1 AND co.calidad_ok = 1)"
-        );
-        foreach ($categorias as $c) {
-            $xml .= $this->sitemapUrl('/categoria/' . $c['slug'], '0.8', 'weekly', $c['updated_at']);
-        }
-
-        // Fechas especiales
-        $fechas = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM fechas_especiales WHERE activo = 1"
-        );
-        foreach ($fechas as $f) {
-            $xml .= $this->sitemapUrl('/fecha/' . $f['slug'], '0.7', 'weekly', $f['updated_at']);
-        }
-
-        // Comercios (solo calidad_ok)
-        $comercios = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM comercios WHERE activo = 1 AND calidad_ok = 1"
-        );
-        foreach ($comercios as $c) {
-            $xml .= $this->sitemapUrl('/comercio/' . $c['slug'], '0.7', 'weekly', $c['updated_at']);
-        }
-
-        // Noticias
-        $noticias = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM noticias WHERE activo = 1"
-        );
-        foreach ($noticias as $n) {
-            $xml .= $this->sitemapUrl('/noticia/' . $n['slug'], '0.6', 'monthly', $n['updated_at']);
-        }
-
-        $xml .= '</urlset>';
-
-        $sitemapPath = BASE_PATH . '/sitemap.xml';
-        file_put_contents($sitemapPath, $xml);
-
-        $totalUrls = substr_count($xml, '<url>');
         $this->log('seo', 'generar_sitemap', 'sitemap', 0, "{$totalUrls} URLs generadas");
-
         $this->redirect('/admin/seo?tab=sitemap', ['success' => "Sitemap generado con {$totalUrls} URLs"]);
-    }
-
-    /**
-     * Helper para generar una entrada de sitemap
-     */
-    private function sitemapUrl(string $path, string $priority, string $freq, ?string $lastmod = null): string
-    {
-        $url  = '  <url>' . "\n";
-        $url .= '    <loc>' . htmlspecialchars(SITE_URL . $path) . '</loc>' . "\n";
-        if ($lastmod) {
-            $url .= '    <lastmod>' . date('Y-m-d', strtotime($lastmod)) . '</lastmod>' . "\n";
-        }
-        $url .= '    <changefreq>' . $freq . '</changefreq>' . "\n";
-        $url .= '    <priority>' . $priority . '</priority>' . "\n";
-        $url .= '  </url>' . "\n";
-        return $url;
     }
 
     /**

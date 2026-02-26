@@ -67,59 +67,13 @@ class ToolsController extends Controller
 
     /**
      * POST /admin/mantenimiento/sitemap/regenerar
-     * Regenerar sitemap.xml
+     * Regenerar sitemap.xml (usa SitemapService unificado)
      */
     public function regenerateSitemap(): void
     {
-        $xml  = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        $service   = new \App\Services\SitemapService();
+        $totalUrls = $service->generateAndSave();
 
-        // Página principal
-        $xml .= $this->sitemapUrl('/', '1.0', 'daily');
-
-        // Comercios activos
-        $comercios = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM comercios WHERE activo = 1"
-        );
-        foreach ($comercios as $c) {
-            $xml .= $this->sitemapUrl('/comercio/' . $c['slug'], '0.8', 'weekly', $c['updated_at']);
-        }
-
-        // Categorías activas
-        $categorias = $this->db->fetchAll(
-            "SELECT slug FROM categorias WHERE activo = 1"
-        );
-        foreach ($categorias as $c) {
-            $xml .= $this->sitemapUrl('/categoria/' . $c['slug'], '0.7', 'weekly');
-        }
-
-        // Fechas especiales activas
-        $fechas = $this->db->fetchAll(
-            "SELECT slug FROM fechas_especiales WHERE activo = 1"
-        );
-        foreach ($fechas as $f) {
-            $xml .= $this->sitemapUrl('/fecha/' . $f['slug'], '0.6', 'monthly');
-        }
-
-        // Noticias activas
-        $noticias = $this->db->fetchAll(
-            "SELECT slug, updated_at FROM noticias WHERE activo = 1"
-        );
-        foreach ($noticias as $n) {
-            $xml .= $this->sitemapUrl('/noticia/' . $n['slug'], '0.6', 'monthly', $n['updated_at']);
-        }
-
-        // Páginas estáticas
-        $xml .= $this->sitemapUrl('/mapa', '0.5', 'monthly');
-        $xml .= $this->sitemapUrl('/buscar', '0.3', 'weekly');
-        $xml .= $this->sitemapUrl('/noticias', '0.6', 'daily');
-
-        $xml .= '</urlset>';
-
-        $sitemapPath = BASE_PATH . '/sitemap.xml';
-        file_put_contents($sitemapPath, $xml);
-
-        $totalUrls = substr_count($xml, '<url>');
         $this->log('mantenimiento', 'regenerar_sitemap', 'sitemap', 0, "{$totalUrls} URLs generadas");
 
         $this->redirect('/admin/mantenimiento/herramientas', [
@@ -418,21 +372,5 @@ class ToolsController extends Controller
         $this->redirect('/admin/mantenimiento/herramientas', [
             'success' => 'Estadísticas recalculadas correctamente',
         ]);
-    }
-
-    /**
-     * Helper para generar una entrada de sitemap
-     */
-    private function sitemapUrl(string $path, string $priority, string $freq, ?string $lastmod = null): string
-    {
-        $url  = '  <url>' . "\n";
-        $url .= '    <loc>' . htmlspecialchars(SITE_URL . $path) . '</loc>' . "\n";
-        if ($lastmod) {
-            $url .= '    <lastmod>' . date('Y-m-d', strtotime($lastmod)) . '</lastmod>' . "\n";
-        }
-        $url .= '    <changefreq>' . $freq . '</changefreq>' . "\n";
-        $url .= '    <priority>' . $priority . '</priority>' . "\n";
-        $url .= '  </url>' . "\n";
-        return $url;
     }
 }

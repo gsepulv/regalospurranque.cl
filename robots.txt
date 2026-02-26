@@ -13,7 +13,6 @@ Disallow: /mis-resenas
 Disallow: /mi-comercio
 Disallow: /mi-comercio/
 Disallow: /compartir/
-Disallow: /registrar-comercio
 
 # Bloquear parametros de busqueda duplicados
 Disallow: /*?q=
