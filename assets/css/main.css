@@ -4584,6 +4584,8 @@ textarea:focus-visible {
     object-fit: contain;
     border-radius: 8px;
     transition: opacity 0.3s;
+    margin: 0 auto;
+    display: block;
 }
 
 .footer-banner-item a:hover .footer-banner-item__img {
@@ -4631,6 +4633,8 @@ textarea:focus-visible {
     opacity: 1 !important;
     position: relative !important;
     overflow: visible !important;
+    margin-top: 1rem;
+    padding: 0.5rem 0;
 }
 
 .section--banners .container {
