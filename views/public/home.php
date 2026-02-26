@@ -99,22 +99,24 @@
 <?php if (!empty($banners) && !empty($proximaFecha)): ?>
 <section class="section section--banners">
     <div class="container">
-        <div class="banner-slider" id="bannerSliderBelow">
+        <div class="banner-slider--img" id="bannerSliderBelow">
             <?php foreach ($banners as $i => $banner): ?>
-                <div class="banner-slide <?= $i === 0 ? 'banner-slide--active' : '' ?>"
-                     style="background-image: url('<?= asset('img/banners/' . $banner['imagen']) ?>')">
-                    <div class="banner-slide__overlay"></div>
-                    <div class="banner-slide__content">
-                        <?php if (!empty($banner['titulo'])): ?>
-                            <h2><?= e($banner['titulo']) ?></h2>
-                        <?php endif; ?>
-                        <?php if (!empty($banner['url'])): ?>
-                            <a href="<?= e($banner['url']) ?>"
-                               class="btn btn--primary btn--lg"
-                               data-banner-id="<?= $banner['id'] ?>"
-                               onclick="trackBanner(<?= $banner['id'] ?>)">Ver mas</a>
-                        <?php endif; ?>
-                    </div>
+                <div class="banner-slide--img <?= $i === 0 ? 'banner-slide--active' : '' ?>">
+                    <?php if (!empty($banner['url'])): ?>
+                        <a href="<?= e($banner['url']) ?>"
+                           data-banner-id="<?= $banner['id'] ?>"
+                           onclick="if(typeof trackBanner==='function')trackBanner(<?= $banner['id'] ?>)">
+                            <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
+                                 alt="<?= e($banner['titulo'] ?? 'Banner') ?>"
+                                 class="banner-slide__img"
+                                 loading="lazy">
+                        </a>
+                    <?php else: ?>
+                        <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
+                             alt="<?= e($banner['titulo'] ?? 'Banner') ?>"
+                             class="banner-slide__img"
+                             loading="lazy">
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
             <?php if (count($banners) > 1): ?>
@@ -325,7 +327,7 @@
 <script>
 (function() {
     var currentB = 0;
-    var slides = document.querySelectorAll('#bannerSliderBelow .banner-slide');
+    var slides = document.querySelectorAll('#bannerSliderBelow .banner-slide--img');
     var dots = document.querySelectorAll('#bannerSliderBelow .banner-dot');
     if (slides.length <= 1) return;
 

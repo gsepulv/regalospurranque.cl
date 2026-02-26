@@ -4,7 +4,7 @@
  * Cachea CSS, JS e imágenes para uso offline
  */
 
-var CACHE_NAME = 'regalos-v2-cache-v1';
+var CACHE_NAME = 'regalos-v2-cache-v2';
 var OFFLINE_URL = '/offline.html';
 
 // Recursos esenciales para cachear al instalar

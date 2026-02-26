@@ -1,3 +1,36 @@
+<!-- Banner Footer -->
+<?php
+if (!isset($bannersFooter)) {
+    $bannersFooter = \App\Models\Banner::getByTipo('footer');
+}
+if (!empty($bannersFooter)): ?>
+<section class="footer-banners">
+    <div class="container">
+        <div class="footer-banners__grid">
+            <?php foreach ($bannersFooter as $fb): ?>
+                <div class="footer-banner-item">
+                    <?php if (!empty($fb['url'])): ?>
+                        <a href="<?= e($fb['url']) ?>" target="_blank" rel="noopener"
+                           data-banner-id="<?= $fb['id'] ?>"
+                           onclick="if(typeof trackBanner==='function')trackBanner(<?= $fb['id'] ?>)">
+                            <img src="<?= asset('img/banners/' . $fb['imagen']) ?>"
+                                 alt="<?= e($fb['titulo'] ?? 'Banner') ?>"
+                                 loading="lazy"
+                                 class="footer-banner-item__img">
+                        </a>
+                    <?php else: ?>
+                        <img src="<?= asset('img/banners/' . $fb['imagen']) ?>"
+                             alt="<?= e($fb['titulo'] ?? 'Banner') ?>"
+                             loading="lazy"
+                             class="footer-banner-item__img">
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <footer class="footer">
     <div class="container">
         <div class="footer__grid">

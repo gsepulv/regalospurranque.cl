@@ -4458,52 +4458,7 @@ textarea:focus-visible {
         font-size: 1.2rem;
     }
 }
-/* === Fix Banner Responsive Móvil (2026-02-17) === */
-@media (max-width: 480px) {
-    .banner-slider {
-        height: 200px;
-        border-radius: 8px;
-    }
-    
-    .banner-slide {
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-color: #e8a020;
-    }
-    
-    .banner-slide__overlay {
-        background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 40%);
-    }
-    
-    .banner-slide__content {
-        padding: 0.75rem 1rem;
-    }
-    
-    .banner-slide__content h2 {
-        font-size: 0.95rem;
-    }
-    
-    .banner-control {
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
-    }
-}
-
-@media (min-width: 481px) and (max-width: 768px) {
-    .banner-slider {
-        height: 260px;
-    }
-    
-    .banner-slide {
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-color: #e8a020;
-    }
-}
-/* === Fin Fix Banner Responsive === */
+/* === Fin Banner Slider Original === */
 
 /* ==========================================================================
    MAPA EMBEBIDO EN FICHA DE COMERCIO — Fix Febrero 2026
@@ -4558,9 +4513,169 @@ textarea:focus-visible {
 /* Mobile: ocultar celebraciones/fechas en home, mostrar enlace "Ver más" */
 .mobile-only { display: none; }
 @media (max-width: 768px) {
-    .section--banners,
     .section-celebraciones-home,
     .section-fechas-home,
     .section-eventos-home { display: none; }
     .mobile-only { display: block; }
+}
+
+/* ── Banner Slider con <img> (más confiable en móvil) ── */
+.banner-slider--img {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+    background: #f0f0f0;
+}
+
+.banner-slide--img {
+    display: none;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    background: transparent;
+}
+
+.banner-slide--img.banner-slide--active {
+    display: block;
+}
+
+.banner-slide__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+    .banner-slider--img {
+        border-radius: 8px;
+        margin: 0.75rem 0;
+    }
+    .banner-slide__img {
+        border-radius: 8px;
+    }
+}
+
+/* ── Banner Footer ── */
+.footer-banners {
+    background: #f8f9fa;
+    padding: 1.5rem 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.footer-banners__grid {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.footer-banner-item {
+    max-width: 728px;
+    width: 100%;
+    text-align: center;
+}
+
+.footer-banner-item__img {
+    width: 100%;
+    height: auto;
+    max-height: 120px;
+    object-fit: contain;
+    border-radius: 8px;
+    transition: opacity 0.3s;
+}
+
+.footer-banner-item a:hover .footer-banner-item__img {
+    opacity: 0.9;
+}
+
+/* ── Banner Sidebar ── */
+.sidebar-banners {
+    margin-top: 1.5rem;
+}
+
+.sidebar-banner-item {
+    margin-bottom: 1rem;
+}
+
+.sidebar-banner-item__img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: 8px;
+    transition: opacity 0.3s;
+}
+
+.sidebar-banner-item a:hover .sidebar-banner-item__img {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .footer-banners {
+        padding: 1rem 0;
+    }
+    .footer-banner-item__img {
+        max-height: 80px;
+    }
+    .sidebar-banner-item__img {
+        max-height: 200px;
+    }
+}
+
+/* ── FIX-BANNER-VISIBILITY: Garantizar visibilidad del banner hero ── */
+.section.section--banners {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.section--banners .container {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.section--banners .banner-slider--img {
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    width: 100% !important;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 1rem 0;
+}
+
+.section--banners .banner-slide--img {
+    display: none;
+    position: relative !important;
+    width: 100% !important;
+    opacity: 1 !important;
+    height: auto !important;
+    top: auto !important;
+    left: auto !important;
+}
+
+.section--banners .banner-slide--img.banner-slide--active {
+    display: block !important;
+}
+
+.section--banners .banner-slide__img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    border-radius: 12px;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .section--banners .banner-slider--img {
+        border-radius: 8px;
+        margin: 0.75rem 0;
+    }
+    .section--banners .banner-slide__img {
+        border-radius: 8px;
+    }
 }
