@@ -22,6 +22,17 @@ class RegistroComercioController extends Controller
 {
     public function index(): void
     {
+        // Comerciante logueado: redirigir según tenga comercio o no
+        if (!empty($_SESSION['comerciante']['id'])) {
+            $comercio = Comercio::findByRegistradoPor($_SESSION['comerciante']['id']);
+            if ($comercio) {
+                header('Location: ' . url('/mi-comercio'));
+                exit;
+            }
+            header('Location: ' . url('/registrar-comercio/datos'));
+            exit;
+        }
+
         if ($this->tieneSessionRegistro()) {
             header('Location: ' . url('/registrar-comercio/datos'));
             exit;
@@ -99,7 +110,7 @@ class RegistroComercioController extends Controller
             'telefono'      => $telefono,
             'password_hash' => password_hash($password, PASSWORD_DEFAULT),
             'rol'           => 'comerciante',
-            'activo'        => 0,
+            'activo'        => 1,
             'site_id'       => 1,
         ]);
 
@@ -267,7 +278,22 @@ class RegistroComercioController extends Controller
 
     private function tieneSessionRegistro(): bool
     {
-        return !empty($_SESSION['registro_uid']);
+        if (!empty($_SESSION['registro_uid'])) {
+            return true;
+        }
+
+        // Comerciante logueado sin comercio → reconstruir sesión de registro
+        if (!empty($_SESSION['comerciante']['id'])) {
+            $comercio = Comercio::findByRegistradoPor($_SESSION['comerciante']['id']);
+            if (!$comercio) {
+                $_SESSION['registro_uid']    = $_SESSION['comerciante']['id'];
+                $_SESSION['registro_nombre'] = $_SESSION['comerciante']['nombre'];
+                $_SESSION['registro_email']  = $_SESSION['comerciante']['email'];
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function generarSlug(string $nombre): string

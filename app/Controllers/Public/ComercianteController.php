@@ -103,7 +103,7 @@ class ComercianteController extends Controller
         }
 
         if (!$user['activo']) {
-            $_SESSION['flash_error'] = 'Tu cuenta aún está pendiente de aprobación. Te notificaremos cuando esté activa.';
+            $_SESSION['flash_error'] = 'Tu cuenta ha sido desactivada. Contáctanos si necesitas ayuda.';
             $_SESSION['flash_old'] = ['email' => $email];
             header('Location: ' . url('/mi-comercio/login'));
             exit;
@@ -297,6 +297,16 @@ class ComercianteController extends Controller
 
         // Obtener comercio del usuario
         $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+
+        // Si no tiene comercio, redirigir al Paso 2 del registro
+        if (!$comercio) {
+            $_SESSION['registro_uid']    = $_SESSION['comerciante']['id'];
+            $_SESSION['registro_nombre'] = $_SESSION['comerciante']['nombre'];
+            $_SESSION['registro_email']  = $_SESSION['comerciante']['email'];
+            $_SESSION['flash_info'] = '¡Bienvenido/a! Completa los datos de tu comercio para finalizar el registro.';
+            header('Location: ' . url('/registrar-comercio/datos'));
+            exit;
+        }
 
         // Verificar si tiene cambios pendientes
         $pendientes = null;
