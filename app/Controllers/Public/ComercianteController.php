@@ -708,6 +708,13 @@ class ComercianteController extends Controller
             exit;
         }
 
+        // Validar Turnstile
+        if (!Captcha::verify($_POST['cf-turnstile-response'] ?? null)) {
+            $_SESSION['flash_error'] = 'Verificación anti-bot fallida. Intenta nuevamente.';
+            header('Location: ' . url('/mi-comercio/perfil'));
+            exit;
+        }
+
         $uid = $_SESSION['comerciante']['id'];
         $usuario = AdminUsuario::find($uid);
 
@@ -736,6 +743,17 @@ class ComercianteController extends Controller
         AdminUsuario::updateById($uid, [
             'password_hash' => password_hash($nueva, PASSWORD_DEFAULT),
         ]);
+
+        // Invalidar tokens de reset pendientes
+        AdminUsuario::clearResetToken($uid);
+
+        // Regenerar sesión para prevenir session fixation
+        session_regenerate_id(true);
+
+        // Registrar evento
+        try {
+            \App\Services\Logger::log('auth', 'password_change', 'usuario', $uid, 'Cambio de contraseña desde perfil comerciante');
+        } catch (\Throwable $e) {}
 
         $_SESSION['flash_success'] = 'Contraseña actualizada correctamente.';
         header('Location: ' . url('/mi-comercio/perfil'));

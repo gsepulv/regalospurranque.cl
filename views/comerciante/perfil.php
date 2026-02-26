@@ -110,7 +110,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_err
                            minlength="8" required>
                 </div>
 
-                <button type="submit" class="btn btn--outline" style="padding:0.6rem 1.5rem">
+                <?= \App\Services\Captcha::widget() ?>
+
+                <button type="submit" class="btn btn--outline" style="padding:0.6rem 1.5rem;margin-top:0.75rem">
                     Cambiar contraseña
                 </button>
             </form>
