@@ -92,10 +92,10 @@ foreach ($fechas as $f) {
                         <small style="color:var(--color-gray)">Min. 9, max. 20 caracteres.</small>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono fijo</label>
+                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono fijo <span style="color:#6B7280;font-weight:400">(opcional)</span></label>
                         <input type="text" name="telefono" class="form-control"
                                value="<?= e($old['telefono'] ?? '') ?>" placeholder="064 XXXXXX"
-                               minlength="9" maxlength="20" required>
+                               minlength="9" maxlength="20">
                     </div>
                 </div>
 
@@ -107,10 +107,10 @@ foreach ($fechas as $f) {
                                maxlength="150" required>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web</label>
+                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web <span style="color:#6B7280;font-weight:400">(opcional)</span></label>
                         <input type="url" name="sitio_web" class="form-control"
                                value="<?= e($old['sitio_web'] ?? '') ?>" placeholder="https://..."
-                               minlength="10" maxlength="255" required>
+                               maxlength="255">
                     </div>
                 </div>
 

@@ -9,20 +9,14 @@ $info    = $_SESSION['flash_info'] ?? '';
 unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_info']);
 ?>
 
+<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
+
 <section class="section">
     <div class="container" style="max-width:720px">
 
         <!-- Header -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:0.75rem">
-            <div>
-                <h1 style="font-size:1.5rem;margin:0">Mi comercio</h1>
-                <p style="color:#6B7280;margin:0.25rem 0 0;font-size:0.9rem">
-                    Hola, <?= e($usuario['nombre']) ?>
-                </p>
-            </div>
-            <a href="<?= url('/mi-comercio/logout') ?>" style="color:#6B7280;font-size:0.85rem;text-decoration:none">
-                Cerrar sesión →
-            </a>
+        <div style="margin-bottom:1.5rem">
+            <h1 style="font-size:1.5rem;margin:0">Mi comercio</h1>
         </div>
 
         <!-- Mensajes flash -->
@@ -148,6 +142,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
                         👁️ Ver mi ficha pública
                     </a>
                 <?php endif; ?>
+                <a href="<?= url('/mi-comercio/perfil') ?>" class="btn btn--outline" style="flex:1;text-align:center;padding:0.75rem">
+                    👤 Mi perfil
+                </a>
             </div>
 
             <!-- Upgrade plan -->

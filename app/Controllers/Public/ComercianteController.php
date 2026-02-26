@@ -675,6 +675,134 @@ class ComercianteController extends Controller
     }
 
     // ══════════════════════════════════════════════════════════
+    // PERFIL DEL COMERCIANTE
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Página de perfil: datos básicos + cambiar contraseña
+     */
+    public function perfil(): void
+    {
+        if (!$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $uid = $_SESSION['comerciante']['id'];
+        $usuario = AdminUsuario::find($uid);
+
+        $this->render('comerciante/perfil', [
+            'title'   => 'Mi perfil — ' . SITE_NAME,
+            'noindex' => true,
+            'usuario' => $usuario,
+        ]);
+    }
+
+    /**
+     * Actualizar contraseña del comerciante
+     */
+    public function updatePassword(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $uid = $_SESSION['comerciante']['id'];
+        $usuario = AdminUsuario::find($uid);
+
+        $actual  = $_POST['password_actual'] ?? '';
+        $nueva   = $_POST['password_nueva'] ?? '';
+        $confirm = $_POST['password_confirm'] ?? '';
+
+        if (!password_verify($actual, $usuario['password_hash'])) {
+            $_SESSION['flash_error'] = 'La contraseña actual es incorrecta.';
+            header('Location: ' . url('/mi-comercio/perfil'));
+            exit;
+        }
+
+        if (mb_strlen($nueva) < 8) {
+            $_SESSION['flash_error'] = 'La nueva contraseña debe tener al menos 8 caracteres.';
+            header('Location: ' . url('/mi-comercio/perfil'));
+            exit;
+        }
+
+        if ($nueva !== $confirm) {
+            $_SESSION['flash_error'] = 'Las contraseñas nuevas no coinciden.';
+            header('Location: ' . url('/mi-comercio/perfil'));
+            exit;
+        }
+
+        AdminUsuario::updateById($uid, [
+            'password_hash' => password_hash($nueva, PASSWORD_DEFAULT),
+        ]);
+
+        $_SESSION['flash_success'] = 'Contraseña actualizada correctamente.';
+        header('Location: ' . url('/mi-comercio/perfil'));
+        exit;
+    }
+
+    /**
+     * Actualizar datos básicos de la cuenta (nombre, email, teléfono)
+     */
+    public function updateDatos(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $uid = $_SESSION['comerciante']['id'];
+
+        $nombre   = trim($_POST['nombre'] ?? '');
+        $email    = strtolower(trim($_POST['email'] ?? ''));
+        $telefono = trim($_POST['telefono'] ?? '');
+
+        $errores = [];
+        if (mb_strlen($nombre) < 3 || mb_strlen($nombre) > 100) {
+            $errores[] = 'El nombre debe tener entre 3 y 100 caracteres.';
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errores[] = 'Ingresa un email válido.';
+        }
+        if (mb_strlen($email) > 100) {
+            $errores[] = 'El email no puede superar los 100 caracteres.';
+        }
+        if (mb_strlen($telefono) < 9 || mb_strlen($telefono) > 15) {
+            $errores[] = 'El teléfono debe tener entre 9 y 15 caracteres.';
+        }
+
+        // Verificar email duplicado
+        if (empty($errores)) {
+            $existe = AdminUsuario::findByEmail($email);
+            if ($existe && (int)$existe['id'] !== $uid) {
+                $errores[] = 'Ya existe otra cuenta con ese email.';
+            }
+        }
+
+        if (!empty($errores)) {
+            $_SESSION['flash_errors'] = $errores;
+            $_SESSION['flash_old'] = ['nombre' => $nombre, 'email' => $email, 'telefono' => $telefono];
+            header('Location: ' . url('/mi-comercio/perfil'));
+            exit;
+        }
+
+        AdminUsuario::updateById($uid, [
+            'nombre'   => $nombre,
+            'email'    => $email,
+            'telefono' => $telefono,
+        ]);
+
+        // Regenerar sesión con datos nuevos
+        $_SESSION['comerciante']['nombre'] = $nombre;
+        $_SESSION['comerciante']['email']  = $email;
+
+        $_SESSION['flash_success'] = 'Datos actualizados correctamente.';
+        header('Location: ' . url('/mi-comercio/perfil'));
+        exit;
+    }
+
+    // ══════════════════════════════════════════════════════════
     // HELPERS
     // ══════════════════════════════════════════════════════════
 

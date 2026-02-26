@@ -21,6 +21,8 @@ foreach ($fechas as $f) {
 $maxRedes = (int)($plan['max_redes'] ?? 1);
 ?>
 
+<?php include BASE_PATH . '/views/partials/comerciante-topbar.php'; ?>
+
 <section class="section">
     <div class="container" style="max-width:680px">
 
@@ -32,7 +34,7 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                 </p>
             </div>
             <a href="<?= url('/mi-comercio') ?>" style="color:#6B7280;font-size:0.85rem;text-decoration:none">
-                ← Volver
+                &larr; Volver
             </a>
         </div>
 
@@ -74,9 +76,9 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                                value="<?= e($comercio['whatsapp']) ?>" minlength="9" maxlength="20" required>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono</label>
+                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Teléfono <span style="color:#6B7280;font-weight:400">(opcional)</span></label>
                         <input type="text" name="telefono" class="form-control"
-                               value="<?= e($comercio['telefono']) ?>" minlength="9" maxlength="20" required>
+                               value="<?= e($comercio['telefono']) ?>" minlength="9" maxlength="20">
                     </div>
                 </div>
 
@@ -87,9 +89,9 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                                value="<?= e($comercio['email']) ?>" maxlength="150" required>
                     </div>
                     <div>
-                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web</label>
+                        <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Sitio web <span style="color:#6B7280;font-weight:400">(opcional)</span></label>
                         <input type="url" name="sitio_web" class="form-control"
-                               value="<?= e($comercio['sitio_web']) ?>" minlength="10" maxlength="255" required>
+                               value="<?= e($comercio['sitio_web']) ?>" maxlength="255">
                     </div>
                 </div>
 
