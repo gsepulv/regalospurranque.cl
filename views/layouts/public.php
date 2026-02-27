@@ -41,8 +41,8 @@
     </style>
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preload" href="<?= asset('css/main.css?v=202602170318') ?>" as="style">
-    <link rel="stylesheet" href="<?= asset('css/main.css?v=202602170318') ?>">
+    <link rel="preload" href="<?= asset('css/styles.css?v=202602271700') ?>" as="style">
+    <link rel="stylesheet" href="<?= asset('css/styles.css?v=202602271700') ?>">
     <?php if (!empty($extraCss)): ?>
     <link rel="stylesheet" href="<?= asset($extraCss) ?>">
     <?php endif; ?>
