@@ -3774,15 +3774,6 @@ textarea:focus-visible {
     color: var(--color-white);
 }
 
-.btn--cta:focus {
-    outline: none;
-}
-
-.btn--cta:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
-}
-
 @media (max-width: 768px) {
     .cta-section__inner {
         flex-direction: column;
@@ -4551,9 +4542,7 @@ textarea:focus-visible {
 
 .banner-slide__img {
     width: 100%;
-    max-height: 450px;
-    object-fit: cover;
-    object-position: center;
+    height: auto;
     display: block;
     border-radius: 12px;
 }
@@ -4565,7 +4554,6 @@ textarea:focus-visible {
     }
     .banner-slide__img {
         border-radius: 8px;
-        max-height: 300px;
     }
 }
 
@@ -4680,9 +4668,7 @@ textarea:focus-visible {
 
 .section--banners .banner-slide__img {
     width: 100% !important;
-    max-height: 450px !important;
-    object-fit: cover !important;
-    object-position: center !important;
+    height: auto !important;
     display: block !important;
     border-radius: 12px;
     max-width: 100%;
@@ -4695,6 +4681,5 @@ textarea:focus-visible {
     }
     .section--banners .banner-slide__img {
         border-radius: 8px;
-        max-height: 300px !important;
     }
 }

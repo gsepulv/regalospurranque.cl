@@ -41,8 +41,8 @@
     </style>
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preload" href="<?= asset('css/main.css?v=202602271500') ?>" as="style">
-    <link rel="stylesheet" href="<?= asset('css/main.css?v=202602271500') ?>">
+    <link rel="preload" href="<?= asset('css/main.css?v=202602170318') ?>" as="style">
+    <link rel="stylesheet" href="<?= asset('css/main.css?v=202602170318') ?>">
     <?php if (!empty($extraCss)): ?>
     <link rel="stylesheet" href="<?= asset($extraCss) ?>">
     <?php endif; ?>
@@ -98,7 +98,7 @@
 
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba">&uarr;</button>
 
-    <script src="<?= asset('js/app.js?v=202602271500') ?>" defer></script>
+    <script src="<?= asset('js/app.js') ?>" defer></script>
     <div class="beta-floating">Beta</div>
 
     <?php include BASE_PATH . '/views/partials/cookie-banner.php'; ?>

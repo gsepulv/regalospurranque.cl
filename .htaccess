@@ -1,12 +1,8 @@
 # =========================================================
 # .htaccess — Regalos Purranque
 # Dominio canónico: https://regalospurranque.cl
-# Actualizado: 2026-02-27
+# Actualizado: 2026-02-19
 # =========================================================
-
-# ── Deshabilitar listado de directorios ───────────────────────────────────
-Options -Indexes
-
 RewriteEngine On
 
 # ── 1) Forzar HTTPS (excepto localhost) ───────────────────────────────────
