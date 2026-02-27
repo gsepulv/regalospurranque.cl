@@ -819,13 +819,21 @@ document.addEventListener('DOMContentLoaded', function () {
         var target = el.getAttribute('data-target');
         if (!target) return;
 
-        var targetDate = new Date(target + 'T00:00:00');
+        // Parsing robusto: YYYY-MM-DD -> componentes individuales (evita problemas de timezone en Safari)
+        var parts = target.split('-');
+        if (parts.length !== 3) return;
+        var targetDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0);
+
         var diasEl = document.getElementById('cdDias');
         var horasEl = document.getElementById('cdHoras');
         var minEl = document.getElementById('cdMin');
         var segEl = document.getElementById('cdSeg');
 
+        if (!diasEl || !horasEl || !minEl || !segEl) return;
+
         function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+        var interval;
 
         function update() {
             var now = new Date();
@@ -836,6 +844,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 horasEl.textContent = '00';
                 minEl.textContent = '00';
                 segEl.textContent = '00';
+                if (interval) clearInterval(interval);
                 return;
             }
 
@@ -851,7 +860,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         update();
-        setInterval(update, 1000);
+        interval = setInterval(update, 1000);
     })();
 
     /* ======================================================================
