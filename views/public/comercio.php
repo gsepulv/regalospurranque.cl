@@ -177,6 +177,82 @@ $hoy = (int) date('w');
                     </div>
                 <?php endif; ?>
 
+                <!-- Mapa embebido -->
+                <?php if ($comercio['lat'] && $comercio['lng']): ?>
+                    <div class="comercio-section">
+                        <h2>&#128205; Ubicación</h2>
+                        <?php if (!empty($comercio['direccion'])): ?>
+                            <p class="text-muted mb-2"><?= e($comercio['direccion']) ?></p>
+                        <?php endif; ?>
+                        <div id="comercioMap" class="comercio-map"></div>
+                        <div class="mt-2">
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=<?= $comercio['lat'] ?>,<?= $comercio['lng'] ?>"
+                               class="btn btn--outline btn--sm"
+                               target="_blank" rel="noopener">
+                                &#128663; Cómo llegar
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Contacto + Redes (solo móvil, en desktop va en sidebar) -->
+                <div class="only-mobile">
+                    <div class="card sidebar-card">
+                        <div class="card__body">
+                            <h3 class="sidebar-card__title">Información de contacto</h3>
+
+                            <?php if (!empty($comercio['telefono'])): ?>
+                                <div class="contact-item">
+                                    <span class="contact-item__icon">&#128222;</span>
+                                    <a href="tel:<?= e($comercio['telefono']) ?>"><?= e($comercio['telefono']) ?></a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (!empty($comercio['whatsapp'])): ?>
+                                <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>"
+                                   class="btn btn--secondary btn--block mb-2"
+                                   target="_blank"
+                                   rel="noopener"
+                                   onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
+                                    &#128172; WhatsApp
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if (!empty($comercio['email'])): ?>
+                                <a href="#" class="btn btn--outline btn--block mb-2 email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;">
+                                    &#9993; Enviar mensaje
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if (!empty($comercio['sitio_web'])): ?>
+                                <a href="<?= e($comercio['sitio_web']) ?>"
+                                   class="btn btn--outline btn--block mb-2"
+                                   target="_blank"
+                                   rel="noopener">
+                                    &#127760; Visitar sitio web
+                                </a>
+                            <?php endif; ?>
+
+                            <?php if (!empty($comercio['direccion'])): ?>
+                                <div class="contact-item">
+                                    <span class="contact-item__icon">&#128205;</span>
+                                    <span><?= e($comercio['direccion']) ?></span>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($comercio['lat'] && $comercio['lng']): ?>
+                                <a href="#comercioMap"
+                                   class="btn btn--outline btn--block"
+                                   onclick="document.getElementById('comercioMap').scrollIntoView({behavior:'smooth'});return false;">
+                                    &#128506; Ver en mapa
+                                </a>
+                            <?php endif; ?>
+
+                            <?php include BASE_PATH . '/views/partials/comercio-redes.php'; ?>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Ofertas por fechas especiales -->
                 <?php if (!empty($comercio['fechas'])): ?>
                     <div class="comercio-section">
@@ -201,24 +277,6 @@ $hoy = (int) date('w');
                                 <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Mapa embebido -->
-                <?php if ($comercio['lat'] && $comercio['lng']): ?>
-                    <div class="comercio-section">
-                        <h2>&#128205; Ubicación</h2>
-                        <?php if (!empty($comercio['direccion'])): ?>
-                            <p class="text-muted mb-2"><?= e($comercio['direccion']) ?></p>
-                        <?php endif; ?>
-                        <div id="comercioMap" class="comercio-map"></div>
-                        <div class="mt-2">
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=<?= $comercio['lat'] ?>,<?= $comercio['lng'] ?>"
-                               class="btn btn--outline btn--sm"
-                               target="_blank" rel="noopener">
-                                &#128663; Cómo llegar
-                            </a>
-                        </div>
                     </div>
                 <?php endif; ?>
 
@@ -376,60 +434,62 @@ $hoy = (int) date('w');
             <!-- Sidebar -->
             <aside class="comercio-sidebar">
 
-                <!-- Contacto -->
-                <div class="card sidebar-card">
-                    <div class="card__body">
-                        <h3 class="sidebar-card__title">Información de contacto</h3>
+                <!-- Contacto (solo desktop, en móvil va en main column) -->
+                <div class="only-desktop">
+                    <div class="card sidebar-card">
+                        <div class="card__body">
+                            <h3 class="sidebar-card__title">Información de contacto</h3>
 
-                        <?php if (!empty($comercio['telefono'])): ?>
-                            <div class="contact-item">
-                                <span class="contact-item__icon">&#128222;</span>
-                                <a href="tel:<?= e($comercio['telefono']) ?>"><?= e($comercio['telefono']) ?></a>
-                            </div>
-                        <?php endif; ?>
+                            <?php if (!empty($comercio['telefono'])): ?>
+                                <div class="contact-item">
+                                    <span class="contact-item__icon">&#128222;</span>
+                                    <a href="tel:<?= e($comercio['telefono']) ?>"><?= e($comercio['telefono']) ?></a>
+                                </div>
+                            <?php endif; ?>
 
-                        <?php if (!empty($comercio['whatsapp'])): ?>
-                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>"
-                               class="btn btn--secondary btn--block mb-2"
-                               target="_blank"
-                               rel="noopener"
-                               onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
-                                &#128172; WhatsApp
-                            </a>
-                        <?php endif; ?>
+                            <?php if (!empty($comercio['whatsapp'])): ?>
+                                <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>"
+                                   class="btn btn--secondary btn--block mb-2"
+                                   target="_blank"
+                                   rel="noopener"
+                                   onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
+                                    &#128172; WhatsApp
+                                </a>
+                            <?php endif; ?>
 
-                        <?php if (!empty($comercio['email'])): ?>
-                            <a href="#" class="btn btn--outline btn--block mb-2 email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;">
-                                &#9993; Enviar mensaje
-                            </a>
-                        <?php endif; ?>
+                            <?php if (!empty($comercio['email'])): ?>
+                                <a href="#" class="btn btn--outline btn--block mb-2 email-obfuscated" data-e="<?= base64_encode($comercio['email']) ?>" onclick="deobfuscateEmail(this);return false;">
+                                    &#9993; Enviar mensaje
+                                </a>
+                            <?php endif; ?>
 
-                        <?php if (!empty($comercio['sitio_web'])): ?>
-                            <a href="<?= e($comercio['sitio_web']) ?>"
-                               class="btn btn--outline btn--block mb-2"
-                               target="_blank"
-                               rel="noopener">
-                                &#127760; Visitar sitio web
-                            </a>
-                        <?php endif; ?>
+                            <?php if (!empty($comercio['sitio_web'])): ?>
+                                <a href="<?= e($comercio['sitio_web']) ?>"
+                                   class="btn btn--outline btn--block mb-2"
+                                   target="_blank"
+                                   rel="noopener">
+                                    &#127760; Visitar sitio web
+                                </a>
+                            <?php endif; ?>
 
-                        <?php if (!empty($comercio['direccion'])): ?>
-                            <div class="contact-item">
-                                <span class="contact-item__icon">&#128205;</span>
-                                <span><?= e($comercio['direccion']) ?></span>
-                            </div>
-                        <?php endif; ?>
+                            <?php if (!empty($comercio['direccion'])): ?>
+                                <div class="contact-item">
+                                    <span class="contact-item__icon">&#128205;</span>
+                                    <span><?= e($comercio['direccion']) ?></span>
+                                </div>
+                            <?php endif; ?>
 
-                        <?php if ($comercio['lat'] && $comercio['lng']): ?>
-                            <a href="#comercioMap"
-                               class="btn btn--outline btn--block"
-                               onclick="document.getElementById('comercioMap').scrollIntoView({behavior:'smooth'});return false;">
-                                &#128506; Ver en mapa
-                            </a>
-                        <?php endif; ?>
+                            <?php if ($comercio['lat'] && $comercio['lng']): ?>
+                                <a href="#comercioMap"
+                                   class="btn btn--outline btn--block"
+                                   onclick="document.getElementById('comercioMap').scrollIntoView({behavior:'smooth'});return false;">
+                                    &#128506; Ver en mapa
+                                </a>
+                            <?php endif; ?>
 
-                        <?php // Redes sociales del comercio ?>
-                        <?php include BASE_PATH . '/views/partials/comercio-redes.php'; ?>
+                            <?php // Redes sociales del comercio ?>
+                            <?php include BASE_PATH . '/views/partials/comercio-redes.php'; ?>
+                        </div>
                     </div>
                 </div>
 
