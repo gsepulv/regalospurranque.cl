@@ -1731,6 +1731,10 @@ textarea.form-control {
     top: 80px;
 }
 
+.only-mobile {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     .comercio-layout {
         grid-template-columns: 1fr;
@@ -1739,17 +1743,10 @@ textarea.form-control {
         position: static;
     }
     .only-desktop {
-        display: none;
+        display: none !important;
     }
-}
-
-.only-mobile {
-    display: none;
-}
-
-@media (max-width: 768px) {
     .only-mobile {
-        display: block;
+        display: block !important;
     }
 }
 
