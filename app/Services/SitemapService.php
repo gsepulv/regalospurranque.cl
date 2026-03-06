@@ -15,10 +15,10 @@ use App\Core\Database;
  * 
  * Criterios de inclusión:
  *   - Páginas estáticas principales (no bloqueadas por robots.txt)
- *   - Categorías activas CON al menos 1 comercio activo y calidad_ok
+ *   - Categorías activas
  *   - Fechas especiales activas (todas, tengan o no comercios)
- *   - Comercios activos con calidad_ok
- *   - Noticias activas sin noindex
+ *   - Comercios activos
+ *   - Noticias activas
  *   - Páginas legales
  * 
  * @since 2026-02-26
@@ -50,6 +50,7 @@ class SitemapService
             ['path' => '/comercios',     'priority' => '0.8', 'freq' => 'weekly',  'lastmod' => $today],
             ['path' => '/noticias',      'priority' => '0.8', 'freq' => 'daily',   'lastmod' => $today],
             ['path' => '/mapa',          'priority' => '0.7', 'freq' => 'weekly',  'lastmod' => $today],
+            ['path' => '/buscar',        'priority' => '0.6', 'freq' => 'weekly',  'lastmod' => $today],
             ['path' => '/contacto',      'priority' => '0.6', 'freq' => 'monthly', 'lastmod' => $today],
             ['path' => '/planes',        'priority' => '0.5', 'freq' => 'monthly', 'lastmod' => $today],
             // /registrar-comercio: landing de captación, debe indexarse
@@ -67,19 +68,12 @@ class SitemapService
 
         $urls = array_merge($staticPages, $legalPages);
 
-        // ── 2. Categorías con comercios activos + calidad_ok ──────────
+        // ── 2. Categorías activas ────────────────────────────────────
         $categorias = $this->db->fetchAll(
-            "SELECT c.slug, c.updated_at 
-             FROM categorias c 
-             WHERE c.activo = 1
-               AND EXISTS (
-                   SELECT 1 FROM comercio_categoria cc
-                   JOIN comercios com ON cc.comercio_id = com.id
-                   WHERE cc.categoria_id = c.id 
-                     AND com.activo = 1 
-                     AND com.calidad_ok = 1
-               )
-             ORDER BY c.nombre"
+            "SELECT slug, updated_at
+             FROM categorias
+             WHERE activo = 1
+             ORDER BY nombre"
         );
         foreach ($categorias as $c) {
             $urls[] = [
@@ -106,11 +100,11 @@ class SitemapService
             ];
         }
 
-        // ── 4. Comercios activos + calidad_ok ─────────────────────────
+        // ── 4. Comercios activos ─────────────────────────────────────
         $comercios = $this->db->fetchAll(
-            "SELECT slug, updated_at 
-             FROM comercios 
-             WHERE activo = 1 AND calidad_ok = 1
+            "SELECT slug, updated_at
+             FROM comercios
+             WHERE activo = 1
              ORDER BY nombre"
         );
         foreach ($comercios as $c) {
@@ -122,12 +116,12 @@ class SitemapService
             ];
         }
 
-        // ── 5. Noticias activas (sin noindex) ─────────────────────────
+        // ── 5. Noticias activas ──────────────────────────────────────
         $noticias = $this->db->fetchAll(
-            "SELECT slug, updated_at 
-             FROM noticias 
-             WHERE activo = 1 AND (seo_noindex = 0 OR seo_noindex IS NULL)
-             ORDER BY id DESC"
+            "SELECT slug, updated_at
+             FROM noticias
+             WHERE activo = 1
+             ORDER BY fecha_publicacion DESC"
         );
         foreach ($noticias as $n) {
             $urls[] = [

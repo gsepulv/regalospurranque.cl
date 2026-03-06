@@ -8,7 +8,6 @@ Disallow: /storage/
 Disallow: /config/
 
 # Paginas sin valor SEO
-Disallow: /buscar
 Disallow: /mis-resenas
 Disallow: /mi-comercio
 Disallow: /mi-comercio/
