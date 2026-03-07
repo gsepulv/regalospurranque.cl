@@ -156,5 +156,7 @@ $errors = $flash['errors'] ?? [];
         .addTo(map)
         .bindPopup('<strong><?= e(SITE_NAME) ?></strong><br>Purranque, Chile')
         .openPopup();
+
+    setTimeout(function() { map.invalidateSize(); }, 300);
 })();
 </script>

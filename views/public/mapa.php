@@ -28,6 +28,50 @@
         </div>
 
         <!-- Mapa -->
+        <style>
+        .map-container {
+            height: 500px;
+            width: 100%;
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-8);
+            border: 1px solid var(--color-border);
+        }
+        .map-filters {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-4);
+            background: var(--color-white);
+            padding: var(--spacing-4);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-4);
+            box-shadow: var(--shadow-sm);
+            flex-wrap: wrap;
+        }
+        .map-filters__label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-3);
+        }
+        .map-list {
+            margin-top: var(--spacing-8);
+        }
+        .map-list h2 {
+            margin-bottom: var(--spacing-6);
+        }
+        @media (max-width: 768px) {
+            .map-container {
+                height: 350px;
+            }
+            .map-filters__label {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+            .map-filters .filter-select {
+                width: 100%;
+            }
+        }
+        </style>
         <div id="map" class="map-container"></div>
 
         <!-- Listado debajo del mapa -->
@@ -119,6 +163,9 @@
         markers.push(marker);
     });
 
+    // Forzar recálculo de tamaño del mapa
+    setTimeout(function() { map.invalidateSize(); }, 300);
+
     // Filtro por categoria
     var filterSelect = document.getElementById('categoryFilter');
     var countEl = document.getElementById('mapCount');
@@ -152,52 +199,3 @@
 })();
 </script>
 
-<style>
-.map-container {
-    height: 500px;
-    width: 100%;
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--spacing-8);
-    border: 1px solid var(--color-border);
-}
-
-.map-filters {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-4);
-    background: var(--color-white);
-    padding: var(--spacing-4);
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-4);
-    box-shadow: var(--shadow-sm);
-    flex-wrap: wrap;
-}
-
-.map-filters__label {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
-}
-
-.map-list {
-    margin-top: var(--spacing-8);
-}
-
-.map-list h2 {
-    margin-bottom: var(--spacing-6);
-}
-
-@media (max-width: 768px) {
-    .map-container {
-        height: 350px;
-    }
-    .map-filters__label {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-    }
-    .map-filters .filter-select {
-        width: 100%;
-    }
-}
-</style>
