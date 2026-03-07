@@ -102,9 +102,9 @@
     </div>
 </section>
 
-<!-- Leaflet CSS + JS (OpenStreetMap, gratis, sin API key) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet CSS + JS (self-hosted, OpenStreetMap tiles) -->
+<link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
+<script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
 
 <script>
 (function() {

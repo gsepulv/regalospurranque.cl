@@ -516,10 +516,10 @@ $hoy = (int) date('w');
     </div>
 </section>
 
-<!-- Leaflet CSS y JS para mapa embebido -->
+<!-- Leaflet CSS y JS para mapa embebido (self-hosted) -->
 <?php if ($comercio['lat'] && $comercio['lng']): ?>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
+<script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
 <?php endif; ?>
 
 <script>

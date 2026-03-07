@@ -97,6 +97,7 @@ vendor/
 !assets/vendor/
 assets/vendor/*
 !assets/vendor/tinymce/
+!assets/vendor/leaflet/
 node_modules/
 composer.lock
 package-lock.json

@@ -131,8 +131,8 @@ $errors = $flash['errors'] ?? [];
     </div>
 </section>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
+<script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
 <script>
 (function() {
     var map = L.map('contactMap', {
