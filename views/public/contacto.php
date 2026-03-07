@@ -135,6 +135,8 @@ $errors = $flash['errors'] ?? [];
 <script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
 <script>
 (function() {
+    if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }
+
     var map = L.map('contactMap', {
         scrollWheelZoom: false,
         dragging: !L.Browser.mobile

@@ -108,6 +108,8 @@
 
 <script>
 (function() {
+    if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }
+
     // Datos de comercios desde PHP
     var comercios = <?= json_encode(array_map(function($c) {
         return [

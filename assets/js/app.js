@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function () {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ pagina: path, tipo: tipo })
-        }).catch(function () { /* silenciar errores de tracking */ });
+        }).catch(function (err) { console.warn('Tracking error:', err); });
     })();
 
     /* ======================================================================
@@ -564,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         comercio_id: parseInt(comercioId, 10),
                         tipo: 'whatsapp'
                     })
-                }).catch(function () {});
+                }).catch(function (err) { console.warn('Tracking error:', err); });
             }
         });
     })();
@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ red: red, slug: slug, tipo: tipo })
-            }).catch(function () {});
+            }).catch(function (err) { console.warn('Tracking error:', err); });
         });
 
         // Copiar enlace al portapapeles
@@ -643,7 +643,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 navigator.share({
                     title: nativeShareBtn.getAttribute('data-share-title') || document.title,
                     url: nativeShareBtn.getAttribute('data-share-url') || window.location.href
-                }).catch(function () {});
+                }).catch(function (err) { console.warn('Tracking error:', err); });
             });
         }
     })();

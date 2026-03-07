@@ -79,7 +79,7 @@ RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal)/ - [F
 </FilesMatch>
 
 # ── Bloquear archivos sensibles ─────────────────────────────────────────────
-<FilesMatch "\.(sql|md|log|sh|bak|env|yml|yaml|lock|ini|php~)$">
+<FilesMatch "\.(sql|md|log|sh|bak|env|yml|yaml|lock|ini|php~|zip|gz)$">
     Require all denied
 </FilesMatch>
 
