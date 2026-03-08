@@ -62,6 +62,15 @@ try {
             ]);
             $totalEnviados++;
             echo "[" . date('Y-m-d H:i:s') . "] Instrucciones enviadas a: {$msg['email']} (ID: {$msg['id']})\n";
+
+            // Registrar en mensajes_respuestas
+            $db->insert('mensajes_respuestas', [
+                'mensaje_id'    => $msg['id'],
+                'tipo'          => 'instrucciones_registro',
+                'asunto'        => 'Instrucciones de registro',
+                'email_destino' => $msg['email'],
+                'enviado_por'   => 'sistema',
+            ]);
         }
 
         // Marcar como procesado (con o sin envío)
@@ -73,6 +82,70 @@ try {
 
     echo "[" . date('Y-m-d H:i:s') . "] Procesados: {$totalProcesados}, Enviados: {$totalEnviados}\n";
 
+    // ── Detección automática de conversiones ────────────────
+    echo "[" . date('Y-m-d H:i:s') . "] Detectando conversiones...\n";
+
+    $conversiones = $db->fetchAll(
+        "SELECT mc.id AS mensaje_id, mc.email, c.id AS comercio_id, c.nombre AS comercio_nombre
+         FROM mensajes_contacto mc
+         INNER JOIN comercios c ON LOWER(mc.email) = LOWER(c.email)
+         WHERE mc.estado != 'convertido'
+           AND mc.comercio_id IS NULL"
+    );
+
+    $totalConversiones = 0;
+    foreach ($conversiones as $conv) {
+        $db->update('mensajes_contacto', [
+            'estado'        => 'convertido',
+            'comercio_id'   => (int) $conv['comercio_id'],
+            'convertido_at' => date('Y-m-d H:i:s'),
+        ], 'id = ?', [$conv['mensaje_id']]);
+
+        $totalConversiones++;
+        echo "[" . date('Y-m-d H:i:s') . "] Conversion detectada: {$conv['email']} -> {$conv['comercio_nombre']}\n";
+    }
+
+    echo "[" . date('Y-m-d H:i:s') . "] Conversiones detectadas: {$totalConversiones}\n";
+
+    // ── Actualizar seguimiento_conversiones del día ─────────
+    $hoy = date('Y-m-d');
+
+    $statsHoy = $db->fetch(
+        "SELECT
+            COUNT(*) as recibidos,
+            SUM(estado IN ('leido','respondido','convertido')) as leidos,
+            SUM(estado = 'respondido') as respondidos,
+            SUM(estado = 'convertido') as convertidos,
+            SUM(estado = 'descartado') as descartados,
+            AVG(CASE WHEN respondido_at IS NOT NULL THEN TIMESTAMPDIFF(MINUTE, created_at, respondido_at) END) as avg_resp,
+            AVG(CASE WHEN convertido_at IS NOT NULL THEN TIMESTAMPDIFF(MINUTE, created_at, convertido_at) END) as avg_conv
+         FROM mensajes_contacto"
+    );
+
+    $db->execute(
+        "INSERT INTO seguimiento_conversiones
+            (fecha, mensajes_recibidos, mensajes_leidos, mensajes_respondidos, mensajes_convertidos, mensajes_descartados, tiempo_respuesta_avg, tiempo_conversion_avg)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+            mensajes_recibidos    = VALUES(mensajes_recibidos),
+            mensajes_leidos       = VALUES(mensajes_leidos),
+            mensajes_respondidos  = VALUES(mensajes_respondidos),
+            mensajes_convertidos  = VALUES(mensajes_convertidos),
+            mensajes_descartados  = VALUES(mensajes_descartados),
+            tiempo_respuesta_avg  = VALUES(tiempo_respuesta_avg),
+            tiempo_conversion_avg = VALUES(tiempo_conversion_avg)",
+        [
+            $hoy,
+            (int) ($statsHoy['recibidos'] ?? 0),
+            (int) ($statsHoy['leidos'] ?? 0),
+            (int) ($statsHoy['respondidos'] ?? 0),
+            (int) ($statsHoy['convertidos'] ?? 0),
+            (int) ($statsHoy['descartados'] ?? 0),
+            $statsHoy['avg_resp'] ? (int) round((float) $statsHoy['avg_resp']) : null,
+            $statsHoy['avg_conv'] ? (int) round((float) $statsHoy['avg_conv']) : null,
+        ]
+    );
+
     // Registrar ejecución
     $db->insert('admin_log', [
         'usuario_id'     => 0,
@@ -81,7 +154,7 @@ try {
         'accion'         => 'cron_instrucciones_registro',
         'entidad_tipo'   => 'mensaje_contacto',
         'entidad_id'     => 0,
-        'detalle'        => "Instrucciones de registro: {$totalProcesados} procesados, {$totalEnviados} enviados",
+        'detalle'        => "Instrucciones: {$totalProcesados} procesados, {$totalEnviados} enviados. Conversiones: {$totalConversiones}",
         'ip'             => '127.0.0.1',
         'user_agent'     => 'CLI/Cron',
         'created_at'     => date('Y-m-d H:i:s'),

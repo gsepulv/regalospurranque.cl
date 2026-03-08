@@ -167,6 +167,15 @@ return [
     // ── Contacto (admin) ────────────────────────────────────
     ['GET',  '/admin/contacto',        'Admin\\ContactoAdminController@index',   ['auth']],
 
+    // ── Mensajes - Seguimiento y Conversiones ──────────────
+    ['GET',  '/admin/mensajes',                'Admin\\MensajeAdminController@index',           ['auth']],
+    ['GET',  '/admin/mensajes/dashboard',      'Admin\\MensajeAdminController@dashboard',       ['auth']],
+    ['POST', '/admin/mensajes/detectar',       'Admin\\MensajeAdminController@detectar',        ['auth']],
+    ['GET',  '/admin/mensajes/{id}',           'Admin\\MensajeAdminController@ver',             ['auth']],
+    ['POST', '/admin/mensajes/{id}/responder', 'Admin\\MensajeAdminController@responder',       ['auth']],
+    ['POST', '/admin/mensajes/{id}/estado',    'Admin\\MensajeAdminController@actualizarEstado', ['auth']],
+    ['POST', '/admin/mensajes/{id}/nota',      'Admin\\MensajeAdminController@guardarNota',     ['auth']],
+
     // ── Correos (admin) ─────────────────────────────────────
     ['GET',  '/admin/correos/enviar',  'Admin\\CorreoAdminController@enviar',    ['auth']],
     ['POST', '/admin/correos/enviar',  'Admin\\CorreoAdminController@send',      ['auth']],

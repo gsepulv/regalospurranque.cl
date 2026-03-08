@@ -19,6 +19,7 @@ return [
         'resenas',
         'planes',
         'contacto',
+        'mensajes',
         'correos',
         'notificaciones',
         'redes',

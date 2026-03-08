@@ -29,6 +29,10 @@
         try {
             $mensajesNoLeidos = \App\Core\Database::getInstance()->count('mensajes_contacto', 'leido = 0');
         } catch (\Throwable $e) {}
+        $mensajesNuevos = 0;
+        try {
+            $mensajesNuevos = \App\Core\Database::getInstance()->count('mensajes_contacto', "estado = 'nuevo'");
+        } catch (\Throwable $e) {}
 
         // Contar comercios para badge
         $totalComercios = 0;
@@ -48,6 +52,7 @@
             ['cambios',      'Cambios Pendientes','/admin/cambios-pendientes', '&#128221;', $cambiosPendientes ?: null],
             ['renovaciones', 'Renovaciones',      '/admin/renovaciones',      '&#128260;', $renovacionesPendientes ?: null],
             ['contacto',     'Contacto',          '/admin/contacto',      '&#128233;', $mensajesNoLeidos ?: null],
+            ['mensajes',     'Seguimiento',       '/admin/mensajes',      '&#128200;', $mensajesNuevos ?: null],
             ['correos',      'Enviar Correo',     '/admin/correos/enviar', '&#9993;',   null],
             ['reportes',     'Reportes',          '/admin/reportes',      '&#128200;', null],
             ['share',        'Compartidos',       '/admin/share',         '&#128279;', null],
