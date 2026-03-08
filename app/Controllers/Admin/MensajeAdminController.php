@@ -4,6 +4,8 @@ namespace App\Controllers\Admin;
 use App\Core\Controller;
 use App\Models\MensajeContacto;
 use App\Models\MensajeRespuesta;
+use App\Models\NurturingConfig;
+use App\Models\NurturingLog;
 use App\Services\Mailer;
 
 class MensajeAdminController extends Controller
@@ -40,6 +42,7 @@ class MensajeAdminController extends Controller
         $mensajes = $result['data'];
 
         $contadores = MensajeContacto::countPorEstado();
+        $maxRec = NurturingConfig::getMaxRecordatorios();
 
         $this->render('admin/mensajes/index', [
             'title'       => 'Seguimiento de Mensajes — ' . SITE_NAME,
@@ -54,6 +57,7 @@ class MensajeAdminController extends Controller
             'currentPage' => $page,
             'totalPages'  => $totalPages,
             'total'       => $total,
+            'maxRec'      => $maxRec,
             'baseUrl'     => '/admin/mensajes',
             'queryParams' => array_filter([
                 'estado' => $estado,
@@ -82,12 +86,23 @@ class MensajeAdminController extends Controller
             'offset' => 0,
         ]);
 
+        // Nurturing stats for dashboard
+        $totalMensajes = $stats['total'] ?: 1;
+        $desuscritosCount = $this->db->fetch(
+            "SELECT COUNT(*) as c FROM mensajes_contacto WHERE desuscrito = 1"
+        );
+        $nurturingStats = [
+            'enviados_semana'     => NurturingLog::countSemana(),
+            'tasa_desuscripcion'  => round(((int) ($desuscritosCount['c'] ?? 0) / $totalMensajes) * 100, 1),
+        ];
+
         $this->render('admin/mensajes/dashboard', [
-            'title'      => 'Dashboard de Conversiones — ' . SITE_NAME,
-            'stats'      => $stats,
-            'contadores' => $contadores,
-            'recientes'  => $recientes['data'],
-            'filters'    => ['desde' => $desde, 'hasta' => $hasta],
+            'title'          => 'Dashboard de Conversiones — ' . SITE_NAME,
+            'stats'          => $stats,
+            'contadores'     => $contadores,
+            'recientes'      => $recientes['data'],
+            'nurturingStats' => $nurturingStats,
+            'filters'        => ['desde' => $desde, 'hasta' => $hasta],
         ]);
     }
 
@@ -116,11 +131,16 @@ class MensajeAdminController extends Controller
             "SELECT id, nombre FROM comercios WHERE activo = 1 ORDER BY nombre ASC"
         );
 
+        $nurturingLog = NurturingLog::getPorMensaje($id);
+        $maxRec = NurturingConfig::getMaxRecordatorios();
+
         $this->render('admin/mensajes/ver', [
-            'title'      => 'Mensaje #' . $id . ' — ' . SITE_NAME,
-            'mensaje'    => $mensaje,
-            'respuestas' => $respuestas,
-            'comercios'  => $comercios,
+            'title'        => 'Mensaje #' . $id . ' — ' . SITE_NAME,
+            'mensaje'      => $mensaje,
+            'respuestas'   => $respuestas,
+            'comercios'    => $comercios,
+            'nurturingLog' => $nurturingLog,
+            'maxRec'       => $maxRec,
         ]);
     }
 

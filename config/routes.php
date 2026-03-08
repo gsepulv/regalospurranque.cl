@@ -40,6 +40,9 @@ return [
     // ── Compartir ───────────────────────────────────────────────
     ['GET',  '/compartir/{tipo}/{slug}', 'Public\\ShareController@show'],
 
+    // ── Desuscripcion ──────────────────────────────────────────
+    ['GET',  '/desuscribir/{token}',     'Public\\DesuscripcionController@confirmar'],
+
     // ── Auth ──────────────────────────────────────────────────
     ['GET',  '/admin',              'Admin\\AuthController@loginForm'],
     ['GET',  '/admin/login',        'Admin\\AuthController@loginForm'],
@@ -175,6 +178,28 @@ return [
     ['POST', '/admin/mensajes/{id}/responder', 'Admin\\MensajeAdminController@responder',       ['auth']],
     ['POST', '/admin/mensajes/{id}/estado',    'Admin\\MensajeAdminController@actualizarEstado', ['auth']],
     ['POST', '/admin/mensajes/{id}/nota',      'Admin\\MensajeAdminController@guardarNota',     ['auth']],
+
+    // ── Nurturing - Recordatorios ─────────────────────────────
+    ['GET',  '/admin/nurturing',                             'Admin\\NurturingAdminController@dashboard',          ['auth']],
+    ['POST', '/admin/nurturing/toggle',                      'Admin\\NurturingAdminController@toggleServicio',     ['auth']],
+    ['GET',  '/admin/nurturing/configuracion',               'Admin\\NurturingAdminController@configuracion',      ['auth']],
+    ['POST', '/admin/nurturing/configuracion',               'Admin\\NurturingAdminController@guardarConfiguracion', ['auth']],
+    ['GET',  '/admin/nurturing/plantillas',                  'Admin\\NurturingAdminController@plantillas',         ['auth']],
+    ['GET',  '/admin/nurturing/plantillas/crear',            'Admin\\NurturingAdminController@crearPlantilla',     ['auth']],
+    ['POST', '/admin/nurturing/plantillas/crear',            'Admin\\NurturingAdminController@guardarPlantilla',   ['auth']],
+    ['POST', '/admin/nurturing/plantillas/reordenar',        'Admin\\NurturingAdminController@reordenarPlantillas', ['auth']],
+    ['GET',  '/admin/nurturing/plantillas/{id}',             'Admin\\NurturingAdminController@editarPlantilla',    ['auth']],
+    ['POST', '/admin/nurturing/plantillas/{id}',             'Admin\\NurturingAdminController@actualizarPlantilla', ['auth']],
+    ['POST', '/admin/nurturing/plantillas/{id}/eliminar',    'Admin\\NurturingAdminController@eliminarPlantilla',  ['auth']],
+    ['GET',  '/admin/nurturing/plantillas/{id}/preview',     'Admin\\NurturingAdminController@previewPlantilla',   ['auth']],
+    ['POST', '/admin/nurturing/plantillas/{id}/toggle',      'Admin\\NurturingAdminController@togglePlantilla',    ['auth']],
+    ['GET',  '/admin/nurturing/contactos',                   'Admin\\NurturingAdminController@contactos',          ['auth']],
+    ['POST', '/admin/nurturing/contactos/{id}/fecha',        'Admin\\NurturingAdminController@editarFechaEnvio',   ['auth']],
+    ['POST', '/admin/nurturing/contactos/{id}/pausar',       'Admin\\NurturingAdminController@pausarContacto',     ['auth']],
+    ['POST', '/admin/nurturing/contactos/{id}/reanudar',     'Admin\\NurturingAdminController@reanudarContacto',   ['auth']],
+    ['POST', '/admin/nurturing/contactos/{id}/cancelar',     'Admin\\NurturingAdminController@cancelarContacto',   ['auth']],
+    ['POST', '/admin/nurturing/contactos/{id}/enviar',       'Admin\\NurturingAdminController@enviarAhora',        ['auth']],
+    ['POST', '/admin/nurturing/masiva',                      'Admin\\NurturingAdminController@accionMasiva',       ['auth']],
 
     // ── Correos (admin) ─────────────────────────────────────
     ['GET',  '/admin/correos/enviar',  'Admin\\CorreoAdminController@enviar',    ['auth']],

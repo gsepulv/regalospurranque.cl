@@ -219,7 +219,7 @@
             </div>
 
             <!-- Info rapida -->
-            <div class="card">
+            <div class="card" style="margin-bottom:1rem;">
                 <div class="card__body" style="font-size:13px;">
                     <div style="margin-bottom:8px;">
                         <small style="color:var(--gray-500);">Respondido</small>
@@ -232,6 +232,58 @@
                     <div>
                         <small style="color:var(--gray-500);">Respuestas enviadas</small>
                         <div><?= $mensaje['total_respuestas'] ?? 0 ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nurturing -->
+            <div class="card">
+                <div class="card__header"><h4 style="margin:0;">Seguimiento automatico</h4></div>
+                <div class="card__body" style="font-size:13px;">
+                    <?php
+                    $nEstado = 'No aplica';
+                    if (!empty($mensaje['desuscrito'])) $nEstado = 'Desuscrito';
+                    elseif (!empty($mensaje['nurturing_pausado'])) $nEstado = 'Pausado';
+                    elseif (($mensaje['recordatorios_enviados'] ?? 0) >= ($maxRec ?? 4)) $nEstado = 'Completado';
+                    elseif (!empty($mensaje['proximo_recordatorio_at'])) $nEstado = 'En curso';
+                    elseif (!empty($mensaje['instrucciones_enviadas'])) $nEstado = 'Pendiente';
+                    ?>
+                    <div style="margin-bottom:8px;">
+                        <small style="color:var(--gray-500);">Estado nurturing</small>
+                        <div style="font-weight:600;"><?= $nEstado ?></div>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <small style="color:var(--gray-500);">Recordatorios</small>
+                        <div><?= $mensaje['recordatorios_enviados'] ?? 0 ?> / <?= $maxRec ?? 4 ?></div>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <small style="color:var(--gray-500);">Proximo envio</small>
+                        <div><?= !empty($mensaje['proximo_recordatorio_at']) ? date('d/m/Y H:i', strtotime($mensaje['proximo_recordatorio_at'])) : 'No programado' ?></div>
+                    </div>
+
+                    <?php if (!$mensaje['desuscrito'] && ($mensaje['recordatorios_enviados'] ?? 0) < ($maxRec ?? 4)): ?>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;">
+                            <?php if (!empty($mensaje['nurturing_pausado'])): ?>
+                                <form method="POST" action="<?= url('/admin/nurturing/contactos/' . $mensaje['id'] . '/reanudar') ?>" style="display:inline;">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn--outline btn--xs">Reanudar</button>
+                                </form>
+                            <?php else: ?>
+                                <form method="POST" action="<?= url('/admin/nurturing/contactos/' . $mensaje['id'] . '/pausar') ?>" style="display:inline;">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn--outline btn--xs">Pausar</button>
+                                </form>
+                            <?php endif; ?>
+                            <form method="POST" action="<?= url('/admin/nurturing/contactos/' . $mensaje['id'] . '/enviar') ?>" style="display:inline;">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn--primary btn--xs"
+                                        onclick="return confirm('Enviar recordatorio ahora?')">Enviar ahora</button>
+                            </form>
+                        </div>
+                    <?php endif; ?>
+
+                    <div style="margin-top:8px;">
+                        <a href="<?= url('/admin/nurturing/contactos') ?>" style="font-size:12px;">Ver panel Nurturing</a>
                     </div>
                 </div>
             </div>

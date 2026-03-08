@@ -33,6 +33,19 @@
         try {
             $mensajesNuevos = \App\Core\Database::getInstance()->count('mensajes_contacto', "estado = 'nuevo'");
         } catch (\Throwable $e) {}
+        $nurturingEnCola = 0;
+        $nurturingActivo = true;
+        try {
+            $__ncfg = \App\Core\Database::getInstance()->fetch("SELECT valor FROM nurturing_config WHERE clave = 'servicio_activo'");
+            $nurturingActivo = ($__ncfg['valor'] ?? '0') === '1';
+            $__nmax = \App\Core\Database::getInstance()->fetch("SELECT valor FROM nurturing_config WHERE clave = 'max_recordatorios'");
+            $__maxR = (int) ($__nmax['valor'] ?? 4);
+            $__nq = \App\Core\Database::getInstance()->fetch(
+                "SELECT COUNT(*) as c FROM mensajes_contacto WHERE proximo_recordatorio_at IS NOT NULL AND desuscrito = 0 AND nurturing_pausado = 0 AND recordatorios_enviados < ?",
+                [$__maxR]
+            );
+            $nurturingEnCola = (int) ($__nq['c'] ?? 0);
+        } catch (\Throwable $e) {}
 
         // Contar comercios para badge
         $totalComercios = 0;
@@ -53,6 +66,7 @@
             ['renovaciones', 'Renovaciones',      '/admin/renovaciones',      '&#128260;', $renovacionesPendientes ?: null],
             ['contacto',     'Contacto',          '/admin/contacto',      '&#128233;', $mensajesNoLeidos ?: null],
             ['mensajes',     'Seguimiento',       '/admin/mensajes',      '&#128200;', $mensajesNuevos ?: null],
+            ['nurturing',    'Nurturing',         '/admin/nurturing',     '&#128276;', $nurturingActivo ? ($nurturingEnCola ?: null) : '!'],
             ['correos',      'Enviar Correo',     '/admin/correos/enviar', '&#9993;',   null],
             ['reportes',     'Reportes',          '/admin/reportes',      '&#128200;', null],
             ['share',        'Compartidos',       '/admin/share',         '&#128279;', null],

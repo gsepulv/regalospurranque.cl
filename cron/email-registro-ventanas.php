@@ -71,6 +71,19 @@ try {
                 'email_destino' => $msg['email'],
                 'enviado_por'   => 'sistema',
             ]);
+
+            // Generar token de desuscripcion y programar primer recordatorio
+            $token = hash('sha256', $msg['id'] . $msg['email'] . time() . bin2hex(random_bytes(8)));
+            $diasEspera = 7;
+            try {
+                $cfgRow = $db->fetch("SELECT valor FROM nurturing_config WHERE clave = 'dias_espera_primera'");
+                if ($cfgRow) $diasEspera = max(1, (int) $cfgRow['valor']);
+            } catch (\Throwable $e) {}
+
+            $db->execute(
+                "UPDATE mensajes_contacto SET token_desuscripcion = ?, proximo_recordatorio_at = DATE_ADD(NOW(), INTERVAL ? DAY) WHERE id = ?",
+                [$token, $diasEspera, $msg['id']]
+            );
         }
 
         // Marcar como procesado (con o sin envío)

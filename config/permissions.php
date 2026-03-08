@@ -20,6 +20,7 @@ return [
         'planes',
         'contacto',
         'mensajes',
+        'nurturing',
         'correos',
         'notificaciones',
         'redes',

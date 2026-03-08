@@ -37,6 +37,16 @@
             <div class="stat-card__label">Tasa de conversion</div>
         </div>
         <div class="stat-card">
+            <div class="stat-card__value"><?= $nurturingStats['enviados_semana'] ?? 0 ?></div>
+            <div class="stat-card__label">Recordatorios esta semana</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card__value" style="color:var(--danger)">
+                <?= $nurturingStats['tasa_desuscripcion'] ?? '0' ?>%
+            </div>
+            <div class="stat-card__label">Tasa desuscripcion</div>
+        </div>
+        <div class="stat-card">
             <div class="stat-card__value">
                 <?php if ($stats['tiempo_respuesta'] !== null): ?>
                     <?php if ($stats['tiempo_respuesta'] >= 1440): ?>
@@ -81,10 +91,11 @@
                 $porEstado = $stats['por_estado'];
                 $total = $stats['total'] ?: 1;
                 $funnel = [
-                    ['Recibidos',    $stats['total'],                  'var(--gray-400)'],
-                    ['Leidos',       ($porEstado['leido'] ?? 0) + ($porEstado['respondido'] ?? 0) + ($porEstado['convertido'] ?? 0), 'var(--info)'],
-                    ['Respondidos',  ($porEstado['respondido'] ?? 0) + ($porEstado['convertido'] ?? 0), 'var(--primary)'],
-                    ['Convertidos',  $porEstado['convertido'] ?? 0,   'var(--success)'],
+                    ['Recibidos',      $stats['total'],                  'var(--gray-400)'],
+                    ['Leidos',         ($porEstado['leido'] ?? 0) + ($porEstado['respondido'] ?? 0) + ($porEstado['convertido'] ?? 0), 'var(--info)'],
+                    ['Respondidos',    ($porEstado['respondido'] ?? 0) + ($porEstado['convertido'] ?? 0), 'var(--primary)'],
+                    ['Recordatorios',  $nurturingStats['enviados_semana'] ?? 0, '#8b5cf6'],
+                    ['Convertidos',    $porEstado['convertido'] ?? 0,   'var(--success)'],
                 ];
                 foreach ($funnel as [$fLabel, $fCount, $fColor]):
                     $pct = round(($fCount / $total) * 100);

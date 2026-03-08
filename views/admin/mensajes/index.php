@@ -96,6 +96,7 @@
                         <th>Email</th>
                         <th>Asunto</th>
                         <th>Estado</th>
+                        <th>Nurturing</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -122,6 +123,19 @@
                                 <span class="badge <?= $b[0] ?>"><?= $b[1] ?></span>
                                 <?php if (!empty($msg['comercio_id'])): ?>
                                     <span class="badge badge--success" style="font-size:10px;">&#10003; Registrado</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="font-size:12px;">
+                                <?php if (!empty($msg['desuscrito'])): ?>
+                                    <span class="badge badge--danger" style="font-size:10px;">Desuscrito</span>
+                                <?php elseif (!empty($msg['nurturing_pausado'])): ?>
+                                    <span class="badge badge--warning" style="font-size:10px;">Pausado</span>
+                                <?php elseif (($msg['recordatorios_enviados'] ?? 0) > 0): ?>
+                                    <span style="font-weight:600;"><?= $msg['recordatorios_enviados'] ?>/<?= $maxRec ?? 4 ?></span>
+                                <?php elseif (!empty($msg['instrucciones_enviadas'])): ?>
+                                    <span style="color:var(--gray-400);">Pendiente</span>
+                                <?php else: ?>
+                                    <span style="color:var(--gray-300);">--</span>
                                 <?php endif; ?>
                             </td>
                             <td>
