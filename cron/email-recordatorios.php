@@ -129,7 +129,7 @@ try {
                 'mensaje_id'          => $mc['id'],
                 'plantilla_id'        => $plantilla['id'],
                 'numero_recordatorio'  => $numSiguiente,
-                'estado'              => 'enviado',
+                'estado_envio'        => 'enviado',
                 'email_destino'       => $mc['email'],
                 'asunto_enviado'      => $asunto,
             ]);
@@ -150,7 +150,7 @@ try {
                 'mensaje_id'          => $mc['id'],
                 'plantilla_id'        => $plantilla['id'],
                 'numero_recordatorio'  => $numSiguiente,
-                'estado'              => 'fallido',
+                'estado_envio'        => 'fallido',
                 'email_destino'       => $mc['email'],
                 'asunto_enviado'      => $asunto,
                 'error_detalle'       => 'Envio fallido via Mailer',
@@ -202,7 +202,7 @@ try {
     );
 
     $totalRecordatoriosLog = $db->fetch(
-        "SELECT COUNT(*) as c FROM nurturing_log WHERE estado = 'enviado'"
+        "SELECT COUNT(*) as c FROM nurturing_log WHERE estado_envio = 'enviado'"
     );
 
     $db->execute(

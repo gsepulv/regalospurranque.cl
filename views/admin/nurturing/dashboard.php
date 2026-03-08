@@ -126,9 +126,9 @@
                                     <td><?= e($u['nombre'] ?? $u['email_destino']) ?></td>
                                     <td><?= $u['numero_recordatorio'] ?></td>
                                     <td>
-                                        <?php if ($u['estado'] === 'enviado'): ?>
+                                        <?php if ($u['estado_envio'] === 'enviado'): ?>
                                             <span class="badge badge--success">Enviado</span>
-                                        <?php elseif ($u['estado'] === 'fallido'): ?>
+                                        <?php elseif ($u['estado_envio'] === 'fallido'): ?>
                                             <span class="badge badge--danger">Fallido</span>
                                         <?php else: ?>
                                             <span class="badge badge--secondary">Cancelado</span>

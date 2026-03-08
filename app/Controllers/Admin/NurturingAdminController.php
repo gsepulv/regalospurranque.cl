@@ -510,7 +510,7 @@ class NurturingAdminController extends Controller
                 'mensaje_id'          => $id,
                 'plantilla_id'        => $plantilla['id'],
                 'numero_recordatorio'  => $numSiguiente,
-                'estado'              => 'enviado',
+                'estado_envio'        => 'enviado',
                 'email_destino'       => $msg['email'],
                 'asunto_enviado'      => $asunto,
             ]);
@@ -533,7 +533,7 @@ class NurturingAdminController extends Controller
                 'mensaje_id'          => $id,
                 'plantilla_id'        => $plantilla['id'],
                 'numero_recordatorio'  => $numSiguiente,
-                'estado'              => 'fallido',
+                'estado_envio'        => 'fallido',
                 'email_destino'       => $msg['email'],
                 'asunto_enviado'      => $asunto,
                 'error_detalle'       => 'Envio manual fallido',

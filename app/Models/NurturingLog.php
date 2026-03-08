@@ -38,9 +38,9 @@ class NurturingLog
         }
 
         $porRecordatorio = $db->fetchAll(
-            "SELECT numero_recordatorio, estado, COUNT(*) as total
+            "SELECT numero_recordatorio, estado_envio, COUNT(*) as total
              FROM nurturing_log WHERE {$where}
-             GROUP BY numero_recordatorio, estado
+             GROUP BY numero_recordatorio, estado_envio
              ORDER BY numero_recordatorio",
             $params
         );
@@ -55,16 +55,16 @@ class NurturingLog
             if (!isset($porNumero[$num])) {
                 $porNumero[$num] = ['enviado' => 0, 'fallido' => 0, 'cancelado' => 0];
             }
-            $porNumero[$num][$r['estado']] = (int) $r['total'];
-            if ($r['estado'] === 'enviado') $totalEnviados += (int) $r['total'];
-            if ($r['estado'] === 'fallido') $totalFallidos += (int) $r['total'];
-            if ($r['estado'] === 'cancelado') $totalCancelados += (int) $r['total'];
+            $porNumero[$num][$r['estado_envio']] = (int) $r['total'];
+            if ($r['estado_envio'] === 'enviado') $totalEnviados += (int) $r['total'];
+            if ($r['estado_envio'] === 'fallido') $totalFallidos += (int) $r['total'];
+            if ($r['estado_envio'] === 'cancelado') $totalCancelados += (int) $r['total'];
         }
 
         $porDia = $db->fetchAll(
             "SELECT DATE(created_at) as fecha, COUNT(*) as total
              FROM nurturing_log
-             WHERE estado = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+             WHERE estado_envio = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
              GROUP BY DATE(created_at) ORDER BY fecha"
         );
 
@@ -97,7 +97,7 @@ class NurturingLog
     {
         $r = Database::getInstance()->fetch(
             "SELECT COUNT(*) as c FROM nurturing_log
-             WHERE estado = 'enviado' AND DATE(created_at) = CURDATE()"
+             WHERE estado_envio = 'enviado' AND DATE(created_at) = CURDATE()"
         );
         return (int) ($r['c'] ?? 0);
     }
@@ -106,7 +106,7 @@ class NurturingLog
     {
         $r = Database::getInstance()->fetch(
             "SELECT COUNT(*) as c FROM nurturing_log
-             WHERE estado = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
+             WHERE estado_envio = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
         );
         return (int) ($r['c'] ?? 0);
     }
@@ -115,7 +115,7 @@ class NurturingLog
     {
         $r = Database::getInstance()->fetch(
             "SELECT COUNT(*) as c FROM nurturing_log
-             WHERE estado = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
+             WHERE estado_envio = 'enviado' AND created_at >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)"
         );
         return (int) ($r['c'] ?? 0);
     }
