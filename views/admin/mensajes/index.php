@@ -142,6 +142,13 @@
                                 <a href="<?= url('/admin/mensajes/' . $msg['id']) ?>" class="btn btn--outline btn--xs">
                                     Ver
                                 </a>
+                                <form method="POST" action="<?= url('/admin/mensajes/' . $msg['id'] . '/eliminar') ?>" style="display:inline;">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn--danger btn--xs"
+                                            onclick="return confirm('¿Estás seguro de eliminar este mensaje? Esta acción no se puede deshacer.')">
+                                        Eliminar
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     <?php endforeach; ?>

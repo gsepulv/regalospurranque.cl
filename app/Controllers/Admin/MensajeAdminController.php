@@ -253,6 +253,25 @@ class MensajeAdminController extends Controller
     }
 
     /**
+     * POST /admin/mensajes/{id}/eliminar — Eliminar mensaje
+     */
+    public function eliminar(int $id): void
+    {
+        $mensaje = MensajeContacto::find($id);
+        if (!$mensaje) {
+            $this->redirect('/admin/mensajes', ['error' => 'Mensaje no encontrado']);
+            return;
+        }
+
+        $this->db->delete('mensajes_contacto', 'id = ?', [$id]);
+
+        $this->log('mensajes', 'eliminar', 'mensaje_contacto', $id,
+            "Mensaje eliminado: {$mensaje['email']} - {$mensaje['asunto']}");
+
+        $this->redirect('/admin/mensajes', ['success' => 'Mensaje eliminado correctamente']);
+    }
+
+    /**
      * POST /admin/mensajes/detectar — Auto-deteccion de conversiones
      */
     public function detectar(): void

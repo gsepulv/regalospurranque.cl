@@ -74,6 +74,13 @@
                                 <a href="<?= url('/admin/correos/enviar?mensaje_id=' . $msg['id']) ?>" class="btn btn--small btn--primary">
                                     Responder
                                 </a>
+                                <form method="POST" action="<?= url('/admin/contacto/' . $msg['id'] . '/eliminar') ?>" style="display:inline;">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn--small btn--danger"
+                                            onclick="return confirm('¿Estás seguro de eliminar este mensaje? Esta acción no se puede deshacer.')">
+                                        Eliminar
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         <tr id="msg-<?= $msg['id'] ?>" style="display:none;">

@@ -168,7 +168,8 @@ return [
     ['POST', '/admin/seo/sitemap',                  'Admin\\SeoAdminController@generateSitemap',['auth']],
 
     // ── Contacto (admin) ────────────────────────────────────
-    ['GET',  '/admin/contacto',        'Admin\\ContactoAdminController@index',   ['auth']],
+    ['GET',  '/admin/contacto',              'Admin\\ContactoAdminController@index',     ['auth']],
+    ['POST', '/admin/contacto/{id}/eliminar', 'Admin\\ContactoAdminController@eliminar', ['auth']],
 
     // ── Mensajes - Seguimiento y Conversiones ──────────────
     ['GET',  '/admin/mensajes',                'Admin\\MensajeAdminController@index',           ['auth']],
@@ -178,6 +179,7 @@ return [
     ['POST', '/admin/mensajes/{id}/responder', 'Admin\\MensajeAdminController@responder',       ['auth']],
     ['POST', '/admin/mensajes/{id}/estado',    'Admin\\MensajeAdminController@actualizarEstado', ['auth']],
     ['POST', '/admin/mensajes/{id}/nota',      'Admin\\MensajeAdminController@guardarNota',     ['auth']],
+    ['POST', '/admin/mensajes/{id}/eliminar', 'Admin\\MensajeAdminController@eliminar',        ['auth']],
 
     // ── Nurturing - Recordatorios ─────────────────────────────
     ['GET',  '/admin/nurturing',                             'Admin\\NurturingAdminController@dashboard',          ['auth']],

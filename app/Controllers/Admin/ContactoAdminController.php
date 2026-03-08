@@ -50,4 +50,23 @@ class ContactoAdminController extends Controller
             'queryParams' => array_filter(['estado' => $estado]),
         ]);
     }
+
+    /**
+     * POST /admin/contacto/{id}/eliminar — Eliminar mensaje de contacto
+     */
+    public function eliminar(int $id): void
+    {
+        $mensaje = MensajeContacto::find($id);
+        if (!$mensaje) {
+            $this->redirect('/admin/contacto', ['error' => 'Mensaje no encontrado']);
+            return;
+        }
+
+        $this->db->delete('mensajes_contacto', 'id = ?', [$id]);
+
+        $this->log('contacto', 'eliminar', 'mensaje_contacto', $id,
+            "Mensaje eliminado: {$mensaje['email']} - {$mensaje['asunto']}");
+
+        $this->redirect('/admin/contacto', ['success' => 'Mensaje eliminado correctamente']);
+    }
 }
