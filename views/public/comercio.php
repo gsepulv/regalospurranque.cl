@@ -572,6 +572,7 @@ function trackBanner(bannerId) {
     marker.bindPopup('<strong><?= addslashes(e($comercio['nombre'])) ?></strong><?= !empty($comercio['direccion']) ? '<br>' . addslashes(e($comercio['direccion'])) : '' ?>').openPopup();
 
     setTimeout(function() { map.invalidateSize(); }, 300);
+    window.addEventListener('load', function() { map.invalidateSize(); });
 })();
 <?php endif; ?>
 

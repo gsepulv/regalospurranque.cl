@@ -160,5 +160,6 @@ $errors = $flash['errors'] ?? [];
         .openPopup();
 
     setTimeout(function() { map.invalidateSize(); }, 300);
+    window.addEventListener('load', function() { map.invalidateSize(); });
 })();
 </script>

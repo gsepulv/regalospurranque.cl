@@ -49,6 +49,9 @@ self.addEventListener('fetch', function (event) {
     // Solo interceptar GET
     if (request.method !== 'GET') return;
 
+    // No interceptar requests externos (tiles OpenStreetMap, analytics, etc.)
+    if (!request.url.startsWith(self.location.origin)) return;
+
     // No interceptar requests al admin ni a APIs
     var url = new URL(request.url);
     if (url.pathname.startsWith('/admin') || url.pathname.startsWith('/api/')) return;
