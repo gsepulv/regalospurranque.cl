@@ -299,12 +299,8 @@ class Seo
             ],
         ];
 
-        if (!empty($fecha['fecha_inicio'])) {
-            $schema['startDate'] = $fecha['fecha_inicio'];
-        }
-        if (!empty($fecha['fecha_fin'])) {
-            $schema['endDate'] = $fecha['fecha_fin'];
-        }
+        $schema['startDate'] = $fecha['fecha_inicio'];
+        $schema['endDate'] = !empty($fecha['fecha_fin']) ? $fecha['fecha_fin'] : $fecha['fecha_inicio'];
 
         return $schema;
     }

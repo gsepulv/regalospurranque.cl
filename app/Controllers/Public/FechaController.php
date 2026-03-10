@@ -82,10 +82,10 @@ class FechaController extends Controller
             'totalPages'  => $totalPages,
             'baseUrl'     => "/fecha/{$slug}",
             'breadcrumbs' => $breadcrumbs,
-            'schemas'     => [
-                Seo::schemaEvent($fecha),
+            'schemas'     => array_filter([
+                !empty($fecha['fecha_inicio']) ? Seo::schemaEvent($fecha) : null,
                 Seo::schemaBreadcrumbs($breadcrumbs),
-            ],
+            ]),
         ]);
     }
 }
