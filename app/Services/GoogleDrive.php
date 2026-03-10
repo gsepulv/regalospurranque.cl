@@ -3,7 +3,7 @@ namespace App\Services;
 
 /**
  * Servicio de Google Drive via API REST v3
- * Autenticación: Service Account con JWT (google-credentials.json)
+ * Autenticación OAuth 2.0 con refresh token (cuenta personal Gmail)
  * Sin cURL ni Composer — usa file_get_contents + stream context
  */
 class GoogleDrive
@@ -12,7 +12,6 @@ class GoogleDrive
     private const API_BASE    = 'https://www.googleapis.com/drive/v3';
     private const UPLOAD_BASE = 'https://www.googleapis.com/upload/drive/v3/files';
     private const CHUNK_SIZE  = 5 * 1024 * 1024; // 5MB
-    private const SCOPE       = 'https://www.googleapis.com/auth/drive.file';
 
     /** @var string Último error para diagnóstico */
     private static string $lastError = '';
@@ -38,9 +37,8 @@ class GoogleDrive
                 return ['ok' => false, 'message' => 'Google Drive no está habilitado'];
             }
 
-            $credFile = defined('GDRIVE_CREDENTIALS_PATH') ? GDRIVE_CREDENTIALS_PATH : '';
-            if (!$credFile || !file_exists($credFile)) {
-                return ['ok' => false, 'message' => 'Archivo de credenciales no encontrado: ' . $credFile];
+            if (!defined('GDRIVE_CLIENT_ID') || !defined('GDRIVE_CLIENT_SECRET') || !defined('GDRIVE_REFRESH_TOKEN')) {
+                return ['ok' => false, 'message' => 'Faltan credenciales OAuth (CLIENT_ID, CLIENT_SECRET o REFRESH_TOKEN)'];
             }
 
             self::$lastError = '';
@@ -317,39 +315,24 @@ class GoogleDrive
         ];
     }
 
-    // ─── Service Account JWT ─────────────────────────────────────
+    // ─── OAuth 2.0 con Refresh Token ────────────────────────────
 
     /**
-     * Obtener access token via Service Account JWT (cacheado o nuevo)
+     * Obtener access token usando refresh token (cacheado o nuevo)
      */
     private static function getAccessToken(): string|false
     {
         $cached = self::getCachedToken();
         if ($cached) return $cached;
 
-        $credFile = defined('GDRIVE_CREDENTIALS_PATH') ? GDRIVE_CREDENTIALS_PATH : '';
-        if (!$credFile || !file_exists($credFile)) {
-            self::$lastError = 'Archivo de credenciales no encontrado: ' . $credFile;
-            return false;
-        }
-
-        $creds = json_decode(file_get_contents($credFile), true);
-        if (!$creds || empty($creds['client_email']) || empty($creds['private_key'])) {
-            self::$lastError = 'Credenciales inválidas en ' . basename($credFile);
-            return false;
-        }
-
-        $jwt = self::buildJwt($creds['client_email'], $creds['private_key']);
-        if (!$jwt) {
-            return false;
-        }
-
         $resp = self::httpRequest(
             self::TOKEN_URI,
             'POST',
             http_build_query([
-                'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-                'assertion'  => $jwt,
+                'client_id'     => GDRIVE_CLIENT_ID,
+                'client_secret' => GDRIVE_CLIENT_SECRET,
+                'refresh_token' => GDRIVE_REFRESH_TOKEN,
+                'grant_type'    => 'refresh_token',
             ]),
             ['Content-Type: application/x-www-form-urlencoded'],
             15
@@ -358,7 +341,7 @@ class GoogleDrive
         if ($resp['httpCode'] !== 200) {
             $body = json_decode($resp['body'], true);
             $errorMsg = $body['error_description'] ?? $body['error'] ?? 'HTTP ' . $resp['httpCode'];
-            self::$lastError = 'JWT token request falló: ' . $errorMsg;
+            self::$lastError = 'Token refresh falló: ' . $errorMsg;
             return false;
         }
 
@@ -372,51 +355,6 @@ class GoogleDrive
         self::cacheToken($tokenData['access_token'], $tokenData['expires_in'] ?? 3600);
 
         return $tokenData['access_token'];
-    }
-
-    /**
-     * Construir JWT firmado con RS256 para Service Account
-     */
-    private static function buildJwt(string $clientEmail, string $privateKey): string|false
-    {
-        $now = time();
-
-        $header = self::base64url(json_encode([
-            'alg' => 'RS256',
-            'typ' => 'JWT',
-        ]));
-
-        $payload = self::base64url(json_encode([
-            'iss'   => $clientEmail,
-            'scope' => self::SCOPE,
-            'aud'   => self::TOKEN_URI,
-            'iat'   => $now,
-            'exp'   => $now + 3600,
-        ]));
-
-        $signingInput = $header . '.' . $payload;
-
-        $pkeyId = openssl_pkey_get_private($privateKey);
-        if (!$pkeyId) {
-            self::$lastError = 'No se pudo leer la private key: ' . openssl_error_string();
-            return false;
-        }
-
-        $signature = '';
-        if (!openssl_sign($signingInput, $signature, $pkeyId, OPENSSL_ALGO_SHA256)) {
-            self::$lastError = 'Error al firmar JWT: ' . openssl_error_string();
-            return false;
-        }
-
-        return $signingInput . '.' . self::base64url($signature);
-    }
-
-    /**
-     * Base64 URL-safe encoding (sin padding)
-     */
-    private static function base64url(string $data): string
-    {
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 
     /**
