@@ -579,6 +579,7 @@ function trackBanner(bannerId) {
 
     setTimeout(function() { map.invalidateSize(); }, 300);
     window.addEventListener('load', function() { map.invalidateSize(); });
+    window.addEventListener('resize', function() { map.invalidateSize(); });
 })();
 <?php endif; ?>
 

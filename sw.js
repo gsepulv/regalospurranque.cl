@@ -4,16 +4,18 @@
  * Cachea CSS, JS e imágenes para uso offline
  */
 
-var CACHE_NAME = 'regalos-v2-cache-v2';
+var CACHE_NAME = 'regalos-v2-cache-v3';
 var OFFLINE_URL = '/offline.html';
+var MAX_CACHE_ITEMS = 100;
 
 // Recursos esenciales para cachear al instalar
 var PRECACHE_URLS = [
     '/',
     '/offline.html',
-    '/assets/css/main.css',
+    '/assets/css/rp2.css',
     '/assets/js/app.js',
-    '/manifest.json'
+    '/manifest.json',
+    '/favicon.ico'
 ];
 
 // ── Install ─────────────────────────────────────────────
@@ -67,6 +69,7 @@ self.addEventListener('fetch', function (event) {
                         // Solo cachear assets estáticos y páginas HTML
                         if (isStaticAsset(url.pathname) || isHTMLPage(request)) {
                             cache.put(request, responseClone);
+                            trimCache(cache, MAX_CACHE_ITEMS);
                         }
                     });
                 }
@@ -96,4 +99,14 @@ function isStaticAsset(pathname) {
 
 function isHTMLPage(request) {
     return request.headers.get('accept') && request.headers.get('accept').includes('text/html');
+}
+
+function trimCache(cache, maxItems) {
+    cache.keys().then(function (keys) {
+        if (keys.length > maxItems) {
+            cache.delete(keys[0]).then(function () {
+                if (keys.length - 1 > maxItems) trimCache(cache, maxItems);
+            });
+        }
+    });
 }

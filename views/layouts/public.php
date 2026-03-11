@@ -39,8 +39,6 @@
     <style id="theme-colors">
     :root { <?= \App\Services\Theme::generateCssVariables() ?> }
     </style>
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preload" href="<?= asset('css/rp2.css?v=202603051800') ?>" as="style">
     <link rel="stylesheet" href="<?= asset('css/rp2.css?v=202603051800') ?>">
     <?php if (!empty($extraCss)): ?>

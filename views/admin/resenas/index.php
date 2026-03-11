@@ -113,7 +113,7 @@ $estado = $filters['estado'] ?? '';
                 <option value="rechazar">Rechazar</option>
                 <option value="eliminar">Eliminar</option>
             </select>
-            <button type="submit" class="btn btn--primary btn--sm" onclick="return confirm('¿Aplicar acción masiva a las reseñas seleccionadas?')">Aplicar</button>
+            <button type="submit" class="btn btn--primary btn--sm" onclick="if(!confirm('¿Aplicar acción masiva a las reseñas seleccionadas?'))return false;this.disabled=true;this.textContent='Aplicando...';">Aplicar</button>
         </div>
 
         <div class="admin-card">

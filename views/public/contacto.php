@@ -89,6 +89,13 @@ $errors = $flash['errors'] ?? [];
                             <?= \App\Services\Captcha::widget() ?>
                             <button type="submit" class="btn btn--primary" id="contactSubmit">Enviar mensaje</button>
                         </form>
+                        <script>
+                        document.getElementById('contactSubmit').closest('form').addEventListener('submit', function() {
+                            var btn = document.getElementById('contactSubmit');
+                            btn.disabled = true;
+                            btn.textContent = 'Enviando...';
+                        });
+                        </script>
                     </div>
                 </div>
             </div>
@@ -161,5 +168,6 @@ $errors = $flash['errors'] ?? [];
 
     setTimeout(function() { map.invalidateSize(); }, 300);
     window.addEventListener('load', function() { map.invalidateSize(); });
+    window.addEventListener('resize', function() { map.invalidateSize(); });
 })();
 </script>

@@ -174,6 +174,7 @@
     // Forzar recálculo de tamaño del mapa
     setTimeout(function() { map.invalidateSize(); }, 300);
     window.addEventListener('load', function() { map.invalidateSize(); });
+    window.addEventListener('resize', function() { map.invalidateSize(); });
 
     // Filtro por categoria
     var filterSelect = document.getElementById('categoryFilter');

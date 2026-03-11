@@ -629,7 +629,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         copyBtn.classList.remove('copied');
                         copyBtn.innerHTML = svgHTML + 'Copiar enlace';
                     }, 2000);
-                } catch (err) { /* silenciar */ }
+                } catch (err) { console.warn('Copiar enlace falló:', err); }
                 document.body.removeChild(textarea);
             }
         });
@@ -804,8 +804,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 });
             })
-            .catch(function () {
-                // SW no soportado o error - silencioso
+            .catch(function (err) {
+                console.warn('Service Worker registration failed:', err);
             });
     })();
 

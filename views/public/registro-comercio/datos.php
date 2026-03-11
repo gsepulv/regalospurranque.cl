@@ -248,7 +248,7 @@ foreach ($fechas as $f) {
             <div style="text-align:center;margin-bottom:2rem">
                 <?= \App\Services\Captcha::widget() ?>
 
-                <button type="submit" class="btn btn--primary" style="padding:0.75rem 2rem;font-size:1.05rem;margin-top:1rem">
+                <button type="submit" class="btn btn--primary" id="btnRegistroComercio" style="padding:0.75rem 2rem;font-size:1.05rem;margin-top:1rem">
                     🏪 Enviar mi comercio para revisión
                 </button>
                 <p style="font-size:0.8rem;color:#6B7280;margin-top:0.75rem">
@@ -294,5 +294,11 @@ document.getElementById('redTipo').addEventListener('change', function() {
     };
     var urlInput = document.getElementById('redUrl');
     urlInput.placeholder = placeholders[this.value] || 'https://...';
+});
+
+document.getElementById('btnRegistroComercio').closest('form').addEventListener('submit', function() {
+    var btn = document.getElementById('btnRegistroComercio');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
 });
 </script>

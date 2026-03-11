@@ -444,8 +444,11 @@ document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
             alert('El contenido debe tener al menos 50 caracteres (actualmente ' + text.length + ')');
             editor.focus();
+            return;
         }
     }
+    var btn = this.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
 });
 
 // Preview de imagen al seleccionar archivo
