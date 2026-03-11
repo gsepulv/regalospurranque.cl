@@ -23,11 +23,28 @@ spl_autoload_register(function (string $class) {
 
 use App\Core\Database;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-analytics-daily.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    echo "[" . date('Y-m-d H:i:s') . "] Otra instancia ya está ejecutándose. Saliendo.\n";
+    exit(0);
+}
+
+// Helper para log persistente
+function cronLog(string $msg): void {
+    $line = "[" . date('Y-m-d H:i:s') . "] {$msg}\n";
+    echo $line;
+    $logDir = BASE_PATH . '/storage/logs';
+    if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+    file_put_contents($logDir . '/cron-analytics.log', $line, FILE_APPEND | LOCK_EX);
+}
+
 try {
     $db = Database::getInstance();
     $ayer = date('Y-m-d', strtotime('-1 day'));
 
-    echo "[" . date('Y-m-d H:i:s') . "] Consolidando analytics del {$ayer}...\n";
+    cronLog("Consolidando analytics del {$ayer}...");
 
     // Consolidar visitas del día anterior en analytics_diario
     $visitas = $db->fetchAll(
@@ -49,7 +66,7 @@ try {
         $inserted++;
     }
 
-    echo "[" . date('Y-m-d H:i:s') . "] Consolidados {$inserted} registros para {$ayer}\n";
+    cronLog("Consolidados {$inserted} registros para {$ayer}");
 
     // Limpiar visitas_log > 90 días (mantener solo resumen diario)
     $cutoff = date('Y-m-d', strtotime('-90 days'));
@@ -58,7 +75,7 @@ try {
         [$cutoff . ' 00:00:00']
     );
 
-    echo "[" . date('Y-m-d H:i:s') . "] Registros antiguos eliminados (anteriores a {$cutoff})\n";
+    cronLog("Registros antiguos eliminados (anteriores a {$cutoff})");
 
     // Registrar en log
     $db->insert('admin_log', [
@@ -74,9 +91,13 @@ try {
         'created_at'     => date('Y-m-d H:i:s'),
     ]);
 
-    echo "[" . date('Y-m-d H:i:s') . "] Proceso completado.\n";
+    cronLog("Proceso completado.");
 
 } catch (\Throwable $e) {
-    echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
+    cronLog("ERROR: " . $e->getMessage());
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }

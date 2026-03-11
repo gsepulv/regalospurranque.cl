@@ -24,11 +24,28 @@ spl_autoload_register(function (string $class) {
 
 use App\Core\Database;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-expiracion.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    echo "[" . date('Y-m-d H:i:s') . "] Otra instancia ya está ejecutándose. Saliendo.\n";
+    exit(0);
+}
+
+// Helper para log persistente
+function cronLog(string $msg): void {
+    $line = "[" . date('Y-m-d H:i:s') . "] {$msg}\n";
+    echo $line;
+    $logDir = BASE_PATH . '/storage/logs';
+    if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+    file_put_contents($logDir . '/cron-expiracion.log', $line, FILE_APPEND | LOCK_EX);
+}
+
 try {
     $db = Database::getInstance();
     $hoy = date('Y-m-d');
 
-    echo "[" . date('Y-m-d H:i:s') . "] Verificando comercios con plan vencido...\n";
+    cronLog("Verificando comercios con plan vencido...");
 
     // Obtener comercios activos cuyo plan_fin ya pasó
     $vencidos = $db->fetchAll(
@@ -39,7 +56,7 @@ try {
     );
 
     if (empty($vencidos)) {
-        echo "[" . date('Y-m-d H:i:s') . "] No hay comercios vencidos.\n";
+        cronLog("No hay comercios vencidos.");
         exit(0);
     }
 
@@ -50,10 +67,10 @@ try {
             [$c['id']]
         );
         $count++;
-        echo "  - Desactivado: {$c['nombre']} (ID {$c['id']}, plan: {$c['plan']}, vencido: {$c['plan_fin']})\n";
+        cronLog("Desactivado: {$c['nombre']} (ID {$c['id']}, plan: {$c['plan']}, vencido: {$c['plan_fin']})");
     }
 
-    echo "[" . date('Y-m-d H:i:s') . "] Total desactivados: {$count}\n";
+    cronLog("Total desactivados: {$count}");
 
     // Registrar en admin_log
     if ($count > 0) {
@@ -71,7 +88,10 @@ try {
     }
 
 } catch (\Throwable $e) {
-    echo "[ERROR] " . $e->getMessage() . "\n";
-    error_log("[cron/expiracion-comercios] " . $e->getMessage());
+    cronLog("ERROR: " . $e->getMessage());
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }

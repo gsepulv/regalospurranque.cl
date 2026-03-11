@@ -30,20 +30,37 @@ spl_autoload_register(function (string $class) {
 use App\Services\Backup;
 use App\Core\Database;
 
+// Helper para log persistente
+function cronLog(string $msg): void {
+    $line = "[" . date('Y-m-d H:i:s') . "] {$msg}\n";
+    echo $line;
+    $logDir = BASE_PATH . '/storage/logs';
+    if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+    file_put_contents($logDir . '/cron-backup.log', $line, FILE_APPEND | LOCK_EX);
+}
+
 $db = Database::getInstance();
 $driveEnabled = defined('GDRIVE_ENABLED') && GDRIVE_ENABLED;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-backup-auto.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    cronLog("Otra instancia ya está ejecutándose. Saliendo.");
+    exit(0);
+}
+
 try {
-    echo "[" . date('Y-m-d H:i:s') . "] Iniciando backup automático...\n";
+    cronLog("Iniciando backup automático...");
 
     // ── 1. Backup de BD comprimido (.sql.gz) ─────────────────
-    echo "[" . date('Y-m-d H:i:s') . "] Generando backup de BD comprimido...\n";
+    cronLog("Generando backup de BD comprimido...");
 
     $dbBackup = Backup::exportDatabaseGz();
 
     if ($dbBackup) {
         $dbSize = Backup::formatSize(filesize($dbBackup));
-        echo "[" . date('Y-m-d H:i:s') . "] Backup BD generado: " . basename($dbBackup) . " ({$dbSize})\n";
+        cronLog("Backup BD generado: " . basename($dbBackup) . " ({$dbSize})");
 
         $db->insert('admin_log', [
             'usuario_id'     => 0,
@@ -60,11 +77,11 @@ try {
 
         // Subir BD a Drive
         if ($driveEnabled) {
-            echo "[" . date('Y-m-d H:i:s') . "] Subiendo backup BD a Google Drive...\n";
+            cronLog("Subiendo backup BD a Google Drive...");
             $driveDb = \App\Services\GoogleDrive::subirArchivo($dbBackup, basename($dbBackup));
 
             if ($driveDb['ok']) {
-                echo "[" . date('Y-m-d H:i:s') . "] BD subida a Drive (ID: " . ($driveDb['fileId'] ?? 'N/A') . ")\n";
+                cronLog("BD subida a Drive (ID: " . ($driveDb['fileId'] ?? 'N/A') . ")");
                 $db->insert('admin_log', [
                     'usuario_id'     => 0,
                     'usuario_nombre' => 'Sistema (Cron)',
@@ -78,21 +95,21 @@ try {
                     'created_at'     => date('Y-m-d H:i:s'),
                 ]);
             } else {
-                echo "[" . date('Y-m-d H:i:s') . "] ERROR Drive (BD): " . ($driveDb['message'] ?? 'Error desconocido') . "\n";
+                cronLog("ERROR Drive (BD): " . ($driveDb['message'] ?? 'Error desconocido'));
             }
         }
     } else {
-        echo "[" . date('Y-m-d H:i:s') . "] ERROR: No se pudo generar el backup de BD\n";
+        cronLog("ERROR: No se pudo generar el backup de BD");
     }
 
     // ── 2. Backup completo (.zip = BD + archivos) ────────────
-    echo "[" . date('Y-m-d H:i:s') . "] Generando backup completo...\n";
+    cronLog("Generando backup completo...");
 
     $fullBackup = Backup::exportFull();
 
     if ($fullBackup) {
         $fullSize = Backup::formatSize(filesize($fullBackup));
-        echo "[" . date('Y-m-d H:i:s') . "] Backup completo generado: " . basename($fullBackup) . " ({$fullSize})\n";
+        cronLog("Backup completo generado: " . basename($fullBackup) . " ({$fullSize})");
 
         $db->insert('admin_log', [
             'usuario_id'     => 0,
@@ -109,11 +126,11 @@ try {
 
         // Subir completo a Drive
         if ($driveEnabled) {
-            echo "[" . date('Y-m-d H:i:s') . "] Subiendo backup completo a Google Drive...\n";
+            cronLog("Subiendo backup completo a Google Drive...");
             $driveFull = \App\Services\GoogleDrive::subirArchivo($fullBackup, basename($fullBackup));
 
             if ($driveFull['ok']) {
-                echo "[" . date('Y-m-d H:i:s') . "] Completo subido a Drive (ID: " . ($driveFull['fileId'] ?? 'N/A') . ")\n";
+                cronLog("Completo subido a Drive (ID: " . ($driveFull['fileId'] ?? 'N/A') . ")");
                 $db->insert('admin_log', [
                     'usuario_id'     => 0,
                     'usuario_nombre' => 'Sistema (Cron)',
@@ -127,30 +144,34 @@ try {
                     'created_at'     => date('Y-m-d H:i:s'),
                 ]);
             } else {
-                echo "[" . date('Y-m-d H:i:s') . "] ERROR Drive (completo): " . ($driveFull['message'] ?? 'Error desconocido') . "\n";
+                cronLog("ERROR Drive (completo): " . ($driveFull['message'] ?? 'Error desconocido'));
             }
         }
     } else {
-        echo "[" . date('Y-m-d H:i:s') . "] ERROR: No se pudo generar el backup completo\n";
+        cronLog("ERROR: No se pudo generar el backup completo");
     }
 
     // ── 3. Limpieza de backups antiguos (>30 días) ───────────
     $deleted = Backup::cleanOldBackups(30);
     if ($deleted > 0) {
-        echo "[" . date('Y-m-d H:i:s') . "] Backups locales antiguos eliminados: {$deleted}\n";
+        cronLog("Backups locales antiguos eliminados: {$deleted}");
     }
 
     if ($driveEnabled) {
         $retentionDays = defined('GDRIVE_RETENTION_DAYS') ? GDRIVE_RETENTION_DAYS : 30;
         $driveDeleted = \App\Services\GoogleDrive::cleanOldDriveBackups($retentionDays);
         if ($driveDeleted > 0) {
-            echo "[" . date('Y-m-d H:i:s') . "] Backups antiguos eliminados de Drive: {$driveDeleted}\n";
+            cronLog("Backups antiguos eliminados de Drive: {$driveDeleted}");
         }
     }
 
-    echo "[" . date('Y-m-d H:i:s') . "] Proceso completado.\n";
+    cronLog("Proceso completado.");
 
 } catch (\Throwable $e) {
-    echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
+    cronLog("ERROR: " . $e->getMessage());
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }

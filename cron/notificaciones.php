@@ -26,14 +26,31 @@ spl_autoload_register(function (string $class) {
 use App\Core\Database;
 use App\Services\Notification;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-notificaciones.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    echo "[" . date('Y-m-d H:i:s') . "] Otra instancia ya está ejecutándose. Saliendo.\n";
+    exit(0);
+}
+
+// Helper para log persistente
+function cronLog(string $msg): void {
+    $line = "[" . date('Y-m-d H:i:s') . "] {$msg}\n";
+    echo $line;
+    $logDir = BASE_PATH . '/storage/logs';
+    if (!is_dir($logDir)) mkdir($logDir, 0755, true);
+    file_put_contents($logDir . '/cron-notificaciones.log', $line, FILE_APPEND | LOCK_EX);
+}
+
 $db = Database::getInstance();
 
 try {
-    echo "[" . date('Y-m-d H:i:s') . "] Iniciando cron de notificaciones...\n";
+    cronLog("Iniciando cron de notificaciones...");
 
     // ── Resumen semanal (solo los lunes) ──────────────────────
     if ((int) date('N') === 1) {
-        echo "[" . date('Y-m-d H:i:s') . "] Generando resumen semanal...\n";
+        cronLog("Generando resumen semanal...");
 
         $semanaAtras = date('Y-m-d', strtotime('-7 days'));
 
@@ -66,11 +83,11 @@ try {
         ];
 
         Notification::resumenSemanal($stats);
-        echo "[" . date('Y-m-d H:i:s') . "] Resumen semanal enviado.\n";
+        cronLog("Resumen semanal enviado.");
     }
 
     // ── Fechas especiales próximas (7 días antes) ────────────
-    echo "[" . date('Y-m-d H:i:s') . "] Verificando fechas próximas...\n";
+    cronLog("Verificando fechas próximas...");
 
     $en7Dias = date('Y-m-d', strtotime('+7 days'));
     $fechasProximas = $db->fetchAll(
@@ -82,11 +99,11 @@ try {
 
     foreach ($fechasProximas as $fecha) {
         Notification::fechaProxima($fecha);
-        echo "[" . date('Y-m-d H:i:s') . "] Notificación enviada: {$fecha['nombre']} ({$fecha['fecha_inicio']})\n";
+        cronLog("Notificación enviada: {$fecha['nombre']} ({$fecha['fecha_inicio']})");
     }
 
     if (empty($fechasProximas)) {
-        echo "[" . date('Y-m-d H:i:s') . "] No hay fechas especiales próximas.\n";
+        cronLog("No hay fechas especiales próximas.");
     }
 
     // Registrar ejecución
@@ -103,9 +120,13 @@ try {
         'created_at'     => date('Y-m-d H:i:s'),
     ]);
 
-    echo "[" . date('Y-m-d H:i:s') . "] Proceso completado.\n";
+    cronLog("Proceso completado.");
 
 } catch (\Throwable $e) {
-    echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
+    cronLog("ERROR: " . $e->getMessage());
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }

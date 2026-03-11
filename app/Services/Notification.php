@@ -20,31 +20,31 @@ class Notification
     /**
      * Nueva reseña creada (notifica a admins)
      */
-    public static function nuevaResena(array $resena, array $comercio): void
+    public static function nuevaResena(array $resena, array $comercio): bool
     {
-        if (!self::isEventEnabled('notif_nueva_resena')) return;
+        if (!self::isEventEnabled('notif_nueva_resena')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Nueva reseña para {$comercio['nombre']}",
             'nueva-resena',
             [
                 'resena'   => $resena,
                 'comercio' => $comercio,
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Reseña aprobada (notifica al autor si dejó email)
      */
-    public static function resenaAprobada(array $resena): void
+    public static function resenaAprobada(array $resena): bool
     {
-        if (!self::isEventEnabled('notif_resena_aprobada')) return;
-        if (empty($resena['email_autor'])) return;
+        if (!self::isEventEnabled('notif_resena_aprobada')) return false;
+        if (empty($resena['email_autor'])) return false;
 
         $comercio = self::getComercio($resena['comercio_id']);
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $resena['email_autor'],
             "Tu reseña ha sido aprobada — " . SITE_NAME,
             'resena-aprobada',
@@ -58,14 +58,14 @@ class Notification
     /**
      * Reseña rechazada (notifica al autor si dejó email)
      */
-    public static function resenaRechazada(array $resena): void
+    public static function resenaRechazada(array $resena): bool
     {
-        if (!self::isEventEnabled('notif_resena_rechazada')) return;
-        if (empty($resena['email_autor'])) return;
+        if (!self::isEventEnabled('notif_resena_rechazada')) return false;
+        if (empty($resena['email_autor'])) return false;
 
         $comercio = self::getComercio($resena['comercio_id']);
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $resena['email_autor'],
             "Sobre tu reseña en " . SITE_NAME,
             'resena-rechazada',
@@ -79,14 +79,14 @@ class Notification
     /**
      * Respuesta a reseña (notifica al autor si dejó email)
      */
-    public static function resenaRespondida(array $resena, string $respuesta): void
+    public static function resenaRespondida(array $resena, string $respuesta): bool
     {
-        if (!self::isEventEnabled('notif_resena_respuesta')) return;
-        if (empty($resena['email_autor'])) return;
+        if (!self::isEventEnabled('notif_resena_respuesta')) return false;
+        if (empty($resena['email_autor'])) return false;
 
         $comercio = self::getComercio($resena['comercio_id']);
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $resena['email_autor'],
             "Han respondido a tu reseña — " . SITE_NAME,
             'resena-respuesta',
@@ -101,13 +101,13 @@ class Notification
     /**
      * Reseña reportada (notifica a admins)
      */
-       public static function resenaReportada(array $resena, array $reporte): void
+    public static function resenaReportada(array $resena, array $reporte): bool
     {
-        if (!self::isEventEnabled('notif_reporte_resena')) return;
+        if (!self::isEventEnabled('notif_reporte_resena')) return false;
 
         $comercio = self::getComercio($resena['comercio_id']);
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Reseña reportada en {$comercio['nombre']}",
             'reporte-resena',
             [
@@ -115,32 +115,32 @@ class Notification
                 'comercio' => $comercio,
                 'reporte'  => $reporte,
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Nuevo comercio creado (notifica a admins)
      */
-    public static function nuevoComercio(array $comercio): void
+    public static function nuevoComercio(array $comercio): bool
     {
-        if (!self::isEventEnabled('notif_nuevo_comercio')) return;
+        if (!self::isEventEnabled('notif_nuevo_comercio')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Nuevo comercio: {$comercio['nombre']}",
             'nuevo-comercio',
             ['comercio' => $comercio]
-        );
+        ) > 0;
     }
 
     /**
      * Bienvenida a comercio (al email del comercio)
      */
-    public static function bienvenidaComercio(array $comercio): void
+    public static function bienvenidaComercio(array $comercio): bool
     {
-        if (!self::isEventEnabled('notif_bienvenida_comercio')) return;
-        if (empty($comercio['email'])) return;
+        if (!self::isEventEnabled('notif_bienvenida_comercio')) return false;
+        if (empty($comercio['email'])) return false;
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $comercio['email'],
             "Bienvenido a " . SITE_NAME,
             'comercio-bienvenida',
@@ -151,11 +151,11 @@ class Notification
     /**
      * Backup completado (notifica a admins)
      */
-    public static function backupCompletado(string $tipo, string $archivo, string $tamano): void
+    public static function backupCompletado(string $tipo, string $archivo, string $tamano): bool
     {
-        if (!self::isEventEnabled('notif_backup')) return;
+        if (!self::isEventEnabled('notif_backup')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Backup {$tipo} completado",
             'backup-completado',
             [
@@ -163,17 +163,17 @@ class Notification
                 'archivo' => $archivo,
                 'tamano'  => $tamano,
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Error de sistema (notifica a admins)
      */
-    public static function errorSistema(string $mensaje, string $detalle = ''): void
+    public static function errorSistema(string $mensaje, string $detalle = ''): bool
     {
-        if (!self::isEventEnabled('notif_error_sistema')) return;
+        if (!self::isEventEnabled('notif_error_sistema')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Error en " . SITE_NAME,
             'error-sistema',
             [
@@ -181,59 +181,59 @@ class Notification
                 'detalle' => $detalle,
                 'fecha'   => date('d/m/Y H:i:s'),
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Resumen semanal (notifica a admins)
      */
-    public static function resumenSemanal(array $stats): void
+    public static function resumenSemanal(array $stats): bool
     {
-        if (!self::isEventEnabled('notif_resumen_semanal')) return;
+        if (!self::isEventEnabled('notif_resumen_semanal')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Resumen semanal — " . SITE_NAME,
             'resumen-semanal',
             ['stats' => $stats]
-        );
+        ) > 0;
     }
 
     /**
      * Fecha próxima (notifica a admins)
      */
-    public static function fechaProxima(array $fecha): void
+    public static function fechaProxima(array $fecha): bool
     {
-        if (!self::isEventEnabled('notif_fecha_proxima')) return;
+        if (!self::isEventEnabled('notif_fecha_proxima')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Fecha próxima: {$fecha['nombre']}",
             'fecha-proxima',
             ['fecha' => $fecha]
-        );
+        ) > 0;
     }
 
     /**
      * Nuevo mensaje de contacto (notifica a admins)
      */
-    public static function nuevoMensajeContacto(array $datos): void
+    public static function nuevoMensajeContacto(array $datos): bool
     {
-        if (!self::isEventEnabled('notif_contacto')) return;
+        if (!self::isEventEnabled('notif_contacto')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Nuevo mensaje de contacto: {$datos['asunto']}",
             'contacto-mensaje',
             ['datos' => $datos]
-        );
+        ) > 0;
     }
 
     /**
      * Acuse de recibo de contacto (al remitente)
      */
-    public static function acuseReciboContacto(array $datos): void
+    public static function acuseReciboContacto(array $datos): bool
     {
-        if (!self::isEventEnabled('notif_acuse_contacto')) return;
+        if (!self::isEventEnabled('notif_acuse_contacto')) return false;
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $datos['email'],
             "Hemos recibido tu mensaje — " . SITE_NAME,
             'contacto-acuse',
@@ -244,11 +244,11 @@ class Notification
     /**
      * Instrucciones de registro (al remitente que consulta sobre registro)
      */
-    public static function instruccionesRegistro(array $datos): void
+    public static function instruccionesRegistro(array $datos): bool
     {
-        if (!self::isEventEnabled('notif_instrucciones_registro')) return;
+        if (!self::isEventEnabled('notif_instrucciones_registro')) return false;
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $datos['email'],
             "Cómo registrar tu comercio — " . SITE_NAME,
             'contacto-instrucciones-registro',
@@ -262,15 +262,15 @@ class Notification
     /**
      * Comercio aprobado (al comerciante que lo registró)
      */
-    public static function comercioAprobado(array $comercio): void
+    public static function comercioAprobado(array $comercio): bool
     {
-        if (!self::isEventEnabled('notif_comercio_aprobado')) return;
-        if (empty($comercio['registrado_por'])) return;
+        if (!self::isEventEnabled('notif_comercio_aprobado')) return false;
+        if (empty($comercio['registrado_por'])) return false;
 
         $usuario = \App\Models\AdminUsuario::find((int)$comercio['registrado_por']);
-        if (!$usuario || empty($usuario['email'])) return;
+        if (!$usuario || empty($usuario['email'])) return false;
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $usuario['email'],
             "Tu comercio ha sido aprobado — " . SITE_NAME,
             'comercio-aprobado',
@@ -281,15 +281,15 @@ class Notification
     /**
      * Comercio rechazado (al comerciante que lo registró)
      */
-    public static function comercioRechazado(array $comercio, string $motivo = ''): void
+    public static function comercioRechazado(array $comercio, string $motivo = ''): bool
     {
-        if (!self::isEventEnabled('notif_comercio_rechazado')) return;
-        if (empty($comercio['registrado_por'])) return;
+        if (!self::isEventEnabled('notif_comercio_rechazado')) return false;
+        if (empty($comercio['registrado_por'])) return false;
 
         $usuario = \App\Models\AdminUsuario::find((int)$comercio['registrado_por']);
-        if (!$usuario || empty($usuario['email'])) return;
+        if (!$usuario || empty($usuario['email'])) return false;
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $usuario['email'],
             "Sobre tu comercio en " . SITE_NAME,
             'comercio-rechazado',
@@ -303,21 +303,21 @@ class Notification
     /**
      * Solicitud ARCO — notifica a admins
      */
-    public static function solicitudArcoAdmin(array $solicitud): void
+    public static function solicitudArcoAdmin(array $solicitud): bool
     {
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Solicitud ARCO #{$solicitud['id']} — {$solicitud['tipo_texto']}",
             'arco-admin',
             ['solicitud' => $solicitud]
-        );
+        ) > 0;
     }
 
     /**
      * Solicitud ARCO — confirmación al solicitante
      */
-    public static function solicitudArcoConfirmacion(string $email, array $solicitud): void
+    public static function solicitudArcoConfirmacion(string $email, array $solicitud): bool
     {
-        self::mailer()->send(
+        return self::mailer()->send(
             $email,
             "Solicitud recibida #{$solicitud['id']} — " . SITE_NAME,
             'arco-confirmacion',
@@ -328,33 +328,33 @@ class Notification
     /**
      * Registro de comercio por comerciante (notifica a admins)
      */
-    public static function registroComercianteAdmin(int $comercioId, string $nombreComercio): void
+    public static function registroComercianteAdmin(int $comercioId, string $nombreComercio): bool
     {
-        if (!self::isEventEnabled('notif_nuevo_comercio')) return;
+        if (!self::isEventEnabled('notif_nuevo_comercio')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Nuevo comercio registrado: {$nombreComercio}",
             'registro-comerciante-admin',
             [
                 'comercioId'     => $comercioId,
                 'nombreComercio' => $nombreComercio,
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Cambios pendientes de comerciante (notifica a admins)
      */
-    public static function cambiosPendientesAdmin(int $comercioId, string $nombreComercio): void
+    public static function cambiosPendientesAdmin(int $comercioId, string $nombreComercio): bool
     {
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Cambios pendientes: {$nombreComercio}",
             'cambios-pendientes-admin',
             [
                 'comercioId'     => $comercioId,
                 'nombreComercio' => $nombreComercio,
             ]
-        );
+        ) > 0;
     }
 
     // ══════════════════════════════════════════════════════════
@@ -364,34 +364,34 @@ class Notification
     /**
      * Nueva solicitud de renovación (notifica a admins)
      */
-    public static function renovacionNuevaAdmin(array $comercio, array $plan): void
+    public static function renovacionNuevaAdmin(array $comercio, array $plan): bool
     {
-        if (!self::isEventEnabled('notif_renovacion_nueva')) return;
+        if (!self::isEventEnabled('notif_renovacion_nueva')) return false;
 
-        self::mailer()->sendToAdmins(
+        return self::mailer()->sendToAdmins(
             "Solicitud de renovación: {$comercio['nombre']}",
             'renovacion-nueva-admin',
             [
                 'comercio' => $comercio,
                 'plan'     => $plan,
             ]
-        );
+        ) > 0;
     }
 
     /**
      * Renovación aprobada (notifica al comerciante)
      */
-    public static function renovacionAprobada(array $renovacion): void
+    public static function renovacionAprobada(array $renovacion): bool
     {
-        if (!self::isEventEnabled('notif_renovacion_aprobada')) return;
+        if (!self::isEventEnabled('notif_renovacion_aprobada')) return false;
 
         $usuario = \App\Models\AdminUsuario::find((int)$renovacion['usuario_id']);
-        if (!$usuario || empty($usuario['email'])) return;
+        if (!$usuario || empty($usuario['email'])) return false;
 
         $comercio = self::getComercio($renovacion['comercio_id']);
         $plan = \App\Models\PlanConfig::findBySlug($renovacion['plan_solicitado']);
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $usuario['email'],
             "Tu renovación ha sido aprobada — " . SITE_NAME,
             'renovacion-aprobada',
@@ -407,16 +407,16 @@ class Notification
     /**
      * Renovación rechazada (notifica al comerciante)
      */
-    public static function renovacionRechazada(array $renovacion): void
+    public static function renovacionRechazada(array $renovacion): bool
     {
-        if (!self::isEventEnabled('notif_renovacion_rechazada')) return;
+        if (!self::isEventEnabled('notif_renovacion_rechazada')) return false;
 
         $usuario = \App\Models\AdminUsuario::find((int)$renovacion['usuario_id']);
-        if (!$usuario || empty($usuario['email'])) return;
+        if (!$usuario || empty($usuario['email'])) return false;
 
         $comercio = self::getComercio($renovacion['comercio_id']);
 
-        self::mailer()->send(
+        return self::mailer()->send(
             $usuario['email'],
             "Sobre tu solicitud de renovación — " . SITE_NAME,
             'renovacion-rechazada',
