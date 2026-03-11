@@ -189,12 +189,7 @@ class ComercioAdminController extends Controller
             $data['portada'] = FileManager::subirImagen($portada, 'portadas', 1200);
         }
 
-        $id = Comercio::create($data);
-
-        // Categorías
-        Comercio::syncCategorias($id, $_POST['categorias'] ?? [], (int) ($_POST['categoria_principal'] ?? 0));
-
-        // Fechas especiales
+        // Preparar datos de fechas
         $fechaIds = $_POST['fechas'] ?? [];
         $ofertas = [];
         foreach ($fechaIds as $fId) {
@@ -204,9 +199,16 @@ class ComercioAdminController extends Controller
                 'precio_hasta'    => !empty($_POST["fecha_precio_hasta_{$fId}"]) ? (float) $_POST["fecha_precio_hasta_{$fId}"] : null,
             ];
         }
-        Comercio::syncFechas($id, $fechaIds, $ofertas);
+        $catIds = $_POST['categorias'] ?? [];
+        $catPrincipal = (int) ($_POST['categoria_principal'] ?? 0);
 
-        Comercio::recalcularCalidad($id);
+        $id = $this->db->transaction(function () use ($data, $catIds, $catPrincipal, $fechaIds, $ofertas) {
+            $id = Comercio::create($data);
+            Comercio::syncCategorias($id, $catIds, $catPrincipal);
+            Comercio::syncFechas($id, $fechaIds, $ofertas);
+            Comercio::recalcularCalidad($id);
+            return $id;
+        });
 
         $this->log('comercios', 'crear', 'comercio', $id, "Comercio creado: {$data['nombre']}");
 
@@ -376,12 +378,7 @@ class ComercioAdminController extends Controller
             $data['portada'] = FileManager::subirImagen($portada, 'portadas', 1200);
         }
 
-        Comercio::updateById($id, $data);
-
-        // Categorías
-        Comercio::syncCategorias($id, $_POST['categorias'] ?? [], (int) ($_POST['categoria_principal'] ?? 0));
-
-        // Fechas especiales
+        // Preparar datos de fechas
         $fechaIds = $_POST['fechas'] ?? [];
         $ofertas = [];
         foreach ($fechaIds as $fId) {
@@ -391,16 +388,22 @@ class ComercioAdminController extends Controller
                 'precio_hasta'    => !empty($_POST["fecha_precio_hasta_{$fId}"]) ? (float) $_POST["fecha_precio_hasta_{$fId}"] : null,
             ];
         }
-        Comercio::syncFechas($id, $fechaIds, $ofertas);
-
-        Comercio::recalcularCalidad($id);
-
-        // Sincronizar estado del usuario comerciante asociado
+        $catIds = $_POST['categorias'] ?? [];
+        $catPrincipal = (int) ($_POST['categoria_principal'] ?? 0);
         $regPor = $data['registrado_por'] ?? $comercio['registrado_por'] ?? null;
-        if (!empty($regPor)) {
-            $activarUsuario = ($data['validado'] && $data['activo']) ? 1 : 0;
-            AdminUsuario::updateById((int) $regPor, ['activo' => $activarUsuario]);
-        }
+
+        $this->db->transaction(function () use ($id, $data, $catIds, $catPrincipal, $fechaIds, $ofertas, $regPor) {
+            Comercio::updateById($id, $data);
+            Comercio::syncCategorias($id, $catIds, $catPrincipal);
+            Comercio::syncFechas($id, $fechaIds, $ofertas);
+            Comercio::recalcularCalidad($id);
+
+            // Sincronizar estado del usuario comerciante asociado
+            if (!empty($regPor)) {
+                $activarUsuario = ($data['validado'] && $data['activo']) ? 1 : 0;
+                AdminUsuario::updateById((int) $regPor, ['activo' => $activarUsuario]);
+            }
+        });
 
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");
         $this->redirect('/admin/comercios', ['success' => 'Comercio actualizado correctamente']);

@@ -113,6 +113,50 @@ class Database
     }
 
     /**
+     * Iniciar transacción
+     */
+    public function beginTransaction(): bool
+    {
+        return $this->connect()->beginTransaction();
+    }
+
+    /**
+     * Confirmar transacción
+     */
+    public function commit(): bool
+    {
+        return $this->connect()->commit();
+    }
+
+    /**
+     * Revertir transacción
+     */
+    public function rollback(): bool
+    {
+        if ($this->connect()->inTransaction()) {
+            return $this->connect()->rollBack();
+        }
+        return false;
+    }
+
+    /**
+     * Ejecutar callback dentro de una transacción.
+     * Hace commit si el callback retorna sin error, rollback si lanza excepción.
+     */
+    public function transaction(callable $callback): mixed
+    {
+        $this->beginTransaction();
+        try {
+            $result = $callback($this);
+            $this->commit();
+            return $result;
+        } catch (\Throwable $e) {
+            $this->rollback();
+            throw $e;
+        }
+    }
+
+    /**
      * Acceso directo al objeto PDO
      */
     public function getPDO(): \PDO

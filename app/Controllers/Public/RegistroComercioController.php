@@ -104,24 +104,24 @@ class RegistroComercioController extends Controller
             exit;
         }
 
-        $userId = AdminUsuario::create([
-            'nombre'        => $nombre,
-            'email'         => $email,
-            'telefono'      => $telefono,
-            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
-            'rol'           => 'comerciante',
-            'activo'        => 1,
-            'site_id'       => 1,
-        ]);
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $userAgent = mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
 
-        // Registrar aceptación de políticas (no debe bloquear el registro si falla)
-        try {
-            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-            $userAgent = mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500);
-            PoliticaAceptacion::registrarDecisiones($userId, $email, $decisiones, $ip, $userAgent);
-        } catch (\Throwable $e) {
-            error_log("Error registrando políticas para usuario {$userId}: " . $e->getMessage());
-        }
+        $userId = $this->db->transaction(function () use ($nombre, $email, $telefono, $password, $decisiones, $ip, $userAgent) {
+            $uid = AdminUsuario::create([
+                'nombre'        => $nombre,
+                'email'         => $email,
+                'telefono'      => $telefono,
+                'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+                'rol'           => 'comerciante',
+                'activo'        => 1,
+                'site_id'       => 1,
+            ]);
+
+            PoliticaAceptacion::registrarDecisiones($uid, $email, $decisiones, $ip, $userAgent);
+
+            return $uid;
+        });
 
         $_SESSION['registro_uid']    = $userId;
         $_SESSION['registro_nombre'] = $nombre;
@@ -217,45 +217,49 @@ class RegistroComercioController extends Controller
             $redes[$redTipo] = $redUrl;
         }
 
-        $comercioId = Comercio::create([
-            'nombre'         => $nombre,
-            'slug'           => $slug,
-            'descripcion'    => trim($_POST['descripcion'] ?? ''),
-            'telefono'       => trim($_POST['telefono'] ?? ''),
-            'whatsapp'       => $whatsapp,
-            'email'          => trim($_POST['email_comercio'] ?? ''),
-            'sitio_web'      => trim($_POST['sitio_web'] ?? ''),
-            'direccion'      => trim($_POST['direccion'] ?? ''),
-            'lat'            => !empty($_POST['lat']) ? (float)$_POST['lat'] : null,
-            'lng'            => !empty($_POST['lng']) ? (float)$_POST['lng'] : null,
-            'logo'           => $logoPath,
-            'portada'        => $portadaPath,
-            'plan'           => 'freemium',
-            'plan_inicio'    => date('Y-m-d'),
-            'plan_fin'       => date('Y-m-d', strtotime('+30 days')),
-            'activo'         => 0,
-            'destacado'      => 0,
-            'registrado_por' => $uid,
-            'facebook'       => $redes['facebook'],
-            'instagram'      => $redes['instagram'],
-            'tiktok'         => $redes['tiktok'],
-            'youtube'        => $redes['youtube'],
-            'x_twitter'      => $redes['x_twitter'],
-            'linkedin'       => $redes['linkedin'],
-            'telegram'       => $redes['telegram'],
-            'pinterest'      => $redes['pinterest'],
-        ]);
-
-        // Categorías
         $catIds = array_filter(array_map('intval', $_POST['categorias'] ?? []), fn($id) => $id > 0);
         $principal = (int)($_POST['categoria_principal'] ?? 0);
-        Comercio::syncCategorias($comercioId, $catIds, $principal);
-
-        // Fechas especiales
         $fechaIds = array_filter(array_map('intval', $_POST['fechas'] ?? []), fn($id) => $id > 0);
-        Comercio::syncFechas($comercioId, $fechaIds);
 
-        Comercio::recalcularCalidad($comercioId);
+        $comercioId = $this->db->transaction(function () use (
+            $nombre, $slug, $whatsapp, $uid, $logoPath, $portadaPath, $redes,
+            $catIds, $principal, $fechaIds
+        ) {
+            $id = Comercio::create([
+                'nombre'         => $nombre,
+                'slug'           => $slug,
+                'descripcion'    => trim($_POST['descripcion'] ?? ''),
+                'telefono'       => trim($_POST['telefono'] ?? ''),
+                'whatsapp'       => $whatsapp,
+                'email'          => trim($_POST['email_comercio'] ?? ''),
+                'sitio_web'      => trim($_POST['sitio_web'] ?? ''),
+                'direccion'      => trim($_POST['direccion'] ?? ''),
+                'lat'            => !empty($_POST['lat']) ? (float)$_POST['lat'] : null,
+                'lng'            => !empty($_POST['lng']) ? (float)$_POST['lng'] : null,
+                'logo'           => $logoPath,
+                'portada'        => $portadaPath,
+                'plan'           => 'freemium',
+                'plan_inicio'    => date('Y-m-d'),
+                'plan_fin'       => date('Y-m-d', strtotime('+30 days')),
+                'activo'         => 0,
+                'destacado'      => 0,
+                'registrado_por' => $uid,
+                'facebook'       => $redes['facebook'],
+                'instagram'      => $redes['instagram'],
+                'tiktok'         => $redes['tiktok'],
+                'youtube'        => $redes['youtube'],
+                'x_twitter'      => $redes['x_twitter'],
+                'linkedin'       => $redes['linkedin'],
+                'telegram'       => $redes['telegram'],
+                'pinterest'      => $redes['pinterest'],
+            ]);
+
+            Comercio::syncCategorias($id, $catIds, $principal);
+            Comercio::syncFechas($id, $fechaIds);
+            Comercio::recalcularCalidad($id);
+
+            return $id;
+        });
 
         // Notificar admin
         $this->notificarAdmin($comercioId, $nombre);
