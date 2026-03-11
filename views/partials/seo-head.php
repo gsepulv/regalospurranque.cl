@@ -173,8 +173,10 @@ $orgSchema = [
     ],
     'contactPoint' => [
         '@type' => 'ContactPoint',
+        'email' => 'contacto@regalospurranque.cl',
         'contactType' => 'customer service',
         'url' => SITE_URL . '/contacto',
+        'areaServed' => 'CL',
         'availableLanguage' => 'Spanish',
     ],
 ];
