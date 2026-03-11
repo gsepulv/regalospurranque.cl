@@ -4,6 +4,7 @@ namespace App\Controllers\Public;
 use App\Core\Controller;
 use App\Models\Comercio;
 use App\Models\Categoria;
+use App\Services\Seo;
 use App\Services\VisitTracker;
 
 /**
@@ -24,11 +25,18 @@ class MapaController extends Controller
         $this->render('public/mapa', [
             'title'       => 'Mapa de Comercios en Purranque · ' . SITE_NAME,
             'description' => 'Mapa interactivo con todos los comercios de Purranque, Chile. Encuentra ubicación, contacto y horarios.',
+            'og_image'    => asset('img/og/og-regalos-purranque.jpg'),
+            'keywords'    => 'mapa comercios purranque, ubicación comercios purranque, directorio purranque mapa',
             'comercios'   => $comercios,
             'categorias'  => $categorias,
             'centerLat'   => CITY_LAT,
             'centerLng'   => CITY_LNG,
             'zoom'        => CITY_ZOOM,
+            'breadcrumbs' => $breadcrumbs = [
+                ['label' => 'Inicio', 'url' => '/'],
+                ['label' => 'Mapa'],
+            ],
+            'schemas'     => [Seo::schemaBreadcrumbs($breadcrumbs)],
         ]);
     }
 }
