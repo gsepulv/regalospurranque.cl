@@ -176,9 +176,11 @@ class Resena
 
         $rows = $db->fetchAll(
             "SELECT r.*, c.nombre as comercio_nombre, c.slug as comercio_slug,
-                    (SELECT COUNT(*) FROM resenas_reportes rr WHERE rr.resena_id = r.id) as num_reportes
+                    COALESCE(rr_count.total, 0) as num_reportes
              FROM resenas r
              INNER JOIN comercios c ON r.comercio_id = c.id
+             LEFT JOIN (SELECT resena_id, COUNT(*) as total FROM resenas_reportes GROUP BY resena_id) rr_count
+                 ON r.id = rr_count.resena_id
              WHERE {$whereStr}
              ORDER BY r.created_at DESC
              LIMIT ? OFFSET ?",

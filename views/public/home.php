@@ -109,7 +109,8 @@
                             <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
                                  alt="<?= e($banner['titulo'] ?? 'Banner') ?>"
                                  class="banner-slide__img"
-                                 loading="lazy">
+                                 loading="lazy"
+                                 width="1200" height="300">
                         </a>
                     <?php else: ?>
                         <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"

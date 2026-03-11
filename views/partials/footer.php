@@ -16,7 +16,8 @@ if (!empty($bannersFooter)): ?>
                             <img src="<?= asset('img/banners/' . $fb['imagen']) ?>"
                                  alt="<?= e($fb['titulo'] ?? 'Banner') ?>"
                                  loading="lazy"
-                                 class="footer-banner-item__img">
+                                 class="footer-banner-item__img"
+                                 width="728" height="90">
                         </a>
                     <?php else: ?>
                         <img src="<?= asset('img/banners/' . $fb['imagen']) ?>"

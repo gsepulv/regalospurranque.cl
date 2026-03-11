@@ -440,12 +440,12 @@ class Comercio
         }
 
         if (!empty($filters['categoria_id'])) {
-            $where[] = 'c.id IN (SELECT comercio_id FROM comercio_categoria WHERE categoria_id = ?)';
+            $where[] = 'EXISTS (SELECT 1 FROM comercio_categoria cc_f WHERE cc_f.comercio_id = c.id AND cc_f.categoria_id = ?)';
             $params[] = (int) $filters['categoria_id'];
         }
 
         if (!empty($filters['fecha_id'])) {
-            $where[] = 'c.id IN (SELECT comercio_id FROM comercio_fecha WHERE fecha_id = ? AND activo = 1)';
+            $where[] = 'EXISTS (SELECT 1 FROM comercio_fecha cf_f WHERE cf_f.comercio_id = c.id AND cf_f.fecha_id = ? AND cf_f.activo = 1)';
             $params[] = (int) $filters['fecha_id'];
         }
 
@@ -497,12 +497,12 @@ class Comercio
         }
 
         if (!empty($filters['categoria_id'])) {
-            $where[] = 'c.id IN (SELECT comercio_id FROM comercio_categoria WHERE categoria_id = ?)';
+            $where[] = 'EXISTS (SELECT 1 FROM comercio_categoria cc_f WHERE cc_f.comercio_id = c.id AND cc_f.categoria_id = ?)';
             $params[] = (int) $filters['categoria_id'];
         }
 
         if (!empty($filters['fecha_id'])) {
-            $where[] = 'c.id IN (SELECT comercio_id FROM comercio_fecha WHERE fecha_id = ? AND activo = 1)';
+            $where[] = 'EXISTS (SELECT 1 FROM comercio_fecha cf_f WHERE cf_f.comercio_id = c.id AND cf_f.fecha_id = ? AND cf_f.activo = 1)';
             $params[] = (int) $filters['fecha_id'];
         }
 

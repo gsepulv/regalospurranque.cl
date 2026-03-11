@@ -11,7 +11,7 @@
 
     <?= $content ?>
 
-    <script src="<?= asset('js/app.js') ?>"></script>
+    <script src="<?= asset('js/app.js') ?>" defer></script>
     <?= \App\Services\Captcha::script() ?>
 </body>
 </html>

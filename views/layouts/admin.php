@@ -53,6 +53,6 @@
         </div>
     </div>
 
-    <script src="<?= asset('js/admin.js') ?>"></script>
+    <script src="<?= asset('js/admin.js') ?>" defer></script>
 </body>
 </html>

@@ -135,7 +135,7 @@
 </div>
 
 <!-- TinyMCE -->
-<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>"></script>
+<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>" defer></script>
 
 <script>
 tinymce.init({

@@ -335,7 +335,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
 </form>
 
 <!-- TinyMCE 6 self-hosted (MIT) -->
-<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>"></script>
+<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>" defer></script>
 
 <script>
 // TinyMCE initialization

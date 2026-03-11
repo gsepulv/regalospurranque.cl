@@ -48,24 +48,12 @@ class Analytics
         );
 
         foreach ($resumen as $row) {
-            $existing = $db->fetch(
-                "SELECT id FROM analytics_diario WHERE fecha = ? AND pagina = ?",
-                [$fecha, $row['pagina']]
+            $db->execute(
+                "INSERT INTO analytics_diario (fecha, pagina, visitas, visitantes_unicos)
+                 VALUES (?, ?, ?, ?)
+                 ON DUPLICATE KEY UPDATE visitas = VALUES(visitas), visitantes_unicos = VALUES(visitantes_unicos)",
+                [$fecha, $row['pagina'], $row['visitas'], $row['visitantes_unicos']]
             );
-
-            if ($existing) {
-                $db->update('analytics_diario', [
-                    'visitas'            => $row['visitas'],
-                    'visitantes_unicos'  => $row['visitantes_unicos'],
-                ], 'id = ?', [$existing['id']]);
-            } else {
-                $db->insert('analytics_diario', [
-                    'fecha'              => $fecha,
-                    'pagina'             => $row['pagina'],
-                    'visitas'            => $row['visitas'],
-                    'visitantes_unicos'  => $row['visitantes_unicos'],
-                ]);
-            }
         }
     }
 

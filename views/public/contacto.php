@@ -139,7 +139,7 @@ $errors = $flash['errors'] ?? [];
 </section>
 
 <link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
-<script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
+<script src="<?= asset('vendor/leaflet/leaflet.js') ?>" defer></script>
 <script>
 (function() {
     if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }

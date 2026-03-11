@@ -18,6 +18,7 @@ class Mailer
     private string $fromEmail;
     private string $fromName;
     private string $replyTo;
+    private array $configCache = [];
 
     public function __construct()
     {
@@ -313,16 +314,23 @@ class Mailer
      */
     private function getConfig(string $key, string $default = ''): string
     {
+        if (isset($this->configCache[$key])) {
+            return $this->configCache[$key];
+        }
+
         try {
             $db = \App\Core\Database::getInstance();
             $row = $db->fetch(
                 "SELECT valor FROM configuracion WHERE clave = ?",
                 [$key]
             );
-            return $row['valor'] ?? $default;
+            $value = $row['valor'] ?? $default;
         } catch (\Throwable $e) {
-            return $default;
+            $value = $default;
         }
+
+        $this->configCache[$key] = $value;
+        return $value;
     }
 
     /**
