@@ -519,7 +519,7 @@ $hoy = (int) date('w');
 <!-- Leaflet CSS y JS para mapa embebido (self-hosted) -->
 <?php if ($comercio['lat'] && $comercio['lng']): ?>
 <link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
-<script src="<?= asset('vendor/leaflet/leaflet.js') ?>" defer></script>
+<script src="<?= asset('vendor/leaflet/leaflet.js') ?>"></script>
 <?php endif; ?>
 
 <script>
