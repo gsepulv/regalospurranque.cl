@@ -185,6 +185,22 @@ class Validator
         return true;
     }
 
+    private function ruleFilesize(string $field, mixed $value, array $params): bool
+    {
+        $maxBytes = ((int) ($params[0] ?? 0)) * 1024 * 1024;
+        if ($maxBytes <= 0) return true;
+
+        $file = $_FILES[$field] ?? null;
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK) return true;
+
+        if ($file['size'] > $maxBytes) {
+            $maxMb = $params[0];
+            $this->errors[$field] = "El archivo {$field} no debe superar {$maxMb} MB";
+            return false;
+        }
+        return true;
+    }
+
     private function ruleUnique(string $field, mixed $value, array $params): bool
     {
         if (!$value || count($params) < 1) {

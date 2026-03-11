@@ -77,7 +77,7 @@ class DerechosController extends Controller
             'tiposConfig'       => $this->tiposConfig,
             'motivosBaja'       => $this->motivosBaja,
             'tipoSeleccionado'  => $tipoSeleccionado,
-            'mensajeExito'      => '',
+            'mensajeExito'      => $_SESSION['flash']['success'] ?? '',
             'mensajeError'      => '',
             'errores'           => [],
             'old'               => [],
@@ -204,24 +204,9 @@ class DerechosController extends Controller
             'fecha'      => date('d/m/Y H:i'),
         ]);
 
-        $mensajeExito = "Solicitud #{$idSolicitud} recibida correctamente. "
-            . "Recibirás confirmación en tu email. Plazo de respuesta: 10 días hábiles.";
-
-        $this->render('public/derechos', [
-            'title'             => 'Ejercicio de Derechos — ' . SITE_NAME,
-            'description'       => 'Ejerce tus derechos ARCO sobre datos personales en ' . SITE_NAME,
-            'breadcrumbs'       => [
-                ['label' => 'Inicio', 'url' => '/'],
-                ['label' => 'Ejercicio de Derechos'],
-            ],
-            'extraCss'          => 'css/derechos.css',
-            'tiposConfig'       => $this->tiposConfig,
-            'motivosBaja'       => $this->motivosBaja,
-            'tipoSeleccionado'  => '',
-            'mensajeExito'      => $mensajeExito,
-            'mensajeError'      => '',
-            'errores'           => [],
-            'old'               => [],
+        $this->redirect('/derechos', [
+            'success' => "Solicitud #{$idSolicitud} recibida correctamente. "
+                . "Recibirás confirmación en tu email. Plazo de respuesta: 10 días hábiles.",
         ]);
     }
 }

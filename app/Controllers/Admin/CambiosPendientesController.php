@@ -104,35 +104,34 @@ class CambiosPendientesController extends Controller
             }
         }
 
-        if (!empty($update)) {
-            // Si cambió el nombre, actualizar slug
-            if (isset($update['nombre'])) {
-                $update['slug'] = $this->generarSlug($update['nombre'], $comercioId);
+        $notas = mb_substr(trim($_POST['notas'] ?? ''), 0, 2000);
+
+        $this->db->transaction(function () use ($comercioId, $id, $update, $cambiosData, $notas) {
+            if (!empty($update)) {
+                if (isset($update['nombre'])) {
+                    $update['slug'] = $this->generarSlug($update['nombre'], $comercioId);
+                }
+                Comercio::updateById($comercioId, $update);
             }
-            Comercio::updateById($comercioId, $update);
-        }
 
-        // Aplicar categorías
-        if (isset($cambiosData['categorias'])) {
-            $principal = $cambiosData['categorias']['principal'] ?? null;
-            Comercio::syncCategorias($comercioId, $cambiosData['categorias']['nuevo'], $principal ? (int)$principal : null);
-        }
+            if (isset($cambiosData['categorias'])) {
+                $principal = $cambiosData['categorias']['principal'] ?? null;
+                Comercio::syncCategorias($comercioId, $cambiosData['categorias']['nuevo'], $principal ? (int)$principal : null);
+            }
 
-        // Aplicar fechas
-        if (isset($cambiosData['fechas'])) {
-            Comercio::syncFechas($comercioId, $cambiosData['fechas']['nuevo']);
-        }
+            if (isset($cambiosData['fechas'])) {
+                Comercio::syncFechas($comercioId, $cambiosData['fechas']['nuevo']);
+            }
 
-        Comercio::recalcularCalidad($comercioId);
+            Comercio::recalcularCalidad($comercioId);
 
-        // Marcar como aprobado
-        $notas = trim($_POST['notas'] ?? '');
-        CambioPendiente::updateById($id, [
-            'estado'      => 'aprobado',
-            'notas'       => $notas,
-            'revisado_por' => \App\Services\Auth::id(),
-            'revisado_at'  => date('Y-m-d H:i:s'),
-        ]);
+            CambioPendiente::updateById($id, [
+                'estado'      => 'aprobado',
+                'notas'       => $notas,
+                'revisado_por' => \App\Services\Auth::id(),
+                'revisado_at'  => date('Y-m-d H:i:s'),
+            ]);
+        });
 
         $this->log('cambios', 'aprobar', 'comercio', $comercioId, "Cambios aprobados para comercio ID {$comercioId}");
         $this->redirect('/admin/cambios-pendientes', ['success' => 'Cambios aprobados y aplicados correctamente']);
@@ -151,7 +150,7 @@ class CambiosPendientesController extends Controller
             return;
         }
 
-        $notas = trim($_POST['notas'] ?? '');
+        $notas = mb_substr(trim($_POST['notas'] ?? ''), 0, 2000);
 
         CambioPendiente::updateById($id, [
             'estado'      => 'rechazado',

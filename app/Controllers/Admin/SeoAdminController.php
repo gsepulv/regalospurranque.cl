@@ -66,7 +66,7 @@ class SeoAdminController extends Controller
         ];
 
         foreach ($keys as $key) {
-            $value = trim($this->request->post($key, ''));
+            $value = mb_substr(trim($this->request->post($key, '')), 0, 2000);
             SeoRedirect::upsertConfig($key, $value);
         }
 
@@ -80,10 +80,10 @@ class SeoAdminController extends Controller
     public function saveMetaTags(): void
     {
         $page  = trim($this->request->post('page', ''));
-        $title = trim($this->request->post('seo_title', ''));
-        $desc  = trim($this->request->post('seo_description', ''));
-        $keys  = trim($this->request->post('seo_keywords', ''));
-        $image = trim($this->request->post('seo_image', ''));
+        $title = mb_substr(trim($this->request->post('seo_title', '')), 0, 200);
+        $desc  = mb_substr(trim($this->request->post('seo_description', '')), 0, 500);
+        $keys  = mb_substr(trim($this->request->post('seo_keywords', '')), 0, 500);
+        $image = mb_substr(trim($this->request->post('seo_image', '')), 0, 500);
 
         if ($page === '') {
             $this->back(['error' => 'Página no especificada']);
@@ -129,7 +129,7 @@ class SeoAdminController extends Controller
         ];
 
         foreach ($keys as $key) {
-            $value = trim($this->request->post($key, ''));
+            $value = mb_substr(trim($this->request->post($key, '')), 0, 2000);
             SeoRedirect::upsertConfig($key, $value);
         }
 

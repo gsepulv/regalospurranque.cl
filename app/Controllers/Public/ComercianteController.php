@@ -473,6 +473,17 @@ class ComercianteController extends Controller
             $errors[] = 'La dirección debe tener entre 5 y 255 caracteres.';
         }
 
+        // Validar tamaño de archivos antes de procesarlos
+        $maxBytes = UPLOAD_MAX_SIZE;
+        $maxMb = round($maxBytes / 1024 / 1024);
+        foreach (['logo', 'portada'] as $campo) {
+            if (!empty($_FILES[$campo]['tmp_name']) && $_FILES[$campo]['error'] === UPLOAD_ERR_OK) {
+                if ($_FILES[$campo]['size'] > $maxBytes) {
+                    $errors[] = "La imagen {$campo} no debe superar {$maxMb} MB.";
+                }
+            }
+        }
+
         if (!empty($errors)) {
             $_SESSION['flash_errors'] = $errors;
             $_SESSION['flash_old'] = $_POST;
