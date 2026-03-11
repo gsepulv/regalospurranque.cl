@@ -179,6 +179,7 @@ class Mailer
             $mail->isHTML(true);
             $mail->Subject = $subject;
             $mail->Body    = $body;
+            $mail->AltBody = $this->htmlToPlainText($body);
 
             $mail->send();
             return true;
@@ -193,13 +194,31 @@ class Mailer
     }
 
     /**
-     * Enviar con mail() nativo de PHP
+     * Enviar con mail() nativo de PHP (multipart con text/plain)
      */
     private function sendNative(string $to, string $subject, string $body): bool
     {
-        $headers = $this->buildHeaders();
+        $boundary = 'boundary_' . bin2hex(random_bytes(16));
+        $plainText = $this->htmlToPlainText($body);
+
+        $headers  = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n";
+        $headers .= "From: {$this->fromName} <{$this->fromEmail}>\r\n";
+        $headers .= "Reply-To: {$this->replyTo}\r\n";
+        $headers .= "X-Mailer: " . SITE_NAME . "/" . APP_VERSION . "\r\n";
+
+        $message  = "--{$boundary}\r\n";
+        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $message .= chunk_split(base64_encode($plainText)) . "\r\n";
+        $message .= "--{$boundary}\r\n";
+        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $message .= chunk_split(base64_encode($body)) . "\r\n";
+        $message .= "--{$boundary}--\r\n";
+
         $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
-        return @mail($to, $encodedSubject, $body, $headers);
+        return @mail($to, $encodedSubject, $message, $headers);
     }
 
     /**
@@ -263,17 +282,22 @@ class Mailer
     }
 
     /**
-     * Construir headers del email (para mail() nativo)
+     * Convertir HTML a texto plano para AltBody
      */
-    private function buildHeaders(): string
+    private function htmlToPlainText(string $html): string
     {
-        $headers  = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: {$this->fromName} <{$this->fromEmail}>\r\n";
-        $headers .= "Reply-To: {$this->replyTo}\r\n";
-        $headers .= "X-Mailer: " . SITE_NAME . "/" . APP_VERSION . "\r\n";
-
-        return $headers;
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $html);
+        $text = preg_replace('/<\/p>/i', "\n\n", $text);
+        $text = preg_replace('/<\/h[1-6]>/i', "\n\n", $text);
+        $text = preg_replace('/<\/tr>/i', "\n", $text);
+        $text = preg_replace('/<\/li>/i', "\n", $text);
+        $text = preg_replace('/<a\s[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)<\/a>/is', '$2 ($1)', $text);
+        $text = preg_replace('/<hr[^>]*>/i', "\n---\n", $text);
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+        $text = preg_replace('/[ \t]+/', ' ', $text);
+        $text = preg_replace('/\n{3,}/', "\n\n", $text);
+        return trim($text);
     }
 
     /**
@@ -337,8 +361,11 @@ class Mailer
      */
     private function logError(string $message): void
     {
-        $logFile = BASE_PATH . '/storage/logs/mailer.log';
+        $logDir = BASE_PATH . '/storage/logs';
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0755, true);
+        }
         $line = "[" . date('Y-m-d H:i:s') . "] {$message}\n";
-        @file_put_contents($logFile, $line, FILE_APPEND);
+        file_put_contents($logDir . '/mailer.log', $line, FILE_APPEND | LOCK_EX);
     }
 }

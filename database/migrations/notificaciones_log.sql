@@ -6,6 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `notificaciones_log` (
     `id` INT NOT NULL AUTO_INCREMENT,
+    `site_id` INT NOT NULL DEFAULT 1,
     `destinatario` VARCHAR(150) NOT NULL,
     `asunto` VARCHAR(255) NOT NULL,
     `template` VARCHAR(100) NOT NULL,
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `notificaciones_log` (
     `datos` JSON DEFAULT NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
+    INDEX `idx_notif_log_site` (`site_id`),
     INDEX `idx_notif_log_estado` (`estado`),
     INDEX `idx_notif_log_template` (`template`),
     INDEX `idx_notif_log_fecha` (`created_at`)

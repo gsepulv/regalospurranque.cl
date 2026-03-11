@@ -25,6 +25,14 @@ use App\Models\NurturingPlantilla;
 use App\Models\NurturingLog;
 use App\Services\Mailer;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-recordatorios.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    echo "[" . date('Y-m-d H:i:s') . "] Otra instancia ya está ejecutándose. Saliendo.\n";
+    exit(0);
+}
+
 $db = Database::getInstance();
 
 try {
@@ -254,4 +262,8 @@ try {
     echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
     echo $e->getTraceAsString() . "\n";
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }

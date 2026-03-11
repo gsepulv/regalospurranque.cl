@@ -26,6 +26,14 @@ spl_autoload_register(function (string $class) {
 use App\Core\Database;
 use App\Services\Notification;
 
+// Lock file para evitar ejecuciones simultáneas
+$lockFile = BASE_PATH . '/storage/logs/cron-registro-ventanas.lock';
+$lockFp = fopen($lockFile, 'c');
+if (!$lockFp || !flock($lockFp, LOCK_EX | LOCK_NB)) {
+    echo "[" . date('Y-m-d H:i:s') . "] Otra instancia ya está ejecutándose. Saliendo.\n";
+    exit(0);
+}
+
 $db = Database::getInstance();
 
 try {
@@ -178,4 +186,8 @@ try {
 } catch (\Throwable $e) {
     echo "[" . date('Y-m-d H:i:s') . "] ERROR: " . $e->getMessage() . "\n";
     exit(1);
+} finally {
+    flock($lockFp, LOCK_UN);
+    fclose($lockFp);
+    @unlink($lockFile);
 }
