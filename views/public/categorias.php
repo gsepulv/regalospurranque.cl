@@ -15,7 +15,7 @@ $pageType = 'categoria';
             <div class="category-grid">
                 <?php foreach ($categorias as $cat): ?>
                     <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="category-card">
-                        <span class="category-card__icon"><?= !empty($cat['icono']) ? $cat['icono'] : mb_substr($cat['nombre'], 0, 1) ?></span>
+                        <span class="category-card__icon"><?= !empty($cat['icono']) ? e($cat['icono']) : mb_substr($cat['nombre'], 0, 1) ?></span>
                         <span class="category-card__name"><?= e($cat['nombre']) ?></span>
                         <span class="category-card__count"><?= (int) ($cat['comercios_count'] ?? 0) ?> comercio<?= ($cat['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
                     </a>

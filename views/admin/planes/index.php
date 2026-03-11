@@ -57,7 +57,7 @@ $totalComercios = array_sum($conteos);
 <div class="plans-overview">
     <?php foreach ($planes as $p): ?>
     <div class="plan-card" style="border-top:3px solid <?= e($p['color']) ?>">
-        <div class="plan-card__icon"><?= $p['icono'] ?></div>
+        <div class="plan-card__icon"><?= e($p['icono']) ?></div>
         <div class="plan-card__name"><?= e($p['nombre']) ?></div>
         <div class="plan-card__price">
             <?= $p['precio_regular'] > 0 ? '$' . number_format($p['precio_regular'], 0, ',', '.') . '/mes' : 'Gratis' ?>
@@ -96,7 +96,7 @@ $totalComercios = array_sum($conteos);
                     <td style="text-align:center;color:#a0aec0"><?= $p['orden'] ?></td>
                     <td>
                         <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:<?= e($p['color']) ?>;vertical-align:middle;margin-right:.25rem"></span>
-                        <?= $p['icono'] ?> <strong><?= e($p['nombre']) ?></strong>
+                        <?= e($p['icono']) ?> <strong><?= e($p['nombre']) ?></strong>
                         <br><code style="font-size:.7rem;color:#a0aec0"><?= e($p['slug']) ?></code>
                     </td>
                     <td>$<?= number_format($p['precio_intro'], 0, ',', '.') ?></td>
@@ -194,7 +194,7 @@ $totalComercios = array_sum($conteos);
                 <select name="plan" class="form-control" style="padding:.3rem .4rem;font-size:.8rem;width:130px">
                     <?php foreach ($planes as $p): ?>
                     <option value="<?= e($p['slug']) ?>" <?= $c['plan'] === $p['slug'] ? 'selected' : '' ?>>
-                        <?= $p['icono'] ?> <?= e($p['nombre']) ?>
+                        <?= e($p['icono']) ?> <?= e($p['nombre']) ?>
                     </option>
                     <?php endforeach; ?>
                 </select>
@@ -262,7 +262,7 @@ $totalComercios = array_sum($conteos);
                 <?= csrf_field() ?>
                 <input type="hidden" name="plan_id" value="<?= $p['id'] ?>">
                 <div class="sello-item <?= $p['tiene_sello'] ? 'sello-item--on' : 'sello-item--off' ?>">
-                    <span><?= $p['icono'] ?> <strong><?= e($p['nombre']) ?></strong></span>
+                    <span><?= e($p['icono']) ?> <strong><?= e($p['nombre']) ?></strong></span>
                     <button type="submit" class="btn btn--sm" style="font-size:.75rem;padding:.2rem .5rem;
                         background:<?= $p['tiene_sello'] ? '#38A169' : '#E53E3E' ?>;color:#fff;border:none">
                         <?= $p['tiene_sello'] ? '✅ Activo' : '❌ Inactivo' ?>

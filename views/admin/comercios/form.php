@@ -393,7 +393,7 @@ $errors  = $flash['errors'] ?? [];
                                    <?= $checked ? 'checked' : '' ?>>
                             <label for="cat_<?= $cat['id'] ?>" style="display:flex;align-items:center;gap:0.5rem;flex:1;cursor:pointer;font-size:var(--font-size-sm)">
                                 <?php if (!empty($cat['icono'])): ?>
-                                    <span><?= $cat['icono'] ?></span>
+                                    <span><?= e($cat['icono']) ?></span>
                                 <?php endif; ?>
                                 <?= e($cat['nombre']) ?>
                             </label>
@@ -454,7 +454,7 @@ $errors  = $flash['errors'] ?? [];
                                            data-fecha-id="<?= $fecha['id'] ?>"
                                            <?= $fChecked ? 'checked' : '' ?>>
                                     <?php if (!empty($fecha['icono'])): ?>
-                                        <span><?= $fecha['icono'] ?></span>
+                                        <span><?= e($fecha['icono']) ?></span>
                                     <?php endif; ?>
                                     <strong><?= e($fecha['nombre']) ?></strong>
                                 </label>
@@ -517,7 +517,7 @@ $errors  = $flash['errors'] ?? [];
                         $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, nombre, icono FROM planes_config WHERE activo = 1 ORDER BY orden ASC");
                         foreach ($planesDisponibles as $pl):
                         ?>
-                        <option value="<?= e($pl['slug']) ?>" <?= $planVal === $pl['slug'] ? 'selected' : '' ?>><?= $pl['icono'] ?> <?= e($pl['nombre']) ?></option>
+                        <option value="<?= e($pl['slug']) ?>" <?= $planVal === $pl['slug'] ? 'selected' : '' ?>><?= e($pl['icono']) ?> <?= e($pl['nombre']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>

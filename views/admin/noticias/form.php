@@ -199,7 +199,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                                    value="<?= $cat['id'] ?>"
                                    <?= in_array($cat['id'], $catIds) ? 'checked' : '' ?>>
                             <?php if (!empty($cat['icono'])): ?>
-                                <span><?= $cat['icono'] ?></span>
+                                <span><?= e($cat['icono']) ?></span>
                             <?php endif; ?>
                             <?= e($cat['nombre']) ?>
                         </label>
@@ -237,7 +237,7 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
                                            value="<?= $f['id'] ?>"
                                            <?= in_array($f['id'], $fechaIds) ? 'checked' : '' ?>>
                                     <?php if (!empty($f['icono'])): ?>
-                                        <span><?= $f['icono'] ?></span>
+                                        <span><?= e($f['icono']) ?></span>
                                     <?php endif; ?>
                                     <?= e($f['nombre']) ?>
                                 </label>

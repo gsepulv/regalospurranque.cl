@@ -133,7 +133,14 @@ function showTab(tab) {
         html = html.replace(/\{total_comercios\}/g, '15');
         html = html.replace(/\{link_registro\}/g, '<?= SITE_URL ?>/registrar-comercio');
         html = html.replace(/\{link_desuscripcion\}/g, '#');
-        previewDiv.innerHTML = html;
+        previewDiv.textContent = '';
+        var iframe = document.createElement('iframe');
+        iframe.sandbox = 'allow-same-origin';
+        iframe.style.cssText = 'width:100%;min-height:400px;border:1px solid #e2e8f0;border-radius:4px';
+        previewDiv.appendChild(iframe);
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(html);
+        iframe.contentDocument.close();
     }
 }
 

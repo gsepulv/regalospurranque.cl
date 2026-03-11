@@ -128,7 +128,7 @@ class ConfigController extends Controller
 
         // Validar tipo MIME
         $allowedMimes = [
-            'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml',
+            'image/jpeg', 'image/png', 'image/gif', 'image/webp',
             'image/x-icon', 'image/vnd.microsoft.icon',
         ];
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
@@ -151,6 +151,13 @@ class ConfigController extends Controller
         $destDir  = BASE_PATH . '/assets/img/config';
         if (!is_dir($destDir)) {
             mkdir($destDir, 0755, true);
+        }
+
+        // Prevenir path traversal
+        $realDir = realpath($destDir);
+        $realBase = realpath(BASE_PATH . '/assets/img');
+        if ($realDir === false || $realBase === false || !str_starts_with($realDir, $realBase)) {
+            return null;
         }
 
         $destPath = $destDir . '/' . $filename;

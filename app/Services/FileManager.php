@@ -89,6 +89,54 @@ class FileManager
     }
 
     /**
+     * Subir comprobante de pago a directorio privado (fuera de /assets/)
+     * Misma validación que subirImagen pero sin thumbnail ni WebP
+     */
+    public static function subirComprobante(array $file, int $maxWidth = 1200): string|false
+    {
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        if ($file['size'] > UPLOAD_MAX_SIZE) {
+            return false;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        if (!in_array($mime, UPLOAD_ALLOWED_TYPES, true)) {
+            return false;
+        }
+
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+            'image/gif'  => 'gif',
+        ];
+        $ext = $extensions[$mime] ?? 'jpg';
+
+        $fileName = 'comp-' . time() . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
+
+        $destDir = BASE_PATH . '/storage/comprobantes';
+        if (!is_dir($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $destPath = $destDir . '/' . $fileName;
+
+        if (!move_uploaded_file($file['tmp_name'], $destPath)) {
+            return false;
+        }
+
+        if (in_array($ext, ['jpg', 'png', 'webp'])) {
+            self::redimensionar($destPath, $maxWidth);
+        }
+
+        return $fileName;
+    }
+
+    /**
      * Redimensionar imagen si excede el ancho máximo
      */
     private static function redimensionar(string $path, int $maxWidth): void

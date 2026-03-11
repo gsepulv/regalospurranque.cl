@@ -194,28 +194,53 @@ class FileExplorerController extends Controller
             return;
         }
 
-        // Limpiar nombre de archivo
-        $filename = basename($file['name']);
+        // Whitelist de extensiones y MIME permitidos
+        $allowed = [
+            'jpg'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'png'  => 'image/png',
+            'gif'  => 'image/gif',
+            'webp' => 'image/webp',
+            'pdf'  => 'application/pdf',
+            'doc'  => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'xls'  => 'application/vnd.ms-excel',
+            'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'txt'  => 'text/plain',
+            'csv'  => 'text/plain',
+            'ico'  => 'image/x-icon',
+            'svg'  => 'image/svg+xml',
+            'css'  => 'text/css',
+            'js'   => 'text/javascript',
+        ];
 
-        // Bloquear extensiones peligrosas
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $blocked = ['php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'cgi', 'pl', 'py', 'sh', 'bat', 'exe', 'com', 'htaccess', 'htpasswd'];
-        if (in_array($ext, $blocked, true)) {
-            $this->back(['error' => "No se permite subir archivos con extensión .{$ext}"]);
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!isset($allowed[$ext])) {
+            $this->back(['error' => "Tipo de archivo .{$ext} no permitido"]);
             return;
         }
 
-        $destination = $realDir . '/' . $filename;
+        // Validar MIME real del archivo
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        if ($mime !== $allowed[$ext]) {
+            $this->back(['error' => 'El tipo MIME del archivo no coincide con su extensión']);
+            return;
+        }
+
+        // Nombre seguro: prefijo único + extensión validada
+        $safeName = uniqid('file_') . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+        $destination = $realDir . '/' . $safeName;
 
         if (!move_uploaded_file($file['tmp_name'], $destination)) {
             $this->back(['error' => 'No se pudo mover el archivo subido']);
             return;
         }
 
-        $relativePath = ($directory !== '' ? $directory . '/' : '') . $filename;
+        $relativePath = ($directory !== '' ? $directory . '/' : '') . $safeName;
         $this->log('mantenimiento', 'archivo_subir', 'archivo', 0, "Archivo subido: {$relativePath}");
 
-        $this->back(['success' => "Archivo '{$filename}' subido correctamente"]);
+        $this->back(['success' => "Archivo '{$safeName}' subido correctamente"]);
     }
 
     /**

@@ -144,4 +144,49 @@ class RenovacionAdminController extends Controller
             $this->redirect('/admin/renovaciones', ['error' => 'No se pudo rechazar. La solicitud ya fue procesada.']);
         }
     }
+
+    /**
+     * Servir comprobante de pago (archivo privado, solo admin autenticado)
+     */
+    public function comprobante(string $id): void
+    {
+        $renovacion = RenovacionComercio::find((int)$id);
+
+        if (!$renovacion || empty($renovacion['comprobante_pago'])) {
+            http_response_code(404);
+            echo 'Comprobante no encontrado.';
+            return;
+        }
+
+        $fileName = $renovacion['comprobante_pago'];
+
+        // Prevenir path traversal
+        if (str_contains($fileName, '..') || str_contains($fileName, '/') || str_contains($fileName, '\\')) {
+            http_response_code(403);
+            echo 'Acceso denegado.';
+            return;
+        }
+
+        // Buscar en storage (nuevos) o en assets (legacy)
+        $storagePath = BASE_PATH . '/storage/comprobantes/' . $fileName;
+        $legacyPath  = UPLOAD_PATH . '/comprobantes/' . $fileName;
+
+        if (file_exists($storagePath)) {
+            $filePath = $storagePath;
+        } elseif (file_exists($legacyPath)) {
+            $filePath = $legacyPath;
+        } else {
+            http_response_code(404);
+            echo 'Archivo no encontrado.';
+            return;
+        }
+
+        $mime = (new \finfo(FILEINFO_MIME_TYPE))->file($filePath);
+
+        header('Content-Type: ' . $mime);
+        header('Content-Length: ' . filesize($filePath));
+        header('Cache-Control: private, max-age=3600');
+        readfile($filePath);
+        exit;
+    }
 }

@@ -313,7 +313,15 @@ function verArchivo(filePath, fileName, extension) {
         .then(function(data) {
             if (data.error) throw new Error(data.error);
             if (data.type === 'image') {
-                contenido.innerHTML = '<div style="text-align:center"><img src="<?= url('/') ?>/' + data.path + '" alt="' + data.name.replace(/"/g, '&quot;') + '" style="max-width:100%;max-height:60vh;border-radius:4px"></div>';
+                contenido.textContent = '';
+                var wrap = document.createElement('div');
+                wrap.style.textAlign = 'center';
+                var img = document.createElement('img');
+                img.src = '<?= url('/') ?>/' + data.path;
+                img.alt = data.name;
+                img.style.cssText = 'max-width:100%;max-height:60vh;border-radius:4px';
+                wrap.appendChild(img);
+                contenido.appendChild(wrap);
             } else {
                 var pre = document.createElement('pre');
                 pre.style.cssText = 'margin:0;padding:var(--spacing-4);background:var(--color-light);border-radius:4px;overflow-x:auto;font-size:0.8125rem;line-height:1.5;max-height:60vh;white-space:pre-wrap;word-break:break-all';
@@ -325,7 +333,11 @@ function verArchivo(filePath, fileName, extension) {
             }
         })
         .catch(function(err) {
-            contenido.innerHTML = '<p style="color:var(--color-danger);text-align:center">' + err.message + '</p>';
+            contenido.textContent = '';
+            var p = document.createElement('p');
+            p.style.cssText = 'color:var(--color-danger);text-align:center';
+            p.textContent = err.message;
+            contenido.appendChild(p);
         });
 }
 

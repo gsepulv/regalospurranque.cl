@@ -12,7 +12,7 @@
     <section class="hero hero--countdown" style="background: linear-gradient(135deg, <?= $heroColor ?> 0%, <?= $heroColorDark ?> 100%); --hero-text-color: <?= $heroTexto ?>;">
         <div class="container hero__content">
             <?php if (!empty($proximaFecha['icono'])): ?>
-                <span class="hero__fecha-icon"><?= $proximaFecha['icono'] ?></span>
+                <span class="hero__fecha-icon"><?= e($proximaFecha['icono']) ?></span>
             <?php endif; ?>
             <h1><?= e($proximaFecha['nombre']) ?>. Celebra con un detalle especial.</h1>
             <div class="hero__countdown" id="heroCountdown" data-target="<?= e($proximaFecha['fecha_inicio']) ?>">
@@ -142,7 +142,7 @@
         <div class="category-grid">
             <?php foreach ($categorias as $cat): ?>
                 <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="category-card">
-                    <span class="category-card__icon"><?= !empty($cat['icono']) ? $cat['icono'] : mb_substr($cat['nombre'], 0, 1) ?></span>
+                    <span class="category-card__icon"><?= !empty($cat['icono']) ? e($cat['icono']) : mb_substr($cat['nombre'], 0, 1) ?></span>
                     <span class="category-card__name"><?= e($cat['nombre']) ?></span>
                     <span class="category-card__count"><?= (int)$cat['comercios_count'] ?> comercio<?= $cat['comercios_count'] != 1 ? 's' : '' ?></span>
                 </a>
@@ -162,7 +162,7 @@
             <?php foreach ($fechasPersonales as $fe): ?>
                 <?php $feColor = !empty($fe['color']) ? $fe['color'] : '#e53e3e'; ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="celebracion-card" style="--card-color: <?= $feColor ?>;">
-                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#127873;' ?></span>
+                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#127873;' ?></span>
                     <span class="celebracion-card__name"><?= e($fe['nombre']) ?></span>
                     <?php if (!empty($fe['descripcion'])): ?>
                         <span class="celebracion-card__desc"><?= e(truncate($fe['descripcion'], 80)) ?></span>
@@ -188,7 +188,7 @@
             <?php foreach ($fechasCalendario as $fe): ?>
                 <?php $feColor = !empty($fe['color']) ? $fe['color'] : '#e53e3e'; ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="celebracion-card" style="--card-color: <?= $feColor ?>;" <?php if (!empty($fe['fecha_inicio'])): ?>title="<?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?>"<?php endif; ?>>
-                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#128197;' ?></span>
+                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#128197;' ?></span>
                     <span class="celebracion-card__name"><?= e($fe['nombre']) ?></span>
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="celebracion-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>
@@ -214,7 +214,7 @@
             <?php foreach ($fechasComerciales as $fe): ?>
                 <?php $feColor = !empty($fe['color']) ? $fe['color'] : '#1e293b'; ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="celebracion-card" style="--card-color: <?= $feColor ?>;" <?php if (!empty($fe['fecha_inicio'])): ?>title="<?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?>"<?php endif; ?>>
-                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#128176;' ?></span>
+                    <span class="celebracion-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#128176;' ?></span>
                     <span class="celebracion-card__name"><?= e($fe['nombre']) ?></span>
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="celebracion-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>

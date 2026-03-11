@@ -6,7 +6,7 @@
 $pageType = 'comercio';
 $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 ?>
-<script>if(typeof fbq==='function')fbq('track','ViewContent',{content_name:'<?= addslashes($comercio['nombre'] ?? '') ?>',content_type:'comercio'});</script>
+<script>if(typeof fbq==='function')fbq('track','ViewContent',{content_name:<?= json_encode($comercio['nombre'] ?? '', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>,content_type:'comercio'});</script>
 <?php
 $hoy = (int) date('w');
 ?>
@@ -260,7 +260,7 @@ $hoy = (int) date('w');
                         <?php foreach ($comercio['fechas'] as $fe): ?>
                             <div class="oferta-card">
                                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="oferta-card__nombre">
-                                    <?= !empty($fe['icono']) ? $fe['icono'] . ' ' : '' ?><?= e($fe['nombre']) ?>
+                                    <?= !empty($fe['icono']) ? e($fe['icono']) . ' ' : '' ?><?= e($fe['nombre']) ?>
                                 </a>
                                 <?php if (!empty($fe['oferta_especial'])): ?>
                                     <p class="oferta-card__detalle"><?= e($fe['oferta_especial']) ?></p>
@@ -569,7 +569,13 @@ function trackBanner(bannerId) {
     });
 
     var marker = L.marker([lat, lng], {icon: giftIcon}).addTo(map);
-    marker.bindPopup('<strong><?= addslashes(e($comercio['nombre'])) ?></strong><?= !empty($comercio['direccion']) ? '<br>' . addslashes(e($comercio['direccion'])) : '' ?>').openPopup();
+    <?php
+    $popupHtml = '<strong>' . e($comercio['nombre']) . '</strong>';
+    if (!empty($comercio['direccion'])) {
+        $popupHtml .= '<br>' . e($comercio['direccion']);
+    }
+    ?>
+    marker.bindPopup(<?= json_encode($popupHtml, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>).openPopup();
 
     setTimeout(function() { map.invalidateSize(); }, 300);
     window.addEventListener('load', function() { map.invalidateSize(); });

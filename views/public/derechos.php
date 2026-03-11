@@ -54,7 +54,7 @@
   <div class="derechos-grid">
     <?php foreach ($tiposConfig as $key => $config): ?>
       <a href="<?= url('/derechos?tipo=' . $key) ?>" class="derecho-card derecho-card--clickable">
-        <span class="derecho-icon"><?= $config['icono'] ?></span>
+        <span class="derecho-icon"><?= e($config['icono']) ?></span>
         <h3><?= e($config['titulo']) ?></h3>
         <p><?= e($config['desc']) ?></p>
       </a>
@@ -95,7 +95,7 @@
   <div class="form-header">
     <a href="<?= url('/derechos') ?>" class="btn-volver">&larr; Volver a opciones</a>
     <div class="form-header-title">
-      <span class="form-header-icon"><?= $cfg['icono'] ?></span>
+      <span class="form-header-icon"><?= e($cfg['icono']) ?></span>
       <div>
         <h2><?= e($cfg['titulo']) ?></h2>
         <p><?= e($cfg['desc']) ?></p>
@@ -242,7 +242,7 @@
     <div class="derechos-explicacion">
       <?php foreach ($tiposConfig as $key => $config): ?>
       <div class="derecho-explica">
-        <span class="derecho-explica-icon"><?= $config['icono'] ?></span>
+        <span class="derecho-explica-icon"><?= e($config['icono']) ?></span>
         <div>
           <h3><?= e($config['titulo']) ?></h3>
           <p><?= e($config['desc']) ?></p>

@@ -110,6 +110,12 @@
 (function() {
     if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }
 
+    function escHtml(str) {
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
     // Datos de comercios desde PHP
     var comercios = <?= json_encode(array_map(function($c) {
         return [
@@ -152,9 +158,9 @@
         var marker = L.marker([com.lat, com.lng], {icon: giftIcon}).addTo(map);
 
         var popup = '<div style="text-align:center;min-width:150px">' +
-            '<h4 style="margin:0 0 4px;font-size:14px">' + com.nombre + '</h4>' +
-            (com.dir ? '<p style="margin:0 0 8px;font-size:12px;color:#666">' + com.dir + '</p>' : '') +
-            '<a href="' + siteUrl + '/comercio/' + com.slug + '" style="font-size:12px">Ver más &rarr;</a>' +
+            '<h4 style="margin:0 0 4px;font-size:14px">' + escHtml(com.nombre) + '</h4>' +
+            (com.dir ? '<p style="margin:0 0 8px;font-size:12px;color:#666">' + escHtml(com.dir) + '</p>' : '') +
+            '<a href="' + siteUrl + '/comercio/' + encodeURIComponent(com.slug) + '" style="font-size:12px">Ver más &rarr;</a>' +
             '</div>';
 
         marker.bindPopup(popup);

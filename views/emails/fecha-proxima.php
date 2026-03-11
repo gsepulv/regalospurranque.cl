@@ -8,7 +8,7 @@
     <tr>
         <td style="padding:20px;text-align:center;">
             <?php if (!empty($fecha['icono'])): ?>
-                <p style="margin:0 0 8px;font-size:32px;"><?= $fecha['icono'] ?></p>
+                <p style="margin:0 0 8px;font-size:32px;"><?= e($fecha['icono']) ?></p>
             <?php endif; ?>
             <p style="margin:0 0 8px;font-size:20px;font-weight:bold;color:#581c87;">
                 <?= htmlspecialchars($fecha['nombre']) ?>

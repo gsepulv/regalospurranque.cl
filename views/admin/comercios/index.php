@@ -38,7 +38,7 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
             <option value="">Todos los planes</option>
             <?php foreach ($planesDisponibles as $pl): ?>
                 <option value="<?= e($pl['slug']) ?>" <?= $planFilter === $pl['slug'] ? 'selected' : '' ?>>
-                    <?= $pl['icono'] ?> <?= e($pl['nombre']) ?>
+                    <?= e($pl['icono']) ?> <?= e($pl['nombre']) ?>
                 </option>
             <?php endforeach; ?>
         </select>

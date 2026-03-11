@@ -12,7 +12,7 @@ $pageType = 'fecha';
         <!-- Cabecera -->
         <div class="page-header">
             <?php if (!empty($fecha['icono'])): ?>
-                <span class="page-header__icon"><?= $fecha['icono'] ?></span>
+                <span class="page-header__icon"><?= e($fecha['icono']) ?></span>
             <?php endif; ?>
             <h1><?= e($fecha['nombre']) ?></h1>
             <?php if (!empty($fecha['descripcion'])): ?>

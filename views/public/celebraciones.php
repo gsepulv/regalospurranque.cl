@@ -21,7 +21,7 @@ $pageType = 'fecha';
         <div class="category-grid">
             <?php foreach ($fechasPersonales as $fe): ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="category-card">
-                    <span class="category-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#127873;' ?></span>
+                    <span class="category-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#127873;' ?></span>
                     <span class="category-card__name"><?= e($fe['nombre']) ?></span>
                     <span class="category-card__count"><?= (int) ($fe['comercios_count'] ?? 0) ?> comercio<?= ($fe['comercios_count'] ?? 0) != 1 ? 's' : '' ?></span>
                 </a>
@@ -39,7 +39,7 @@ $pageType = 'fecha';
         <div class="category-grid">
             <?php foreach ($fechasCalendario as $fe): ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="category-card" <?php if (!empty($fe['fecha_inicio'])): ?>title="<?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?>"<?php endif; ?>>
-                    <span class="category-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#128197;' ?></span>
+                    <span class="category-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#128197;' ?></span>
                     <span class="category-card__name"><?= e($fe['nombre']) ?></span>
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="category-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>
@@ -60,7 +60,7 @@ $pageType = 'fecha';
         <div class="category-grid">
             <?php foreach ($fechasComerciales as $fe): ?>
                 <a href="<?= url('/fecha/' . $fe['slug']) ?>" class="category-card" <?php if (!empty($fe['fecha_inicio'])): ?>title="<?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?>"<?php endif; ?>>
-                    <span class="category-card__icon"><?= !empty($fe['icono']) ? $fe['icono'] : '&#128176;' ?></span>
+                    <span class="category-card__icon"><?= !empty($fe['icono']) ? e($fe['icono']) : '&#128176;' ?></span>
                     <span class="category-card__name"><?= e($fe['nombre']) ?></span>
                     <?php if (!empty($fe['fecha_inicio'])): ?>
                         <span class="category-card__date"><?= fecha_es($fe['fecha_inicio'], 'd/m') ?><?php if (!empty($fe['fecha_fin']) && $fe['fecha_fin'] !== $fe['fecha_inicio']): ?> — <?= fecha_es($fe['fecha_fin'], 'd/m') ?><?php endif; ?></span>

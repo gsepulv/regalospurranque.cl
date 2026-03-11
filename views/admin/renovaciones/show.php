@@ -70,7 +70,7 @@ $esPendiente = $renovacion['estado'] === 'pendiente';
     <div class="admin-card" style="margin-bottom:1.25rem">
         <div class="admin-card__header">Comprobante de pago</div>
         <div class="admin-card__body" style="text-align:center">
-            <img src="<?= url('/assets/img/comprobantes/' . $renovacion['comprobante_pago']) ?>"
+            <img src="<?= url('/admin/renovaciones/comprobante/' . $renovacion['id']) ?>"
                  alt="Comprobante" style="max-width:500px;max-height:600px;border-radius:8px;border:1px solid #e2e8f0"
                  loading="lazy">
         </div>

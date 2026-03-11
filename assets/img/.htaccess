@@ -1,0 +1,6 @@
+# Bloquear ejecución de scripts en directorio de uploads
+<FilesMatch "\.(php|phtml|phar|php[3-8]|phps|cgi|pl|py|jsp|asp|sh|bat)$">
+    Require all denied
+</FilesMatch>
+Options -ExecCGI
+RemoveHandler .php .php3 .php4 .php5 .phtml .phar .pl .py .cgi .jsp .asp

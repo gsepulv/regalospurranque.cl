@@ -652,7 +652,12 @@ $currentTab = $tab ?? 'config';
             document.getElementById('testFbDesc').textContent = ogDesc || desc || '';
             var fbImg = document.getElementById('testFbImage');
             if (ogImage) {
-                fbImg.innerHTML = '<img src="' + ogImage + '" style="max-height:120px;max-width:100%;border-radius:4px" onerror="this.parentNode.textContent=\'Imagen no encontrada\'">';
+                fbImg.textContent = '';
+                var img = document.createElement('img');
+                img.src = ogImage;
+                img.style.cssText = 'max-height:120px;max-width:100%;border-radius:4px';
+                img.onerror = function() { fbImg.textContent = 'Imagen no encontrada'; };
+                fbImg.appendChild(img);
             } else {
                 fbImg.textContent = 'Sin imagen OG';
             }
@@ -678,7 +683,11 @@ $currentTab = $tab ?? 'config';
             checks.forEach(function(c) {
                 var li = document.createElement('li');
                 li.style.marginBottom = '4px';
-                li.innerHTML = '<span style="color:' + (c.ok ? '#059669' : '#dc2626') + ';margin-right:6px">' + (c.ok ? '\u2714' : '\u2718') + '</span>' + c.text;
+                var span = document.createElement('span');
+                span.style.cssText = 'color:' + (c.ok ? '#059669' : '#dc2626') + ';margin-right:6px';
+                span.textContent = c.ok ? '\u2714' : '\u2718';
+                li.appendChild(span);
+                li.appendChild(document.createTextNode(c.text));
                 checklistEl.appendChild(li);
             });
 

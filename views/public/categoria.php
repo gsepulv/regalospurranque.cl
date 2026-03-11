@@ -12,7 +12,7 @@ $pageType = 'categoria';
         <!-- Cabecera -->
         <div class="page-header">
             <?php if (!empty($categoria['icono'])): ?>
-                <span class="page-header__icon" style="color: <?= e($categoria['color'] ?? '#2563eb') ?>"><?= $categoria['icono'] ?></span>
+                <span class="page-header__icon" style="color: <?= e($categoria['color'] ?? '#2563eb') ?>"><?= e($categoria['icono']) ?></span>
             <?php endif; ?>
             <h1><?= e($categoria['nombre']) ?></h1>
             <?php if (!empty($categoria['descripcion'])): ?>
@@ -61,14 +61,14 @@ $pageType = 'categoria';
 
                 <?php else: ?>
                     <div class="empty-state">
-                        <span class="empty-state__emoji"><?= !empty($categoria['icono']) ? $categoria['icono'] : '&#128269;' ?></span>
+                        <span class="empty-state__emoji"><?= !empty($categoria['icono']) ? e($categoria['icono']) : '&#128269;' ?></span>
                         <h3>Aun no hay comercios en <?= e($categoria['nombre']) ?></h3>
                         <p>Pronto tendras opciones aqui. Mientras tanto, explora otras categorias:</p>
                         <div class="empty-state__pills">
                             <?php foreach ($categorias as $cat): ?>
                                 <?php if ($cat['id'] == $categoria['id'] || ($cat['comercios_count'] ?? 0) == 0) continue; ?>
                                 <a href="<?= url('/categoria/' . $cat['slug']) ?>" class="empty-state__pill">
-                                    <?= !empty($cat['icono']) ? $cat['icono'] . ' ' : '' ?><?= e($cat['nombre']) ?>
+                                    <?= !empty($cat['icono']) ? e($cat['icono']) . ' ' : '' ?><?= e($cat['nombre']) ?>
                                 </a>
                             <?php endforeach; ?>
                         </div>
@@ -100,7 +100,7 @@ $pageType = 'categoria';
                                 <?php if ($cat['id'] == $categoria['id']) continue; ?>
                                 <li>
                                     <a href="<?= url('/categoria/' . $cat['slug']) ?>">
-                                        <?= !empty($cat['icono']) ? $cat['icono'] . ' ' : '' ?>
+                                        <?= !empty($cat['icono']) ? e($cat['icono']) . ' ' : '' ?>
                                         <?= e($cat['nombre']) ?>
                                         <span class="text-muted text-sm">(<?= (int) ($cat['comercios_count'] ?? 0) ?>)</span>
                                     </a>

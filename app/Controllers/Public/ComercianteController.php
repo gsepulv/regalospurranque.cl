@@ -635,7 +635,7 @@ class ComercianteController extends Controller
         // Subir comprobante si es transferencia
         $comprobante = null;
         if ($metodoPago === 'transferencia' && !empty($_FILES['comprobante']['tmp_name']) && $_FILES['comprobante']['error'] === UPLOAD_ERR_OK) {
-            $comprobante = FileManager::subirImagen($_FILES['comprobante'], 'comprobantes', 1200);
+            $comprobante = FileManager::subirComprobante($_FILES['comprobante'], 1200);
             if (!$comprobante) {
                 $_SESSION['flash_error'] = 'No se pudo subir el comprobante. Verifica que sea una imagen válida (JPG, PNG, WebP) de máximo 2 MB.';
                 header('Location: ' . url('/mi-comercio'));

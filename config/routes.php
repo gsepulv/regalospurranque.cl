@@ -134,6 +134,7 @@ return [
     ['GET',  '/admin/renovaciones/ver/{id}',      'Admin\\RenovacionAdminController@show',     ['auth']],
     ['POST', '/admin/renovaciones/aprobar/{id}',  'Admin\\RenovacionAdminController@aprobar',  ['auth']],
     ['POST', '/admin/renovaciones/rechazar/{id}', 'Admin\\RenovacionAdminController@rechazar', ['auth']],
+    ['GET',  '/admin/renovaciones/comprobante/{id}', 'Admin\\RenovacionAdminController@comprobante', ['auth']],
 
     // ── Reseñas ───────────────────────────────────────────────
     ['GET',  '/admin/resenas',                         'Admin\\ResenaAdminController@index',        ['auth']],

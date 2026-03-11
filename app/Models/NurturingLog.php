@@ -89,7 +89,8 @@ class NurturingLog
              LEFT JOIN mensajes_contacto mc ON nl.mensaje_id = mc.id
              LEFT JOIN nurturing_plantillas np ON nl.plantilla_id = np.id
              ORDER BY nl.created_at DESC
-             LIMIT {$limit}"
+             LIMIT ?",
+            [$limit]
         );
     }
 
