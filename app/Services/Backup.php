@@ -60,20 +60,31 @@ class Backup
                 $count = $pdo->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
                 if ($count == 0) continue;
 
-                $stmt = $pdo->query("SELECT * FROM `{$table}`");
+                // Exportar datos en chunks para tablas grandes
+                $chunkSize = 500;
+                $offset = 0;
                 $columns = null;
 
-                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                while (true) {
+                    $stmt = $pdo->query("SELECT * FROM `{$table}` LIMIT {$chunkSize} OFFSET {$offset}");
+                    $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                    if (empty($rows)) break;
+
                     if ($columns === null) {
-                        $columns = '`' . implode('`, `', array_keys($row)) . '`';
+                        $columns = '`' . implode('`, `', array_keys($rows[0])) . '`';
                     }
 
-                    $values = array_map(function ($val) use ($pdo) {
-                        if ($val === null) return 'NULL';
-                        return $pdo->quote($val);
-                    }, array_values($row));
+                    foreach ($rows as $row) {
+                        $values = array_map(function ($val) use ($pdo) {
+                            if ($val === null) return 'NULL';
+                            return $pdo->quote($val);
+                        }, array_values($row));
 
-                    fwrite($handle, "INSERT INTO `{$table}` ({$columns}) VALUES (" . implode(', ', $values) . ");\n");
+                        fwrite($handle, "INSERT INTO `{$table}` ({$columns}) VALUES (" . implode(', ', $values) . ");\n");
+                    }
+
+                    if (count($rows) < $chunkSize) break;
+                    $offset += $chunkSize;
                 }
                 fwrite($handle, "\n");
             }

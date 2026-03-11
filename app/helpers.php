@@ -177,6 +177,27 @@ function picture(string $imgPath, string $alt, string $class = '', bool $lazy = 
     $attrs .= $width ? ' width="' . $width . '"' : '';
     $attrs .= $height ? ' height="' . $height . '"' : '';
 
+    // Generar srcset para imágenes redimensionadas (si existen)
+    $srcset = '';
+    if ($width > 0) {
+        $sizes = [];
+        $baseName = pathinfo($imgPath, PATHINFO_FILENAME);
+        $ext = pathinfo($imgPath, PATHINFO_EXTENSION);
+        $dir = pathinfo($imgPath, PATHINFO_DIRNAME);
+
+        foreach ([400, 800, 1200] as $w) {
+            if ($w > $width) break;
+            $thumbPath = $dir . '/' . $baseName . '-' . $w . 'w.' . $ext;
+            if (file_exists(BASE_PATH . '/assets/' . $thumbPath)) {
+                $sizes[] = asset($thumbPath) . ' ' . $w . 'w';
+            }
+        }
+        if (!empty($sizes)) {
+            $sizes[] = $src . ' ' . $width . 'w';
+            $srcset = ' srcset="' . implode(', ', $sizes) . '"';
+        }
+    }
+
     // Buscar versión WebP
     $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $imgPath);
     $webpFile = BASE_PATH . '/assets/' . $webpPath;
@@ -185,9 +206,9 @@ function picture(string $imgPath, string $alt, string $class = '', bool $lazy = 
         $webpSrc = asset($webpPath);
         return '<picture>'
             . '<source srcset="' . $webpSrc . '" type="image/webp">'
-            . '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . '>'
+            . '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . $srcset . '>'
             . '</picture>';
     }
 
-    return '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . '>';
+    return '<img src="' . $src . '" alt="' . $alt . '"' . $attrs . $srcset . '>';
 }

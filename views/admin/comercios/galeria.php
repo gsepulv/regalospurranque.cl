@@ -67,7 +67,7 @@
                     <div style="border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden">
                         <img src="<?= asset('img/galeria/' . $foto['ruta']) ?>"
                              alt="<?= e($foto['titulo'] ?? '') ?>"
-                             loading="lazy"
+                             loading="lazy" width="300" height="180"
                              style="width:100%;height:180px;object-fit:cover;display:block">
                         <div style="padding:0.75rem">
                             <?php if (!empty($foto['titulo'])): ?>

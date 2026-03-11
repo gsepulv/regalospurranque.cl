@@ -182,16 +182,37 @@ try {
            AND mc.comercio_id IS NULL"
     );
 
-    $totalConversiones = 0;
-    foreach ($conversiones as $conv) {
-        $db->update('mensajes_contacto', [
-            'estado'                  => 'convertido',
-            'comercio_id'             => (int) $conv['comercio_id'],
-            'convertido_at'           => date('Y-m-d H:i:s'),
-            'proximo_recordatorio_at' => null,
-        ], 'id = ?', [$conv['mensaje_id']]);
-        $totalConversiones++;
-        echo "[" . date('Y-m-d H:i:s') . "] Conversion: {$conv['email']} -> {$conv['comercio_nombre']}\n";
+    $totalConversiones = count($conversiones);
+    if ($totalConversiones > 0) {
+        $ids = array_column($conversiones, 'mensaje_id');
+        $now = date('Y-m-d H:i:s');
+
+        // CASE para asignar comercio_id por mensaje
+        $caseParts = [];
+        $params = [];
+        foreach ($conversiones as $conv) {
+            $caseParts[] = "WHEN ? THEN ?";
+            $params[] = (int) $conv['mensaje_id'];
+            $params[] = (int) $conv['comercio_id'];
+        }
+        $caseSQL = implode(' ', $caseParts);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $params[] = $now;
+        $params = array_merge($params, $ids);
+
+        $db->execute(
+            "UPDATE mensajes_contacto
+             SET estado = 'convertido',
+                 comercio_id = CASE id {$caseSQL} END,
+                 convertido_at = ?,
+                 proximo_recordatorio_at = NULL
+             WHERE id IN ({$placeholders})",
+            $params
+        );
+
+        foreach ($conversiones as $conv) {
+            echo "[" . date('Y-m-d H:i:s') . "] Conversion: {$conv['email']} -> {$conv['comercio_nombre']}\n";
+        }
     }
 
     // PASO 6: Actualizar seguimiento_conversiones

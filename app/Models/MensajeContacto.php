@@ -257,18 +257,37 @@ class MensajeContacto
                AND mc.comercio_id IS NULL"
         );
 
-        $conversiones = [];
-        foreach ($matches as $m) {
-            $db->update('mensajes_contacto', [
-                'estado'       => 'convertido',
-                'comercio_id'  => (int) $m['comercio_id'],
-                'convertido_at'=> date('Y-m-d H:i:s'),
-            ], 'id = ?', [$m['mensaje_id']]);
-
-            $conversiones[] = $m;
+        if (empty($matches)) {
+            return [];
         }
 
-        return $conversiones;
+        // Batch UPDATE en una sola query
+        $ids = array_column($matches, 'mensaje_id');
+        $now = date('Y-m-d H:i:s');
+
+        // Construir CASE para comercio_id
+        $caseParts = [];
+        $params = [];
+        foreach ($matches as $m) {
+            $caseParts[] = "WHEN ? THEN ?";
+            $params[] = (int) $m['mensaje_id'];
+            $params[] = (int) $m['comercio_id'];
+        }
+        $caseSQL = implode(' ', $caseParts);
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $params[] = $now;
+        $params = array_merge($params, $ids);
+
+        $db->execute(
+            "UPDATE mensajes_contacto
+             SET estado = 'convertido',
+                 comercio_id = CASE id {$caseSQL} END,
+                 convertido_at = ?
+             WHERE id IN ({$placeholders})",
+            $params
+        );
+
+        return $matches;
     }
 
     public static function countPorEstado(): array

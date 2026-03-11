@@ -5,6 +5,9 @@
  */
 ?>
 
+<?php $mapaCss = APP_ENV === 'production' ? 'css/mapa.min.css' : 'css/mapa.css'; ?>
+<link rel="stylesheet" href="<?= asset($mapaCss) ?>">
+
 <section class="section">
     <div class="container">
 
@@ -28,50 +31,6 @@
         </div>
 
         <!-- Mapa -->
-        <style>
-        .map-container {
-            height: 500px;
-            width: 100%;
-            border-radius: var(--radius-lg);
-            margin-bottom: var(--spacing-8);
-            border: 1px solid var(--color-border);
-        }
-        .map-filters {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-4);
-            background: var(--color-white);
-            padding: var(--spacing-4);
-            border-radius: var(--radius-md);
-            margin-bottom: var(--spacing-4);
-            box-shadow: var(--shadow-sm);
-            flex-wrap: wrap;
-        }
-        .map-filters__label {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-3);
-        }
-        .map-list {
-            margin-top: var(--spacing-8);
-        }
-        .map-list h2 {
-            margin-bottom: var(--spacing-6);
-        }
-        @media (max-width: 768px) {
-            .map-container {
-                height: 350px;
-            }
-            .map-filters__label {
-                flex-direction: column;
-                align-items: flex-start;
-                width: 100%;
-            }
-            .map-filters .filter-select {
-                width: 100%;
-            }
-        }
-        </style>
         <div id="map" class="map-container"></div>
 
         <!-- Listado debajo del mapa -->
@@ -106,18 +65,10 @@
 <link rel="stylesheet" href="<?= asset('vendor/leaflet/leaflet.css') ?>">
 <script src="<?= asset('vendor/leaflet/leaflet.js') ?>" defer></script>
 
+<!-- Datos PHP para el mapa (bridge PHP→JS) -->
 <script>
-(function() {
-    if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }
-
-    function escHtml(str) {
-        var d = document.createElement('div');
-        d.textContent = str;
-        return d.innerHTML;
-    }
-
-    // Datos de comercios desde PHP
-    var comercios = <?= json_encode(array_map(function($c) {
+window.__mapaData = {
+    comercios: <?= json_encode(array_map(function($c) {
         return [
             'id'     => (int) $c['id'],
             'nombre' => $c['nombre'],
@@ -128,84 +79,12 @@
             'logo'   => $c['logo'] ?? '',
             'cats'   => $c['categorias_ids'] ?? '',
         ];
-    }, $comercios), JSON_UNESCAPED_UNICODE) ?>;
-
-    // Inicializar mapa centrado en Plaza de Purranque
-    var map = L.map('map').setView([<?= $centerLat ?>, <?= $centerLng ?>], <?= $zoom ?>);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap',
-        maxZoom: 18
-    }).addTo(map);
-
-    var markers = [];
-    var siteUrl = '<?= rtrim(SITE_URL, '/') ?>';
-    var assetBase = siteUrl + '/assets/img/logos/';
-
-    // Ícono personalizado de caja de regalo (emoji sobre pin morado)
-    var giftIcon = L.divIcon({
-        className: 'gift-marker',
-        html: '<div class="gift-pin"><span class="gift-pin__emoji">🎁</span><div class="gift-pin__arrow"></div></div>',
-        iconSize: [40, 48],
-        iconAnchor: [20, 48],
-        popupAnchor: [0, -44]
-    });
-
-    // Crear marcadores
-    comercios.forEach(function(com) {
-        if (!com.lat || !com.lng) return;
-
-        var marker = L.marker([com.lat, com.lng], {icon: giftIcon}).addTo(map);
-
-        var popup = '<div style="text-align:center;min-width:150px">' +
-            '<h4 style="margin:0 0 4px;font-size:14px">' + escHtml(com.nombre) + '</h4>' +
-            (com.dir ? '<p style="margin:0 0 8px;font-size:12px;color:#666">' + escHtml(com.dir) + '</p>' : '') +
-            '<a href="' + siteUrl + '/comercio/' + encodeURIComponent(com.slug) + '" style="font-size:12px">Ver más &rarr;</a>' +
-            '</div>';
-
-        marker.bindPopup(popup);
-        marker.comercioData = {
-            id: com.id,
-            cats: com.cats ? com.cats.split(',') : []
-        };
-        markers.push(marker);
-    });
-
-    // Forzar recálculo de tamaño del mapa
-    setTimeout(function() { map.invalidateSize(); }, 300);
-    window.addEventListener('load', function() { map.invalidateSize(); });
-    window.addEventListener('resize', function() { map.invalidateSize(); });
-
-    // Filtro por categoria
-    var filterSelect = document.getElementById('categoryFilter');
-    var countEl = document.getElementById('mapCount');
-    var items = document.querySelectorAll('.business-item');
-
-    filterSelect.addEventListener('change', function() {
-        var cat = this.value;
-        var visible = 0;
-
-        markers.forEach(function(marker) {
-            if (!cat || marker.comercioData.cats.indexOf(cat) !== -1) {
-                marker.addTo(map);
-                visible++;
-            } else {
-                map.removeLayer(marker);
-            }
-        });
-
-        items.forEach(function(item) {
-            var itemCats = (item.dataset.categories || '').split(',');
-            if (!cat || itemCats.indexOf(cat) !== -1) {
-                item.style.display = '';
-                visible++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-
-        countEl.textContent = Math.ceil(visible / 2) + ' comercios';
-    });
-})();
+    }, $comercios), JSON_UNESCAPED_UNICODE) ?>,
+    centerLat: <?= $centerLat ?>,
+    centerLng: <?= $centerLng ?>,
+    zoom: <?= $zoom ?>,
+    siteUrl: '<?= rtrim(SITE_URL, '/') ?>'
+};
 </script>
-
+<?php $mapaJs = APP_ENV === 'production' ? 'js/mapa.min.js' : 'js/mapa.js'; ?>
+<script src="<?= asset($mapaJs) ?>" defer></script>

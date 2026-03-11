@@ -17,3 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_resenas_comercio_estado
 -- Si no existe, necesario para el batch insert del cron
 CREATE UNIQUE INDEX IF NOT EXISTS idx_analytics_diario_fecha_pagina
     ON analytics_diario(fecha, pagina);
+
+-- Índice FULLTEXT para búsqueda de comercios
+-- Usado en: search, countSearch (reemplaza LIKE '%term%')
+ALTER TABLE comercios ADD FULLTEXT INDEX idx_comercios_fulltext (nombre, descripcion, direccion);

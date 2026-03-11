@@ -704,7 +704,7 @@ function trackBanner(bannerId) {
     overlay.className = 'lightbox';
     overlay.innerHTML = '<button class="lightbox__close" aria-label="Cerrar">&times;</button>' +
         '<button class="lightbox__prev" aria-label="Anterior">&#8249;</button>' +
-        '<img class="lightbox__img" src="" alt="">' +
+        '<img class="lightbox__img" src="" alt="" width="1200" height="800">' +
         '<button class="lightbox__next" aria-label="Siguiente">&#8250;</button>';
     document.body.appendChild(overlay);
 

@@ -211,16 +211,17 @@ class Validator
         $exceptId = $params[2] ?? null;
 
         $db = \App\Core\Database::getInstance();
-        $sql = "SELECT COUNT(*) as total FROM {$table} WHERE {$column} = ?";
+        $sql = "SELECT EXISTS(SELECT 1 FROM {$table} WHERE {$column} = ?";
         $bindings = [$value];
 
         if ($exceptId) {
             $sql .= " AND id != ?";
             $bindings[] = $exceptId;
         }
+        $sql .= ") as hay";
 
         $result = $db->fetch($sql, $bindings);
-        if ((int) ($result['total'] ?? 0) > 0) {
+        if ((int) ($result['hay'] ?? 0) === 1) {
             $this->errors[$field] = "El valor de {$field} ya existe";
             return false;
         }

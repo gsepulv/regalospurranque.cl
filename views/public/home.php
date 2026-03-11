@@ -43,8 +43,12 @@
     <section class="hero hero--banner">
         <div class="hero-slider" id="heroSlider">
             <?php foreach ($banners as $i => $banner): ?>
-                <div class="hero-slide <?= $i === 0 ? 'hero-slide--active' : '' ?>"
-                     style="background-image: url('<?= asset('img/banners/' . $banner['imagen']) ?>')">
+                <div class="hero-slide <?= $i === 0 ? 'hero-slide--active' : '' ?>">
+                    <img src="<?= asset('img/banners/' . $banner['imagen']) ?>"
+                         alt="<?= e($banner['titulo'] ?? 'Banner') ?>"
+                         class="hero-slide__bg"
+                         width="1200" height="400"
+                         <?= $i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' ?>>
                     <div class="hero-slide__overlay"></div>
                     <div class="container hero-slide__content">
                         <?php if (!empty($banner['titulo'])): ?>

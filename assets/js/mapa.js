@@ -1,0 +1,91 @@
+(function() {
+    if (typeof L === 'undefined') { console.error('Leaflet no cargó'); return; }
+
+    function escHtml(str) {
+        var d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    // Datos inyectados por PHP en variable global
+    var comercios = window.__mapaData.comercios;
+    var centerLat = window.__mapaData.centerLat;
+    var centerLng = window.__mapaData.centerLng;
+    var zoom = window.__mapaData.zoom;
+    var siteUrl = window.__mapaData.siteUrl;
+
+    // Inicializar mapa
+    var map = L.map('map').setView([centerLat, centerLng], zoom);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 18
+    }).addTo(map);
+
+    var markers = [];
+
+    // Ícono personalizado de caja de regalo
+    var giftIcon = L.divIcon({
+        className: 'gift-marker',
+        html: '<div class="gift-pin"><span class="gift-pin__emoji">\uD83C\uDF81</span><div class="gift-pin__arrow"></div></div>',
+        iconSize: [40, 48],
+        iconAnchor: [20, 48],
+        popupAnchor: [0, -44]
+    });
+
+    // Crear marcadores
+    comercios.forEach(function(com) {
+        if (!com.lat || !com.lng) return;
+
+        var marker = L.marker([com.lat, com.lng], {icon: giftIcon}).addTo(map);
+
+        var popup = '<div style="text-align:center;min-width:150px">' +
+            '<h4 style="margin:0 0 4px;font-size:14px">' + escHtml(com.nombre) + '</h4>' +
+            (com.dir ? '<p style="margin:0 0 8px;font-size:12px;color:#666">' + escHtml(com.dir) + '</p>' : '') +
+            '<a href="' + siteUrl + '/comercio/' + encodeURIComponent(com.slug) + '" style="font-size:12px">Ver más &rarr;</a>' +
+            '</div>';
+
+        marker.bindPopup(popup);
+        marker.comercioData = {
+            id: com.id,
+            cats: com.cats ? com.cats.split(',') : []
+        };
+        markers.push(marker);
+    });
+
+    // Forzar recálculo de tamaño del mapa
+    setTimeout(function() { map.invalidateSize(); }, 300);
+    window.addEventListener('load', function() { map.invalidateSize(); });
+    window.addEventListener('resize', function() { map.invalidateSize(); });
+
+    // Filtro por categoria
+    var filterSelect = document.getElementById('categoryFilter');
+    var countEl = document.getElementById('mapCount');
+    var items = document.querySelectorAll('.business-item');
+
+    filterSelect.addEventListener('change', function() {
+        var cat = this.value;
+        var visible = 0;
+
+        markers.forEach(function(marker) {
+            if (!cat || marker.comercioData.cats.indexOf(cat) !== -1) {
+                marker.addTo(map);
+                visible++;
+            } else {
+                map.removeLayer(marker);
+            }
+        });
+
+        items.forEach(function(item) {
+            var itemCats = (item.dataset.categories || '').split(',');
+            if (!cat || itemCats.indexOf(cat) !== -1) {
+                item.style.display = '';
+                visible++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        countEl.textContent = Math.ceil(visible / 2) + ' comercios';
+    });
+})();

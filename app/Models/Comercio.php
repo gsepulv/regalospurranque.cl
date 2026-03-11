@@ -66,7 +66,18 @@ class Comercio
 
     public static function find(int $id): ?array
     {
-        return Database::getInstance()->fetch("SELECT * FROM comercios WHERE id = ?", [$id]);
+        return Database::getInstance()->fetch(
+            "SELECT id, site_id, nombre, slug, descripcion, telefono, whatsapp, email,
+                    sitio_web, facebook, instagram, tiktok, youtube, x_twitter, linkedin,
+                    telegram, pinterest, direccion, lat, lng, logo, portada,
+                    plan, plan_precio, plan_inicio, plan_fin, max_fotos,
+                    activo, calidad_ok, registrado_por, destacado, validado, validado_fecha,
+                    validado_notas, visitas, whatsapp_clicks,
+                    seo_titulo, seo_descripcion, seo_keywords,
+                    created_at, updated_at
+             FROM comercios WHERE id = ?",
+            [$id]
+        );
     }
 
     public static function create(array $data): int
@@ -112,7 +123,15 @@ class Comercio
     public static function findByRegistradoPor(int $userId): ?array
     {
         return Database::getInstance()->fetch(
-            "SELECT * FROM comercios WHERE registrado_por = ? LIMIT 1", [$userId]
+            "SELECT id, site_id, nombre, slug, descripcion, telefono, whatsapp, email,
+                    sitio_web, facebook, instagram, tiktok, youtube, x_twitter, linkedin,
+                    telegram, pinterest, direccion, lat, lng, logo, portada,
+                    plan, plan_precio, plan_inicio, plan_fin, max_fotos,
+                    activo, calidad_ok, registrado_por, destacado, validado, validado_fecha,
+                    validado_notas, visitas, whatsapp_clicks,
+                    seo_titulo, seo_descripcion, seo_keywords,
+                    created_at, updated_at
+             FROM comercios WHERE registrado_por = ? LIMIT 1", [$userId]
         );
     }
 
@@ -432,11 +451,8 @@ class Comercio
         $params = [];
 
         if (!empty($filters['query'])) {
-            $where[] = '(c.nombre LIKE ? OR c.descripcion LIKE ? OR c.direccion LIKE ?)';
-            $q = '%' . $filters['query'] . '%';
-            $params[] = $q;
-            $params[] = $q;
-            $params[] = $q;
+            $where[] = 'MATCH(c.nombre, c.descripcion, c.direccion) AGAINST(? IN BOOLEAN MODE)';
+            $params[] = $filters['query'];
         }
 
         if (!empty($filters['categoria_id'])) {
@@ -489,11 +505,8 @@ class Comercio
         $params = [];
 
         if (!empty($filters['query'])) {
-            $where[] = '(c.nombre LIKE ? OR c.descripcion LIKE ? OR c.direccion LIKE ?)';
-            $q = '%' . $filters['query'] . '%';
-            $params[] = $q;
-            $params[] = $q;
-            $params[] = $q;
+            $where[] = 'MATCH(c.nombre, c.descripcion, c.direccion) AGAINST(? IN BOOLEAN MODE)';
+            $params[] = $filters['query'];
         }
 
         if (!empty($filters['categoria_id'])) {

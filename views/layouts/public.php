@@ -41,8 +41,9 @@
     <style id="theme-colors">
     :root { <?= \App\Services\Theme::generateCssVariables() ?> }
     </style>
-    <link rel="preload" href="<?= asset('css/rp2.css?v=202603051800') ?>" as="style">
-    <link rel="stylesheet" href="<?= asset('css/rp2.css?v=202603051800') ?>">
+    <?php $cssFile = APP_ENV === 'production' ? 'css/rp2.min.css' : 'css/rp2.css'; ?>
+    <link rel="preload" href="<?= asset($cssFile . '?v=202603101200') ?>" as="style">
+    <link rel="stylesheet" href="<?= asset($cssFile . '?v=202603101200') ?>">
     <?php if (!empty($extraCss)): ?>
     <link rel="stylesheet" href="<?= asset($extraCss) ?>">
     <?php endif; ?>
@@ -98,7 +99,8 @@
 
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba">&uarr;</button>
 
-    <script src="<?= asset('js/app.js') ?>" defer></script>
+    <?php $jsFile = APP_ENV === 'production' ? 'js/app.min.js' : 'js/app.js'; ?>
+    <script src="<?= asset($jsFile) ?>" defer></script>
     <div class="beta-floating">Beta</div>
 
     <?php include BASE_PATH . '/views/partials/cookie-banner.php'; ?>
