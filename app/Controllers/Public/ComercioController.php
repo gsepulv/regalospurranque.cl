@@ -41,6 +41,7 @@ class ComercioController extends Controller
             'title'       => 'Comercios en Purranque · Directorio Comercial · ' . SITE_NAME,
             'description' => 'Directorio completo de comercios y servicios en Purranque, Chile. Encuentra tiendas, restaurantes y más con contacto y ubicación.',
             'og_image'    => asset('img/og/comercio-default.jpg'),
+            'keywords'    => 'comercios purranque, directorio comercial purranque, tiendas purranque, restaurantes purranque',
             'comercios'   => $comercios,
             'categorias'  => $categorias,
             'banners'     => $banners,
@@ -121,7 +122,7 @@ class ComercioController extends Controller
             'banners'       => $banners,
             'breadcrumbs'   => $breadcrumbs,
             'schemas'       => [
-                Seo::schemaLocalBusiness($comercio),
+                Seo::schemaLocalBusiness($comercio, $horarios),
                 Seo::schemaBreadcrumbs($breadcrumbs),
             ],
         ]);

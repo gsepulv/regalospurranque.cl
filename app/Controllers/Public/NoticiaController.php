@@ -35,9 +35,10 @@ class NoticiaController extends Controller
         ];
 
         $this->render('public/noticias', [
-            'title'       => 'Noticias · ' . SITE_NAME,
+            'title'       => 'Noticias del Comercio Local en Purranque · ' . SITE_NAME,
             'description' => 'Noticias y novedades del comercio local de Purranque, Chile. Nuevos locales, ofertas especiales y eventos de la comuna.',
             'og_image'    => asset('img/og/noticia-default.jpg'),
+            'keywords'    => 'noticias purranque, comercio local purranque, novedades purranque, eventos purranque',
             'noticias'    => $noticias,
             'destacadas'  => $destacadas,
             'banners'     => $banners,

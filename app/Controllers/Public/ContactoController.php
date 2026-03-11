@@ -5,18 +5,22 @@ use App\Core\Controller;
 use App\Models\MensajeContacto;
 use App\Services\Captcha;
 use App\Services\Notification;
+use App\Services\Seo;
 
 class ContactoController extends Controller
 {
     public function index(): void
     {
         $this->render('public/contacto', [
-            'title'       => 'Registra tu Comercio en Purranque · ' . SITE_NAME,
-            'description' => 'Registra tu comercio en el directorio de Purranque, Chile. Contacto, consultas y soporte para comerciantes.',
-            'breadcrumbs' => [
-                ['label' => 'Inicio', 'url' => url('/')],
+            'title'       => 'Contacto · ' . SITE_NAME,
+            'description' => 'Contáctanos para registrar tu comercio en el directorio de Purranque, Chile. Consultas, soporte y atención para comerciantes.',
+            'og_image'    => asset('img/og/og-regalos-purranque.jpg'),
+            'keywords'    => 'contacto purranque, registrar comercio purranque, directorio comercial purranque',
+            'breadcrumbs' => $breadcrumbs = [
+                ['label' => 'Inicio', 'url' => '/'],
                 ['label' => 'Contacto'],
             ],
+            'schemas'     => [Seo::schemaBreadcrumbs($breadcrumbs)],
         ]);
     }
 

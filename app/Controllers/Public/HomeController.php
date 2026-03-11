@@ -52,6 +52,7 @@ class HomeController extends Controller
             'fechasComerciales'  => $fechasComerciales,
             'proximaFecha'       => $proximaFecha,
             'og_image'           => asset('img/og/og-regalos-purranque.jpg'),
+            'keywords'           => 'comercios purranque, directorio comercial purranque, tiendas purranque, regalos purranque, servicios purranque',
             'schemas'            => [Seo::schemaWebSite()],
         ]);
     }

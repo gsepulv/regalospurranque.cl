@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\FechaEspecial;
 use App\Models\Banner;
 use App\Services\VisitTracker;
+use App\Services\Seo;
 
 /**
  * Busqueda y listado general de comercios
@@ -51,8 +52,10 @@ class BuscarController extends Controller
                       !empty($filters['fecha_id']) || !empty($filters['plan']) || !empty($filters['destacado']);
 
         $this->render('public/buscar', [
-            'title'       => 'Buscar Comercios - ' . SITE_NAME,
-            'description' => 'Busca y encuentra los mejores comercios y servicios en Purranque',
+            'title'       => 'Buscar Comercios · ' . SITE_NAME,
+            'description' => 'Busca y encuentra los mejores comercios y servicios en Purranque, Chile. Directorio completo con filtros por categoría y fecha.',
+            'og_image'    => asset('img/og/og-regalos-purranque.jpg'),
+            'keywords'    => 'buscar comercios purranque, directorio purranque, tiendas purranque',
             'noindex'     => $hasFilters,
             'comercios'   => $comercios,
             'categorias'  => $categorias,
@@ -64,6 +67,11 @@ class BuscarController extends Controller
             'totalPages'  => $totalPages,
             'baseUrl'     => '/buscar',
             'queryParams' => $queryParams,
+            'breadcrumbs' => $breadcrumbs = [
+                ['label' => 'Inicio', 'url' => '/'],
+                ['label' => 'Buscar'],
+            ],
+            'schemas'     => [Seo::schemaBreadcrumbs($breadcrumbs)],
         ]);
     }
 }

@@ -121,7 +121,7 @@ class Seo
     /**
      * Schema.org LocalBusiness para un comercio
      */
-    public static function schemaLocalBusiness(array $comercio): array
+    public static function schemaLocalBusiness(array $comercio, array $horarios = []): array
     {
         $schema = [
             '@context' => 'https://schema.org',
@@ -177,6 +177,23 @@ class Seo
                 'bestRating' => 5,
                 'worstRating' => 1,
             ];
+        }
+
+        if (!empty($horarios)) {
+            $dias = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            $specs = [];
+            foreach ($horarios as $dia => $h) {
+                if (!empty($h['cerrado']) || empty($h['hora_apertura'])) continue;
+                $specs[] = [
+                    '@type' => 'OpeningHoursSpecification',
+                    'dayOfWeek' => $dias[$dia] ?? '',
+                    'opens' => $h['hora_apertura'],
+                    'closes' => $h['hora_cierre'],
+                ];
+            }
+            if ($specs) {
+                $schema['openingHoursSpecification'] = $specs;
+            }
         }
 
         return $schema;

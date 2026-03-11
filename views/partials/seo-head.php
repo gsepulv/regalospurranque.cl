@@ -17,7 +17,15 @@ if ($profileTw && preg_match('#(?:twitter\.com|x\.com)/([^/?]+)#', $profileTw, $
 $seoTitle       = $title ?? $ogDefaults['title'] ?: SITE_NAME;
 $seoDescription = $description ?? $ogDefaults['description'] ?: SITE_DESCRIPTION;
 $seoKeywords    = $keywords ?? 'comercios purranque, directorio comercial, tiendas purranque, ofertas purranque';
-$seoUrl         = url($_SERVER['REQUEST_URI'] ?? '/');
+$seoUrlBase     = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+$seoUrl         = url($seoUrlBase);
+$seoPagination  = [];
+if (!empty($currentPage) && !empty($totalPages) && $totalPages > 1) {
+    if ($currentPage > 1) {
+        $seoUrl = url($seoUrlBase . '?page=' . $currentPage);
+    }
+    $seoPagination = ['current' => $currentPage, 'total' => $totalPages, 'baseUrl' => url($seoUrlBase)];
+}
 $seoType        = $og_type ?? 'website';
 $seoNoindex     = $noindex ?? false;
 
@@ -67,6 +75,14 @@ if (!empty($gscMeta['valor'])): ?>
 <meta name="author" content="<?= e($articleAuthor ?: SITE_NAME) ?>">
 <meta name="generator" content="<?= e(SITE_NAME) ?> v<?= APP_VERSION ?>">
 <link rel="canonical" href="<?= e($seoUrl) ?>">
+<?php if (!empty($seoPagination)): ?>
+<?php if ($seoPagination['current'] > 1): ?>
+<link rel="prev" href="<?= e($seoPagination['baseUrl'] . ($seoPagination['current'] > 2 ? '?page=' . ($seoPagination['current'] - 1) : '')) ?>">
+<?php endif; ?>
+<?php if ($seoPagination['current'] < $seoPagination['total']): ?>
+<link rel="next" href="<?= e($seoPagination['baseUrl'] . '?page=' . ($seoPagination['current'] + 1)) ?>">
+<?php endif; ?>
+<?php endif; ?>
 
 <!-- Hreflang -->
 <link rel="alternate" hreflang="es-CL" href="<?= e($seoUrl) ?>">
@@ -142,12 +158,24 @@ $orgSchema = [
     '@type' => 'Organization',
     'name' => SITE_NAME,
     'url' => SITE_URL,
+    'logo' => [
+        '@type' => 'ImageObject',
+        'url' => SITE_URL . '/assets/img/logo.png',
+        'width' => 300,
+        'height' => 60,
+    ],
     'description' => SITE_DESCRIPTION,
     'address' => [
         '@type' => 'PostalAddress',
         'addressLocality' => CITY_NAME,
         'addressRegion' => 'Los Lagos',
         'addressCountry' => 'CL',
+    ],
+    'contactPoint' => [
+        '@type' => 'ContactPoint',
+        'contactType' => 'customer service',
+        'url' => SITE_URL . '/contacto',
+        'availableLanguage' => 'Spanish',
     ],
 ];
 if (!empty($sameAs)) {

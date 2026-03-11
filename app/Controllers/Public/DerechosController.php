@@ -4,6 +4,7 @@ namespace App\Controllers\Public;
 use App\Core\Controller;
 use App\Services\Captcha;
 use App\Services\Notification;
+use App\Services\Seo;
 use App\Services\VisitTracker;
 
 /**
@@ -65,10 +66,13 @@ class DerechosController extends Controller
         $this->render('public/derechos', [
             'title'             => 'Ejercicio de Derechos — ' . SITE_NAME,
             'description'       => 'Ejerce tus derechos ARCO sobre datos personales en ' . SITE_NAME,
-            'breadcrumbs'       => [
+            'og_image'          => asset('img/og/og-regalos-purranque.jpg'),
+            'keywords'          => 'derechos ARCO, datos personales, privacidad purranque',
+            'breadcrumbs'       => $breadcrumbs = [
                 ['label' => 'Inicio', 'url' => '/'],
                 ['label' => 'Ejercicio de Derechos'],
             ],
+            'schemas'           => [Seo::schemaBreadcrumbs($breadcrumbs)],
             'extraCss'          => 'css/derechos.css',
             'tiposConfig'       => $this->tiposConfig,
             'motivosBaja'       => $this->motivosBaja,
