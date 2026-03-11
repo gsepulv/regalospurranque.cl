@@ -106,7 +106,7 @@
                         <?php if (($i + 1) % 6 === 0 && isset($banners[$bannerIndex])): ?>
                             <div class="between-banner" data-banner-id="<?= $banners[$bannerIndex]['id'] ?>">
                                 <a href="<?= e($banners[$bannerIndex]['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banners[$bannerIndex]['id'] ?>)">
-                                    <?= picture('img/banners/' . $banners[$bannerIndex]['imagen'], $banners[$bannerIndex]['titulo'] ?? 'Publicidad', '', true) ?>
+                                    <?= picture('img/banners/' . $banners[$bannerIndex]['imagen'], $banners[$bannerIndex]['titulo'] ?? 'Publicidad', '', true, 340, 300) ?>
                                 </a>
                             </div>
                             <?php $bannerIndex++; ?>

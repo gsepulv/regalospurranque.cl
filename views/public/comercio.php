@@ -506,7 +506,7 @@ $hoy = (int) date('w');
                 <?php foreach ($banners as $banner): ?>
                     <div class="sidebar-banner" data-banner-id="<?= $banner['id'] ?>">
                         <a href="<?= e($banner['url']) ?>" target="_blank" rel="noopener" onclick="trackBanner(<?= $banner['id'] ?>)">
-                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true) ?>
+                            <?= picture('img/banners/' . $banner['imagen'], $banner['titulo'] ?? 'Publicidad', '', true, 340, 300) ?>
                         </a>
                     </div>
                 <?php endforeach; ?>
