@@ -1,19 +1,12 @@
 <?php
 /**
- * Admin - Formulario de noticia (crear / editar) con TinyMCE
+ * Admin - Formulario de noticia (crear / editar) con Quill.js
  * Variables: $categorias, $fechas, optionally $noticia, $catIds, $fechaIds
  */
 $editing  = isset($noticia);
 $catIds   = $catIds ?? [];
 $fechaIds = $fechaIds ?? [];
 $errors  = $flash['errors'] ?? [];
-
-// TinyMCE config desde admin
-$tinymceHeight     = \App\Services\RedesSociales::get('tinymce_height', '500');
-$tinymceLanguage   = \App\Services\RedesSociales::get('tinymce_language', 'es');
-$tinymceAutosave   = \App\Services\RedesSociales::get('tinymce_autosave', '1');
-$tinymceMaxImgMb   = \App\Services\RedesSociales::get('tinymce_max_image_mb', '3');
-$tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width', '1200');
 ?>
 <div class="admin-breadcrumb">
     <a href="<?= url('/admin/dashboard') ?>">Dashboard</a> &rsaquo;
@@ -74,11 +67,10 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
 
             <div class="form-group">
                 <label class="form-label" for="contenido">Contenido *</label>
-                <textarea id="contenido"
-                          name="contenido"
-                          class="form-control tinymce-editor"
-                          rows="15"
-                          required><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
+                <!-- Textarea oculto que recibe el valor final para el POST -->
+                <textarea id="contenido" name="contenido" style="display:none;" required><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
+                <!-- Contenedor visible del editor Quill -->
+                <div id="editor-quill" style="min-height: 300px; background: white;"></div>
                 <small style="color:var(--color-gray)">Min. 50 caracteres.</small>
             </div>
 
@@ -334,119 +326,48 @@ $tinymceMaxImgW    = \App\Services\RedesSociales::get('tinymce_max_image_width',
     </div>
 </form>
 
-<!-- TinyMCE 6 self-hosted (MIT) -->
-<script src="<?= asset('vendor/tinymce/tinymce.min.js') ?>" defer></script>
+<!-- Quill.js CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css" rel="stylesheet">
+
+<!-- Quill.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"></script>
 
 <script>
-// TinyMCE initialization
-tinymce.init({
-    selector: '.tinymce-editor',
-    license_key: 'gpl',
-    height: <?= (int)$tinymceHeight ?>,
-    language: '<?= e($tinymceLanguage) ?>',
-    language_url: '<?= asset('vendor/tinymce/langs/' . e($tinymceLanguage) . '.js') ?>',
-    plugins: 'advlist autolink lists link image charmap anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount emoticons autoresize quickbars help',
-    toolbar: [
-        'undo redo | styles | bold italic underline strikethrough | forecolor backcolor | removeformat',
-        'alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | table emoticons charmap | code fullscreen help'
-    ],
-    style_formats: [
-        { title: 'Encabezados', items: [
-            { title: 'Encabezado 2', block: 'h2' },
-            { title: 'Encabezado 3', block: 'h3' },
-            { title: 'Encabezado 4', block: 'h4' }
-        ]},
-        { title: 'Bloques', items: [
-            { title: 'Parrafo', block: 'p' },
-            { title: 'Cita', block: 'blockquote' },
-            { title: 'Código', block: 'pre' }
-        ]},
-        { title: 'Inline', items: [
-            { title: 'Destacado', inline: 'span', classes: 'text-highlight' },
-            { title: 'Código', inline: 'code' },
-            { title: 'Pequeño', inline: 'span', classes: 'text-small' }
-        ]}
-    ],
-    content_css: '<?= asset('css/main.css') ?>',
-    content_style: 'body { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; line-height: 1.8; padding: 16px; color: #334155; }',
-    image_class_list: [
-        { title: 'Responsive', value: 'img-responsive' },
-        { title: 'Centrada', value: 'img-center' },
-        { title: 'Flotante izquierda', value: 'img-left' },
-        { title: 'Flotante derecha', value: 'img-right' }
-    ],
-    images_upload_url: '<?= url('/admin/noticias/upload-imagen') ?>',
-    images_upload_handler: function (blobInfo) {
-        return new Promise(function (resolve, reject) {
-            var maxMb = <?= (int)$tinymceMaxImgMb ?>;
-            if (blobInfo.blob().size > maxMb * 1024 * 1024) {
-                reject('La imagen excede ' + maxMb + 'MB');
-                return;
-            }
-
-            var formData = new FormData();
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-            formData.append('_csrf', '<?= csrf_token() ?>');
-
-            fetch('<?= url('/admin/noticias/upload-imagen') ?>', {
-                method: 'POST',
-                body: formData
-            })
-            .then(function(resp) { return resp.json(); })
-            .then(function(data) {
-                if (data.location) {
-                    resolve(data.location);
-                } else {
-                    reject(data.error || 'Error al subir imagen');
-                }
-            })
-            .catch(function() {
-                reject('Error de conexion al subir imagen');
-            });
-        });
-    },
-    image_dimensions: false,
-    paste_as_text: false,
-    paste_word_valid_elements: 'p,b,strong,i,em,h2,h3,h4,ul,ol,li,a[href],blockquote,br',
-    paste_retain_style_properties: 'none',
-    paste_strip_class_attributes: 'all',
-    automatic_uploads: true,
-    file_picker_types: 'image',
-    image_advtab: true,
-    image_caption: true,
-    quickbars_selection_toolbar: 'bold italic | link h2 h3 blockquote',
-    quickbars_insert_toolbar: 'image media table hr',
-    autoresize_bottom_margin: 20,
-    min_height: 300,
-    max_height: 800,
-    <?php if ($tinymceAutosave === '1'): ?>
-    autosave_interval: '<?= (int)(\App\Services\RedesSociales::get('tinymce_autosave_interval', '30')) ?>s',
-    autosave_restore_when_empty: true,
-    <?php endif; ?>
-    setup: function (editor) {
-        editor.on('NodeChange', function (e) {
-            var imgs = editor.getBody().querySelectorAll('img:not([loading])');
-            imgs.forEach(function(img) {
-                img.setAttribute('loading', 'lazy');
-            });
-        });
-    },
-    promotion: false,
-    branding: false
+// Inicializar Quill
+var quill = new Quill('#editor-quill', {
+    theme: 'snow',
+    placeholder: 'Escribe el contenido de la noticia aquí...',
+    modules: {
+        toolbar: [
+            [{ 'header': [2, 3, 4, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link'],
+            ['clean']
+        ]
+    }
 });
 
-// Validación TinyMCE antes de enviar
+// Si hay contenido previo (modo editar), cargarlo en Quill
+var contenidoInicial = document.getElementById('contenido').value;
+if (contenidoInicial) {
+    quill.root.innerHTML = contenidoInicial;
+}
+
+// Validación y copia del contenido antes de enviar
 document.querySelector('form').addEventListener('submit', function(e) {
-    var editor = tinymce.get('contenido');
-    if (editor) {
-        var text = editor.getContent({format: 'text'}).trim();
-        if (text.length < 50) {
-            e.preventDefault();
-            alert('El contenido debe tener al menos 50 caracteres (actualmente ' + text.length + ')');
-            editor.focus();
-            return;
-        }
+    // Copiar el HTML de Quill al textarea oculto
+    document.getElementById('contenido').value = quill.root.innerHTML;
+
+    // Validar mínimo 50 caracteres
+    var text = quill.getText().trim();
+    if (text.length < 50) {
+        e.preventDefault();
+        alert('El contenido debe tener al menos 50 caracteres (actualmente ' + text.length + ')');
+        quill.focus();
+        return;
     }
+
     var btn = this.querySelector('button[type="submit"]');
     if (btn) { btn.disabled = true; btn.textContent = 'Guardando...'; }
 });
