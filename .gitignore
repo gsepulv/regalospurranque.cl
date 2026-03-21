@@ -13,6 +13,7 @@ storage/backups/*
 storage/logs/*
 storage/cache/*
 storage/temp/*
+storage/comprobantes/*
 !storage/backups/.htaccess
 !storage/backups/.gitkeep
 !storage/logs/.htaccess
@@ -21,6 +22,7 @@ storage/temp/*
 !storage/cache/.gitkeep
 !storage/temp/.htaccess
 !storage/temp/.gitkeep
+!storage/comprobantes/.gitkeep
 
 # Uploads de usuarios
 assets/img/logos/*
@@ -43,9 +45,11 @@ assets/img/config/*
 !assets/img/og/fecha-default.jpg
 !assets/img/og/noticia-default.jpg
 !assets/img/config/.gitkeep
+!assets/img/*/.gitkeep
 
 # Dumps de BD
 *.sql
+!database/*.sql
 
 # Archivos comprimidos y backups
 *.zip
@@ -61,6 +65,18 @@ rastreo-planes-validacion.php
 restaurar-backups.php
 verificar-controller.php
 ver-tildes.php
+diagnostico.php
+testcorreo.php
+test-*.php
+fix-*.php
+buscar-*.php
+debug-*.php
+
+# Deploy scripts peligrosos
+deploy/fix-permissions.php
+
+# SEO diagnóstico
+seo-regalospurranque/
 
 # Backups y diagnósticos
 *.bak
