@@ -114,6 +114,7 @@ class NoticiaAdminController extends Controller
         Noticia::syncFechas($id, $_POST['fechas'] ?? []);
 
         $this->log('noticias', 'crear', 'noticia', $id, "Noticia creada: {$data['titulo']}");
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->redirect('/admin/noticias', ['success' => 'Noticia creada correctamente']);
     }
 
@@ -206,6 +207,7 @@ class NoticiaAdminController extends Controller
         Noticia::syncFechas($id, $_POST['fechas'] ?? []);
 
         $this->log('noticias', 'editar', 'noticia', $id, "Noticia editada: {$data['titulo']}");
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->redirect('/admin/noticias', ['success' => 'Noticia actualizada correctamente']);
     }
 
@@ -222,6 +224,7 @@ class NoticiaAdminController extends Controller
         Noticia::updateById($id, ['activo' => $newState]);
 
         $this->log('noticias', $newState ? 'activar' : 'desactivar', 'noticia', $id, $noticia['titulo']);
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->json(['ok' => true, 'activo' => $newState, 'csrf' => $_SESSION['csrf_token']]);
     }
 

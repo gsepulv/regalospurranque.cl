@@ -234,6 +234,7 @@ class ComercioAdminController extends Controller
             Notification::bienvenidaComercio($comercioCreado);
         }
 
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->redirect('/admin/comercios', ['success' => 'Comercio creado correctamente']);
     }
 
@@ -436,6 +437,7 @@ class ComercioAdminController extends Controller
         });
 
         $this->log('comercios', 'editar', 'comercio', $id, "Comercio editado: {$data['nombre']}");
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->redirect('/admin/comercios', ['success' => 'Comercio actualizado correctamente']);
     }
 
@@ -459,6 +461,7 @@ class ComercioAdminController extends Controller
 
         $accion = $newState ? 'activar' : 'desactivar';
         $this->log('comercios', $accion, 'comercio', $id, "{$comercio['nombre']}");
+        try { (new \App\Services\SitemapService())->generateAndSave(); } catch (\Throwable $e) {}
         $this->json(['ok' => true, 'activo' => $newState, 'csrf' => $_SESSION['csrf_token']]);
     }
 
