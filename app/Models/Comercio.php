@@ -341,7 +341,7 @@ class Comercio
              LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
              LEFT JOIN categorias cat ON cc.categoria_id = cat.id AND cat.activo = 1
              LEFT JOIN resenas r ON c.id = r.comercio_id AND r.estado = 'aprobada'
-             WHERE c.activo = 1 AND c.calidad_ok = 1 AND c.destacado = 1
+             WHERE c.activo = 1 AND c.destacado = 1
                    AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id
              ORDER BY " . self::$planOrder . ", c.nombre ASC
@@ -369,8 +369,7 @@ class Comercio
              LEFT JOIN comercio_categoria cc2 ON c.id = cc2.comercio_id
              LEFT JOIN categorias cat ON cc2.categoria_id = cat.id AND cat.activo = 1
              LEFT JOIN resenas r ON c.id = r.comercio_id AND r.estado = 'aprobada'
-             WHERE c.activo = 1 AND c.calidad_ok = 1
-                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
+             WHERE c.activo = 1                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id
              ORDER BY c.destacado DESC, " . self::$planOrder . ", c.nombre ASC
              LIMIT ? OFFSET ?",
@@ -388,8 +387,7 @@ class Comercio
             "SELECT COUNT(DISTINCT c.id) as total
              FROM comercios c
              INNER JOIN comercio_categoria cc ON c.id = cc.comercio_id AND cc.categoria_id = ?
-             WHERE c.activo = 1 AND c.calidad_ok = 1
-                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())",
+             WHERE c.activo = 1                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())",
             [$categoriaId]
         );
         return (int) ($result['total'] ?? 0);
@@ -415,8 +413,7 @@ class Comercio
              LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
              LEFT JOIN categorias cat ON cc.categoria_id = cat.id AND cat.activo = 1
              LEFT JOIN resenas r ON c.id = r.comercio_id AND r.estado = 'aprobada'
-             WHERE c.activo = 1 AND c.calidad_ok = 1
-                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
+             WHERE c.activo = 1                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id
              ORDER BY c.destacado DESC, " . self::$planOrder . ", c.nombre ASC
              LIMIT ? OFFSET ?",
@@ -434,8 +431,7 @@ class Comercio
             "SELECT COUNT(DISTINCT c.id) as total
              FROM comercios c
              INNER JOIN comercio_fecha cf ON c.id = cf.comercio_id AND cf.fecha_id = ? AND cf.activo = 1
-             WHERE c.activo = 1 AND c.calidad_ok = 1
-                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())",
+             WHERE c.activo = 1                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())",
             [$fechaId]
         );
         return (int) ($result['total'] ?? 0);
@@ -447,7 +443,7 @@ class Comercio
     public static function search(array $filters, int $limit, int $offset): array
     {
         $db = Database::getInstance();
-        $where = ['c.activo = 1', 'c.calidad_ok = 1', '(c.plan_fin IS NULL OR c.plan_fin >= CURDATE())'];
+        $where = ['c.activo = 1', '(c.plan_fin IS NULL OR c.plan_fin >= CURDATE())'];
         $params = [];
 
         if (!empty($filters['query'])) {
@@ -501,7 +497,7 @@ class Comercio
     public static function countSearch(array $filters): int
     {
         $db = Database::getInstance();
-        $where = ['c.activo = 1', 'c.calidad_ok = 1', '(c.plan_fin IS NULL OR c.plan_fin >= CURDATE())'];
+        $where = ['c.activo = 1', '(c.plan_fin IS NULL OR c.plan_fin >= CURDATE())'];
         $params = [];
 
         if (!empty($filters['query'])) {
@@ -583,7 +579,7 @@ class Comercio
              INNER JOIN comercio_categoria cc2 ON cc.categoria_id = cc2.categoria_id AND cc2.comercio_id = ?
              LEFT JOIN comercio_categoria cc3 ON c.id = cc3.comercio_id
              LEFT JOIN categorias cat ON cc3.categoria_id = cat.id AND cat.activo = 1
-             WHERE c.activo = 1 AND c.calidad_ok = 1 AND c.id != ?
+             WHERE c.activo = 1 AND c.id != ?
                    AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id
              ORDER BY c.destacado DESC, RAND()
@@ -622,7 +618,7 @@ class Comercio
                     GROUP_CONCAT(DISTINCT cc.categoria_id) as categorias_ids
              FROM comercios c
              LEFT JOIN comercio_categoria cc ON c.id = cc.comercio_id
-             WHERE c.activo = 1 AND c.calidad_ok = 1 AND c.lat IS NOT NULL AND c.lng IS NOT NULL
+             WHERE c.activo = 1 AND c.lat IS NOT NULL AND c.lng IS NOT NULL
                    AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id
              ORDER BY c.nombre ASC"
