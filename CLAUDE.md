@@ -38,7 +38,7 @@ regalospurranque.cl/
 │   ├── database.php          # Credenciales BD (gitignored)
 │   ├── mail.php              # SMTP Gmail (gitignored)
 │   ├── backup.php            # Google Drive config (gitignored)
-│   ├── captcha.php           # Cloudflare Turnstile (gitignored, deshabilitado)
+│   ├── captcha.php           # Cloudflare Turnstile (gitignored, HABILITADO en produccion)
 │   ├── middleware.php         # Registro: auth, csrf, permission, maintenance, redirect
 │   ├── permissions.php        # RBAC: superadmin/admin(*), editor(17 modulos), comerciante(dashboard,perfil)
 │   └── routes.php            # ~240 rutas
@@ -50,13 +50,12 @@ regalospurranque.cl/
 │   ├── expiracion-comercios.php
 │   └── notificaciones.php
 ├── database/
-│   ├── schema.sql            # DDL completo (31 tablas)
+│   ├── schema.sql            # DDL completo (40 tablas en produccion, schema.sql incompleto)
 │   ├── seed.sql              # Datos iniciales produccion
 │   ├── seed_local.sql        # Datos desarrollo
 │   └── migrations/           # Migraciones incrementales
 ├── deploy/
-│   ├── verify.php            # Verificacion post-deploy
-│   └── fix-permissions.php
+│   └── verify.php            # Verificacion post-deploy
 ├── legales/                  # Documentos legales + SQL parches
 ├── lib/PHPMailer/            # Libreria email (sin Composer)
 ├── scripts/                  # minify.php, optimizar-imagenes.php
@@ -268,7 +267,7 @@ regalospurranque.cl/
 
 ---
 
-## Base de datos (31 tablas)
+## Base de datos (40 tablas)
 
 ### Administracion
 
@@ -284,7 +283,7 @@ regalospurranque.cl/
 
 | Tabla | Columnas clave | Notas |
 |-------|---------------|-------|
-| comercios | id, site_id, nombre, slug (UNIQUE), descripcion, telefono, whatsapp, email, sitio_web, direccion, lat (DECIMAL 10,8), lng (DECIMAL 11,8), logo, portada, plan (ENUM), plan_inicio, plan_fin, max_fotos, activo, registrado_por (FK), destacado, validado, visitas, whatsapp_clicks, seo_*, contacto_*, contrato_* | Tabla mas grande, 8 redes sociales como columnas |
+| comercios | id, site_id, nombre, slug (UNIQUE), descripcion, telefono, whatsapp, email, sitio_web, direccion, lat (DECIMAL 10,8), lng (DECIMAL 11,8), logo, portada, plan (ENUM), plan_inicio, plan_fin, max_fotos, activo, calidad_ok, registrado_por (FK), destacado, validado, visitas, whatsapp_clicks, seo_*, contacto_*, contrato_* | Tabla mas grande, 8 redes sociales. **calidad_ok existe en BD/admin pero NO filtra listados publicos** — si activo=1, aparece en todo |
 | comercio_categoria | comercio_id (FK), categoria_id (FK), es_principal | M2M |
 | comercio_fecha | comercio_id (FK), fecha_id (FK), oferta_especial, precio_desde, precio_hasta | M2M |
 | comercio_fotos | id, comercio_id (FK), ruta, ruta_thumb, titulo, orden | Galeria |
@@ -324,20 +323,30 @@ regalospurranque.cl/
 | Tabla | Columnas clave | Notas |
 |-------|---------------|-------|
 | mensajes_contacto | id, nombre, email, asunto, mensaje, leido, respondido, instrucciones_enviadas | Formulario contacto |
-| mensajes_respuestas | id, mensaje_id (FK), respuesta | Respuestas admin |
+| mensajes_respuestas | id, mensaje_id (FK), tipo (ENUM: acuse_recibo/instrucciones_registro/manual/seguimiento), asunto, contenido, enviado_por (ENUM: sistema/admin), admin_id, email_destino, enviado_exitoso | Respuestas a mensajes de contacto |
 | notificaciones_log | id, destinatario, asunto, template, estado, datos (JSON) | Log emails |
-| nurturing_config | clave, valor, grupo | Config nurturing |
-| nurturing_plantillas | id, numero, nombre, contenido_html, activo | Templates email |
-| nurturing_log | id, mensaje_id (FK), plantilla_id (FK), estado_envio | Log envios |
+| nurturing_config | id, clave (UNIQUE), valor, descripcion, tipo (ENUM: text/number/boolean/time/json), grupo, orden | Config campanas nurturing |
+| nurturing_plantillas | id, numero (UNIQUE), nombre, asunto, contenido_html, contenido_texto, tono, activo, variables_disponibles | Templates email nurturing |
+| nurturing_log | id, mensaje_id (FK), plantilla_id (FK), numero_recordatorio, email_destino, asunto_enviado, estado_envio (ENUM: enviado/fallido/cancelado), error_detalle | Log envios nurturing |
+
+### Legal y compliance
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| consentimientos | id, session_id, ip, tipo (ENUM: cookies_esenciales/cookies_todas), user_agent | Registro consentimiento cookies |
+| politicas_aceptacion | id, usuario_id (FK), email, politica (ENUM), decision (ENUM: acepto/rechazo), ip_address | Aceptacion politicas en registro |
+| solicitudes_arco | id, tipo (ENUM: acceso/rectificacion/cancelacion/oposicion/portabilidad), nombre, email, rut, descripcion, estado (ENUM: recibida/en_proceso/resuelta/rechazada), respuesta, ip, fecha_solicitud, fecha_respuesta, fecha_limite (GENERATED) | Derechos ARCO (ley proteccion datos) |
+| registro_tratamiento | id, dato_personal, fuente (ENUM), finalidad, base_legal, plazo_conservacion, medidas_seguridad | Registro de actividades de tratamiento |
 
 ### Sistema
 
 | Tabla | Columnas clave | Notas |
 |-------|---------------|-------|
 | planes_config | id, slug (UNIQUE), nombre, precio_intro, precio_regular, duracion_dias, max_fotos, max_redes, tiene_mapa, tiene_horarios, tiene_sello | Definicion de planes |
-| politicas_aceptacion | id, usuario_id (FK), email, politica (ENUM), decision (ENUM: acepto/rechazo), ip_address | GDPR |
+| configuracion_mantenimiento | clave (PK), valor | Config modo mantenimiento |
 | redes_sociales_config | id, site_id, clave, valor | Config redes sociales |
 | share_log | id, comercio_id, pagina, red_social, ip | Tracking compartir |
+| seguimiento_conversiones | id, fecha (UNIQUE), mensajes_recibidos/leidos/respondidos/convertidos/descartados, acuses_enviados, instrucciones_enviadas, tasa_conversion, tiempo_respuesta_avg | Metricas diarias de conversion contacto→comerciante |
 | sitios | id, nombre, slug, dominio, logo, ciudad, lat, lng, activo | Multi-sitio |
 
 ---
@@ -422,7 +431,7 @@ regalospurranque.cl/
 | Mailer | Envio email SMTP (Gmail) via PHPMailer, fallback a mail() |
 | Notification | Orquesta emails: nuevaResena, comercioAprobado, registroComercianteAdmin, etc. |
 | RedesSociales | Config redes sociales, OG defaults |
-| Captcha | Cloudflare Turnstile (actualmente deshabilitado) |
+| Captcha | Cloudflare Turnstile (HABILITADO en produccion: registro, login admin, login comerciante) |
 
 ### Tracking y SEO
 
@@ -517,7 +526,7 @@ arco-admin, arco-confirmacion, backup-completado, cambios-pendientes-admin, come
 - Force HTTPS (excepto localhost)
 - Redirect www → sin www, v2.regalos.purranque.info → regalospurranque.cl
 - Front controller: todo a index.php
-- Bloquea directorios: app/, config/, storage/, database/, cron/, deploy/, views/, legales/
+- Bloquea directorios: app/, config/, storage/, database/, cron/, deploy/, views/, legales/, lib/
 - Bloquea extensiones: .sql, .md, .log, .sh, .bak, .env, .yml, .zip, .gz
 - Headers: HSTS (1 ano), X-Content-Type-Options, X-Frame-Options, CSP, Permissions-Policy
 - Cache: imagenes 1 mes, CSS/JS 1 semana, fonts 1 mes
@@ -639,39 +648,24 @@ arco-admin, arco-confirmacion, backup-completado, cambios-pendientes-admin, come
 
 ## ADVERTENCIAS
 
-### Archivos que NO deberian estar en produccion
-
-| Archivo | Tipo | Riesgo |
-|---------|------|--------|
-| `purranque_regalos_v2.sql` (raiz) | Dump BD | Expone estructura y datos completos |
-| `app/Controllers/Public/ComercianteController.php.bak2` | Backup | Codigo muerto en repo |
-| `.htaccess.zip`, `.htaccess_bak` | Backup | Config server vieja/comprimida |
-| `app.zip` (1.6MB) | Archivo | Codigo fuente comprimido |
-| `regalos_purranque.zip` (50MB) | Archivo v1 | Legacy completo, enorme |
-| `robots.txt.zip`, `config/app.php.zip` | Archivos | Innecesarios |
-| `deploy/fix-permissions.php` | Script | Herramienta peligrosa en prod |
-| `regalos_purranque/` (directorio) | Legacy v1 | Directorio v1 completo |
-| `seo-regalospurranque/` | Diagnostico | Archivos temporales SEO |
-| `respaldos/client_secret_*.json` | Credencial | OAuth client secret expuesto |
-| `respaldos/google-credentials.json.json` | Credencial | Service account key expuesto |
-
-### Cambios sin commitear (al 2026-03-20)
-
-13 archivos modificados sin commit. Verificar con `git status`:
-- Admin: AuthController, BannerAdminController, ComercioAdminController, ConfigController, FileExplorerController, HealthController, NoticiaAdminController
-- Public: ComercianteController, RegistroComercioController
-- Services: GoogleDrive, Validator
-- Otros: deploy/verify.php, index.php
-
-### Observaciones tecnicas
+### Observaciones tecnicas vigentes
 
 1. **Dos editores WYSIWYG**: TinyMCE (bundled en assets/vendor/) y Quill.js (CDN en form noticias). Deberia unificarse.
-2. **Tablas faltantes en schema.sql**: nurturing_config, nurturing_plantillas, nurturing_log, mensajes_respuestas existen en produccion pero no en el DDL versionado.
+2. **schema.sql incompleto**: Produccion tiene 40 tablas pero schema.sql no incluye: consentimientos, registro_tratamiento, seguimiento_conversiones, solicitudes_arco, configuracion_mantenimiento, mensajes_respuestas, nurturing_config, nurturing_log, nurturing_plantillas.
 3. **Servicios de pago son stubs**: PagoFlow, PagoMercadoPago, PagoWebpay, PagoTransferencia no implementados.
-4. **Captcha deshabilitado**: Turnstile esta en false. Formularios publicos sin proteccion anti-bot activa.
+4. **Captcha Turnstile HABILITADO** en produccion. Protege: registro comerciante, login admin, login comerciante. Impide testing automatizado via curl.
 5. **Multi-sitio preparado pero no activo**: tabla sitios existe, site_id en la mayoria de tablas, solo 1 sitio.
-6. **Credenciales en respaldos/**: client_secret y google-credentials estan en directorio respaldos/ sin gitignore adecuado.
-7. **schema.sql dice 29 tablas pero hay 31**: las 2 faltantes son de nurturing.
+6. **Sitemap estatico**: No se regenera automaticamente al crear contenido. Debe regenerarse desde admin > SEO o admin > herramientas.
+7. **calidad_ok no filtra**: El campo existe en BD y admin pero fue removido de todos los queries publicos (2026-03-21). Si activo=1, el comercio aparece en listados, busqueda, mapa, categorias y fechas.
+
+### Limpieza realizada (2026-03-21)
+
+Los siguientes archivos fueron eliminados de produccion y/o sacados del tracking de git:
+- Scripts diagnostico: rastreo-fechas.php, diagnostico-directo.php, diagnostico-noticias-store.php, _diag-css.php, setup-smtp-produccion.php, clear-cache.php, buscar_tokens_google.php, buscar_tokens_v2.php, reenviar-instrucciones.php, ig.php
+- Archivos legacy: app.zip, .htaccess.zip, robots.txt.zip, config/app.php.zip, seo-regalospurranque/
+- Deploy: deploy/fix-permissions.php (eliminado de prod y git)
+- Todos los .bak/.bak2/.bak3 en produccion
+- .gitignore actualizado para prevenir reincidencia
 
 ---
 
