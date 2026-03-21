@@ -24,7 +24,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L,QSA]
 
 # ── Bloquear carpetas del framework ─────────────────────────────────────────
-RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal)/ - [F,L]
+RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal|lib)/ - [F,L]
 
 # ── MIME Types explícitos ───────────────────────────────────────────────────
 # Necesario para que el servidor envíe Content-Type correcto a crawlers

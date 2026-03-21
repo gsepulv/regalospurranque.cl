@@ -253,10 +253,10 @@
                         <?php if (!empty($com['categorias_nombres'])): ?>
                             <p class="card__text card__text--small"><?= e($com['categorias_nombres']) ?></p>
                         <?php endif; ?>
-                        <?php if ($com['calificación_promedio']): ?>
+                        <?php if (($com['calificación_promedio'] ?? 0)): ?>
                             <div class="rating-small">
                                 <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <span class="star <?= $i <= round($com['calificación_promedio']) ? 'star--filled' : '' ?>">&#9733;</span>
+                                    <span class="star <?= $i <= round(($com['calificación_promedio'] ?? 0)) ? 'star--filled' : '' ?>">&#9733;</span>
                                 <?php endfor; ?>
                                 <span class="text-muted">(<?= $com['total_resenas'] ?>)</span>
                             </div>
