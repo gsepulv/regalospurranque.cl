@@ -68,7 +68,7 @@ $errors  = $flash['errors'] ?? [];
             <div class="form-group">
                 <label class="form-label" for="contenido">Contenido *</label>
                 <!-- Textarea oculto que recibe el valor final para el POST -->
-                <textarea id="contenido" name="contenido" style="display:none;" required><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
+                <textarea id="contenido" name="contenido" style="display:none;"><?= old('contenido', $noticia['contenido'] ?? '') ?></textarea>
                 <!-- Contenedor visible del editor Quill -->
                 <div id="editor-quill" style="min-height: 300px; background: white;"></div>
                 <small style="color:var(--color-gray)">Min. 50 caracteres.</small>
