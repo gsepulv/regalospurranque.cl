@@ -187,7 +187,7 @@ class HealthController extends Controller
             return [
                 'name'      => 'Conexión a MySQL',
                 'status'    => 'error',
-                'detail'    => 'No se pudo conectar: ' . $e->getMessage(),
+                'detail'    => 'No se pudo conectar a la base de datos',
                 'points'    => 0,
                 'maxPoints' => 10,
             ];

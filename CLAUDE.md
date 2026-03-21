@@ -1,211 +1,720 @@
-# Regalos Purranque v2
+# CLAUDE.md — Regalos Purranque v2
 
-Directorio comercial de Purranque, Chile. PHP vanilla MVC, sin Composer ni frameworks.
+Referencia maestra del proyecto. Toda modificacion debe consultarse contra este documento.
 
-## Stack
+## Proyecto
 
-- **PHP 8.3** vanilla MVC (no Composer, no frameworks)
-- **MySQL 8.4** (local: `regalos_v2`, producción: `purranque_regalos_v2`)
-- **Hosting**: HostGator compartido, cPanel, sin SSH, sin `exec()`
-- **Frontend**: CSS vanilla (`assets/css/main.css`), JS vanilla (`assets/js/app.js`)
-- **PWA**: manifest.json + service worker (sw.js)
+- **Nombre**: Regalos Purranque — Directorio comercial digital de Purranque, Region de Los Lagos
+- **Stack**: PHP 8.3 vanilla MVC, MySQL 8.4, Apache, sin Composer ni frameworks
+- **Produccion**: https://regalospurranque.cl (canonical), https://v2.regalos.purranque.info (redirect)
+- **Hosting**: HostGator compartido, cPanel, sin exec()
+- **Deploy**: cPanel Git Version Control > Update from Remote (usa `.cpanel.yml`)
+- **Deploy path**: `/home/purranque/v2.regalos.purranque.info/`
+- **SSH**: `ssh -i ~/.ssh/purranque_key purranque@162.241.53.185`
+- **PHP local**: `C:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe`
+- **MySQL local**: `C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root regalos_v2`
+- **DB local**: `regalos_v2` | **DB produccion**: `purranque_regalos_v2`
 
-## Setup local
+---
 
-```bash
-# Servidor de desarrollo
-php -S localhost:8000 router.php
-
-# MySQL (Laragon)
-mysql -u root regalos_v2
-```
-
-- PHP: `C:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe`
-- MySQL: `C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root regalos_v2`
-- Config: `config/database.php` (host, db, user, pass)
-- Entorno auto-detectado en `config/app.php` por `HTTP_HOST`
-
-## Estructura del proyecto
+## Estructura de directorios (2 niveles)
 
 ```
-├── index.php              # Front controller
-├── router.php             # Dev server + auto_prepend_file en producción
-├── config/
-│   ├── app.php            # Constantes globales (SITE_NAME, SITE_URL, etc.)
-│   ├── database.php       # Credenciales DB
-│   ├── routes.php         # [método, URI, Controller@acción, [middlewares]]
-│   ├── middleware.php      # Registro nombre → clase
-│   └── permissions.php    # ACL: rol → módulos permitidos
+regalospurranque.cl/
 ├── app/
-│   ├── Core/
-│   │   ├── App.php        # Bootstrap: sesión, middleware global, dispatch
-│   │   ├── Router.php     # Match URI con {params} y dispatch
-│   │   ├── Controller.php # Base: $db, render(), redirect(), validate(), log()
-│   │   ├── Database.php   # Singleton PDO: fetch, fetchAll, insert, update, delete
-│   │   ├── View.php       # Render vista + layout auto-detect
-│   │   ├── Request.php    # Wrapper $_GET/$_POST/$_SERVER
-│   │   └── Response.php   # JSON, redirect, error pages
-│   ├── Controllers/
-│   │   ├── Admin/         # Panel admin (requiere middleware 'auth')
-│   │   ├── Public/        # Sitio público
-│   │   └── Api/           # Endpoints JSON (sin CSRF)
-│   ├── Middleware/
-│   │   ├── AuthMiddleware.php       # Sesión admin + permisos por módulo
-│   │   ├── CsrfMiddleware.php       # Token CSRF en POST (single-use)
-│   │   ├── MaintenanceMiddleware.php
-│   │   ├── RedirectMiddleware.php   # SEO redirects desde DB
-│   │   └── PermissionMiddleware.php
-│   ├── Models/            # (solo para queries complejas, no ORM)
-│   ├── Services/
-│   │   ├── Auth.php       # Login/logout admin
-│   │   ├── Seo.php        # Schema.org JSON-LD builders
-│   │   ├── Permission.php # ACL: can(rol, modulo)
-│   │   ├── Theme.php      # CSS variables dinámicas
-│   │   ├── RedesSociales.php # Config redes, OG defaults, share buttons
-│   │   ├── Validator.php  # Validación de datos
-│   │   ├── Logger.php     # admin_log
-│   │   ├── Mailer.php     # Envío email con templates
-│   │   ├── Notification.php
-│   │   └── FileManager.php
-│   └── helpers.php        # e(), url(), asset(), csrf_token(), slugify(), etc.
+│   ├── Controllers/          # Admin/, Public/, Api/
+│   ├── Core/                 # App, Controller, Database, Router, View, Request, Response, Middleware
+│   ├── Middleware/            # Auth, Csrf, Maintenance, Permission, Redirect
+│   ├── Models/               # 23 modelos
+│   ├── Services/             # 23 servicios
+│   └── helpers.php           # Funciones globales: e(), url(), asset(), csrf_field(), slugify(), picture()
+├── assets/
+│   ├── css/                  # rp2.css, rp2.min.css, admin.css, mapa.css
+│   ├── js/                   # app.js, app.min.js, admin.js, mapa.js
+│   ├── img/                  # logos/, portadas/, galeria/, banners/, noticias/, og/, iconos/
+│   └── vendor/               # leaflet/ (mapas), tinymce/ (editor WYSIWYG)
+├── config/
+│   ├── app.php               # Constantes: APP_ENV, SITE_URL, UPLOAD_MAX_SIZE (5MB), PER_PAGE (12)
+│   ├── database.php          # Credenciales BD (gitignored)
+│   ├── mail.php              # SMTP Gmail (gitignored)
+│   ├── backup.php            # Google Drive config (gitignored)
+│   ├── captcha.php           # Cloudflare Turnstile (gitignored, deshabilitado)
+│   ├── middleware.php         # Registro: auth, csrf, permission, maintenance, redirect
+│   ├── permissions.php        # RBAC: superadmin/admin(*), editor(17 modulos), comerciante(dashboard,perfil)
+│   └── routes.php            # ~240 rutas
+├── cron/
+│   ├── analytics-daily.php   # Agregacion diaria de visitas
+│   ├── backup-auto.php       # Backup BD a Google Drive
+│   ├── email-recordatorios.php
+│   ├── email-registro-ventanas.php
+│   ├── expiracion-comercios.php
+│   └── notificaciones.php
+├── database/
+│   ├── schema.sql            # DDL completo (31 tablas)
+│   ├── seed.sql              # Datos iniciales produccion
+│   ├── seed_local.sql        # Datos desarrollo
+│   └── migrations/           # Migraciones incrementales
+├── deploy/
+│   ├── verify.php            # Verificacion post-deploy
+│   └── fix-permissions.php
+├── legales/                  # Documentos legales + SQL parches
+├── lib/PHPMailer/            # Libreria email (sin Composer)
+├── scripts/                  # minify.php, optimizar-imagenes.php
+├── storage/
+│   ├── backups/              # Backups BD automaticos
+│   ├── cache/                # Cache aplicacion
+│   ├── comprobantes/         # Comprobantes de pago
+│   ├── logs/                 # Logs de error
+│   └── temp/
 ├── views/
-│   ├── layouts/
-│   │   ├── public.php     # Layout público (nav, footer, SEO head)
-│   │   ├── admin.php      # Layout admin (sidebar, topbar)
-│   │   └── login.php      # Layout login (minimal)
-│   ├── partials/          # Componentes reutilizables
-│   │   └── seo-head.php   # Meta tags, OG, Twitter Cards, JSON-LD, GSC
-│   ├── public/            # Vistas públicas
-│   ├── comerciante/       # Panel del comerciante (usa layout public)
-│   ├── admin/             # Vistas admin
-│   └── errors/            # 404, 403, 500
-├── assets/                # CSS, JS, imágenes
-├── storage/logs/          # Logs de errores
-├── database/schema.sql    # Esquema completo (29 tablas)
-└── deploy/                # Scripts de deploy
+│   ├── admin/                # 24 subdirectorios (1 por modulo)
+│   ├── comerciante/          # dashboard, editar, login, perfil, olvide-contrasena
+│   ├── emails/               # 26 templates de email
+│   ├── errors/               # 403, 404, 500
+│   ├── layouts/              # admin.php, public.php, login.php
+│   ├── partials/             # 19 componentes reutilizables
+│   └── public/               # 18 paginas + registro-comercio/
+├── .htaccess                 # Rewrite, seguridad, HSTS, CSP, cache
+├── .cpanel.yml               # Copia archivos a deploy path
+├── index.php                 # Entry point (front controller)
+├── manifest.json             # PWA config
+├── sw.js                     # Service Worker (network-first, cache v3)
+└── robots.txt                # Bloquea /admin/, /api/, /storage/
 ```
 
-## Rutas y convenciones
+---
 
-### Formato de rutas
-```php
-// config/routes.php
-['GET',  '/ruta/{param}', 'Namespace\\Controller@metodo', ['middleware1']]
-```
+## Rutas y endpoints
 
-### Namespaces
-- Público: `Public\\NombreController@metodo`
-- Admin: `Admin\\NombreController@metodo`
-- API: `Api\\NombreController@metodo`
+### Publicas (25 rutas)
 
-### URLs canónicas
-- Comercios: `/comercio/{slug}`, `/comercios`
-- Categorías: `/categoria/{slug}`, `/categorias`
-- Fechas: `/fecha/{slug}`, `/celebraciones`
-- Noticias: `/noticia/{slug}`, `/noticias`
-- Registro: `/registrar-comercio` → `/registrar-comercio/datos` → `/registrar-comercio/gracias`
-- Panel comerciante: `/mi-comercio`, `/mi-comercio/login`, `/mi-comercio/editar`
-- Admin: `/admin/*` (requiere middleware `auth`)
-- API: `/api/*` (sin CSRF)
+| Metodo | URL | Controlador::metodo |
+|--------|-----|---------------------|
+| GET | `/` | HomeController::index |
+| GET | `/comercios` | ComercioController::index |
+| GET | `/comercio/{slug}` | ComercioController::show |
+| GET | `/categorias` | CategoriaController::index |
+| GET | `/categoria/{slug}` | CategoriaController::show |
+| GET | `/celebraciones` | FechaController::index |
+| GET | `/fecha/{slug}` | FechaController::show |
+| GET | `/buscar` | BuscarController::index |
+| GET | `/noticias` | NoticiaController::index |
+| GET | `/noticia/{slug}` | NoticiaController::show |
+| GET | `/mapa` | MapaController::index |
+| GET | `/planes` | PlanesController::index |
+| GET | `/contacto` | ContactoController::index |
+| POST | `/contacto/enviar` | ContactoController::send |
+| GET | `/sitemap.xml` | HomeController::sitemap |
+| GET | `/feed/rss.xml` | FeedController::rss |
+| GET | `/terminos` | PageController::terminos |
+| GET | `/privacidad` | PageController::privacidad |
+| GET | `/cookies` | PageController::cookies |
+| GET | `/contenidos` | PageController::contenidos |
+| GET | `/derechos` | DerechosController::index |
+| POST | `/derechos` | DerechosController::store |
+| GET | `/mis-resenas` | ReviewController::misResenas |
+| GET | `/compartir/{tipo}/{slug}` | ShareController::show |
+| GET | `/desuscribir/{token}` | DesuscripcionController::confirmar |
 
-### Layouts auto-detectados en View.php
-- `admin/login*` → layout `login`
-- `admin/*` → layout `admin`
-- Todo lo demás → layout `public`
-- `comerciante/*` vistas usan layout `public`
+### Registro de comerciantes (5 rutas)
+
+| Metodo | URL | Controlador::metodo |
+|--------|-----|---------------------|
+| GET | `/registrar-comercio` | RegistroComercioController::index |
+| POST | `/registrar-comercio/cuenta` | RegistroComercioController::storeCuenta |
+| GET | `/registrar-comercio/datos` | RegistroComercioController::datos |
+| POST | `/registrar-comercio/store` | RegistroComercioController::storeDatos |
+| GET | `/registrar-comercio/gracias` | RegistroComercioController::gracias |
+
+### Panel comerciante — mi-comercio (14 rutas)
+
+| Metodo | URL | Controlador::metodo |
+|--------|-----|---------------------|
+| GET | `/mi-comercio` | ComercianteController::dashboard |
+| GET/POST | `/mi-comercio/login` | ComercianteController::loginForm / login |
+| GET | `/mi-comercio/logout` | ComercianteController::logout |
+| GET | `/mi-comercio/editar` | ComercianteController::editar |
+| POST | `/mi-comercio/guardar` | ComercianteController::guardar |
+| POST | `/mi-comercio/solicitar-renovacion` | ComercianteController::solicitarRenovacion |
+| GET | `/mi-comercio/perfil` | ComercianteController::perfil |
+| POST | `/mi-comercio/perfil/password` | ComercianteController::updatePassword |
+| POST | `/mi-comercio/perfil/datos` | ComercianteController::updateDatos |
+| GET/POST | `/mi-comercio/olvide-contrasena` | ComercianteController::forgotPasswordForm / sendResetLink |
+| GET/POST | `/mi-comercio/reset/{token}` | ComercianteController::resetPasswordForm / resetPassword |
+
+### Admin auth (4 rutas)
+
+| Metodo | URL | Controlador::metodo |
+|--------|-----|---------------------|
+| GET | `/admin`, `/admin/login` | AuthController::loginForm |
+| POST | `/admin/login` | AuthController::login |
+| GET | `/admin/logout` | AuthController::logout |
+
+### Admin CRUD (~190 rutas, todas con middleware auth)
+
+| Modulo | Prefijo | Controlador | Operaciones |
+|--------|---------|-------------|-------------|
+| Dashboard | `/admin/dashboard` | DashboardController | index |
+| Comercios | `/admin/comercios` | ComercioAdminController | CRUD + toggle + galeria + horarios |
+| Categorias | `/admin/categorias` | CategoriaAdminController | CRUD completo |
+| Fechas | `/admin/fechas` | FechaAdminController | CRUD completo |
+| Noticias | `/admin/noticias` | NoticiaAdminController | CRUD + toggle + upload imagen |
+| Banners | `/admin/banners` | BannerAdminController | CRUD + toggle + resetStats |
+| Usuarios | `/admin/usuarios` | UsuarioAdminController | CRUD + toggle |
+| Planes | `/admin/planes` | PlanAdminController | CRUD + assign + validar + toggleSello |
+| Cambios | `/admin/cambios-pendientes` | CambiosPendientesController | index, show, aprobar, rechazar |
+| Renovaciones | `/admin/renovaciones` | RenovacionAdminController | index, show, aprobar, rechazar, comprobante |
+| Resenas | `/admin/resenas` | ResenaAdminController | index, show, reportes, aprobar, rechazar, responder, eliminar, bulk |
+| Resenas config | `/admin/resenas/configuracion` | ResenaConfigController | index, update |
+| Reportes | `/admin/reportes` | ReporteAdminController | index, visitas, comercios, categorias, fechas, banners, exportCsv |
+| SEO | `/admin/seo` | SeoAdminController | index, saveConfig, metatags, schema, redirects, sitemap |
+| Contacto | `/admin/contacto` | ContactoAdminController | index, eliminar |
+| Mensajes | `/admin/mensajes` | MensajeAdminController | index, dashboard, detectar, ver, responder, estado, nota, eliminar |
+| Nurturing | `/admin/nurturing` | NurturingAdminController | dashboard, config, plantillas CRUD, contactos, acciones masivas |
+| Correos | `/admin/correos` | CorreoAdminController | enviar, send, preview |
+| Notificaciones | `/admin/notificaciones` | NotificacionAdminController | index, saveConfig, test, logView, cleanLog |
+| Share | `/admin/share` | ShareAdminController | index |
+| Redes | `/admin/redes-sociales` | RedesAdminController | index, update |
+| Apariencia | `/admin/apariencia` | AparienciaAdminController | index, update, preset, autoShades |
+| Mantenimiento | `/admin/mantenimiento` | MantenimientoController | index (hub) |
+| Backups | `/admin/mantenimiento/backups` | BackupController | list, backupDb/Files/Full, download, delete, drive |
+| Archivos | `/admin/mantenimiento/archivos` | FileExplorerController | browse, view, download, upload, mkdir, rename, delete |
+| Salud | `/admin/mantenimiento/salud` | HealthController | index, refresh |
+| Logs | `/admin/mantenimiento/logs` | LogsController | index, export, clean, show |
+| Herramientas | `/admin/mantenimiento/herramientas` | ToolsController | sitemap, cache, maintenance, phpinfo, sessions, tables, images, stats |
+| Configuracion | `/admin/mantenimiento/configuracion` | ConfigController | index, update |
+| Perfil | `/admin/perfil` | PerfilController | index, updatePassword |
+| Sitios | `/admin/sitios` | SitioAdminController | CRUD + toggle + switchSite |
+
+### API (7 rutas)
+
+| Metodo | URL | Controlador::metodo |
+|--------|-----|---------------------|
+| POST | `/api/reviews/create` | ReviewApiController::create |
+| GET | `/api/reviews/list/{id}` | ReviewApiController::list |
+| POST | `/api/reviews/report` | ReviewApiController::report |
+| POST | `/api/track` | TrackApiController::track |
+| POST | `/api/banner-track` | BannerApiController::track |
+| POST | `/api/share-track` | ShareApiController::track |
+| POST | `/api/consentimiento` | ConsentimientoApiController::store |
+
+---
+
+## Controladores (53 total)
+
+### Public (16)
+
+| Controlador | Modelos usados | Vistas |
+|-------------|---------------|--------|
+| HomeController | Categoria, Comercio, Noticia, Banner, FechaEspecial | public/home |
+| ComercioController | Comercio, Categoria, Resena, Banner, VisitTracker | public/comercios, public/comercio |
+| CategoriaController | Categoria, Comercio, Banner, VisitTracker | public/categorias, public/categoria |
+| FechaController | FechaEspecial, Comercio, Banner, VisitTracker | public/celebraciones, public/fecha |
+| NoticiaController | Noticia, Banner, VisitTracker | public/noticias, public/noticia |
+| BuscarController | Comercio, Categoria, FechaEspecial, Banner | public/buscar |
+| ContactoController | MensajeContacto, Captcha, Notification | public/contacto |
+| MapaController | Comercio, Categoria, VisitTracker | public/mapa |
+| PlanesController | — | public/planes |
+| PageController | VisitTracker | public/terminos, privacidad, cookies, contenidos |
+| FeedController | Database (directo) | XML output |
+| DerechosController | Captcha, Notification | public/derechos |
+| ReviewController | Resena | public/resenas |
+| ShareController | Comercio, Noticia | public/share |
+| DesuscripcionController | Database | desuscripcion/confirmacion, error |
+| RegistroComercioController | AdminUsuario, Categoria, Comercio, FechaEspecial, PoliticaAceptacion, FileManager | public/registro-comercio/* |
+| ComercianteController | AdminUsuario, Comercio, Categoria, FechaEspecial, CambioPendiente, PlanConfig, RenovacionComercio | comerciante/* |
+
+### Admin (32) — ver tabla de rutas arriba para operaciones por modulo
+
+### API (5)
+
+| Controlador | Modelos | Output |
+|-------------|---------|--------|
+| ReviewApiController | Resena, Comercio, Captcha | JSON |
+| TrackApiController | VisitTracker | JSON |
+| BannerApiController | BannerClick | JSON |
+| ShareApiController | ShareLog | JSON |
+| ConsentimientoApiController | ConsentLog | JSON |
+
+---
+
+## Modelos (23)
+
+| Modelo | Tabla(s) | Metodos principales |
+|--------|---------|---------------------|
+| AdminUsuario | admin_usuarios | find, findByEmail, findByEmailAndRol, create, updateById, deleteById, setResetToken, clearResetToken |
+| AdminLog | admin_log | find, getFiltered, getRecentLimit, getTopAcciones, getWeeklyVisitStats |
+| Analytics | visitas_log, analytics_diario | registrarVisita, resumenDiario, getDashboard, getVisitasPorDia, getExportData |
+| Banner | banners | getByTipo, find, create, updateById, deleteById, incrementImpresiones, incrementClicks |
+| CambioPendiente | comercio_cambios_pendientes | find, getPendiente, getFiltered, create, updateById |
+| Categoria | categorias | getAll, getBySlug, find, create, updateById, deleteById, getWithComerciosCount |
+| Comercio | comercios + 4 pivote | getBySlug, find, create, updateById, deleteById, syncCategorias, syncFechas, addFoto, saveHorarios, checkCompletitud |
+| Configuracion | configuracion | getAll, getByGroup, getByKey, upsert |
+| FechaEspecial | fechas_especiales | getAll, getAllByTipo, getBySlug, find, create, updateById, deleteById, getProximas |
+| MensajeContacto | mensajes_contacto | create, find, getAll, countNoLeidos, marcarLeido, marcarRespondido |
+| MensajeRespuesta | mensajes_respuestas | crear, getPorMensaje, countPorMensaje |
+| Noticia | noticias + 2 pivote | getAll, getBySlug, getDestacadas, find, create, updateById, deleteById, syncCategorias, syncFechas |
+| NotificacionLog | notificaciones_log | getFiltered, countAll, countByEstado, deleteOlderThan |
+| NurturingConfig | nurturing_config | getAll, get, set, isServicioActivo, getHoraEnvio |
+| NurturingLog | nurturing_log | registrar, getPorMensaje, getEstadisticas, countHoy |
+| NurturingPlantilla | nurturing_plantillas | getAll, getById, crear, actualizar, eliminar, reordenar, toggleActivo |
+| PlanConfig | planes_config | find, findBySlug, getAll, create, updateById, deleteById |
+| PoliticaAceptacion | politicas_aceptacion | create, registrarDecisiones, validarAceptaciones |
+| RenovacionComercio | comercio_renovaciones | find, findPendiente, hasPendiente, create, updateById |
+| Resena | resenas + resenas_reportes | getByComercio, getPromedio, getDistribucion, crear, reportar, updateEstado |
+| SeoRedirect | seo_redirects, seo_config | getAll, find, findByUrlOrigen, create, deleteById, toggleActive, getConfig |
+| Share | share_log | registrar, getTotal, getPorRed, getTopComercios |
+| Sitio | sitios | find, getAll, create, updateById |
+
+---
+
+## Base de datos (31 tablas)
+
+### Administracion
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| admin_usuarios | id, nombre, email (UNIQUE), password_hash, rol (ENUM: superadmin/admin/editor/comerciante), site_id, activo, reset_token, reset_expira | Autenticacion central |
+| sesiones_admin | id, usuario_id (FK), token, ip, expira | Sesiones activas |
+| admin_log | id, usuario_id, modulo, accion, entidad_tipo, entidad_id, detalle, datos_antes (JSON), datos_despues (JSON), ip | Auditoria |
+| configuracion | clave (PK), site_id, valor, grupo | Key-value config: seo_, social_, apariencia_ |
+| login_intentos | id, ip, email, exitoso, created_at | Rate limiting: max 5/15min |
+
+### Comercios (entidad central)
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| comercios | id, site_id, nombre, slug (UNIQUE), descripcion, telefono, whatsapp, email, sitio_web, direccion, lat (DECIMAL 10,8), lng (DECIMAL 11,8), logo, portada, plan (ENUM), plan_inicio, plan_fin, max_fotos, activo, registrado_por (FK), destacado, validado, visitas, whatsapp_clicks, seo_*, contacto_*, contrato_* | Tabla mas grande, 8 redes sociales como columnas |
+| comercio_categoria | comercio_id (FK), categoria_id (FK), es_principal | M2M |
+| comercio_fecha | comercio_id (FK), fecha_id (FK), oferta_especial, precio_desde, precio_hasta | M2M |
+| comercio_fotos | id, comercio_id (FK), ruta, ruta_thumb, titulo, orden | Galeria |
+| comercio_horarios | id, comercio_id (FK), dia (0-6), hora_apertura, hora_cierre, cerrado | Horarios |
+| comercio_cambios_pendientes | id, comercio_id (FK), usuario_id (FK), cambios_json (JSON), estado (ENUM), revisado_por (FK) | Workflow aprobacion |
+| comercio_renovaciones | id, comercio_id (FK), usuario_id (FK), plan_actual, plan_solicitado, estado, comprobante_pago, monto | Renovaciones plan |
+
+### Contenido
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| categorias | id, site_id, nombre, slug (UNIQUE), icono, imagen, color, orden, activo | Categorias de comercios |
+| fechas_especiales | id, site_id, nombre, slug (UNIQUE), tipo (ENUM: personal/calendario/comercial), fecha_inicio, fecha_fin, recurrente | Fechas especiales |
+| noticias | id, site_id, titulo, slug (UNIQUE), contenido (LONGTEXT), extracto, imagen, autor, activo, destacada, seo_*, fecha_publicacion | Articulos |
+| noticia_categoria | noticia_id (FK), categoria_id (FK) | M2M |
+| noticia_fecha | noticia_id (FK), fecha_id (FK) | M2M |
+| banners | id, site_id, titulo, tipo (ENUM: hero/sidebar/entre_comercios/footer), imagen, url, comercio_id (FK), activo, clicks, impresiones, fecha_inicio, fecha_fin | Publicidad |
+
+### Resenas
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| resenas | id, site_id, comercio_id (FK), nombre_autor, email_autor, calificacion (1-5), comentario, estado (ENUM: pendiente/aprobada/rechazada), respuesta_comercio | Reviews publicas |
+| resenas_reportes | id, resena_id (FK), motivo, descripcion, ip | Denuncias |
+
+### SEO y Analytics
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| seo_config | clave (PK), site_id, valor | Config SEO |
+| seo_redirects | id, url_origen, url_destino, tipo (301/302/307), activo, hits | Redirects v1-v2 |
+| visitas_log | id (BIGINT), comercio_id, pagina, tipo, ip, referrer | Alto volumen |
+| analytics_diario | id, fecha, pagina, visitas, visitantes_unicos | Agregado diario |
+
+### Comunicacion
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| mensajes_contacto | id, nombre, email, asunto, mensaje, leido, respondido, instrucciones_enviadas | Formulario contacto |
+| mensajes_respuestas | id, mensaje_id (FK), respuesta | Respuestas admin |
+| notificaciones_log | id, destinatario, asunto, template, estado, datos (JSON) | Log emails |
+| nurturing_config | clave, valor, grupo | Config nurturing |
+| nurturing_plantillas | id, numero, nombre, contenido_html, activo | Templates email |
+| nurturing_log | id, mensaje_id (FK), plantilla_id (FK), estado_envio | Log envios |
+
+### Sistema
+
+| Tabla | Columnas clave | Notas |
+|-------|---------------|-------|
+| planes_config | id, slug (UNIQUE), nombre, precio_intro, precio_regular, duracion_dias, max_fotos, max_redes, tiene_mapa, tiene_horarios, tiene_sello | Definicion de planes |
+| politicas_aceptacion | id, usuario_id (FK), email, politica (ENUM), decision (ENUM: acepto/rechazo), ip_address | GDPR |
+| redes_sociales_config | id, site_id, clave, valor | Config redes sociales |
+| share_log | id, comercio_id, pagina, red_social, ip | Tracking compartir |
+| sitios | id, nombre, slug, dominio, logo, ciudad, lat, lng, activo | Multi-sitio |
+
+---
 
 ## Middlewares
 
-| Nombre | Scope | Función |
-|--------|-------|---------|
-| `maintenance` | Global | Modo mantenimiento |
-| `redirect` | Global | Redirecciones SEO desde `seo_redirects` |
-| `csrf` | POST no-API | Token CSRF single-use |
-| `auth` | Rutas admin | Sesión admin + permisos ACL por módulo |
+| Middleware | Archivo | Funcion |
+|-----------|---------|---------|
+| AuthMiddleware | app/Middleware/AuthMiddleware.php | Verifica `$_SESSION['admin']`, valida expiracion, renueva lifetime, chequea permisos del modulo. Redirige a /admin/login si no hay sesion. |
+| CsrfMiddleware | app/Middleware/CsrfMiddleware.php | Solo POST. Valida `_csrf` param o header `X-CSRF-TOKEN` contra `$_SESSION['csrf_token']`. Regenera token despues de validar (single-use). |
+| MaintenanceMiddleware | app/Middleware/MaintenanceMiddleware.php | Permite /admin y /api siempre. Para publicas, chequea `storage/cache/maintenance.flag`. Sirve `mantenimiento.html` con 503. |
+| PermissionMiddleware | app/Middleware/PermissionMiddleware.php | Extrae modulo del URI `/admin/{modulo}`. Verifica rol vs config/permissions.php. 403 si denegado. |
+| RedirectMiddleware | app/Middleware/RedirectMiddleware.php | Salta /admin y /api. Busca en tabla `seo_redirects`. Incrementa hits. Soporta 301/302/307. |
 
-## Roles y permisos
+### Roles y permisos
 
 | Rol | Acceso |
 |-----|--------|
-| `superadmin` | Todo + gestión de sitios |
-| `admin` | Todo excepto sitios |
-| `editor` | Dashboard, comercios, categorías, fechas, noticias, banners, reportes, reseñas, planes, notificaciones, redes, apariencia, perfil |
-| `comerciante` | Dashboard admin y perfil (pero usa panel propio en `/mi-comercio`) |
+| superadmin | Todo (*) incluyendo gestion de sitios |
+| admin | Todo (*) |
+| editor | 17 modulos: dashboard, comercios, categorias, fechas, noticias, banners, reportes, share, resenas, planes, contacto, mensajes, nurturing, correos, notificaciones, redes, apariencia, perfil |
+| comerciante | Solo dashboard y perfil (accede via /mi-comercio, sesion separada) |
 
-## Tablas principales (29 total)
+### Autenticacion
+
+- **Admin**: `$_SESSION['admin']` con id, nombre, email, rol. Lifetime: `SESSION_LIFETIME` (2h). Brute force: max 5 intentos/15min por IP (tabla `login_intentos`).
+- **Comerciante**: `$_SESSION['comerciante']` con id, nombre, email. Sesion separada del admin. Password recovery: token 32-byte hex, 1 hora expiracion.
+
+---
+
+## Core (app/Core/)
+
+| Clase | Funcion |
+|-------|---------|
+| App | Bootstrap: carga config, inicia sesion, ejecuta middleware global, despacha ruta |
+| Router | Matching de URI con parametros dinamicos `{slug}`, middleware por ruta |
+| Controller | Base: render(), renderAdmin(), redirect(), json(), validate(), audit() |
+| View | Render: auto-detecta layout (admin/public/login), extract($data) como variables locales |
+| Database | Singleton PDO: getInstance(), fetch(), fetchAll(), execute(), insert(), update(), delete(), transaction() |
+| Request | Wrapper HTTP: method(), uri(), get(), post(), all(), only() |
+| Response | Helpers: redirect(), json(), error(), download() |
+| Middleware | Clase abstracta base: handle() |
+
+### Patrones clave
+
+- **Modelos**: metodos static, usan `Database::getInstance()` internamente
+- **Base Controller**: `$this->db` para queries, `$this->audit($uid, 'accion', 'modulo', "detalle", $rid?, 'tipo?')` para log
+- **Config dinamica**: tabla `configuracion` con patron grupo/clave/valor
+- **CSRF**: token single-use, se regenera tras cada POST
+- **Views**: variables disponibles globalmente: `$admin`, `$csrf`, `$flash`
+- **Layouts auto-detectados**: `admin/login*` → login, `admin/*` → admin, todo lo demas → public
+- **Flash messages**: `$_SESSION['flash_error']`, `$_SESSION['flash_success']`, `$_SESSION['flash_errors']` (array)
+- **Sin exec()**: restriccion del hosting compartido
+
+---
+
+## Servicios (app/Services/)
 
 ### Core
-- `admin_usuarios` — usuarios del sistema (superadmin/admin/editor/comerciante)
-- `sesiones_admin` — tokens de sesión
-- `admin_log` — auditoría de acciones
-- `configuracion` — clave-valor agrupados
 
-### Comercios
-- `comercios` — directorio principal (incluye 8 redes sociales como columnas, plan, validación, datos tributarios)
-- `categorias` — clasificación de comercios
-- `comercio_categoria` — M:N comercios ↔ categorías (con `es_principal`)
-- `fechas_especiales` — eventos del calendario (personal/calendario/comercial)
-- `comercio_fecha` — M:N comercios ↔ fechas (con oferta y precios)
-- `comercio_fotos` — galería de fotos
-- `comercio_horarios` — horarios por día (0=Dom, 6=Sáb)
-- `comercio_cambios_pendientes` — JSON de cambios para revisión admin
+| Servicio | Proposito |
+|----------|-----------|
+| Auth | Login/logout admin, verificacion sesion |
+| Validator | Validacion encadenable: required, string, email, numeric, integer, min, max, in, url, slug, unique, date, latitude, longitude, phone, afterField |
+| Seo | Meta tags, Open Graph, Schema.org JSON-LD |
+| Theme | Colores dinamicos desde config admin (CSS variables) |
+| Logger | Auditoria acciones admin (tabla admin_log) |
+| Permission | RBAC: verifica rol vs modulo |
 
-### Contenido
-- `noticias` — artículos con SEO propio
-- `noticia_categoria` / `noticia_fecha` — M:N
-- `banners` — publicidad (hero/sidebar/entre_comercios/footer)
+### Archivos y backup
 
-### Reseñas
-- `resenas` — calificación 1-5, estado pendiente/aprobada/rechazada
-- `resenas_reportes` — reportes de contenido inapropiado
+| Servicio | Proposito |
+|----------|-----------|
+| FileManager | Upload imagenes, validacion MIME con finfo, redimension, thumbnails, WebP |
+| GoogleDrive | Backup a Google Drive via Service Account |
+| Backup | Backup BD + archivos, listar, restaurar, eliminar |
 
-### SEO y analytics
-- `seo_config` — meta tags, GSC, GA, robots.txt
-- `seo_redirects` — 301/302 personalizados
-- `visitas_log` — registro detallado de visitas
-- `analytics_diario` — resumen agregado
+### Comunicacion
 
-### Planes
-- `planes_config` — definición de planes (freemium/basico/premium/sponsor/banner)
+| Servicio | Proposito |
+|----------|-----------|
+| Mailer | Envio email SMTP (Gmail) via PHPMailer, fallback a mail() |
+| Notification | Orquesta emails: nuevaResena, comercioAprobado, registroComercianteAdmin, etc. |
+| RedesSociales | Config redes sociales, OG defaults |
+| Captcha | Cloudflare Turnstile (actualmente deshabilitado) |
 
-### Sistema
-- `configuracion_mantenimiento`
-- `mensajes_contacto`
-- `notificaciones_log`
-- `redes_sociales_config` — config redes del sitio
-- `share_log` — tracking de compartidos
-- `sitios` — multi-sitio
+### Tracking y SEO
+
+| Servicio | Proposito |
+|----------|-----------|
+| VisitTracker | Registra visitas a paginas |
+| SitemapService | Genera sitemap.xml |
+| SiteManager | Multi-sitio (preparado, 1 sitio activo) |
+
+### Pagos (stubs, no implementados)
+
+PasarelaPago, PagoFlow, PagoMercadoPago, PagoWebpay, PagoTransferencia
+
+---
+
+## Helpers (app/helpers.php)
+
+```
+e($string)           # HTML escape (XSS prevention)
+csrf_field()         # Hidden CSRF token input
+csrf_token()         # Get/generate CSRF token
+sanitize_html($html) # Remove dangerous HTML/scripts
+url($path)           # Generate absolute URL
+asset($path)         # Generate asset URL (assets/...)
+old($field, $default)# Repopulate form fields from flash
+slugify($text)       # Text to URL slug (maneja acentos espanol)
+truncate($text, $len)# Truncate with ellipsis
+fecha_es($date, $fmt)# Format date in Spanish
+picture($img, $alt)  # <picture> con WebP + fallback, srcset, lazy loading
+dd(...$vars)         # Dump and die (solo si APP_DEBUG=true)
+```
+
+---
+
+## Vistas
+
+### Layouts (3)
+
+| Layout | Uso |
+|--------|-----|
+| layouts/public.php | Sitio publico: GTM, Meta Pixel, PWA, tema dinamico, nav + footer |
+| layouts/admin.php | Panel admin: sidebar (17 items con badges), topbar, toast, modal delete |
+| layouts/login.php | Login: minimal, incluye Captcha script |
+
+### Partials (19)
+
+nav.php (navbar), sidebar.php (admin sidebar con badges), footer.php, seo-head.php (meta+OG+Schema.org), pagination.php, breadcrumbs.php, topbar.php (admin), toast.php (flash), modal.php, cookie-banner.php (GDPR), share-buttons.php, share-float.php, whatsapp-float.php, session-bar.php, card-badges.php, comercio-redes.php, cta-comercio.php, comerciante-topbar.php, social-profiles.php
+
+### Email templates (26 en views/emails/)
+
+arco-admin, arco-confirmacion, backup-completado, cambios-pendientes-admin, comercio-aprobado, comercio-bienvenida, comercio-rechazado, contacto-acuse, contacto-instrucciones-registro, contacto-mensaje, error-sistema, fecha-proxima, layout (base), nueva-resena, nuevo-comercio, registro-comerciante-admin, renovacion-aprobada, renovacion-nueva-admin, renovacion-rechazada, reporte-resena, resena-aprobada, resena-rechazada, resena-respuesta, reset-password, resumen-semanal, test
+
+---
+
+## Assets y dependencias
+
+### CSS/JS propios
+- `rp2.css` / `rp2.min.css` — Estilos publicos (custom, sin framework)
+- `admin.css` — Estilos panel admin
+- `mapa.css` / `mapa.min.css` — Estilos mapa
+- `app.js` / `app.min.js` — JS publico (vanilla)
+- `admin.js` — JS admin
+- `mapa.js` / `mapa.min.js` — Mapa Leaflet
+
+### Librerias bundled
+- **Leaflet** v1.x — `assets/vendor/leaflet/` (mapas con OpenStreetMap tiles)
+- **TinyMCE** v6.x — `assets/vendor/tinymce/` (editor WYSIWYG admin)
+
+### CDN externos
+- Google Tag Manager (GTM-56D8422F)
+- Meta Pixel / Facebook (ID: 1223892215809376)
+- OpenStreetMap tiles
+- Google Fonts
+- Quill.js 1.3.7 (solo en formulario de noticias)
+- jsDelivr / Cloudflare CDN (referenciados en CSP)
+
+### Directorios de uploads (todos gitignored)
+- `assets/img/logos/` — Logos comercios
+- `assets/img/portadas/` — Portadas comercios
+- `assets/img/galeria/` — Fotos galeria
+- `assets/img/banners/` — Imagenes banners
+- `assets/img/noticias/` — Imagenes noticias + inline editor
+- `assets/img/og/` — Imagenes Open Graph
+- `assets/img/config/` — Favicon, logos del sitio
+- `storage/comprobantes/` — Comprobantes de pago
+
+---
+
+## Archivos especiales
+
+### .htaccess
+- Force HTTPS (excepto localhost)
+- Redirect www → sin www, v2.regalos.purranque.info → regalospurranque.cl
+- Front controller: todo a index.php
+- Bloquea directorios: app/, config/, storage/, database/, cron/, deploy/, views/, legales/
+- Bloquea extensiones: .sql, .md, .log, .sh, .bak, .env, .yml, .zip, .gz
+- Headers: HSTS (1 ano), X-Content-Type-Options, X-Frame-Options, CSP, Permissions-Policy
+- Cache: imagenes 1 mes, CSS/JS 1 semana, fonts 1 mes
+- Gzip habilitado
+
+### Service Worker (sw.js)
+- Estrategia: Network First
+- Precache: /, /offline.html, rp2.css, app.js, manifest.json, favicon.ico
+- Cache name: regalos-v2-cache-v3, max 100 items
+- Excluye: /admin/*, /api/*, dominios externos, tiles
+- Fallback offline: /offline.html
+
+### PWA (manifest.json)
+- Display: standalone, theme: #ea580c (naranja)
+- Shortcuts: Buscar comercios → /buscar, Ver mapa → /mapa
+
+### Cron jobs
+
+| Script | Funcion |
+|--------|---------|
+| analytics-daily.php | Agrega visitas del dia en analytics_diario |
+| backup-auto.php | Backup BD a Google Drive |
+| email-recordatorios.php | Recordatorios por email |
+| email-registro-ventanas.php | Emails ventana de registro |
+| expiracion-comercios.php | Gestiona comercios expirados |
+| notificaciones.php | Envio notificaciones pendientes |
+
+---
+
+## Dependencias entre modulos
+
+### Comercios (modulo central)
+- **Tablas**: comercios, comercio_categoria, comercio_fecha, comercio_fotos, comercio_horarios
+- **Depende de**: categorias, fechas_especiales, admin_usuarios (registrado_por), planes_config
+- **Dependientes**: banners (comercio_id FK), resenas, visitas_log, share_log, comercio_renovaciones, comercio_cambios_pendientes
+
+### Categorias
+- **Tablas**: categorias, comercio_categoria, noticia_categoria
+- **Dependientes**: comercios (M2M), noticias (M2M)
+- **Impacto**: eliminar categoria rompe relaciones con comercios y noticias
+
+### Noticias
+- **Tablas**: noticias, noticia_categoria, noticia_fecha
+- **Depende de**: categorias (M2M), fechas_especiales (M2M)
+- **Editor**: Quill.js via CDN en form.php (textarea oculto)
+
+### Fechas especiales
+- **Tablas**: fechas_especiales, comercio_fecha, noticia_fecha
+- **Dependientes**: comercios (M2M), noticias (M2M)
+
+### Banners
+- **Tablas**: banners
+- **Depende de**: comercios (FK opcional)
+- **Tracking**: api/banner-track incrementa clicks/impresiones
+
+### Resenas
+- **Tablas**: resenas, resenas_reportes
+- **Depende de**: comercios (FK obligatorio)
+- **API publica**: /api/reviews/create, /api/reviews/list/{id}, /api/reviews/report
+
+### Planes y renovaciones
+- **Tablas**: planes_config, comercio_renovaciones
+- **Depende de**: comercios, admin_usuarios
+- **Planes**: freemium, basico, premium, sponsor, banner
+
+### Mensajes / Nurturing
+- **Tablas**: mensajes_contacto, mensajes_respuestas, nurturing_config, nurturing_plantillas, nurturing_log
+- **Nurturing depende de**: mensajes_contacto (FK)
+- **Email**: usa Mailer + Notification services
+
+### SEO
+- **Tablas**: seo_config, seo_redirects
+- **Genera**: sitemap.xml via SitemapService
+- **Middleware**: RedirectMiddleware lee seo_redirects en cada request publico
+
+### Usuarios admin
+- **Tablas**: admin_usuarios, sesiones_admin, login_intentos
+- **Dependientes**: comercios (registrado_por FK), admin_log, comercio_renovaciones, comercio_cambios_pendientes
+
+### Registro publico de comerciantes
+- **Flujo**: 2 pasos (cuenta → datos)
+- **Tablas**: admin_usuarios (rol=comerciante), comercios (activo=0), politicas_aceptacion
+- **Notifica**: admin via email (registro-comerciante-admin template)
+
+### Dashboard del comerciante (mi-comercio)
+- **Tablas**: admin_usuarios, comercios, comercio_cambios_pendientes, comercio_renovaciones
+- **Flujo edicion**: cambios van a comercio_cambios_pendientes (estado=pendiente), admin aprueba/rechaza
+
+### Backup automatico
+- **Servicios**: Backup, GoogleDrive
+- **Storage**: storage/backups/ (local) + Google Drive (remoto)
+- **Cron**: backup-auto.php
+
+---
 
 ## Flujos principales
 
 ### Registro de comerciante
 1. `GET /registrar-comercio` → form cuenta (nombre, email, password)
-2. `POST /registrar-comercio/cuenta` → crea `admin_usuarios` con `rol=comerciante`, `activo=0`
-3. `GET /registrar-comercio/datos` → form datos del comercio (categorías, fechas, redes)
-4. `POST /registrar-comercio/store` → crea `comercios` con `plan=freemium`, `activo=0`
+2. `POST /registrar-comercio/cuenta` → crea admin_usuarios con rol=comerciante + politicas_aceptacion
+3. `GET /registrar-comercio/datos` → form datos del comercio
+4. `POST /registrar-comercio/store` → crea comercios con plan=freemium, activo=0 (dentro de transaccion)
 5. Redirige a `/registrar-comercio/gracias`
-6. Admin recibe email y activa el comercio + usuario desde el panel
+6. Admin recibe email y activa comercio + usuario desde el panel
 
 ### Panel del comerciante
-- Login propio en `/mi-comercio/login` (sesión `$_SESSION['comerciante']`, separada de admin)
-- Dashboard: `/mi-comercio` — ve datos de su comercio, plan, cambios pendientes
-- Editar: `/mi-comercio/editar` → `/mi-comercio/guardar`
-- Los cambios NO se aplican directo: se guardan en `comercio_cambios_pendientes` como JSON
+- Login: `/mi-comercio/login` (sesion `$_SESSION['comerciante']`, separada de admin)
+- Dashboard: `/mi-comercio` — datos comercio, plan, cambios pendientes
+- Edicion: cambios NO se aplican directo, van a `comercio_cambios_pendientes` como JSON
 - Admin revisa en `/admin/cambios-pendientes` y aprueba/rechaza
 
-### SEO
-- Meta tags en `views/partials/seo-head.php` (OG, Twitter Cards, JSON-LD)
-- Google Search Console: meta tag inyectado desde `seo_config.google_search_console`
-- Sitemap dinámico: `GET /sitemap.xml` → `HomeController@sitemap`
-- `robots.txt` estático con Sitemap apuntando al dominio canónico
-- Redirecciones SEO desde `seo_redirects` via `RedirectMiddleware`
+### Renovacion de plan
+1. Comerciante solicita desde `/mi-comercio` con comprobante de pago
+2. Se crea registro en `comercio_renovaciones` con estado=pendiente
+3. Admin revisa en `/admin/renovaciones`, aprueba o rechaza
+4. Si aprobado: actualiza plan del comercio, extiende fecha, notifica por email
 
-## Convenciones de código
+---
 
-- Sin Composer, autoloader PSR-4 manual en `index.php`
-- Controladores extienden `App\Core\Controller` (acceso a `$this->db`, `$this->render()`)
-- Database singleton: `Database::getInstance()->fetch/fetchAll/insert/update/delete`
-- Helpers globales: `e()`, `url()`, `asset()`, `csrf_field()`, `slugify()`
-- Flash messages: `$_SESSION['flash_error']`, `$_SESSION['flash_success']`, `$_SESSION['flash_errors']` (array)
-- CSRF: campo `_csrf` en forms, token regenerado después de cada POST
-- Sin `exec()` (restricción del hosting)
+## ADVERTENCIAS
+
+### Archivos que NO deberian estar en produccion
+
+| Archivo | Tipo | Riesgo |
+|---------|------|--------|
+| `purranque_regalos_v2.sql` (raiz) | Dump BD | Expone estructura y datos completos |
+| `app/Controllers/Public/ComercianteController.php.bak2` | Backup | Codigo muerto en repo |
+| `.htaccess.zip`, `.htaccess_bak` | Backup | Config server vieja/comprimida |
+| `app.zip` (1.6MB) | Archivo | Codigo fuente comprimido |
+| `regalos_purranque.zip` (50MB) | Archivo v1 | Legacy completo, enorme |
+| `robots.txt.zip`, `config/app.php.zip` | Archivos | Innecesarios |
+| `deploy/fix-permissions.php` | Script | Herramienta peligrosa en prod |
+| `regalos_purranque/` (directorio) | Legacy v1 | Directorio v1 completo |
+| `seo-regalospurranque/` | Diagnostico | Archivos temporales SEO |
+| `respaldos/client_secret_*.json` | Credencial | OAuth client secret expuesto |
+| `respaldos/google-credentials.json.json` | Credencial | Service account key expuesto |
+
+### Cambios sin commitear (al 2026-03-20)
+
+13 archivos modificados sin commit. Verificar con `git status`:
+- Admin: AuthController, BannerAdminController, ComercioAdminController, ConfigController, FileExplorerController, HealthController, NoticiaAdminController
+- Public: ComercianteController, RegistroComercioController
+- Services: GoogleDrive, Validator
+- Otros: deploy/verify.php, index.php
+
+### Observaciones tecnicas
+
+1. **Dos editores WYSIWYG**: TinyMCE (bundled en assets/vendor/) y Quill.js (CDN en form noticias). Deberia unificarse.
+2. **Tablas faltantes en schema.sql**: nurturing_config, nurturing_plantillas, nurturing_log, mensajes_respuestas existen en produccion pero no en el DDL versionado.
+3. **Servicios de pago son stubs**: PagoFlow, PagoMercadoPago, PagoWebpay, PagoTransferencia no implementados.
+4. **Captcha deshabilitado**: Turnstile esta en false. Formularios publicos sin proteccion anti-bot activa.
+5. **Multi-sitio preparado pero no activo**: tabla sitios existe, site_id en la mayoria de tablas, solo 1 sitio.
+6. **Credenciales en respaldos/**: client_secret y google-credentials estan en directorio respaldos/ sin gitignore adecuado.
+7. **schema.sql dice 29 tablas pero hay 31**: las 2 faltantes son de nurturing.
+
+---
+
+## ARCHIVOS PROTEGIDOS
+
+Archivos criticos que nunca deben modificarse sin revision cuidadosa:
+
+| Archivo | Razon |
+|---------|-------|
+| `config/routes.php` | Define todas las rutas. Error rompe todo el sitio. |
+| `config/permissions.php` | RBAC. Error abre acceso no autorizado. |
+| `app/Core/App.php` | Bootstrap. Error impide arranque. |
+| `app/Core/Database.php` | Singleton BD. Error rompe toda query. |
+| `app/Core/Router.php` | Matching de rutas. Error rompe navegacion. |
+| `app/Middleware/AuthMiddleware.php` | Autenticacion. Error expone panel admin. |
+| `app/Middleware/CsrfMiddleware.php` | CSRF. Error permite ataques cross-site. |
+| `app/Middleware/PermissionMiddleware.php` | ACL. Error da acceso no autorizado. |
+| `.htaccess` | Seguridad, HTTPS, CSP, cache. Error expone archivos sensibles. |
+| `index.php` | Entry point. Error impide arranque. |
+| `database/schema.sql` | DDL maestro. Debe reflejar estado real de produccion. |
+| `config/app.php` | Constantes globales. Error rompe paths, URLs, sesiones. |
+| `app/helpers.php` | Funciones globales (e, csrf, url). Error rompe XSS protection. |
+| `sw.js` | Service Worker. Error cachea contenido incorrecto indefinidamente. |
+
+---
+
+## Comandos utiles
+
+```bash
+# PHP local (syntax check)
+C:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe -l archivo.php
+
+# Servidor desarrollo
+C:/laragon/bin/php/php-8.3.30-Win32-vs16-x64/php.exe -S localhost:8000 router.php
+
+# MySQL local
+C:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe -u root regalos_v2
+
+# SSH produccion
+ssh -i C:\Users\asus\.ssh\purranque_key purranque@162.241.53.185
+
+# Deploy: cPanel > Git Version Control > regalospurranque.cl > Update from Remote
+
+# Minificar assets
+php scripts/minify.php
+```

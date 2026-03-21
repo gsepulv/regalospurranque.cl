@@ -128,6 +128,9 @@ class ComercioAdminController extends Controller
             'contacto_rut'        => 'string|max:15',
             'contacto_telefono'   => 'string|max:20',
             'contacto_email'      => 'email|max:200',
+            // Coordenadas
+            'lat'                 => 'latitude',
+            'lng'                 => 'longitude',
         ]);
 
         // Validar tamaño de archivos
@@ -319,6 +322,9 @@ class ComercioAdminController extends Controller
             'contacto_rut'        => 'string|max:15',
             'contacto_telefono'   => 'string|max:20',
             'contacto_email'      => 'email|max:200',
+            // Coordenadas
+            'lat'                 => 'latitude',
+            'lng'                 => 'longitude',
         ]);
 
         // Validar tamaño de archivos

@@ -84,7 +84,9 @@ class NoticiaAdminController extends Controller
             'contenido'         => $_POST['contenido'] ?? '',
             'extracto'          => trim($_POST['extracto'] ?? ''),
             'autor'             => trim($_POST['autor'] ?? ''),
-            'fecha_publicacion' => !empty($_POST['fecha_publicacion']) ? $_POST['fecha_publicacion'] : date('Y-m-d H:i:s'),
+            'fecha_publicacion' => !empty($_POST['fecha_publicacion']) && strtotime($_POST['fecha_publicacion']) !== false
+                ? date('Y-m-d H:i:s', strtotime($_POST['fecha_publicacion']))
+                : date('Y-m-d H:i:s'),
             'activo'            => isset($_POST['activo']) ? 1 : 0,
             'destacada'         => isset($_POST['destacada']) ? 1 : 0,
             'seo_titulo'        => trim($_POST['seo_titulo'] ?? ''),
@@ -243,9 +245,9 @@ class NoticiaAdminController extends Controller
             return;
         }
 
-        // Validar tamaño
-        $maxMb = (int) \App\Services\RedesSociales::get('tinymce_max_image_mb', '3');
-        if ($file['size'] > $maxMb * 1024 * 1024) {
+        // Validar tamaño (usa constante global)
+        if ($file['size'] > UPLOAD_MAX_SIZE) {
+            $maxMb = round(UPLOAD_MAX_SIZE / 1024 / 1024);
             $this->json(['error' => "La imagen excede {$maxMb}MB"], 400);
             return;
         }

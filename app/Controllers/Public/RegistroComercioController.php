@@ -191,6 +191,34 @@ class RegistroComercioController extends Controller
         if (mb_strlen($telefono) > 0 && (mb_strlen($telefono) < 9 || mb_strlen($telefono) > 15)) $errores[] = 'El teléfono debe tener entre 9 y 15 caracteres.';
         if (mb_strlen($direccion) < 5 || mb_strlen($direccion) > 255) $errores[] = 'La dirección debe tener entre 5 y 255 caracteres.';
 
+        // Validar email comercio
+        $emailComercio = trim($_POST['email_comercio'] ?? '');
+        if (!empty($emailComercio) && !filter_var($emailComercio, FILTER_VALIDATE_EMAIL)) {
+            $errores[] = 'El email del comercio no es válido.';
+        }
+
+        // Validar URL sitio web
+        $sitioWeb = trim($_POST['sitio_web'] ?? '');
+        if (!empty($sitioWeb) && !filter_var($sitioWeb, FILTER_VALIDATE_URL)) {
+            $errores[] = 'La URL del sitio web no es válida.';
+        }
+
+        // Validar coordenadas
+        if (!empty($_POST['lat'])) {
+            $lat = (float) $_POST['lat'];
+            if ($lat < -90 || $lat > 90) $errores[] = 'La latitud debe estar entre -90 y 90.';
+        }
+        if (!empty($_POST['lng'])) {
+            $lng = (float) $_POST['lng'];
+            if ($lng < -180 || $lng > 180) $errores[] = 'La longitud debe estar entre -180 y 180.';
+        }
+
+        // Validar URL red social
+        $redUrl = trim($_POST['red_social_url'] ?? '');
+        if (!empty($redUrl) && !filter_var($redUrl, FILTER_VALIDATE_URL)) {
+            $errores[] = 'La URL de la red social no es válida.';
+        }
+
         // Validar tamaño de archivos
         $maxBytes = UPLOAD_MAX_SIZE;
         $maxMb = round($maxBytes / 1024 / 1024);
@@ -209,20 +237,8 @@ class RegistroComercioController extends Controller
             exit;
         }
 
-        $slug = $this->generarSlug($nombre);
-
-        // Subir imágenes (FileManager valida MIME con finfo, redimensiona y genera WebP)
-        $logoPath = $portadaPath = null;
-        if (!empty($_FILES['logo']['tmp_name']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
-            $logoPath = FileManager::subirImagen($_FILES['logo'], 'logos', 800) ?: null;
-        }
-        if (!empty($_FILES['portada']['tmp_name']) && $_FILES['portada']['error'] === UPLOAD_ERR_OK) {
-            $portadaPath = FileManager::subirImagen($_FILES['portada'], 'portadas', 1200) ?: null;
-        }
-
         // Red social (solo 1 en plan freemium)
         $redTipo = $_POST['red_social_tipo'] ?? '';
-        $redUrl  = trim($_POST['red_social_url'] ?? '');
         $redes = array_fill_keys(['facebook','instagram','tiktok','youtube','x_twitter','linkedin','telegram','pinterest'], null);
         if (!empty($redTipo) && !empty($redUrl) && isset($redes[$redTipo])) {
             $redes[$redTipo] = $redUrl;
@@ -232,23 +248,35 @@ class RegistroComercioController extends Controller
         $principal = (int)($_POST['categoria_principal'] ?? 0);
         $fechaIds = array_filter(array_map('intval', $_POST['fechas'] ?? []), fn($id) => $id > 0);
 
+        // Verificar que el usuario de sesión siga existiendo en BD
+        $usuario = \App\Models\AdminUsuario::find($uid);
+        if (!$usuario) {
+            unset($_SESSION['registro_uid'], $_SESSION['registro_nombre'], $_SESSION['registro_email']);
+            $_SESSION['flash_error'] = 'Tu sesión de registro ha expirado. Regístrate nuevamente.';
+            header('Location: ' . url('/registrar-comercio'));
+            exit;
+        }
+
         $comercioId = $this->db->transaction(function () use (
-            $nombre, $slug, $whatsapp, $uid, $logoPath, $portadaPath, $redes,
-            $catIds, $principal, $fechaIds
+            $nombre, $whatsapp, $uid, $redes,
+            $catIds, $principal, $fechaIds, $emailComercio, $sitioWeb, $descripcion, $telefono, $direccion
         ) {
+            // Slug generado DENTRO de la transacción para evitar race conditions
+            $slug = $this->generarSlug($nombre);
+
             $id = Comercio::create([
                 'nombre'         => $nombre,
                 'slug'           => $slug,
-                'descripcion'    => trim($_POST['descripcion'] ?? ''),
-                'telefono'       => trim($_POST['telefono'] ?? ''),
+                'descripcion'    => $descripcion,
+                'telefono'       => $telefono,
                 'whatsapp'       => $whatsapp,
-                'email'          => trim($_POST['email_comercio'] ?? ''),
-                'sitio_web'      => trim($_POST['sitio_web'] ?? ''),
-                'direccion'      => trim($_POST['direccion'] ?? ''),
+                'email'          => $emailComercio,
+                'sitio_web'      => $sitioWeb,
+                'direccion'      => $direccion,
                 'lat'            => !empty($_POST['lat']) ? (float)$_POST['lat'] : null,
                 'lng'            => !empty($_POST['lng']) ? (float)$_POST['lng'] : null,
-                'logo'           => $logoPath,
-                'portada'        => $portadaPath,
+                'logo'           => null,
+                'portada'        => null,
                 'plan'           => 'freemium',
                 'plan_inicio'    => date('Y-m-d'),
                 'plan_fin'       => date('Y-m-d', strtotime('+30 days')),
@@ -271,6 +299,20 @@ class RegistroComercioController extends Controller
 
             return $id;
         });
+
+        // Subir imágenes DESPUÉS de la transacción exitosa
+        $updateData = [];
+        if (!empty($_FILES['logo']['tmp_name']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+            $logoPath = FileManager::subirImagen($_FILES['logo'], 'logos', 800);
+            if ($logoPath) $updateData['logo'] = $logoPath;
+        }
+        if (!empty($_FILES['portada']['tmp_name']) && $_FILES['portada']['error'] === UPLOAD_ERR_OK) {
+            $portadaPath = FileManager::subirImagen($_FILES['portada'], 'portadas', 1200);
+            if ($portadaPath) $updateData['portada'] = $portadaPath;
+        }
+        if (!empty($updateData)) {
+            Comercio::updateById($comercioId, $updateData);
+        }
 
         // Notificar admin
         $this->notificarAdmin($comercioId, $nombre);
@@ -326,6 +368,8 @@ class RegistroComercioController extends Controller
     {
         try {
             \App\Services\Notification::registroComercianteAdmin($comercioId, $nombreComercio);
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            error_log('[RegistroComercio] Error al notificar admin: ' . $e->getMessage());
+        }
     }
 }

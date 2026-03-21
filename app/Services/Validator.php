@@ -3,7 +3,7 @@ namespace App\Services;
 
 /**
  * Validación centralizada de datos
- * Reglas: required, string, email, numeric, integer, min, max, in, url, slug, unique
+ * Reglas: required, string, email, numeric, integer, min, max, in, url, slug, unique, date, latitude, longitude, phone
  * Uso: $v = new Validator($data, ['campo' => 'required|string|min:3|max:100']);
  */
 class Validator
@@ -196,6 +196,62 @@ class Validator
         if ($file['size'] > $maxBytes) {
             $maxMb = $params[0];
             $this->errors[$field] = "El archivo {$field} no debe superar {$maxMb} MB";
+            return false;
+        }
+        return true;
+    }
+
+    private function ruleDate(string $field, mixed $value, array $params): bool
+    {
+        if ($value === null || $value === '') return true;
+        $format = $params[0] ?? 'Y-m-d';
+        $d = \DateTimeImmutable::createFromFormat($format, $value);
+        if (!$d || $d->format($format) !== $value) {
+            $this->errors[$field] = "El campo {$field} debe ser una fecha válida ({$format})";
+            return false;
+        }
+        return true;
+    }
+
+    private function ruleAfterField(string $field, mixed $value, array $params): bool
+    {
+        if ($value === null || $value === '') return true;
+        $otherField = $params[0] ?? '';
+        $otherValue = $this->data[$otherField] ?? null;
+        if ($otherValue && $value < $otherValue) {
+            $this->errors[$field] = "El campo {$field} debe ser posterior a {$otherField}";
+            return false;
+        }
+        return true;
+    }
+
+    private function ruleLatitude(string $field, mixed $value, array $params): bool
+    {
+        if ($value === null || $value === '') return true;
+        $val = (float) $value;
+        if (!is_numeric($value) || $val < -90 || $val > 90) {
+            $this->errors[$field] = "La latitud debe estar entre -90 y 90";
+            return false;
+        }
+        return true;
+    }
+
+    private function ruleLongitude(string $field, mixed $value, array $params): bool
+    {
+        if ($value === null || $value === '') return true;
+        $val = (float) $value;
+        if (!is_numeric($value) || $val < -180 || $val > 180) {
+            $this->errors[$field] = "La longitud debe estar entre -180 y 180";
+            return false;
+        }
+        return true;
+    }
+
+    private function rulePhone(string $field, mixed $value, array $params): bool
+    {
+        if ($value === null || $value === '') return true;
+        if (!preg_match('/^[\+]?[\d\s\-\(\)]{9,20}$/', $value)) {
+            $this->errors[$field] = "El campo {$field} debe ser un número de teléfono válido";
             return false;
         }
         return true;

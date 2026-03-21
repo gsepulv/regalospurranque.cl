@@ -44,6 +44,9 @@ try {
     $app = new App\Core\App();
     $app->run();
 } catch (\Throwable $e) {
+    // Siempre loguear el error completo
+    error_log('[FATAL] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine() . "\n" . $e->getTraceAsString());
+
     if (APP_DEBUG) {
         http_response_code(500);
         echo '<div style="font-family:system-ui;max-width:900px;margin:40px auto;padding:20px;">';

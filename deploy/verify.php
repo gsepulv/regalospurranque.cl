@@ -87,7 +87,7 @@ try {
         $dbErr = 'config/database.php no encontrado';
     }
 } catch (PDOException $e) {
-    $dbErr = $e->getMessage();
+    $dbErr = 'No se pudo conectar a la BD';
 }
 check('Conexion a BD', $dbOk, $dbOk ? DB_NAME . '@' . DB_HOST : $dbErr);
 

@@ -138,8 +138,8 @@ class ConfigController extends Controller
             return null;
         }
 
-        // Validar tamaño (max 2MB)
-        if ($file['size'] > 2 * 1024 * 1024) {
+        // Validar tamaño
+        if ($file['size'] > UPLOAD_MAX_SIZE) {
             return null;
         }
 

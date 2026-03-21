@@ -187,10 +187,11 @@ class FileExplorerController extends Controller
 
         $file = $_FILES['archivo'];
 
-        // Validar tamaño máximo: 10 MB
-        $maxSize = 10 * 1024 * 1024;
+        // Validar tamaño máximo (usa constante global)
+        $maxSize = UPLOAD_MAX_SIZE;
         if ($file['size'] > $maxSize) {
-            $this->back(['error' => 'El archivo excede el tamaño máximo permitido (10 MB)']);
+            $maxMb = round(UPLOAD_MAX_SIZE / 1024 / 1024);
+            $this->back(['error' => "El archivo excede el tamaño máximo permitido ({$maxMb} MB)"]);
             return;
         }
 
@@ -209,9 +210,6 @@ class FileExplorerController extends Controller
             'txt'  => 'text/plain',
             'csv'  => 'text/plain',
             'ico'  => 'image/x-icon',
-            'svg'  => 'image/svg+xml',
-            'css'  => 'text/css',
-            'js'   => 'text/javascript',
         ];
 
         $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));

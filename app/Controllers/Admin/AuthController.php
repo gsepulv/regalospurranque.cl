@@ -46,6 +46,14 @@ class AuthController extends Controller
             return;
         }
 
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->redirect('/admin/login', [
+                'error' => 'Ingresa un email válido',
+                'old'   => ['email' => $email],
+            ]);
+            return;
+        }
+
         // Protección fuerza bruta: máx 5 intentos fallidos en 15 min
         try {
             $intentos = $this->db->fetch(

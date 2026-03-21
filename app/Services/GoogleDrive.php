@@ -64,7 +64,8 @@ class GoogleDrive
 
             return ['ok' => true, 'message' => 'Conectado', 'email' => $email];
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => $e->getMessage()];
+            error_log('[GoogleDrive::verificarConexion] ' . $e->getMessage());
+            return ['ok' => false, 'message' => 'Error al verificar conexión con Google Drive'];
         }
     }
 
@@ -95,7 +96,8 @@ class GoogleDrive
 
             return self::resumableUpload($filepath, $filename, $fileSize, $mimeType, $folderId, $token);
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => 'Exception: ' . $e->getMessage()];
+            error_log('[GoogleDrive::subirArchivo] ' . $e->getMessage());
+            return ['ok' => false, 'message' => 'Error al subir archivo a Google Drive'];
         }
     }
 
@@ -142,7 +144,8 @@ class GoogleDrive
 
             return ['ok' => true, 'files' => $files];
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => $e->getMessage()];
+            error_log('[GoogleDrive::listarArchivos] ' . $e->getMessage());
+            return ['ok' => false, 'message' => 'Error al listar archivos de Google Drive'];
         }
     }
 
@@ -177,7 +180,8 @@ class GoogleDrive
             $msg = $error['error']['message'] ?? 'HTTP ' . $resp['httpCode'];
             return ['ok' => false, 'message' => 'Error al eliminar: ' . $msg];
         } catch (\Throwable $e) {
-            return ['ok' => false, 'message' => $e->getMessage()];
+            error_log('[GoogleDrive::eliminarArchivo] ' . $e->getMessage());
+            return ['ok' => false, 'message' => 'Error al eliminar archivo de Google Drive'];
         }
     }
 

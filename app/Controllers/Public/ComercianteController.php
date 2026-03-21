@@ -466,11 +466,30 @@ class ComercianteController extends Controller
         if (mb_strlen($email) > 100) {
             $errors[] = 'El email no puede superar los 100 caracteres.';
         }
+        if (!empty($sitio_web) && !filter_var($sitio_web, FILTER_VALIDATE_URL)) {
+            $errors[] = 'La URL del sitio web no es válida.';
+        }
         if (mb_strlen($sitio_web) > 255) {
             $errors[] = 'El sitio web no puede superar los 255 caracteres.';
         }
         if (mb_strlen($direccion) < 5 || mb_strlen($direccion) > 255) {
             $errors[] = 'La dirección debe tener entre 5 y 255 caracteres.';
+        }
+
+        // Validar coordenadas
+        if (!empty($_POST['lat'])) {
+            $latVal = (float) $_POST['lat'];
+            if ($latVal < -90 || $latVal > 90) $errors[] = 'La latitud debe estar entre -90 y 90.';
+        }
+        if (!empty($_POST['lng'])) {
+            $lngVal = (float) $_POST['lng'];
+            if ($lngVal < -180 || $lngVal > 180) $errors[] = 'La longitud debe estar entre -180 y 180.';
+        }
+
+        // Validar URL red social
+        $redUrl = trim($_POST['red_social_url'] ?? '');
+        if (!empty($redUrl) && !filter_var($redUrl, FILTER_VALIDATE_URL)) {
+            $errors[] = 'La URL de la red social no es válida.';
         }
 
         // Validar tamaño de archivos antes de procesarlos
