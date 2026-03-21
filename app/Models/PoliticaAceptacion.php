@@ -9,20 +9,14 @@ class PoliticaAceptacion
 
     public static function create(array $data): int
     {
-        $db = Database::getInstance();
-        $db->execute(
-            "INSERT INTO politicas_aceptacion (usuario_id, email, politica, decision, ip_address, user_agent)
-             VALUES (?, ?, ?, ?, ?, ?)",
-            [
-                $data['usuario_id'],
-                $data['email'],
-                $data['politica'],
-                $data['decision'],
-                $data['ip_address'],
-                $data['user_agent'],
-            ]
-        );
-        return (int) $db->lastInsertId();
+        return Database::getInstance()->insert('politicas_aceptacion', [
+            'usuario_id' => $data['usuario_id'],
+            'email'      => $data['email'],
+            'politica'   => $data['politica'],
+            'decision'   => $data['decision'],
+            'ip_address' => $data['ip_address'],
+            'user_agent' => $data['user_agent'],
+        ]);
     }
 
     public static function registrarDecisiones(int $userId, string $email, array $decisiones, string $ip, ?string $userAgent): void
