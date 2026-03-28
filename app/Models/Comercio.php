@@ -28,7 +28,6 @@ class Comercio
              FROM comercios c
              LEFT JOIN resenas r ON c.id = r.comercio_id AND r.estado = 'aprobada'
              WHERE c.slug = ? AND c.activo = 1
-                   AND (c.plan_fin IS NULL OR c.plan_fin >= CURDATE())
              GROUP BY c.id",
             [$slug]
         );
