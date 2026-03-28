@@ -69,6 +69,7 @@ class ComercioController extends Controller
             return;
         }
 
+        $inactivo = !$comercio['activo'];
         $id = (int) $comercio['id'];
 
         // Datos complementarios
@@ -79,9 +80,11 @@ class ComercioController extends Controller
         $relacionados = Comercio::getRelacionados($id, 4);
         $banners     = Banner::getByTipo('sidebar');
 
-        // Tracking
-        Comercio::incrementVisitas($id);
-        VisitTracker::track($id, "/comercio/{$slug}", 'comercio');
+        // Tracking (no contar visitas de fichas inactivas)
+        if (!$inactivo) {
+            Comercio::incrementVisitas($id);
+            VisitTracker::track($id, "/comercio/{$slug}", 'comercio');
+        }
 
         // SEO
         $catPrincipal = '';
@@ -113,7 +116,9 @@ class ComercioController extends Controller
             'keywords'      => $comercio['seo_keywords'] ?? '',
             'og_image'      => $ogImage,
             'og_type'       => 'business.business',
+            'noindex'       => $inactivo,
             'comercio'      => $comercio,
+            'inactivo'      => $inactivo,
             'fotos'         => $fotos,
             'horarios'      => $horarios,
             'resenas'       => $resenas,
@@ -121,7 +126,7 @@ class ComercioController extends Controller
             'relacionados'  => $relacionados,
             'banners'       => $banners,
             'breadcrumbs'   => $breadcrumbs,
-            'schemas'       => [
+            'schemas'       => $inactivo ? [] : [
                 Seo::schemaLocalBusiness($comercio, $horarios),
                 Seo::schemaBreadcrumbs($breadcrumbs),
             ],

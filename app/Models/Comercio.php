@@ -27,7 +27,7 @@ class Comercio
                     COUNT(DISTINCT r.id) as total_resenas
              FROM comercios c
              LEFT JOIN resenas r ON c.id = r.comercio_id AND r.estado = 'aprobada'
-             WHERE c.slug = ? AND c.activo = 1
+             WHERE c.slug = ?
              GROUP BY c.id",
             [$slug]
         );

@@ -1,7 +1,7 @@
 <?php
 /**
  * Vista detalle de comercio
- * Variables: $comercio, $fotos, $horarios, $resenas, $distribucion, $relacionados, $banners
+ * Variables: $comercio, $inactivo, $fotos, $horarios, $resenas, $distribucion, $relacionados, $banners
  */
 $pageType = 'comercio';
 $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -13,6 +13,13 @@ $hoy = (int) date('w');
 
 <section class="section">
     <div class="container">
+        <?php if (!empty($inactivo)): ?>
+            <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.25rem;text-align:center">
+                <p style="margin:0;color:#991B1B;font-size:0.95rem;font-weight:600">
+                    Este comercio no est&aacute; activo actualmente. La informaci&oacute;n puede no estar actualizada.
+                </p>
+            </div>
+        <?php endif; ?>
         <div class="comercio-layout">
 
             <!-- Contenido principal -->
