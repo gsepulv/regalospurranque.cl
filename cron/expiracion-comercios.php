@@ -57,24 +57,58 @@ try {
 
     if (empty($vencidos)) {
         cronLog("No hay comercios vencidos.");
-        exit(0);
     }
 
-    $count = 0;
+    // Separar freemiums (auto-renovar) de pagos (desactivar)
+    $freemiums = [];
+    $pagos = [];
     foreach ($vencidos as $c) {
+        if ($c['plan'] === 'freemium') {
+            $freemiums[] = $c;
+        } else {
+            $pagos[] = $c;
+        }
+    }
+
+    // Auto-renovar freemiums
+    $countRenovados = 0;
+    if (!empty($freemiums)) {
+        $planFreemium = $db->fetch(
+            "SELECT duracion_dias FROM planes_config WHERE slug = 'freemium' AND activo = 1"
+        );
+        $duracion = $planFreemium ? (int)$planFreemium['duracion_dias'] : 30;
+
+        foreach ($freemiums as $c) {
+            $db->execute(
+                "UPDATE comercios SET plan_inicio = CURDATE(), plan_fin = DATE_ADD(CURDATE(), INTERVAL ? DAY) WHERE id = ?",
+                [$duracion, $c['id']]
+            );
+            $countRenovados++;
+            cronLog("Auto-renovado freemium: {$c['nombre']} (ID {$c['id']}, nuevo vencimiento: " . date('Y-m-d', strtotime("+{$duracion} days")) . ")");
+        }
+    }
+
+    // Desactivar planes pagos vencidos
+    $countDesactivados = 0;
+    foreach ($pagos as $c) {
         $db->execute(
             "UPDATE comercios SET activo = 0 WHERE id = ?",
             [$c['id']]
         );
-        $count++;
+        $countDesactivados++;
         cronLog("Desactivado: {$c['nombre']} (ID {$c['id']}, plan: {$c['plan']}, vencido: {$c['plan_fin']})");
     }
 
-    cronLog("Total desactivados: {$count}");
+    if ($countDesactivados > 0) {
+        cronLog("Total desactivados: {$countDesactivados}");
+    }
+    if ($countRenovados > 0) {
+        cronLog("Total freemiums auto-renovados: {$countRenovados}");
+    }
 
     // Registrar en admin_log
-    if ($count > 0) {
-        $nombres = array_column($vencidos, 'nombre');
+    if ($countDesactivados > 0) {
+        $nombres = array_column($pagos, 'nombre');
         $db->insert('admin_log', [
             'usuario_id'     => null,
             'usuario_nombre' => 'cron',
@@ -82,7 +116,20 @@ try {
             'accion'         => 'expiracion_automatica',
             'entidad_tipo'   => 'comercio',
             'entidad_id'     => null,
-            'detalle'        => "Desactivados {$count} comercios vencidos: " . implode(', ', $nombres),
+            'detalle'        => "Desactivados {$countDesactivados} comercios vencidos: " . implode(', ', $nombres),
+            'ip'             => '127.0.0.1',
+        ]);
+    }
+    if ($countRenovados > 0) {
+        $nombres = array_column($freemiums, 'nombre');
+        $db->insert('admin_log', [
+            'usuario_id'     => null,
+            'usuario_nombre' => 'cron',
+            'modulo'         => 'comercios',
+            'accion'         => 'freemium_auto_renovacion',
+            'entidad_tipo'   => 'comercio',
+            'entidad_id'     => null,
+            'detalle'        => "Auto-renovados {$countRenovados} freemiums: " . implode(', ', $nombres),
             'ip'             => '127.0.0.1',
         ]);
     }
