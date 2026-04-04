@@ -50,7 +50,6 @@ class SitemapService
             ['path' => '/comercios',     'priority' => '0.8', 'freq' => 'weekly',  'lastmod' => $today],
             ['path' => '/noticias',      'priority' => '0.8', 'freq' => 'daily',   'lastmod' => $today],
             ['path' => '/mapa',          'priority' => '0.7', 'freq' => 'weekly',  'lastmod' => $today],
-            ['path' => '/buscar',        'priority' => '0.6', 'freq' => 'weekly',  'lastmod' => $today],
             ['path' => '/contacto',      'priority' => '0.6', 'freq' => 'monthly', 'lastmod' => $today],
             ['path' => '/planes',        'priority' => '0.5', 'freq' => 'monthly', 'lastmod' => $today],
             // /registrar-comercio: landing de captación, debe indexarse

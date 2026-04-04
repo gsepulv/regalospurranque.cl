@@ -69,7 +69,7 @@ class CategoriaController extends Controller
         ];
 
         // noindex para categorías sin comercios (thin content)
-        $noindex = $total === 0;
+        $noindex = false;
         $seoDesc = $categoria['descripcion']
             ?: ($total > 0
                 ? "Los mejores comercios de {$categoria['nombre']} en Purranque, Chile. Encuentra {$total} opciones con ubicación, contacto y reseñas."
