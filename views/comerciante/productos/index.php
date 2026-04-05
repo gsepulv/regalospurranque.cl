@@ -78,9 +78,15 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
                             <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem">
                                 <div style="min-width:0">
                                     <strong style="font-size:0.95rem;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><?= e($p['nombre']) ?></strong>
-                                    <?php if ($p['precio']): ?>
-                                        <span style="color:#166534;font-weight:600;font-size:0.9rem">$ <?= number_format($p['precio'], 0, '', '.') ?></span>
-                                    <?php endif; ?>
+                                    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-top:2px">
+                                        <?php if ($p['precio']): ?>
+                                            <span style="color:#166534;font-weight:600;font-size:0.9rem">$ <?= number_format($p['precio'], 0, '', '.') ?></span>
+                                        <?php endif; ?>
+                                        <span style="font-size:0.75rem;color:#999">&#128065; <?= $p['vistas'] ?? 0 ?></span>
+                                        <?php if (($p['estado'] ?? 'disponible') !== 'disponible'): ?>
+                                            <span style="font-size:0.7rem;padding:1px 6px;border-radius:10px;background:<?= ($p['estado'] ?? '') === 'vendido' ? '#ffebee' : '#fff8e1' ?>;color:<?= ($p['estado'] ?? '') === 'vendido' ? '#c62828' : '#f57f17' ?>"><?= ucfirst($p['estado'] ?? '') ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                                 <div style="display:flex;gap:0.5rem;flex-shrink:0">
                                     <?php if (!$p['activo']): ?>

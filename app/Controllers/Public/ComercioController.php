@@ -85,6 +85,7 @@ class ComercioController extends Controller
         // Tracking (no contar visitas de fichas inactivas)
         if (!$inactivo) {
             Comercio::incrementVisitas($id);
+            if (!empty($productos)) Producto::incrementVistas($id);
             VisitTracker::track($id, "/comercio/{$slug}", 'comercio');
         }
 

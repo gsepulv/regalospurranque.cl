@@ -136,4 +136,15 @@ class Producto
     {
         return Database::getInstance()->update('productos', ['estado' => $estado], 'id = ?', [$id]);
     }
+
+    /**
+     * Incrementar vistas de todos los productos activos de un comercio
+     */
+    public static function incrementVistas(int $comercioId): void
+    {
+        Database::getInstance()->execute(
+            "UPDATE productos SET vistas = vistas + 1 WHERE comercio_id = ? AND activo = 1",
+            [$comercioId]
+        );
+    }
 }

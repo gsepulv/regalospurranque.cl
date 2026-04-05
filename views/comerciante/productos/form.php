@@ -93,6 +93,33 @@ $condicion   = $old['condicion'] ?? $producto['condicion'] ?? '';
                 <small style="color:#9CA3AF;font-size:0.75rem">Déjalo en blanco si prefieres no mostrar precio</small>
             </div>
 
+            <div style="margin-bottom:1rem" id="stockGroup">
+                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Unidades disponibles (opcional)</label>
+                <input type="number" name="stock" value="<?= $stock ?>" min="0" step="1"
+                       class="form-control" placeholder="Ej: 10">
+                <small style="color:#9CA3AF;font-size:0.75rem">Deja vac&iacute;o si no manejas stock</small>
+            </div>
+
+            <div style="margin-bottom:1rem" id="condicionGroup">
+                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Condici&oacute;n</label>
+                <select name="condicion" class="form-control">
+                    <option value="">&#8212; Sin especificar &#8212;</option>
+                    <option value="nuevo" <?= $condicion === 'nuevo' ? 'selected' : '' ?>>Nuevo</option>
+                    <option value="usado" <?= $condicion === 'usado' ? 'selected' : '' ?>>Usado</option>
+                    <option value="reacondicionado" <?= $condicion === 'reacondicionado' ? 'selected' : '' ?>>Reacondicionado</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom:1rem">
+                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Estado *</label>
+                <select name="estado" class="form-control">
+                    <option value="disponible" <?= $estado === 'disponible' ? 'selected' : '' ?>>&#9989; Disponible</option>
+                    <option value="vendido" <?= $estado === 'vendido' ? 'selected' : '' ?>>&#128308; Vendido</option>
+                    <option value="reservado" <?= $estado === 'reservado' ? 'selected' : '' ?>>&#128993; Reservado</option>
+                    <option value="agotado" <?= $estado === 'agotado' ? 'selected' : '' ?>>&#9899; Agotado</option>
+                </select>
+            </div>
+
             <div style="margin-bottom:1rem">
                 <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Imagen del producto</label>
                 <?php if ($esEdicion && !empty($producto['imagen'])): ?>
