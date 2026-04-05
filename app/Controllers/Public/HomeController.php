@@ -7,6 +7,7 @@ use App\Models\Comercio;
 use App\Models\Noticia;
 use App\Models\Banner;
 use App\Models\FechaEspecial;
+use App\Models\Producto;
 use App\Services\Seo;
 
 /**
@@ -24,6 +25,7 @@ class HomeController extends Controller
         $fechasCalendario = [];
         $fechasComerciales = [];
         $proximaFecha = null;
+        $productosDestacados = [];
 
         $hasComercio = fn($item) => ((int)($item['comercios_count'] ?? 0)) > 0;
 
@@ -36,6 +38,7 @@ class HomeController extends Controller
             $fechasCalendario    = array_values(array_filter(FechaEspecial::getAllByTipo('calendario'), $hasComercio));
             $fechasComerciales   = array_values(array_filter(FechaEspecial::getAllByTipo('comercial'), $hasComercio));
             $proximaFecha        = FechaEspecial::getProximaConFecha();
+            $productosDestacados = Producto::getDestacadosParaHome(8);
         } catch (\Throwable $e) {
             // Sin BD, la home muestra estructura vacia
         }
@@ -51,6 +54,7 @@ class HomeController extends Controller
             'fechasCalendario'   => $fechasCalendario,
             'fechasComerciales'  => $fechasComerciales,
             'proximaFecha'       => $proximaFecha,
+            'productosDestacados' => $productosDestacados,
             'og_image'           => asset('img/og/og-regalos-purranque.jpg'),
             'keywords'           => 'comercios purranque, directorio comercial purranque, tiendas purranque, regalos purranque, servicios purranque',
             'schemas'            => [Seo::schemaWebSite()],

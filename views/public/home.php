@@ -275,6 +275,39 @@
 </section>
 <?php endif; ?>
 
+<!-- Productos destacados -->
+<?php if (!empty($productosDestacados)): ?>
+<section class="section section--alt">
+    <div class="container">
+        <h2 class="section__title">&#127991; Lo nuevo en Purranque</h2>
+        <p class="text-center text-muted mb-4">Descubre lo que ofrecen nuestros comercios locales</p>
+        <div class="grid grid--4">
+            <?php foreach ($productosDestacados as $prod): ?>
+                <a href="<?= url('/comercio/' . $prod['comercio_slug']) ?>" class="card" style="text-decoration:none">
+                    <div style="aspect-ratio:1/1;background:#f0f0f0;overflow:hidden">
+                        <img src="<?= asset('img/productos/' . $prod['comercio_id'] . '/thumbs/' . $prod['imagen']) ?>"
+                             alt="<?= e($prod['nombre']) ?>"
+                             style="width:100%;height:100%;object-fit:cover"
+                             loading="lazy"
+                             onerror="this.src='<?= asset('img/productos/' . $prod['comercio_id'] . '/' . $prod['imagen']) ?>'">
+                    </div>
+                    <div class="card__body">
+                        <h3 class="card__title" style="font-size:0.95rem;margin-bottom:0.25rem"><?= e($prod['nombre']) ?></h3>
+                        <p class="card__text card__text--small" style="margin-bottom:0.25rem"><?= e($prod['comercio_nombre']) ?></p>
+                        <?php if ($prod['precio']): ?>
+                            <span style="color:#166534;font-weight:700;font-size:0.95rem">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
+                        <?php endif; ?>
+                    </div>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <div class="text-center mt-3">
+            <a href="<?= url('/comercios') ?>" class="btn btn--outline">Ver todos los comercios &rarr;</a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <!-- Noticias -->
 <?php if (!empty($noticias)): ?>
 <section class="section section-noticias-home">
