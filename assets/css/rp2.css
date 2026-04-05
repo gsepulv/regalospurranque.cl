@@ -496,13 +496,13 @@ a.card:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 420px;
+    min-height: 280px;
     background-color: var(--color-dark);
     background-size: cover;
     background-position: center;
     color: var(--color-white);
     text-align: center;
-    padding: var(--spacing-16) var(--spacing-4);
+    padding: var(--spacing-6) var(--spacing-4);
 }
 
 .hero::before {
@@ -523,20 +523,20 @@ a.card:hover {
     font-size: var(--font-size-4xl);
     font-weight: var(--font-weight-bold);
     color: var(--color-white);
-    margin-bottom: var(--spacing-4);
+    margin-bottom: var(--spacing-2);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .hero__subtitle {
     font-size: var(--font-size-lg);
     color: rgba(255, 255, 255, 0.9);
-    margin-bottom: var(--spacing-8);
+    margin-bottom: var(--spacing-4);
 }
 
 /* Hero countdown variant */
 .hero--countdown {
     background: linear-gradient(135deg, #e53e3e 0%, #dd6b20 100%);
-    min-height: 420px;
+    min-height: 280px;
 }
 
 .hero--countdown::before {
@@ -557,15 +557,15 @@ a.card:hover {
 
 .hero__fecha-icon {
     display: block;
-    font-size: 3rem;
-    margin-bottom: var(--spacing-3);
+    font-size: 2rem;
+    margin-bottom: var(--spacing-1);
 }
 
 .hero__countdown {
     display: flex;
     justify-content: center;
     gap: var(--spacing-6);
-    margin: var(--spacing-8) 0;
+    margin: var(--spacing-3) 0;
 }
 
 .countdown__item {
@@ -575,7 +575,7 @@ a.card:hover {
 }
 
 .countdown__number {
-    font-size: 3rem;
+    font-size: 2.2rem;
     font-weight: var(--font-weight-bold);
     color: var(--color-white);
     line-height: 1;
@@ -1631,8 +1631,8 @@ textarea.form-control {
 
     /* Hero */
     .hero {
-        min-height: 320px;
-        padding: var(--spacing-10) var(--spacing-4);
+        min-height: 240px;
+        padding: var(--spacing-4) var(--spacing-4);
     }
 
     .hero__title {
@@ -1670,7 +1670,7 @@ textarea.form-control {
 
     /* Hero countdown mobile */
     .hero--countdown {
-        min-height: 360px;
+        min-height: 280px;
     }
 
     .countdown__number {
