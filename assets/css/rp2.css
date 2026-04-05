@@ -2485,7 +2485,7 @@ textarea.form-control {
    -------------------------------------------------------------------------- */
 .hero--banner {
     position: relative;
-    height: 480px;
+    height: 250px;
     overflow: hidden;
 }
 
@@ -2527,7 +2527,7 @@ textarea.form-control {
     z-index: 2;
     color: var(--color-white);
     text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    padding-top: 100px;
+    padding-top: 30px;
     text-align: center;
 }
 
@@ -2575,7 +2575,7 @@ textarea.form-control {
 
 .hero-dots {
     position: absolute;
-    bottom: 5rem;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 4;
@@ -2600,10 +2600,10 @@ textarea.form-control {
 
 @media (max-width: 768px) {
     .hero--banner {
-        height: 380px;
+        height: 180px;
     }
     .hero-slide__content {
-        padding-top: 60px;
+        padding-top: 20px;
     }
     .hero-slide__content h2 {
         font-size: var(--font-size-2xl);
@@ -2613,7 +2613,7 @@ textarea.form-control {
         padding: var(--spacing-1) var(--spacing-2);
     }
     .hero-dots {
-        bottom: 4.5rem;
+        bottom: 1rem;
     }
 }
 
