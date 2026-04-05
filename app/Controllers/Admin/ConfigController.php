@@ -163,7 +163,7 @@ class ConfigController extends Controller
         $destPath = $destDir . '/' . $filename;
 
         if (move_uploaded_file($file['tmp_name'], $destPath)) {
-            return '/assets/img/config/' . $filename;
+            return 'img/config/' . $filename;
         }
 
         return null;
