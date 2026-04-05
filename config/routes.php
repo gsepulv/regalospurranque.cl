@@ -323,4 +323,12 @@ return [
     ['POST', '/mi-comercio/olvide-contrasena',  'Public\\ComercianteController@sendResetLink',      []],
     ['GET',  '/mi-comercio/reset/{token}',      'Public\\ComercianteController@resetPasswordForm',  []],
     ['POST', '/mi-comercio/reset/{token}',      'Public\\ComercianteController@resetPassword',      []],
+
+    // ── Productos del comerciante ────────────────────────────
+    ['GET',  '/mi-comercio/productos',              'Public\\ComercianteController@productos',          []],
+    ['GET',  '/mi-comercio/productos/crear',        'Public\\ComercianteController@productoCrear',      []],
+    ['POST', '/mi-comercio/productos/guardar',      'Public\\ComercianteController@productoGuardar',    []],
+    ['GET',  '/mi-comercio/productos/editar/{id}',  'Public\\ComercianteController@productoEditar',     []],
+    ['POST', '/mi-comercio/productos/actualizar/{id}', 'Public\\ComercianteController@productoActualizar', []],
+    ['POST', '/mi-comercio/productos/eliminar/{id}',   'Public\\ComercianteController@productoEliminar',   []],
 ];

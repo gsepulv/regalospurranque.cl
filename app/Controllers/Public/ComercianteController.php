@@ -9,6 +9,7 @@ use App\Models\Comercio;
 use App\Models\Configuracion;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Models\Producto;
 use App\Models\RenovacionComercio;
 use App\Services\Captcha;
 use App\Services\FileManager;
@@ -848,6 +849,329 @@ class ComercianteController extends Controller
         $_SESSION['flash_success'] = 'Datos actualizados correctamente.';
         header('Location: ' . url('/mi-comercio/perfil'));
         exit;
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PRODUCTOS DEL COMERCIANTE
+    // ══════════════════════════════════════════════════════════
+
+    /**
+     * Listar productos del comerciante
+     */
+    public function productos(): void
+    {
+        if (!$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $comercio = Comercio::find($comercioId);
+        if (!$comercio) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        $this->render('comerciante/productos/index', [
+            'title'          => 'Mis productos — ' . SITE_NAME,
+            'noindex'        => true,
+            'comercio'       => $comercio,
+            'productos'      => Producto::findByComercioId($comercioId, false),
+            'totalProductos' => Producto::countByComercioId($comercioId),
+            'maxProductos'   => $maxProductos,
+            'plan'           => $plan,
+        ]);
+    }
+
+    /**
+     * Formulario de nuevo producto
+     */
+    public function productoCrear(): void
+    {
+        if (!$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $comercio = Comercio::find($comercioId);
+        if (!$comercio) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        if (Producto::countByComercioId($comercioId) >= $maxProductos) {
+            $_SESSION['flash_error'] = 'Has alcanzado el límite de productos de tu plan.';
+            header('Location: ' . url('/mi-comercio/productos'));
+            exit;
+        }
+
+        $this->render('comerciante/productos/form', [
+            'title'    => 'Nuevo producto — ' . SITE_NAME,
+            'noindex'  => true,
+            'comercio' => $comercio,
+            'producto' => null,
+        ]);
+    }
+
+    /**
+     * Guardar nuevo producto (POST)
+     */
+    public function productoGuardar(): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $comercio = Comercio::find($comercioId);
+        if (!$comercio) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        if (Producto::countByComercioId($comercioId) >= $maxProductos) {
+            $_SESSION['flash_error'] = 'Has alcanzado el límite de productos de tu plan.';
+            header('Location: ' . url('/mi-comercio/productos'));
+            exit;
+        }
+
+        $nombre      = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $precio      = $_POST['precio'] ?? null;
+        $activo      = isset($_POST['activo']) ? 1 : 0;
+
+        $errores = [];
+        if (empty($nombre)) {
+            $errores[] = 'El nombre del producto es obligatorio.';
+        } elseif (mb_strlen($nombre) > 150) {
+            $errores[] = 'El nombre no puede superar los 150 caracteres.';
+        }
+        if (mb_strlen($descripcion) > 500) {
+            $errores[] = 'La descripción no puede superar los 500 caracteres.';
+        }
+        if ($precio !== null && $precio !== '') {
+            $precio = (int) $precio;
+            if ($precio < 0) {
+                $errores[] = 'El precio debe ser mayor o igual a 0.';
+            }
+        } else {
+            $precio = null;
+        }
+
+        // Imagen
+        $imagenNombre = null;
+        if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['imagen']['size'] > 2 * 1024 * 1024) {
+                $errores[] = 'La imagen no puede superar los 2 MB.';
+            } else {
+                $imagenNombre = FileManager::subirImagen($_FILES['imagen'], 'productos/' . $comercioId, 800);
+                if (!$imagenNombre) {
+                    $errores[] = 'Error al subir la imagen. Solo se permiten JPG, PNG o WebP.';
+                }
+            }
+        }
+
+        if (!empty($errores)) {
+            $_SESSION['flash_errors'] = $errores;
+            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'precio' => $precio, 'activo' => $activo];
+            header('Location: ' . url('/mi-comercio/productos/crear'));
+            exit;
+        }
+
+        $data = [
+            'comercio_id' => $comercioId,
+            'nombre'      => $nombre,
+            'descripcion' => $descripcion ?: null,
+            'precio'      => $precio,
+            'activo'      => $activo,
+            'orden'       => Producto::countByComercioId($comercioId),
+        ];
+        if ($imagenNombre) {
+            $data['imagen'] = $imagenNombre;
+        }
+
+        Producto::create($data);
+
+        $_SESSION['flash_success'] = 'Producto creado correctamente.';
+        header('Location: ' . url('/mi-comercio/productos'));
+        exit;
+    }
+
+    /**
+     * Formulario de edicion de producto
+     */
+    public function productoEditar(int $id): void
+    {
+        if (!$this->isLogueado()) {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $comercio = Comercio::find($comercioId);
+        $producto = Producto::findById($id);
+
+        if (!$comercio || !$producto || $producto['comercio_id'] != $comercioId) {
+            $_SESSION['flash_error'] = 'Producto no encontrado.';
+            header('Location: ' . url('/mi-comercio/productos'));
+            exit;
+        }
+
+        $this->render('comerciante/productos/form', [
+            'title'    => 'Editar producto — ' . SITE_NAME,
+            'noindex'  => true,
+            'comercio' => $comercio,
+            'producto' => $producto,
+        ]);
+    }
+
+    /**
+     * Actualizar producto (POST)
+     */
+    public function productoActualizar(int $id): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $comercio = Comercio::find($comercioId);
+        $producto = Producto::findById($id);
+
+        if (!$comercio || !$producto || $producto['comercio_id'] != $comercioId) {
+            $_SESSION['flash_error'] = 'Producto no encontrado.';
+            header('Location: ' . url('/mi-comercio/productos'));
+            exit;
+        }
+
+        $nombre      = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $precio      = $_POST['precio'] ?? null;
+        $activo      = isset($_POST['activo']) ? 1 : 0;
+
+        $errores = [];
+        if (empty($nombre)) {
+            $errores[] = 'El nombre del producto es obligatorio.';
+        } elseif (mb_strlen($nombre) > 150) {
+            $errores[] = 'El nombre no puede superar los 150 caracteres.';
+        }
+        if (mb_strlen($descripcion) > 500) {
+            $errores[] = 'La descripcion no puede superar los 500 caracteres.';
+        }
+        if ($precio !== null && $precio !== '') {
+            $precio = (int) $precio;
+            if ($precio < 0) {
+                $errores[] = 'El precio debe ser mayor o igual a 0.';
+            }
+        } else {
+            $precio = null;
+        }
+
+        // Imagen
+        $imagenNombre = null;
+        if (!empty($_FILES['imagen']['name']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['imagen']['size'] > 2 * 1024 * 1024) {
+                $errores[] = 'La imagen no puede superar los 2 MB.';
+            } else {
+                $imagenNombre = FileManager::subirImagen($_FILES['imagen'], 'productos/' . $comercioId, 800);
+                if (!$imagenNombre) {
+                    $errores[] = 'Error al subir la imagen. Solo se permiten JPG, PNG o WebP.';
+                }
+            }
+        }
+
+        if (!empty($errores)) {
+            $_SESSION['flash_errors'] = $errores;
+            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'precio' => $precio, 'activo' => $activo];
+            header('Location: ' . url('/mi-comercio/productos/editar/' . $id));
+            exit;
+        }
+
+        $data = [
+            'nombre'      => $nombre,
+            'descripcion' => $descripcion ?: null,
+            'precio'      => $precio,
+            'activo'      => $activo,
+        ];
+        if ($imagenNombre) {
+            // Eliminar imagen anterior
+            if (!empty($producto['imagen'])) {
+                $this->eliminarImagenProducto($comercioId, $producto['imagen']);
+            }
+            $data['imagen'] = $imagenNombre;
+        }
+
+        Producto::update($id, $data);
+
+        $_SESSION['flash_success'] = 'Producto actualizado correctamente.';
+        header('Location: ' . url('/mi-comercio/productos'));
+        exit;
+    }
+
+    /**
+     * Eliminar producto (POST)
+     */
+    public function productoEliminar(int $id): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $producto = Producto::findById($id);
+
+        if (!$producto || $producto['comercio_id'] != $comercioId) {
+            $_SESSION['flash_error'] = 'Producto no encontrado.';
+            header('Location: ' . url('/mi-comercio/productos'));
+            exit;
+        }
+
+        // Eliminar imagen del disco
+        if (!empty($producto['imagen'])) {
+            $this->eliminarImagenProducto($comercioId, $producto['imagen']);
+        }
+
+        Producto::delete($id);
+
+        $_SESSION['flash_success'] = 'Producto eliminado.';
+        header('Location: ' . url('/mi-comercio/productos'));
+        exit;
+    }
+
+    /**
+     * Eliminar archivos de imagen de un producto (original, thumb, webp)
+     */
+    private function eliminarImagenProducto(int $comercioId, string $imagen): void
+    {
+        $basePath = UPLOAD_PATH . '/productos/' . $comercioId;
+        $files = [
+            $basePath . '/' . $imagen,
+            $basePath . '/thumbs/' . $imagen,
+        ];
+        // Versiones WebP
+        $webpName = pathinfo($imagen, PATHINFO_FILENAME) . '.webp';
+        if (pathinfo($imagen, PATHINFO_EXTENSION) !== 'webp') {
+            $files[] = $basePath . '/' . $webpName;
+            $files[] = $basePath . '/thumbs/' . $webpName;
+        }
+        foreach ($files as $f) {
+            if (file_exists($f)) {
+                @unlink($f);
+            }
+        }
     }
 
     // ══════════════════════════════════════════════════════════

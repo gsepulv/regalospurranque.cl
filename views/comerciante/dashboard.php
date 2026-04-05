@@ -135,6 +135,9 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
                 <a href="<?= url('/mi-comercio/editar') ?>" class="btn btn--primary" style="flex:1;text-align:center;padding:0.75rem">
                     ✏️ Editar información
                 </a>
+                <a href="<?= url('/mi-comercio/productos') ?>" class="btn btn--outline" style="flex:1;text-align:center;padding:0.75rem">
+                    🏷️ Mis productos
+                </a>
                 <?php if ($comercio['activo']): ?>
                     <a href="<?= url('/comercio/' . $comercio['slug']) ?>" class="btn btn--outline" style="flex:1;text-align:center;padding:0.75rem" target="_blank">
                         👁️ Ver mi ficha pública

@@ -133,6 +133,48 @@ $hoy = (int) date('w');
                     </div>
                 <?php endif; ?>
 
+                <!-- Catálogo de productos -->
+                <?php if (!empty($productos)): ?>
+                    <div class="comercio-section">
+                        <h2>&#127991; Catálogo — <?= count($productos) ?> opci<?= count($productos) === 1 ? 'ón disponible' : 'ones disponibles' ?></h2>
+                        <div style="display:flex;flex-direction:column;gap:0.75rem">
+                            <?php foreach ($productos as $prod): ?>
+                                <div style="display:flex;gap:1rem;align-items:flex-start;padding:0.75rem;border:1px solid #e5e7eb;border-radius:10px">
+                                    <?php if (!empty($prod['imagen'])): ?>
+                                        <img src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
+                                             alt="<?= e($prod['nombre']) ?>"
+                                             style="width:80px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0"
+                                             loading="lazy"
+                                             onerror="this.src='<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>'">
+                                    <?php endif; ?>
+                                    <div style="flex:1;min-width:0">
+                                        <strong style="font-size:0.95rem;display:block"><?= e($prod['nombre']) ?></strong>
+                                        <?php if (!empty($prod['descripcion'])): ?>
+                                            <p style="margin:0.25rem 0;font-size:0.85rem;color:#6B7280"><?= e($prod['descripcion']) ?></p>
+                                        <?php endif; ?>
+                                        <?php if ($prod['precio']): ?>
+                                            <span style="color:#166534;font-weight:700;font-size:0.95rem">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($comercio['whatsapp'])): ?>
+                                            <?php
+                                            $msgProd = 'Hola, vi el producto "' . $prod['nombre'] . '"';
+                                            if ($prod['precio']) $msgProd .= ' ($' . number_format($prod['precio'], 0, '', '.') . ')';
+                                            $msgProd .= ' en regalospurranque.cl y me interesa. ¿Está disponible?';
+                                            ?>
+                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>?text=<?= urlencode($msgProd) ?>"
+                                               target="_blank" rel="noopener"
+                                               style="display:inline-block;margin-top:0.5rem;font-size:0.8rem;color:#25D366;font-weight:600;text-decoration:none"
+                                               onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
+                                                &#128172; Consultar por WhatsApp
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
                 <!-- Galería de fotos -->
                 <?php if (!empty($fotos)): ?>
                     <div class="comercio-section">

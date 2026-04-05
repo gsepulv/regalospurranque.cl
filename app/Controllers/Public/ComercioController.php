@@ -7,6 +7,7 @@ use App\Models\Comercio;
 use App\Models\Categoria;
 use App\Models\Resena;
 use App\Models\Banner;
+use App\Models\Producto;
 use App\Services\VisitTracker;
 use App\Services\Seo;
 
@@ -79,6 +80,7 @@ class ComercioController extends Controller
         $distribucion = Resena::getDistribucion($id);
         $relacionados = Comercio::getRelacionados($id, 4);
         $banners     = Banner::getByTipo('sidebar');
+        $productos   = Producto::findByComercioId($id);
 
         // Tracking (no contar visitas de fichas inactivas)
         if (!$inactivo) {
@@ -125,6 +127,7 @@ class ComercioController extends Controller
             'distribucion'  => $distribucion,
             'relacionados'  => $relacionados,
             'banners'       => $banners,
+            'productos'     => $productos,
             'breadcrumbs'   => $breadcrumbs,
             'schemas'       => $inactivo ? [] : [
                 Seo::schemaLocalBusiness($comercio, $horarios),
