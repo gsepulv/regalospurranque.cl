@@ -42,8 +42,8 @@
     :root { <?= \App\Services\Theme::generateCssVariables() ?> }
     </style>
     <?php $cssFile = APP_ENV === 'production' ? 'css/rp2.min.css' : 'css/rp2.css'; ?>
-    <link rel="preload" href="<?= asset($cssFile . '?v=202603101200') ?>" as="style">
-    <link rel="stylesheet" href="<?= asset($cssFile . '?v=202603101200') ?>">
+    <link rel="preload" href="<?= asset($cssFile . '?v=202604051300') ?>" as="style">
+    <link rel="stylesheet" href="<?= asset($cssFile . '?v=202604051300') ?>">
     <?php if (!empty($extraCss)): ?>
     <link rel="stylesheet" href="<?= asset($extraCss) ?>">
     <?php endif; ?>
