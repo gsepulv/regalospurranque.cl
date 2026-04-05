@@ -40,6 +40,7 @@ return [
     // ── Compartir ───────────────────────────────────────────────
     ['GET',  '/compartir/{tipo}/{slug}', 'Public\\ShareController@show'],
     ['GET',  '/producto/{id}',                       'Public\\ComercioController@productoShare',       []],
+    ['GET',  '/producto/{id}/og-image',               'Public\\ComercioController@productoOgImage',    []],
 
     // ── Desuscripcion ──────────────────────────────────────────
     ['GET',  '/desuscribir/{token}',     'Public\\DesuscripcionController@confirmar'],

@@ -156,4 +156,136 @@ class ComercioController extends Controller
         ];
         include BASE_PATH . '/views/public/producto-share.php';
     }
+
+    /**
+     * Generate OG image for product sharing (1200x630)
+     */
+    public function productoOgImage(string $id): void
+    {
+        $id = (int) $id;
+        $producto = Producto::findByIdWithComercio($id);
+        if (!$producto) {
+            http_response_code(404);
+            exit;
+        }
+
+        $cacheDir = UPLOAD_PATH . '/og-cache';
+        if (!is_dir($cacheDir)) @mkdir($cacheDir, 0755, true);
+        $cachePath = $cacheDir . '/producto-' . $id . '.jpg';
+
+        // Check cache - regenerate if product was updated after cache
+        if (file_exists($cachePath)) {
+            $cacheTime = filemtime($cachePath);
+            $updatedAt = strtotime($producto['updated_at'] ?? '2000-01-01');
+            if ($cacheTime > $updatedAt) {
+                header('Content-Type: image/jpeg');
+                header('Cache-Control: public, max-age=86400');
+                readfile($cachePath);
+                exit;
+            }
+        }
+
+        // Canvas 1200x630
+        $w = 1200; $h = 630;
+        $img = imagecreatetruecolor($w, $h);
+        $white = imagecolorallocate($img, 255, 255, 255);
+        $grayBg = imagecolorallocate($img, 245, 245, 245);
+        $black = imagecolorallocate($img, 51, 51, 51);
+        $gray = imagecolorallocate($img, 153, 153, 153);
+        $green = imagecolorallocate($img, 76, 175, 80);
+        imagefill($img, 0, 0, $white);
+
+        // Bottom bar (120px)
+        $barH = 120;
+        $barY = $h - $barH;
+        imagefilledrectangle($img, 0, $barY, $w, $h, $grayBg);
+        // Thin green line separator
+        imagefilledrectangle($img, 0, $barY, $w, $barY + 3, $green);
+
+        $fontBold = '/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf';
+        $fontRegular = '/usr/share/fonts/dejavu/DejaVuSans.ttf';
+
+        // Load product image
+        $prodImgPath = UPLOAD_PATH . '/productos/' . $producto['comercio_id'] . '/' . ($producto['imagen'] ?? '');
+        $prodImg = null;
+        if (!empty($producto['imagen']) && file_exists($prodImgPath)) {
+            $ext = strtolower(pathinfo($prodImgPath, PATHINFO_EXTENSION));
+            if ($ext === 'jpg' || $ext === 'jpeg') $prodImg = @imagecreatefromjpeg($prodImgPath);
+            elseif ($ext === 'png') $prodImg = @imagecreatefrompng($prodImgPath);
+            elseif ($ext === 'webp') $prodImg = @imagecreatefromwebp($prodImgPath);
+        }
+
+        if ($prodImg) {
+            $pw = imagesx($prodImg); $ph = imagesy($prodImg);
+            // Max area for product image: 1200 x 510 (above bar)
+            $maxW = $w; $maxH = $barY;
+            $ratio = min($maxW / $pw, $maxH / $ph);
+            $newW = (int)($pw * $ratio);
+            $newH = (int)($ph * $ratio);
+            $dx = (int)(($w - $newW) / 2);
+            $dy = (int)(($maxH - $newH) / 2);
+            imagecopyresampled($img, $prodImg, $dx, $dy, 0, 0, $newW, $newH, $pw, $ph);
+            imagedestroy($prodImg);
+        } else {
+            // No image - show product initial large
+            $initial = mb_substr($producto['nombre'], 0, 1);
+            $bbox = imagettfbbox(80, 0, $fontBold, $initial);
+            $tw = $bbox[2] - $bbox[0]; $th = $bbox[1] - $bbox[7];
+            imagettftext($img, 80, 0, (int)(($w - $tw)/2), (int)(($barY - $th)/2 + $th), $gray, $fontBold, $initial);
+        }
+
+        // Bottom bar: logo + text
+        $logoPath = UPLOAD_PATH . '/logos/' . ($producto['comercio_logo'] ?? '');
+        $logoSize = 60;
+        $logoX = 30; $logoY = $barY + (int)(($barH - $logoSize) / 2);
+
+        if (!empty($producto['comercio_logo']) && file_exists($logoPath)) {
+            $ext = strtolower(pathinfo($logoPath, PATHINFO_EXTENSION));
+            $logoImg = null;
+            if ($ext === 'jpg' || $ext === 'jpeg') $logoImg = @imagecreatefromjpeg($logoPath);
+            elseif ($ext === 'png') $logoImg = @imagecreatefrompng($logoPath);
+            elseif ($ext === 'webp') $logoImg = @imagecreatefromwebp($logoPath);
+
+            if ($logoImg) {
+                $lw = imagesx($logoImg); $lh = imagesy($logoImg);
+                $logoResized = imagecreatetruecolor($logoSize, $logoSize);
+                imagecopyresampled($logoResized, $logoImg, 0, 0, 0, 0, $logoSize, $logoSize, $lw, $lh);
+                imagedestroy($logoImg);
+                imagecopy($img, $logoResized, $logoX, $logoY, 0, 0, $logoSize, $logoSize);
+                imagedestroy($logoResized);
+            }
+        } else {
+            // Placeholder circle with initial
+            $cx = $logoX + $logoSize/2; $cy = $logoY + $logoSize/2;
+            imagefilledellipse($img, (int)$cx, (int)$cy, $logoSize, $logoSize, $gray);
+            $ini = mb_substr($producto['comercio_nombre'], 0, 1);
+            $bbox2 = imagettfbbox(20, 0, $fontBold, $ini);
+            $tw2 = $bbox2[2] - $bbox2[0]; $th2 = $bbox2[1] - $bbox2[7];
+            imagettftext($img, 20, 0, (int)($cx - $tw2/2), (int)($cy + $th2/2), $white, $fontBold, $ini);
+        }
+
+        // Commerce name
+        $textX = $logoX + $logoSize + 16;
+        imagettftext($img, 18, 0, $textX, $barY + 50, $black, $fontBold, $producto['comercio_nombre']);
+        imagettftext($img, 12, 0, $textX, $barY + 75, $gray, $fontRegular, 'regalospurranque.cl');
+
+        // Price badge (top-right)
+        if ($producto['precio']) {
+            $priceTxt = '$ ' . number_format($producto['precio'], 0, '', '.');
+            $bbox3 = imagettfbbox(22, 0, $fontBold, $priceTxt);
+            $ptw = $bbox3[2] - $bbox3[0] + 30;
+            $px = $w - $ptw - 20; $py = 20;
+            imagefilledrectangle($img, $px, $py, $px + $ptw, $py + 45, $green);
+            imagettftext($img, 22, 0, $px + 15, $py + 33, $white, $fontBold, $priceTxt);
+        }
+
+        // Save and serve
+        imagejpeg($img, $cachePath, 90);
+        imagedestroy($img);
+
+        header('Content-Type: image/jpeg');
+        header('Cache-Control: public, max-age=86400');
+        readfile($cachePath);
+        exit;
+    }
 }

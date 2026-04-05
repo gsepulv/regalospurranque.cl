@@ -5,7 +5,7 @@
  */
 $ogTitle = e($producto['nombre']) . ' — ' . e($comercio['nombre']);
 $ogDesc = $producto['descripcion'] ? e($producto['descripcion']) : e($producto['nombre']) . ' disponible en ' . e($comercio['nombre']);
-$ogImage = SITE_URL . '/assets/img/productos/' . $producto['comercio_id'] . '/' . ($producto['imagen'] ?: ('../logos/' . $comercio['logo']));
+$ogImage = SITE_URL . '/producto/' . $producto['id'] . '/og-image';
 $ogUrl = SITE_URL . '/producto/' . $producto['id'];
 $precioFmt = $producto['precio'] ? number_format($producto['precio'], 0, ',', '.') : '';
 $redirectUrl = url('/comercio/' . $comercio['slug']) . '#producto-' . $producto['id'];
