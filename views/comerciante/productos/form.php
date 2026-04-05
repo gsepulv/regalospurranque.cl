@@ -20,6 +20,12 @@ $activo      = $old['activo'] ?? $producto['activo'] ?? 1;
         <div style="margin-bottom:1.5rem">
             <h1 style="font-size:1.5rem;margin:0"><?= $esEdicion ? 'Editar producto' : 'Nuevo producto' ?></h1>
             <a href="<?= url('/mi-comercio/productos') ?>" style="color:#6B7280;font-size:0.85rem;text-decoration:none">&larr; Volver a mis productos</a>
+            <?php if (isset($totalProductos, $maxProductos)):
+                $_restantes = $maxProductos - $totalProductos;
+                $_color = $_restantes <= 0 ? '#dc2626' : ($_restantes === 1 ? '#d97706' : '#6B7280');
+            ?>
+                <p style="font-size:0.85rem;margin:0.5rem 0 0;color:<?= $_color ?>">&#128230; <?= $totalProductos ?> de <?= $maxProductos ?> productos utilizados (Plan: <?= e($plan['nombre'] ?? 'Freemium') ?>)</p>
+            <?php endif; ?>
         </div>
 
         <?php if (!empty($errors)): ?>

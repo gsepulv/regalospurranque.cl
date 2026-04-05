@@ -915,10 +915,13 @@ class ComercianteController extends Controller
         }
 
         $this->render('comerciante/productos/form', [
-            'title'    => 'Nuevo producto — ' . SITE_NAME,
-            'noindex'  => true,
-            'comercio' => $comercio,
-            'producto' => null,
+            'title'          => 'Nuevo producto — ' . SITE_NAME,
+            'noindex'        => true,
+            'comercio'       => $comercio,
+            'producto'       => null,
+            'totalProductos' => Producto::countByComercioId($comercioId),
+            'maxProductos'   => $maxProductos,
+            'plan'           => $plan,
         ]);
     }
 
@@ -1032,11 +1035,16 @@ class ComercianteController extends Controller
             exit;
         }
 
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+
         $this->render('comerciante/productos/form', [
-            'title'    => 'Editar producto — ' . SITE_NAME,
-            'noindex'  => true,
-            'comercio' => $comercio,
-            'producto' => $producto,
+            'title'          => 'Editar producto — ' . SITE_NAME,
+            'noindex'        => true,
+            'comercio'       => $comercio,
+            'producto'       => $producto,
+            'totalProductos' => Producto::countByComercioId($comercioId),
+            'maxProductos'   => $plan['max_productos'] ?? 5,
+            'plan'           => $plan,
         ]);
     }
 
