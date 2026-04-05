@@ -136,46 +136,115 @@ $hoy = (int) date('w');
                 <?php endif; ?>
 
                 <!-- Catálogo de productos -->
+                <style>
+                .catalogo-grid{display:flex;flex-direction:column;gap:0}
+                .catalogo-card{display:flex;gap:1rem;padding:16px;border-bottom:1px solid #eee;align-items:flex-start}
+                .catalogo-card:last-child{border-bottom:none}
+                .catalogo-img{width:200px;height:200px;object-fit:cover;border-radius:8px;flex-shrink:0}
+                .catalogo-placeholder{width:200px;height:200px;border-radius:8px;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3rem}
+                .catalogo-info{flex:1;min-width:0}
+                .catalogo-nombre{font-size:1.2rem;font-weight:700;margin:0 0 0.25rem}
+                .catalogo-desc{font-size:0.9rem;color:#666;margin:0.25rem 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+                .catalogo-precio{font-size:1.3rem;font-weight:700;color:#4caf50;display:block;margin:0.5rem 0}
+                .catalogo-actions{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
+                .catalogo-btn{display:inline-flex;align-items:center;gap:0.35rem;padding:0.45rem 1rem;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:opacity 0.2s;font-family:inherit}
+                .catalogo-btn:hover{opacity:0.85}
+                .catalogo-btn--wa{background:#25D366;color:#fff}
+                .catalogo-btn--outline{background:transparent;color:#555;border:1.5px solid #ccc}
+                .catalogo-share-popup{display:none;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem}
+                .catalogo-share-popup.active{display:flex}
+                .catalogo-share-popup a{display:inline-flex;align-items:center;gap:0.3rem;padding:0.35rem 0.75rem;border-radius:16px;font-size:0.8rem;text-decoration:none;font-weight:600}
+                .catalogo-share-fb{background:#1877F2;color:#fff}
+                .catalogo-share-x{background:#000;color:#fff}
+                .catalogo-share-wa2{background:#25D366;color:#fff}
+                @media(max-width:600px){
+                    .catalogo-card{flex-direction:column;align-items:center;text-align:center}
+                    .catalogo-img,.catalogo-placeholder{width:100%;max-width:280px;height:200px}
+                    .catalogo-actions{justify-content:center}
+                    .catalogo-share-popup{justify-content:center}
+                }
+                </style>
                 <?php if (!empty($productos)): ?>
                     <div class="comercio-section">
                         <h2>&#127991; Catálogo — <?= count($productos) ?> opci<?= count($productos) === 1 ? 'ón disponible' : 'ones disponibles' ?></h2>
-                        <div style="display:flex;flex-direction:column;gap:0.75rem">
-                            <?php foreach ($productos as $prod): ?>
-                                <div style="display:flex;gap:1rem;align-items:flex-start;padding:0.75rem;border:1px solid #e5e7eb;border-radius:10px">
+                        <div class="catalogo-grid">
+                            <?php foreach ($productos as $prod):
+                                $prodUrl = url('/comercio/' . $comercio['slug']) . '#producto-' . $prod['id'];
+                                $prodPrecioFmt = $prod['precio'] ? '$' . number_format($prod['precio'], 0, '', '.') : '';
+                            ?>
+                                <div class="catalogo-card" id="producto-<?= $prod['id'] ?>">
                                     <?php if (!empty($prod['imagen'])): ?>
-                                        <img src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
+                                        <img class="catalogo-img"
+                                             src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
                                              alt="<?= e($prod['nombre']) ?>"
-                                             style="width:80px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0"
                                              loading="lazy"
                                              onerror="this.src='<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>'">
+                                    <?php else: ?>
+                                        <div class="catalogo-placeholder">&#128230;</div>
                                     <?php endif; ?>
-                                    <div style="flex:1;min-width:0">
-                                        <strong style="font-size:0.95rem;display:block"><?= e($prod['nombre']) ?></strong>
+                                    <div class="catalogo-info">
+                                        <h3 class="catalogo-nombre"><?= e($prod['nombre']) ?></h3>
                                         <?php if (!empty($prod['descripcion'])): ?>
-                                            <p style="margin:0.25rem 0;font-size:0.85rem;color:#6B7280"><?= e($prod['descripcion']) ?></p>
+                                            <p class="catalogo-desc"><?= e($prod['descripcion']) ?></p>
                                         <?php endif; ?>
                                         <?php if ($prod['precio']): ?>
-                                            <span style="color:#166534;font-weight:700;font-size:0.95rem">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
+                                            <span class="catalogo-precio">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
                                         <?php endif; ?>
-                                        <?php if (!empty($comercio['whatsapp'])): ?>
-                                            <?php
-                                            $msgProd = 'Hola, vi el producto "' . $prod['nombre'] . '"';
-                                            if ($prod['precio']) $msgProd .= ' ($' . number_format($prod['precio'], 0, '', '.') . ')';
-                                            $msgProd .= ' en regalospurranque.cl y me interesa. ¿Está disponible?';
+                                        <div class="catalogo-actions">
+                                            <?php if (!empty($comercio['whatsapp'])):
+                                                $msgProd = 'Hola, vi el producto "' . $prod['nombre'] . '"';
+                                                if ($prod['precio']) $msgProd .= ' (' . $prodPrecioFmt . ')';
+                                                $msgProd .= ' en regalospurranque.cl y me interesa. ¿Está disponible?';
                                             ?>
-                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>?text=<?= urlencode($msgProd) ?>"
-                                               target="_blank" rel="noopener"
-                                               style="display:inline-block;margin-top:0.5rem;font-size:0.8rem;color:#25D366;font-weight:600;text-decoration:none"
-                                               onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
-                                                &#128172; Consultar por WhatsApp
-                                            </a>
-                                        <?php endif; ?>
+                                                <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>?text=<?= urlencode($msgProd) ?>"
+                                                   target="_blank" rel="noopener"
+                                                   class="catalogo-btn catalogo-btn--wa"
+                                                   onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
+                                                    &#128172; Consultar por WhatsApp
+                                                </a>
+                                            <?php endif; ?>
+                                            <button class="catalogo-btn catalogo-btn--outline"
+                                                    onclick="catalogoCopiar(this)"
+                                                    data-url="<?= e($prodUrl) ?>">
+                                                &#128203; Copiar enlace
+                                            </button>
+                                            <button class="catalogo-btn catalogo-btn--outline"
+                                                    onclick="catalogoCompartir(this)"
+                                                    data-nombre="<?= e($prod['nombre']) ?>"
+                                                    data-desc="<?= e($prod['descripcion'] ?? '') ?>"
+                                                    data-url="<?= e($prodUrl) ?>">
+                                                &#128241; Compartir
+                                            </button>
+                                        </div>
+                                        <div class="catalogo-share-popup" id="share-popup-<?= $prod['id'] ?>">
+                                            <a class="catalogo-share-fb" href="#" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(this.closest('.catalogo-card').querySelector('[data-url]').dataset.url),'fb','width=600,height=400');return false">&#127760; Facebook</a>
+                                            <a class="catalogo-share-x" href="#" onclick="window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('<?= e($prod['nombre']) ?> '+'<?= $prodPrecioFmt ?>')+'&url='+encodeURIComponent('<?= e($prodUrl) ?>'),'tw','width=600,height=400');return false">&#120143; / Twitter</a>
+                                            <a class="catalogo-share-wa2" href="https://wa.me/?text=<?= urlencode($prod['nombre'] . ' ' . $prodPrecioFmt . ' ' . $prodUrl) ?>" target="_blank" rel="noopener">&#128172; WhatsApp</a>
+                                        </div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
+                <script>
+                function catalogoCopiar(btn){
+                    var url=btn.dataset.url;
+                    navigator.clipboard.writeText(url).then(function(){
+                        var orig=btn.innerHTML;btn.innerHTML='&#10003; Copiado';btn.style.color='#4caf50';btn.style.borderColor='#4caf50';
+                        setTimeout(function(){btn.innerHTML=orig;btn.style.color='';btn.style.borderColor='';},2000);
+                    });
+                }
+                function catalogoCompartir(btn){
+                    var nombre=btn.dataset.nombre,desc=btn.dataset.desc,url=btn.dataset.url;
+                    if(navigator.share){
+                        navigator.share({title:nombre,text:desc,url:url}).catch(function(){});
+                    }else{
+                        var popup=btn.closest('.catalogo-card').querySelector('.catalogo-share-popup');
+                        popup.classList.toggle('active');
+                    }
+                }
+                </script>
 
                 <!-- Galería de fotos -->
                 <?php if (!empty($fotos)): ?>
