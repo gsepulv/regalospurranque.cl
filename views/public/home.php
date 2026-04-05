@@ -303,6 +303,40 @@
 </section>
 <?php endif; ?>
 
+<!-- Onboarding: 3 pasos para comerciantes -->
+<section class="section" style="background:#f9f9f9">
+    <div class="container" style="max-width:900px;text-align:center">
+        <p style="color:#4caf50;font-weight:600;font-size:0.9rem;margin:0 0 0.5rem">&#127793; Tu camino comienza aquí</p>
+        <h2 class="section__title" style="margin-bottom:0.5rem">Tres pasos para mostrar tu negocio en Purranque</h2>
+        <p style="color:#6B7280;margin:0 0 2rem;font-size:0.95rem">No importa en qué etapa estés. Aquí todos empiezan igual y crecen a su ritmo.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;align-items:start" class="onboarding-grid">
+            <div style="text-align:center;padding:1.25rem">
+                <div style="width:48px;height:48px;background:#4caf50;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;margin-bottom:0.75rem">1</div>
+                <h3 style="font-size:1.05rem;margin:0 0 0.5rem">Regístrate y crea tu perfil</h3>
+                <p style="color:#6B7280;font-size:0.85rem;margin:0;line-height:1.5">Regístrate gratis, elige tu categoría, sube tus productos y cuenta tu historia. En minutos ya eres parte.</p>
+            </div>
+            <div style="text-align:center;padding:1.25rem">
+                <div style="width:48px;height:48px;background:#4caf50;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;margin-bottom:0.75rem">2</div>
+                <h3 style="font-size:1.05rem;margin:0 0 0.5rem">Purranque te descubre</h3>
+                <p style="color:#6B7280;font-size:0.85rem;margin:0;line-height:1.5">Tu negocio aparece en el directorio. Te buscan por nombre, categoría o producto. Ya no eres invisible.</p>
+            </div>
+            <div style="text-align:center;padding:1.25rem">
+                <div style="width:48px;height:48px;background:#4caf50;color:#fff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:700;margin-bottom:0.75rem">3</div>
+                <h3 style="font-size:1.05rem;margin:0 0 0.5rem">Conectas y creces</h3>
+                <p style="color:#6B7280;font-size:0.85rem;margin:0;line-height:1.5">Te escriben por WhatsApp, te dejan reseñas, te recomiendan. Cada interacción te hace más fuerte aquí.</p>
+            </div>
+        </div>
+
+        <a href="<?= url('/registrar-comercio') ?>" class="btn btn--primary" style="margin-top:1.5rem;padding:0.75rem 2rem;font-size:1rem;background:#4caf50;border-color:#4caf50">
+            &#127807; Empezar mi camino — es gratis &rarr;
+        </a>
+    </div>
+</section>
+<style>
+@media(max-width:600px){.onboarding-grid{grid-template-columns:1fr !important;gap:0.5rem !important}}
+</style>
+
 <!-- Scripts del hero slider -->
 <?php if (!empty($banners) && empty($proximaFecha) && count($banners) > 1): ?>
 <script>

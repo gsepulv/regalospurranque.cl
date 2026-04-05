@@ -97,6 +97,28 @@
     include BASE_PATH . '/views/partials/share-buttons.php';
     ?>
 
+    <!-- Widget flotante captación comerciantes -->
+    <div id="widgetComercio" style="display:none;position:fixed;bottom:20px;right:20px;z-index:999;font-family:inherit">
+        <div style="background:#4caf50;color:#fff;border-radius:28px;padding:0.65rem 1.25rem;box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem;font-weight:600;text-decoration:none;transition:transform 0.2s" onclick="window.location.href='<?= url('/registrar-comercio') ?>'" role="button">
+            <span style="font-size:1.2rem">&#127978;</span>
+            <span class="widget-comercio-text">¿Tienes un negocio? Publícalo gratis</span>
+            <button onclick="event.stopPropagation();document.getElementById('widgetComercio').style.display='none';sessionStorage.setItem('widgetCerrado','1')" style="background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;padding:0 0 0 0.25rem;line-height:1;opacity:0.8" aria-label="Cerrar">&times;</button>
+        </div>
+    </div>
+    <style>
+    @media(max-width:600px){.widget-comercio-text{display:none}}
+    </style>
+    <script>
+    (function(){
+        if(sessionStorage.getItem('widgetCerrado'))return;
+        setTimeout(function(){
+            var w=document.getElementById('widgetComercio');
+            if(w){w.style.display='block';w.style.animation='fadeIn 0.4s ease';}
+        },3000);
+    })();
+    </script>
+    <style>@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}</style>
+
     <button class="back-to-top" id="backToTop" aria-label="Volver arriba">&uarr;</button>
 
     <?php $jsFile = APP_ENV === 'production' ? 'js/app.min.js' : 'js/app.js'; ?>
