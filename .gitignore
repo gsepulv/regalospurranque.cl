@@ -31,7 +31,9 @@ assets/img/galeria/*
 assets/img/banners/*
 assets/img/noticias/*
 assets/img/og/*
+assets/img/productos/*
 assets/img/config/*
+!assets/img/productos/.gitkeep
 !assets/img/logos/.gitkeep
 !assets/img/portadas/.gitkeep
 !assets/img/galeria/.gitkeep
@@ -91,6 +93,9 @@ legales/prompt-*.md
 
 # TypeScript definitions (no usamos TS)
 *.d.ts
+
+# Logs de error
+error_log
 
 # Sistema
 .DS_Store
