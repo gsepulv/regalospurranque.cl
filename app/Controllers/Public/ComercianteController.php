@@ -1480,14 +1480,14 @@ class ComercianteController extends Controller
     public function productoFotoEliminar(int $id, int $fid): void
     {
         if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(403); echo json_encode(['error' => 'No autorizado']); exit;
+            header('Location: ' . url('/mi-comercio/login')); exit;
         }
         $uid = $_SESSION['comerciante']['id'];
         $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
         $producto = Producto::findById($id);
         $foto = ProductoFoto::findById($fid);
         if (!$comercio || !$producto || !$foto || $producto['comercio_id'] != $comercio['id'] || $foto['producto_id'] != $id) {
-            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+            $_SESSION['flash_error'] = 'Foto no encontrada.'; header('Location: ' . url('/mi-comercio/productos')); exit;
         }
         // Delete physical file
         $this->eliminarImagenProducto($comercio['id'], $foto['imagen']);
@@ -1500,30 +1500,30 @@ class ComercianteController extends Controller
         // Update productos.imagen with current principal
         $principal = ProductoFoto::getPrincipal($id);
         Producto::update($id, ['imagen' => $principal ? $principal['imagen'] : null]);
-        header('Content-Type: application/json');
-        echo json_encode(['ok' => true, 'remaining' => ProductoFoto::countByProductoId($id)]);
+        $_SESSION['flash_success'] = 'Foto eliminada.';
+        header('Location: ' . url('/mi-comercio/productos/editar/' . $id));
         exit;
     }
 
     /**
-     * Marcar foto como principal (AJAX)
+     * Marcar foto como principal
      */
     public function productoFotoPrincipal(int $id, int $fid): void
     {
         if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(403); echo json_encode(['error' => 'No autorizado']); exit;
+            header('Location: ' . url('/mi-comercio/login')); exit;
         }
         $uid = $_SESSION['comerciante']['id'];
         $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
         $producto = Producto::findById($id);
         $foto = ProductoFoto::findById($fid);
         if (!$comercio || !$producto || !$foto || $producto['comercio_id'] != $comercio['id'] || $foto['producto_id'] != $id) {
-            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+            $_SESSION['flash_error'] = 'Foto no encontrada.'; header('Location: ' . url('/mi-comercio/productos')); exit;
         }
         ProductoFoto::setPrincipal($id, $fid);
         Producto::update($id, ['imagen' => $foto['imagen']]);
-        header('Content-Type: application/json');
-        echo json_encode(['ok' => true]);
+        $_SESSION['flash_success'] = 'Foto principal actualizada.';
+        header('Location: ' . url('/mi-comercio/productos/editar/' . $id));
         exit;
     }
 

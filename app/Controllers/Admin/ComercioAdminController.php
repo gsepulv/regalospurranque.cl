@@ -1069,13 +1069,11 @@ class ComercioAdminController extends Controller
         }
         $principal = ProductoFoto::getPrincipal($pid);
         Producto::update($pid, ['imagen' => $principal ? $principal['imagen'] : null]);
-        header('Content-Type: application/json');
-        echo json_encode(['ok' => true]);
-        exit;
+        $this->redirect("/admin/comercios/{$id}/productos/editar/{$pid}", ['success' => 'Foto eliminada']);
     }
 
     /**
-     * Marcar foto como principal (AJAX)
+     * Marcar foto como principal
      */
     public function productoFotoPrincipal(string $id, string $pid, string $fid): void
     {
@@ -1087,9 +1085,7 @@ class ComercioAdminController extends Controller
         }
         ProductoFoto::setPrincipal($pid, $fid);
         Producto::update($pid, ['imagen' => $foto['imagen']]);
-        header('Content-Type: application/json');
-        echo json_encode(['ok' => true]);
-        exit;
+        $this->redirect("/admin/comercios/{$id}/productos/editar/{$pid}", ['success' => 'Foto principal actualizada']);
     }
 
     public function productoToggle(string $id, string $pid): void
