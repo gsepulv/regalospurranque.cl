@@ -961,7 +961,7 @@ class ComercianteController extends Controller
         $deliveryLocal = isset($_POST['delivery_local']) ? 1 : 0;
         $enviosChile = isset($_POST['envios_chile']) ? 1 : 0;
 
-        Comercio::update($comercio['id'], [
+        Comercio::updateById($comercio['id'], [
             'delivery_local' => $deliveryLocal,
             'envios_chile'   => $enviosChile,
         ]);
