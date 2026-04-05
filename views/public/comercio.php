@@ -57,8 +57,8 @@ $hoy = (int) date('w');
                                 <?php elseif ($_plan === 'banner'): ?>
                                     <span class="badge badge--plan badge--banner">&#128226; Banner</span>
                                 <?php endif; ?>
-                                <?php if ($_validado): ?>
-                                    <span class="badge badge--validado">&#9989; Validado</span>
+                                <?php if ($_validado || !empty($comercio['activo'])): ?>
+                                    <span class="badge badge--validado" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;font-weight:600;padding:0.25em 0.75em;border-radius:999px;font-size:0.85rem">&#10003; Verificado</span>
                                 <?php endif; ?>
                                 <?php if ($comercio['destacado']): ?>
                                     <span class="badge badge--warning">Destacado</span>
@@ -107,6 +107,29 @@ $hoy = (int) date('w');
                     <div class="comercio-section">
                         <h2>Sobre nosotros</h2>
                         <p><?= nl2br(e($comercio['descripcion'])) ?></p>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Sobre este negocio (badges de confianza) -->
+                <?php
+                $badges_confianza = [];
+                if (!empty($comercio['activo'])) $badges_confianza[] = ['icon' => '&#10003;', 'text' => 'Negocio verificado manualmente'];
+                if (!empty($comercio['whatsapp'])) $badges_confianza[] = ['icon' => '&#128172;', 'text' => 'Responde por WhatsApp'];
+                if (!empty($comercio['email'])) $badges_confianza[] = ['icon' => '&#9993;', 'text' => 'Responde por correo electrónico'];
+                if (!empty($comercio['direccion'])) $badges_confianza[] = ['icon' => '&#128205;', 'text' => 'Negocio local en Purranque'];
+                if (!empty($comercio['sitio_web'])) $badges_confianza[] = ['icon' => '&#127760;', 'text' => 'Tiene sitio web'];
+                ?>
+                <?php if (!empty($badges_confianza)): ?>
+                    <div class="comercio-section">
+                        <h2>Sobre este negocio</h2>
+                        <div style="border:1px solid #e0e0e0;border-radius:8px;padding:16px">
+                            <?php foreach ($badges_confianza as $bc): ?>
+                                <div style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:0.95rem;color:#444">
+                                    <span style="font-size:1.1rem;flex-shrink:0"><?= $bc['icon'] ?></span>
+                                    <span><?= $bc['text'] ?></span>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
 
@@ -239,6 +262,10 @@ $hoy = (int) date('w');
                                     &#127760; Visitar sitio web
                                 </a>
                             <?php endif; ?>
+
+                            <button type="button" class="btn btn--outline btn--block mb-2" onclick="copiarEnlacePerfil(this)" style="color:#666;border-color:#ccc">
+                                &#128203; Copiar enlace
+                            </button>
 
                             <?php if (!empty($comercio['direccion'])): ?>
                                 <div class="contact-item">
@@ -478,6 +505,10 @@ $hoy = (int) date('w');
                                     &#127760; Visitar sitio web
                                 </a>
                             <?php endif; ?>
+
+                            <button type="button" class="btn btn--outline btn--block mb-2" onclick="copiarEnlacePerfil(this)" style="color:#666;border-color:#ccc">
+                                &#128203; Copiar enlace
+                            </button>
 
                             <?php if (!empty($comercio['direccion'])): ?>
                                 <div class="contact-item">
@@ -809,4 +840,31 @@ function trackBanner(bannerId) {
         if (e.key === 'ArrowRight') { goTo(current + 1); e.preventDefault(); }
     });
 })();
+
+/* Copiar enlace del perfil */
+function copiarEnlacePerfil(btn) {
+    var url = <?= json_encode(url('/comercio/' . $comercio['slug']), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>;
+    var original = btn.innerHTML;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function() {
+            btn.innerHTML = '&#10003; ¡Enlace copiado!';
+            btn.style.color = '#2e7d32';
+            btn.style.borderColor = '#2e7d32';
+            setTimeout(function() { btn.innerHTML = original; btn.style.color = '#666'; btn.style.borderColor = '#ccc'; }, 2000);
+        });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.innerHTML = '&#10003; ¡Enlace copiado!';
+        btn.style.color = '#2e7d32';
+        btn.style.borderColor = '#2e7d32';
+        setTimeout(function() { btn.innerHTML = original; btn.style.color = '#666'; btn.style.borderColor = '#ccc'; }, 2000);
+    }
+}
 </script>
