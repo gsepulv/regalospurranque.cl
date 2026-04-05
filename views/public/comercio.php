@@ -187,6 +187,19 @@ $hoy = (int) date('w');
                 </style>
                 <?php if (!empty($productos)): ?>
                     <?php
+                    // Labels de tipo y estado
+                    $_tipoLabels = [
+                        'producto'  => '&#128230; Producto',
+                        'servicio'  => '&#128295; Servicio',
+                        'arriendo'  => '&#127968; Arriendo',
+                        'propiedad' => '&#127969; Propiedad',
+                    ];
+                    $_estadoLabels = [
+                        'disponible' => '&#9989; Disponible',
+                        'vendido'    => '&#128308; Vendido',
+                        'reservado'  => '&#128993; Reservado',
+                        'agotado'    => '&#9899; Agotado',
+                    ];
                     // Contar por tipo y estado
                     $tiposPresentes = [];
                     $countDisponibles = 0;
@@ -213,7 +226,7 @@ $hoy = (int) date('w');
                         <div class="catalogo-filters">
                             <button class="catalogo-filter active" onclick="filtrarCatalogo('todos',this)">Todos</button>
                             <?php foreach ($tiposPresentes as $ft => $fc): ?>
-                                <button class="catalogo-filter" onclick="filtrarCatalogo('<?= $ft ?>',this)"><?= \App\Models\Producto::getTipoLabel($ft) ?> (<?= $fc ?>)</button>
+                                <button class="catalogo-filter" onclick="filtrarCatalogo('<?= $ft ?>',this)"><?= ($_tipoLabels[$ft] ?? $ft) ?> (<?= $fc ?>)</button>
                             <?php endforeach; ?>
                         </div>
                         <?php endif; ?>
@@ -249,8 +262,8 @@ $hoy = (int) date('w');
                                     </div>
                                     <div class="catalogo-info">
                                         <div class="catalogo-badges">
-                                            <span class="catalogo-badge catalogo-badge--<?= $prodTipo ?>"><?= \App\Models\Producto::getTipoLabel($prodTipo) ?></span>
-                                            <span class="catalogo-badge catalogo-badge--<?= $prodEstado ?>"><?= \App\Models\Producto::getEstadoLabel($prodEstado) ?></span>
+                                            <span class="catalogo-badge catalogo-badge--<?= $prodTipo ?>"><?= ($_tipoLabels[$prodTipo] ?? $prodTipo) ?></span>
+                                            <span class="catalogo-badge catalogo-badge--<?= $prodEstado ?>"><?= ($_estadoLabels[$prodEstado] ?? $prodEstado) ?></span>
                                         </div>
                                         <h3 class="catalogo-nombre"><?= e($prod['nombre']) ?></h3>
                                         <?php if (!empty($prod['descripcion'])): ?>
