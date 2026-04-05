@@ -745,6 +745,64 @@ class ComercioAdminController extends Controller
             $precio = null;
         }
 
+
+        // Campos especificos por tipo
+        $modalidad = $_POST['modalidad'] ?? null;
+        $horario_atencion = trim($_POST['horario_atencion'] ?? '');
+        $tipo_propiedad_val = $_POST['tipo_propiedad'] ?? null;
+        $operacion = $_POST['operacion'] ?? null;
+        $superficie_terreno = $_POST['superficie_terreno'] ?? null;
+        $superficie_construida = $_POST['superficie_construida'] ?? null;
+        $dormitorios = $_POST['dormitorios'] ?? null;
+        $banos_val = $_POST['banos'] ?? null;
+        $estacionamientos_val = $_POST['estacionamientos'] ?? null;
+        $bodegas_val = $_POST['bodegas'] ?? null;
+        $direccion_propiedad = trim($_POST['direccion_propiedad'] ?? '');
+        $comuna_propiedad = trim($_POST['comuna_propiedad'] ?? '');
+        $disponible_desde = $_POST['disponible_desde'] ?? null;
+        $ano_construccion = $_POST['ano_construccion'] ?? null;
+        $amoblado = isset($_POST['amoblado']) ? 1 : null;
+        $acepta_mascotas = isset($_POST['acepta_mascotas']) ? 1 : null;
+        $tiene_lenera = isset($_POST['tiene_lenera']) ? 1 : null;
+        $tiene_areas_verdes = isset($_POST['tiene_areas_verdes']) ? 1 : null;
+        $tiene_calefaccion = isset($_POST['tiene_calefaccion']) ? 1 : null;
+        $tipo_calefaccion_val = $_POST['tipo_calefaccion'] ?? null;
+        $es_rural = isset($_POST['es_rural']) ? (int)$_POST['es_rural'] : null;
+        $agua_potable = isset($_POST['agua_potable']) ? 1 : null;
+        $alcantarillado_val = isset($_POST['alcantarillado']) ? 1 : null;
+        $luz_electrica = isset($_POST['luz_electrica']) ? 1 : null;
+        $gastos_comunes = $_POST['gastos_comunes'] ?? null;
+
+        // Validar enums
+        if ($modalidad && !in_array($modalidad, ['presencial','domicilio','online','mixto'])) $modalidad = null;
+        if ($horario_atencion && mb_strlen($horario_atencion) > 100) $horario_atencion = mb_substr($horario_atencion, 0, 100);
+        $tpValid = ['casa','departamento','local_comercial','oficina','bodega','terreno','estacionamiento','habitacion','parcela','galpon','sitio'];
+        if ($tipo_propiedad_val && !in_array($tipo_propiedad_val, $tpValid)) $tipo_propiedad_val = null;
+        if ($operacion && !in_array($operacion, ['arriendo','venta'])) $operacion = null;
+        if ($superficie_terreno !== null && $superficie_terreno !== '') $superficie_terreno = (float)$superficie_terreno; else $superficie_terreno = null;
+        if ($superficie_construida !== null && $superficie_construida !== '') $superficie_construida = (float)$superficie_construida; else $superficie_construida = null;
+        if ($dormitorios !== null && $dormitorios !== '') $dormitorios = (int)$dormitorios; else $dormitorios = null;
+        if ($banos_val !== null && $banos_val !== '') $banos_val = (int)$banos_val; else $banos_val = null;
+        if ($estacionamientos_val !== null && $estacionamientos_val !== '') $estacionamientos_val = (int)$estacionamientos_val; else $estacionamientos_val = null;
+        if ($bodegas_val !== null && $bodegas_val !== '') $bodegas_val = (int)$bodegas_val; else $bodegas_val = null;
+        if ($disponible_desde && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $disponible_desde)) $disponible_desde = null;
+        if ($ano_construccion !== null && $ano_construccion !== '') { $ano_construccion = (int)$ano_construccion; if ($ano_construccion < 1900 || $ano_construccion > 2026) $ano_construccion = null; } else $ano_construccion = null;
+        if ($gastos_comunes !== null && $gastos_comunes !== '') $gastos_comunes = (int)$gastos_comunes; else $gastos_comunes = null;
+        if (!$tiene_calefaccion) $tipo_calefaccion_val = null;
+
+        // Nullificar campos de otros tipos
+        if ($tipo !== 'servicio') { $modalidad = null; $horario_atencion = ''; }
+        if (!in_array($tipo, ['arriendo','propiedad'])) {
+            $tipo_propiedad_val = null; $operacion = null; $superficie_terreno = null; $superficie_construida = null;
+            $dormitorios = null; $banos_val = null; $estacionamientos_val = null; $bodegas_val = null;
+            $direccion_propiedad = ''; $comuna_propiedad = ''; $disponible_desde = null; $ano_construccion = null;
+            $amoblado = null; $acepta_mascotas = null; $tiene_lenera = null; $tiene_areas_verdes = null;
+            $tiene_calefaccion = null; $tipo_calefaccion_val = null; $es_rural = null; $agua_potable = null;
+            $alcantarillado_val = null; $luz_electrica = null; $gastos_comunes = null;
+        }
+        if ($tipo === 'arriendo') $operacion = 'arriendo';
+        if ($tipo === 'propiedad') $operacion = 'venta';
+
         $imagenNombre = null;
         $foto = $this->request->file('imagen');
         if ($foto && $foto['error'] === UPLOAD_ERR_OK) {
@@ -771,6 +829,31 @@ class ComercioAdminController extends Controller
             'activo'      => $activo,
             'estado'      => $estado,
             'orden'       => Producto::countByComercioId($id),
+            'modalidad'             => $modalidad,
+            'horario_atencion'      => $horario_atencion ?: null,
+            'tipo_propiedad'        => $tipo_propiedad_val,
+            'operacion'             => $operacion,
+            'superficie_terreno'    => $superficie_terreno,
+            'superficie_construida' => $superficie_construida,
+            'dormitorios'           => $dormitorios,
+            'banos'                 => $banos_val,
+            'estacionamientos'      => $estacionamientos_val,
+            'bodegas'               => $bodegas_val,
+            'direccion_propiedad'   => $direccion_propiedad ?: null,
+            'comuna_propiedad'      => $comuna_propiedad ?: null,
+            'disponible_desde'      => $disponible_desde,
+            'ano_construccion'      => $ano_construccion,
+            'amoblado'              => $amoblado,
+            'acepta_mascotas'       => $acepta_mascotas,
+            'tiene_lenera'          => $tiene_lenera,
+            'tiene_areas_verdes'    => $tiene_areas_verdes,
+            'tiene_calefaccion'     => $tiene_calefaccion,
+            'tipo_calefaccion'      => $tipo_calefaccion_val,
+            'es_rural'              => $es_rural,
+            'agua_potable'          => $agua_potable,
+            'alcantarillado'        => $alcantarillado_val,
+            'luz_electrica'         => $luz_electrica,
+            'gastos_comunes'        => $gastos_comunes,
         ];
         if ($imagenNombre) {
             $data['imagen'] = $imagenNombre;
@@ -869,6 +952,31 @@ class ComercioAdminController extends Controller
             'condicion'   => $condicion,
             'activo'      => $activo,
             'estado'      => $estado,
+            'modalidad'             => $modalidad,
+            'horario_atencion'      => $horario_atencion ?: null,
+            'tipo_propiedad'        => $tipo_propiedad_val,
+            'operacion'             => $operacion,
+            'superficie_terreno'    => $superficie_terreno,
+            'superficie_construida' => $superficie_construida,
+            'dormitorios'           => $dormitorios,
+            'banos'                 => $banos_val,
+            'estacionamientos'      => $estacionamientos_val,
+            'bodegas'               => $bodegas_val,
+            'direccion_propiedad'   => $direccion_propiedad ?: null,
+            'comuna_propiedad'      => $comuna_propiedad ?: null,
+            'disponible_desde'      => $disponible_desde,
+            'ano_construccion'      => $ano_construccion,
+            'amoblado'              => $amoblado,
+            'acepta_mascotas'       => $acepta_mascotas,
+            'tiene_lenera'          => $tiene_lenera,
+            'tiene_areas_verdes'    => $tiene_areas_verdes,
+            'tiene_calefaccion'     => $tiene_calefaccion,
+            'tipo_calefaccion'      => $tipo_calefaccion_val,
+            'es_rural'              => $es_rural,
+            'agua_potable'          => $agua_potable,
+            'alcantarillado'        => $alcantarillado_val,
+            'luz_electrica'         => $luz_electrica,
+            'gastos_comunes'        => $gastos_comunes,
         ];
 
         // Eliminar imagen2 si se marco checkbox

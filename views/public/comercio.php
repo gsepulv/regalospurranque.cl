@@ -135,7 +135,7 @@ $hoy = (int) date('w');
                     </div>
                 <?php endif; ?>
 
-                <!-- Cat&aacute;logo de productos -->
+                <!-- Catalogo de productos -->
                 <style>
                 .catalogo-header{background:#f8f9fa;border-left:4px solid #4caf50;padding:20px;border-radius:0 8px 8px 0;margin-bottom:16px}
                 .catalogo-titulo{font-size:1.5rem;font-weight:700;margin:0;color:#333}
@@ -149,280 +149,228 @@ $hoy = (int) date('w');
                 .acordeon-header{display:flex;align-items:center;padding:14px 16px;cursor:pointer;transition:background 0.2s;user-select:none}
                 .acordeon-header:hover{background:#f9f9f9}
                 .acordeon-thumb{width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:14px;flex-shrink:0;border:2px solid #f0f0f0}
-                .acordeon-thumb-placeholder{width:60px;height:60px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#999;margin-right:14px;flex-shrink:0;font-weight:700}
+                .acordeon-thumb-ph{width:60px;height:60px;border-radius:50%;background:#e0e0e0;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#999;margin-right:14px;flex-shrink:0;font-weight:700}
                 .acordeon-nombre{flex:1;font-weight:600;font-size:1rem;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
                 .acordeon-precio{color:#4caf50;font-weight:700;margin-right:12px;font-size:1rem;white-space:nowrap}
                 .acordeon-badges{display:flex;gap:6px;margin-right:12px}
                 .acordeon-badge{font-size:0.7rem;padding:2px 8px;border-radius:12px;white-space:nowrap}
-                .acordeon-badge--disponible{background:#e8f5e9;color:#2e7d32}
-                .acordeon-badge--vendido{background:#ffebee;color:#c62828}
-                .acordeon-badge--reservado{background:#fff8e1;color:#f57f17}
-                .acordeon-badge--agotado{background:#f5f5f5;color:#616161}
-                .acordeon-badge--producto{background:#e3f2fd;color:#1565c0}
-                .acordeon-badge--servicio{background:#fce4ec;color:#c62828}
-                .acordeon-badge--arriendo{background:#f3e5f5;color:#7b1fa2}
-                .acordeon-badge--propiedad{background:#e0f2f1;color:#00695c}
-                .acordeon-flecha{transition:transform 0.3s;font-size:1.2rem;color:#999;flex-shrink:0}
+                .acordeon-badge--disponible{background:#e8f5e9;color:#2e7d32}.acordeon-badge--vendido{background:#ffebee;color:#c62828}
+                .acordeon-badge--reservado{background:#fff8e1;color:#f57f17}.acordeon-badge--agotado{background:#f5f5f5;color:#616161}
+                .acordeon-badge--producto{background:#e3f2fd;color:#1565c0}.acordeon-badge--servicio{background:#fce4ec;color:#c62828}
+                .acordeon-badge--arriendo{background:#f3e5f5;color:#7b1fa2}.acordeon-badge--propiedad{background:#e0f2f1;color:#00695c}
+                .acordeon-flecha{transition:transform 0.3s;flex-shrink:0;line-height:0}
                 .acordeon-flecha.abierto{transform:rotate(180deg)}
                 .acordeon-contenido{max-height:0;overflow:hidden;transition:max-height 0.3s ease-out}
-                .acordeon-contenido.abierto{max-height:2000px;transition:max-height 0.5s ease-in}
+                .acordeon-contenido.abierto{max-height:3000px;transition:max-height 0.5s ease-in}
                 .acordeon-detalle{padding:20px;background:#fafafa;border-radius:8px;margin:0 16px 16px}
-                .acordeon-detalle__layout{display:flex;gap:20px}
-                .acordeon-detalle__img-wrap{position:relative;flex-shrink:0}
-                .acordeon-detalle__imagen{width:250px;height:250px;border-radius:12px;object-fit:cover}
-                .acordeon-detalle__placeholder{width:250px;height:250px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3.5rem}
-                .acordeon-detalle__logo{width:30px;height:30px;border-radius:50%;position:absolute;bottom:8px;right:8px;border:2px solid white;object-fit:cover}
-                .acordeon-detalle__overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(198,40,40,0.7);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:700}
-                .acordeon-detalle__info{flex:1;min-width:0}
-                .acordeon-detalle__badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
-                .acordeon-detalle__nombre{font-size:1.3rem;font-weight:700;margin:4px 0}
-                .acordeon-detalle__desc{font-size:0.9rem;color:#666;margin:4px 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-                .acordeon-detalle__precio{font-size:1.4rem;font-weight:700;color:#4caf50;margin:8px 0}
-                .acordeon-detalle__meta{font-size:0.85rem;color:#666;margin:4px 0}
-                .acordeon-detalle__vistas{font-size:0.8rem;color:#999;margin:4px 0}
-                .acordeon-desc-expandible{margin-top:12px}
-                .acordeon-desc-toggle{color:#4caf50;cursor:pointer;font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-weight:600;font-family:inherit;padding:0}
-                .acordeon-desc-texto{max-height:0;overflow:hidden;transition:max-height 0.3s;font-size:0.9rem;color:#555;line-height:1.6;margin-top:8px}
-                .acordeon-desc-texto.abierto{max-height:500px}
+                .acordeon-det-layout{display:flex;gap:20px}
+                .acordeon-det-imgwrap{position:relative;flex-shrink:0}
+                .acordeon-det-img{width:250px;height:250px;border-radius:12px;object-fit:cover}
+                .acordeon-det-ph{width:250px;height:250px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3.5rem}
+                .acordeon-det-logo{width:30px;height:30px;border-radius:50%;position:absolute;bottom:8px;right:8px;border:2px solid white;object-fit:cover}
+                .acordeon-det-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(198,40,40,0.7);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:700}
+                .acordeon-det-info{flex:1;min-width:0}
+                .acordeon-det-badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+                .acordeon-det-nombre{font-size:1.3rem;font-weight:700;margin:4px 0}
+                .acordeon-det-desc{font-size:0.9rem;color:#666;margin:4px 0}
+                .acordeon-det-precio{font-size:1.4rem;font-weight:700;color:#4caf50;margin:8px 0}
+                .acordeon-det-meta{font-size:0.85rem;color:#666;margin:4px 0}
+                .acordeon-det-vistas{font-size:0.8rem;color:#999;margin:4px 0}
+                .acordeon-det-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:0.88rem;color:#555;margin:10px 0}
+                .acordeon-det-grid span{display:flex;align-items:center;gap:4px}
+                .acordeon-amenidades{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+                .acordeon-amenidad{font-size:0.75rem;padding:3px 10px;border-radius:14px;background:#e8f5e9;color:#2e7d32;font-weight:500}
+                .acordeon-desc-exp{margin-top:12px}
+                .acordeon-desc-tog{color:#4caf50;cursor:pointer;font-size:0.85rem;display:inline-flex;align-items:center;gap:4px;background:none;border:none;font-weight:600;font-family:inherit;padding:0}
+                .acordeon-desc-txt{max-height:0;overflow:hidden;transition:max-height 0.3s;font-size:0.9rem;color:#555;line-height:1.6;margin-top:8px}
+                .acordeon-desc-txt.abierto{max-height:500px}
                 .acordeon-acciones{margin-top:16px}
                 .acordeon-btn-wa{display:block;width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:10px;font-family:inherit}
                 .acordeon-btn-wa:hover{background:#1da851}
                 .acordeon-share-row{display:flex;gap:8px;justify-content:center}
-                .acordeon-share-btn{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:transform 0.2s;text-decoration:none}
-                .acordeon-share-btn:hover{transform:scale(1.1)}
-                .acordeon-share-btn--fb{background:#1877F2;color:white}
-                .acordeon-share-btn--tw{background:#000;color:white}
-                .acordeon-share-btn--wa{background:#25D366;color:white}
-                .acordeon-share-btn--copy{background:#f0f0f0;color:#666}
+                .acordeon-share-btn{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;text-decoration:none}
+                .acordeon-share-btn:hover{transform:scale(1.15);box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+                .acordeon-share-btn--fb{background:#1877F2}.acordeon-share-btn--tw{background:#000}
+                .acordeon-share-btn--wa{background:#25D366}.acordeon-share-btn--copy{background:#f0f0f0}
                 .acordeon-img2{width:150px;height:150px;border-radius:8px;object-fit:cover;margin-top:8px}
                 @media(max-width:768px){
-                    .acordeon-detalle__layout{flex-direction:column}
-                    .acordeon-detalle__imagen,.acordeon-detalle__placeholder{width:100%;height:200px}
-                    .acordeon-header{padding:10px 12px}
-                    .acordeon-badges{display:none}
-                    .acordeon-share-row{flex-wrap:wrap}
+                    .acordeon-det-layout{flex-direction:column}
+                    .acordeon-det-img,.acordeon-det-ph{width:100%;height:200px}
+                    .acordeon-header{padding:10px 12px}.acordeon-badges{display:none}
+                    .acordeon-share-row{flex-wrap:wrap}.acordeon-det-grid{grid-template-columns:1fr}
                     .acordeon-img2{width:100%;max-width:200px;height:auto}
                 }
                 </style>
                 <?php if (!empty($productos)): ?>
                     <?php
-                    $_tipoLabels = [
-                        'producto'  => '&#128230; Producto',
-                        'servicio'  => '&#128295; Servicio',
-                        'arriendo'  => '&#127968; Arriendo',
-                        'propiedad' => '&#127969; Propiedad',
-                    ];
-                    $_estadoLabels = [
-                        'disponible' => '&#9989; Disponible',
-                        'vendido'    => '&#128308; Vendido',
-                        'reservado'  => '&#128993; Reservado',
-                        'agotado'    => '&#9899; Agotado',
-                    ];
-                    $_tipoShort = ['producto'=>'&#128230;','servicio'=>'&#128295;','arriendo'=>'&#127968;','propiedad'=>'&#127969;'];
-                    $_estadoShort = ['disponible'=>'&#9989;','vendido'=>'&#128308;','reservado'=>'&#128993;','agotado'=>'&#9899;'];
-                    $tiposPresentes = [];
-                    foreach ($productos as $_p) {
-                        $t = $_p['tipo'] ?? 'producto';
-                        $tiposPresentes[$t] = ($tiposPresentes[$t] ?? 0) + 1;
-                    }
+                    $_tL=['producto'=>'&#128230; Producto','servicio'=>'&#128295; Servicio','arriendo'=>'&#127968; Arriendo','propiedad'=>'&#127969; Propiedad'];
+                    $_eL=['disponible'=>'&#9989; Disponible','vendido'=>'&#128308; Vendido','reservado'=>'&#128993; Reservado','agotado'=>'&#9899; Agotado'];
+                    $_tS=['producto'=>'&#128230;','servicio'=>'&#128295;','arriendo'=>'&#127968;','propiedad'=>'&#127969;'];
+                    $_eS=['disponible'=>'&#9989;','vendido'=>'&#128308;','reservado'=>'&#128993;','agotado'=>'&#9899;'];
+                    $tiposP=[];
+                    foreach($productos as $_p){$t=$_p['tipo']??'producto';$tiposP[$t]=($tiposP[$t]??0)+1;}
                     ?>
                     <div class="comercio-section">
                         <div class="catalogo-header">
                             <div class="catalogo-titulo">&#127991; Cat&aacute;logo de <?= e($comercio['nombre']) ?></div>
                             <div class="catalogo-subtitulo">Explora nuestros productos y servicios</div>
-                            <?php if (count($productos) > 3 && count($tiposPresentes) > 1): ?>
+                            <?php if(count($productos)>3 && count($tiposP)>1): ?>
                             <div class="catalogo-filtros">
                                 <button class="catalogo-filtro activo" data-tipo="todos">Todos (<?= count($productos) ?>)</button>
-                                <?php foreach ($tiposPresentes as $ft => $fc): ?>
-                                    <button class="catalogo-filtro" data-tipo="<?= $ft ?>"><?= ($_tipoLabels[$ft] ?? $ft) ?> (<?= $fc ?>)</button>
+                                <?php foreach($tiposP as $ft=>$fc): ?>
+                                <button class="catalogo-filtro" data-tipo="<?= $ft ?>"><?= ($_tL[$ft]??$ft) ?> (<?= $fc ?>)</button>
                                 <?php endforeach; ?>
                             </div>
                             <?php endif; ?>
                         </div>
-
                         <div class="catalogo-acordeon">
-                            <?php foreach ($productos as $idx => $prod):
-                                $prodTipo = $prod['tipo'] ?? 'producto';
-                                $prodEstado = $prod['estado'] ?? 'disponible';
-                                $prodUrl = url('/comercio/' . $comercio['slug']) . '#producto-' . $prod['id'];
-                                $prodPrecioFmt = $prod['precio'] ? '$' . number_format($prod['precio'], 0, '', '.') : '';
-                                $esVendido = in_array($prodEstado, ['vendido', 'agotado']);
-                                $precioDisplay = $prod['precio'] ? '$ ' . number_format($prod['precio'], 0, '', '.') : 'Consultar precio';
-                                if ($prodTipo === 'arriendo' && $prod['precio']) $precioDisplay .= ' /mes';
-                                $shareTexto = $prod['nombre'] . ' - ' . $prodPrecioFmt . ' en ' . $comercio['nombre'] . ' | Regalos Purranque';
-                                // WhatsApp message by type
-                                if ($esVendido) {
-                                    $msgWa = 'Hola, vi que "' . $prod['nombre'] . '" fue vendido. ¿Tienes algo similar disponible?';
-                                } elseif ($prodTipo === 'servicio') {
-                                    $msgWa = 'Hola, vi el servicio "' . $prod['nombre'] . '" en regalospurranque.cl y me interesa. ¿Podemos coordinar?';
-                                } elseif ($prodTipo === 'arriendo') {
-                                    $msgWa = 'Hola, vi "' . $prod['nombre'] . '"';
-                                    if ($prod['precio']) $msgWa .= ' (' . $prodPrecioFmt . '/mes)';
-                                    $msgWa .= ' en regalospurranque.cl. ¿Est&aacute; disponible para arriendo?';
-                                } elseif ($prodTipo === 'propiedad') {
-                                    $msgWa = 'Hola, vi la propiedad "' . $prod['nombre'] . '"';
-                                    if ($prod['precio']) $msgWa .= ' (' . $prodPrecioFmt . ')';
-                                    $msgWa .= ' en regalospurranque.cl. ¿Podemos agendar una visita?';
-                                } else {
-                                    $msgWa = 'Hola, vi el producto "' . $prod['nombre'] . '"';
-                                    if ($prod['precio']) $msgWa .= ' (' . $prodPrecioFmt . ')';
-                                    $msgWa .= ' en regalospurranque.cl y me interesa. ¿Est&aacute; disponible?';
-                                }
-                            ?>
-                                <div class="acordeon-item" id="producto-<?= $prod['id'] ?>" data-tipo="<?= $prodTipo ?>" data-estado="<?= $prodEstado ?>">
-                                    <div class="acordeon-header" onclick="toggleAcordeon(this)">
-                                        <?php if (!empty($prod['imagen'])): ?>
-                                            <img class="acordeon-thumb"
-                                                 src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
-                                                 alt="<?= e($prod['nombre']) ?>"
-                                                 loading="lazy"
-                                                 onerror="this.src='<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>'">
-                                        <?php else: ?>
-                                            <div class="acordeon-thumb-placeholder"><?= mb_substr($prod['nombre'], 0, 1) ?></div>
-                                        <?php endif; ?>
-                                        <span class="acordeon-nombre"><?= e($prod['nombre']) ?></span>
-                                        <span class="acordeon-precio"><?= $precioDisplay ?></span>
-                                        <div class="acordeon-badges">
-                                            <span class="acordeon-badge acordeon-badge--<?= $prodTipo ?>"><?= ($_tipoShort[$prodTipo] ?? '') ?></span>
-                                            <span class="acordeon-badge acordeon-badge--<?= $prodEstado ?>"><?= ($_estadoShort[$prodEstado] ?? '') ?></span>
-                                        </div>
-                                        <span class="acordeon-flecha">&#9660;</span>
+                        <?php foreach($productos as $idx=>$prod):
+                            $pT=$prod['tipo']??'producto';
+                            $pE=$prod['estado']??'disponible';
+                            $pUrl=url('/producto/'.$prod['id']);
+                            $pPF=$prod['precio']?'$'.number_format($prod['precio'],0,'','.'):'';
+                            $esV=in_array($pE,['vendido','agotado']);
+                            $pD=$prod['precio']?'$ '.number_format($prod['precio'],0,',','.'):'Consultar precio';
+                            if($pT==='arriendo'&&$prod['precio'])$pD.=' /mes';
+                            $sTxt=$prod['nombre'].' - '.$pPF.' en '.$comercio['nombre'].' | Regalos Purranque';
+                            if($esV){$mW='Hola, vi que "'.$prod['nombre'].'" fue vendido. Tienes algo similar?';}
+                            elseif($pT==='servicio'){$mW='Hola, vi el servicio "'.$prod['nombre'].'" en regalospurranque.cl y me interesa. Podemos coordinar?';}
+                            elseif($pT==='arriendo'){$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.'/mes)';$mW.=' en regalospurranque.cl. Esta disponible para arriendo?';}
+                            elseif($pT==='propiedad'){$mW='Hola, vi la propiedad "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.')';$mW.=' en regalospurranque.cl. Podemos agendar una visita?';}
+                            else{$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.')';$mW.=' en regalospurranque.cl y me interesa. Esta disponible?';}
+                        ?>
+                            <div class="acordeon-item" id="producto-<?= $prod['id'] ?>" data-tipo="<?= $pT ?>" data-estado="<?= $pE ?>">
+                                <div class="acordeon-header" onclick="toggleAc(this)">
+                                    <?php if(!empty($prod['imagen'])): ?>
+                                    <img class="acordeon-thumb" src="<?= asset('img/productos/'.$comercio['id'].'/thumbs/'.$prod['imagen']) ?>" alt="<?= e($prod['nombre']) ?>" loading="lazy" onerror="this.src='<?= asset('img/productos/'.$comercio['id'].'/'.$prod['imagen']) ?>'">
+                                    <?php else: ?>
+                                    <div class="acordeon-thumb-ph"><?= mb_substr($prod['nombre'],0,1) ?></div>
+                                    <?php endif; ?>
+                                    <span class="acordeon-nombre"><?= e($prod['nombre']) ?></span>
+                                    <span class="acordeon-precio"><?= $pD ?></span>
+                                    <div class="acordeon-badges">
+                                        <span class="acordeon-badge acordeon-badge--<?= $pT ?>"><?= ($_tS[$pT]??'') ?></span>
+                                        <span class="acordeon-badge acordeon-badge--<?= $pE ?>"><?= ($_eS[$pE]??'') ?></span>
                                     </div>
-                                    <div class="acordeon-contenido">
-                                        <div class="acordeon-detalle">
-                                            <div class="acordeon-detalle__layout">
-                                                <div class="acordeon-detalle__img-wrap">
-                                                    <?php if (!empty($prod['imagen'])): ?>
-                                                        <img class="acordeon-detalle__imagen"
-                                                             src="<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>"
-                                                             alt="<?= e($prod['nombre']) ?>"
-                                                             loading="lazy">
-                                                    <?php else: ?>
-                                                        <div class="acordeon-detalle__placeholder">&#128230;</div>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($comercio['logo'])): ?>
-                                                        <img class="acordeon-detalle__logo"
-                                                             src="<?= asset('img/logos/' . $comercio['logo']) ?>"
-                                                             alt="<?= e($comercio['nombre']) ?>" loading="lazy">
-                                                    <?php endif; ?>
-                                                    <?php if ($esVendido): ?>
-                                                        <div class="acordeon-detalle__overlay"><?= strtoupper($prodEstado) ?></div>
-                                                    <?php endif; ?>
-                                                    <?php if (!empty($prod['imagen2'])): ?>
-                                                        <img class="acordeon-img2"
-                                                             src="<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen2']) ?>"
-                                                             alt="<?= e($prod['nombre']) ?> - imagen 2" loading="lazy">
-                                                    <?php endif; ?>
+                                    <svg class="acordeon-flecha" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                </div>
+                                <div class="acordeon-contenido">
+                                    <div class="acordeon-detalle">
+                                        <div class="acordeon-det-layout">
+                                            <div class="acordeon-det-imgwrap">
+                                                <?php if(!empty($prod['imagen'])): ?>
+                                                <img class="acordeon-det-img" src="<?= asset('img/productos/'.$comercio['id'].'/'.$prod['imagen']) ?>" alt="<?= e($prod['nombre']) ?>" loading="lazy">
+                                                <?php else: ?>
+                                                <div class="acordeon-det-ph">&#128230;</div>
+                                                <?php endif; ?>
+                                                <?php if(!empty($comercio['logo'])): ?>
+                                                <img class="acordeon-det-logo" src="<?= asset('img/logos/'.$comercio['logo']) ?>" alt="<?= e($comercio['nombre']) ?>" loading="lazy">
+                                                <?php endif; ?>
+                                                <?php if($esV): ?><div class="acordeon-det-overlay"><?= strtoupper($pE) ?></div><?php endif; ?>
+                                                <?php if(!empty($prod['imagen2'])): ?>
+                                                <img class="acordeon-img2" src="<?= asset('img/productos/'.$comercio['id'].'/'.$prod['imagen2']) ?>" alt="<?= e($prod['nombre']) ?> - 2" loading="lazy">
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="acordeon-det-info">
+                                                <div class="acordeon-det-badges">
+                                                    <span class="acordeon-badge acordeon-badge--<?= $pT ?>"><?= ($_tL[$pT]??$pT) ?></span>
+                                                    <span class="acordeon-badge acordeon-badge--<?= $pE ?>"><?= ($_eL[$pE]??$pE) ?></span>
                                                 </div>
-                                                <div class="acordeon-detalle__info">
-                                                    <div class="acordeon-detalle__badges">
-                                                        <span class="acordeon-badge acordeon-badge--<?= $prodTipo ?>"><?= ($_tipoLabels[$prodTipo] ?? $prodTipo) ?></span>
-                                                        <span class="acordeon-badge acordeon-badge--<?= $prodEstado ?>"><?= ($_estadoLabels[$prodEstado] ?? $prodEstado) ?></span>
+                                                <h3 class="acordeon-det-nombre"><?= e($prod['nombre']) ?></h3>
+                                                <?php if(!empty($prod['descripcion'])): ?>
+                                                <p class="acordeon-det-desc"><?= e($prod['descripcion']) ?></p>
+                                                <?php endif; ?>
+                                                <div class="acordeon-det-precio"><?= $pD ?></div>
+
+                                                <?php if($pT==='servicio'): ?>
+                                                    <?php if(!empty($prod['modalidad'])): ?>
+                                                    <div class="acordeon-det-meta">&#128205; Modalidad: <?= ucfirst($prod['modalidad']) ?></div>
+                                                    <?php endif; ?>
+                                                    <?php if(!empty($prod['horario_atencion'])): ?>
+                                                    <div class="acordeon-det-meta">&#128336; <?= e($prod['horario_atencion']) ?></div>
+                                                    <?php endif; ?>
+
+                                                <?php elseif($pT==='arriendo'||$pT==='propiedad'): ?>
+                                                    <?php if(!empty($prod['tipo_propiedad'])): ?>
+                                                    <div class="acordeon-det-meta" style="font-weight:600;margin-bottom:6px"><?= ucfirst(str_replace('_',' ',$prod['tipo_propiedad'])) ?><?php if($pT==='propiedad') echo ' en venta'; ?></div>
+                                                    <?php endif; ?>
+                                                    <div class="acordeon-det-grid">
+                                                        <?php if($prod['dormitorios']!==null): ?><span>&#128716; <?= $prod['dormitorios'] ?> dormitorios</span><?php endif; ?>
+                                                        <?php if($prod['banos']!==null): ?><span>&#128703; <?= $prod['banos'] ?> ba&ntilde;os</span><?php endif; ?>
+                                                        <?php if($prod['estacionamientos']): ?><span>&#128663; <?= $prod['estacionamientos'] ?> estac.</span><?php endif; ?>
+                                                        <?php if($prod['bodegas']): ?><span>&#128230; <?= $prod['bodegas'] ?> bodegas</span><?php endif; ?>
+                                                        <?php if($prod['superficie_terreno']): ?><span>&#128208; Terreno: <?= number_format($prod['superficie_terreno'],0,',','.') ?> m&sup2;</span><?php endif; ?>
+                                                        <?php if($prod['superficie_construida']): ?><span>&#127959; Construido: <?= number_format($prod['superficie_construida'],0,',','.') ?> m&sup2;</span><?php endif; ?>
+                                                        <?php if(!empty($prod['direccion_propiedad'])): ?><span>&#128205; <?= e($prod['direccion_propiedad']) ?></span><?php endif; ?>
+                                                        <?php if(!empty($prod['comuna_propiedad'])): ?><span>&#127968; <?= e($prod['comuna_propiedad']) ?></span><?php endif; ?>
+                                                        <?php if(!empty($prod['disponible_desde'])): ?><span>&#128197; Desde: <?= date('d/m/Y',strtotime($prod['disponible_desde'])) ?></span><?php endif; ?>
+                                                        <?php if($prod['ano_construccion']): ?><span>&#128197; A&ntilde;o: <?= $prod['ano_construccion'] ?></span><?php endif; ?>
+                                                        <?php if($prod['gastos_comunes']): ?><span>&#128176; GC: $ <?= number_format($prod['gastos_comunes'],0,',','.') ?></span><?php endif; ?>
                                                     </div>
-                                                    <h3 class="acordeon-detalle__nombre"><?= e($prod['nombre']) ?></h3>
-                                                    <?php if (!empty($prod['descripcion'])): ?>
-                                                        <p class="acordeon-detalle__desc"><?= e($prod['descripcion']) ?></p>
-                                                    <?php endif; ?>
-                                                    <div class="acordeon-detalle__precio"><?= $precioDisplay ?></div>
                                                     <?php
-                                                    $metaParts = [];
-                                                    if ($prod['stock'] !== null && $prodTipo === 'producto' && $prod['stock'] > 0) $metaParts[] = '&#128230; ' . $prod['stock'] . ' unidades disponibles';
-                                                    if (!empty($prod['condicion'])) $metaParts[] = ucfirst($prod['condicion']);
+                                                    $amen=[];
+                                                    if(!empty($prod['amoblado']))$amen[]='&#129681; Amoblado';
+                                                    if(!empty($prod['acepta_mascotas']))$amen[]='&#128062; Mascotas OK';
+                                                    if(!empty($prod['tiene_lenera']))$amen[]='&#129717; Le&ntilde;era';
+                                                    if(!empty($prod['tiene_areas_verdes']))$amen[]='&#127807; &Aacute;reas verdes';
+                                                    if(!empty($prod['tiene_calefaccion']))$amen[]='&#128293; Calefacci&oacute;n'.(!empty($prod['tipo_calefaccion'])?' ('.e($prod['tipo_calefaccion']).')':'');
+                                                    if(!empty($prod['agua_potable']))$amen[]='&#128167; Agua potable';
+                                                    if(!empty($prod['alcantarillado']))$amen[]='&#128688; Alcantarillado';
+                                                    if(!empty($prod['luz_electrica']))$amen[]='&#128161; Luz';
+                                                    if(isset($prod['es_rural']))$amen[]=$prod['es_rural']?'&#127806; Rural':'&#127961; Urbano';
                                                     ?>
-                                                    <?php if (!empty($metaParts)): ?>
-                                                        <div class="acordeon-detalle__meta"><?= implode(' | ', $metaParts) ?></div>
+                                                    <?php if(!empty($amen)): ?>
+                                                    <div class="acordeon-amenidades">
+                                                        <?php foreach($amen as $a): ?><span class="acordeon-amenidad"><?= $a ?></span><?php endforeach; ?>
+                                                    </div>
                                                     <?php endif; ?>
-                                                    <div class="acordeon-detalle__vistas">&#128065; <?= $prod['vistas'] ?? 0 ?> vistas</div>
-                                                    <?php if (!empty($prod['descripcion_detallada'])): ?>
-                                                        <div class="acordeon-desc-expandible">
-                                                            <button class="acordeon-desc-toggle" onclick="event.stopPropagation();toggleDescDetalle(this)">
-                                                                &#128221; <span class="acordeon-desc-label">Ver m&aacute;s detalles</span> <span class="acordeon-desc-icono">&#9660;</span>
-                                                            </button>
-                                                            <div class="acordeon-desc-texto"><?= nl2br(e($prod['descripcion_detallada'])) ?></div>
-                                                        </div>
+
+                                                <?php else: ?>
+                                                    <?php
+                                                    $mp=[];
+                                                    if($prod['stock']!==null&&$prod['stock']>0)$mp[]='&#128230; '.$prod['stock'].' unidades';
+                                                    if(!empty($prod['condicion']))$mp[]=ucfirst($prod['condicion']);
+                                                    ?>
+                                                    <?php if(!empty($mp)): ?>
+                                                    <div class="acordeon-det-meta"><?= implode(' | ',$mp) ?></div>
                                                     <?php endif; ?>
-                                                    <div class="acordeon-acciones">
-                                                        <?php if (!empty($comercio['whatsapp'])): ?>
-                                                            <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>?text=<?= urlencode($msgWa) ?>"
-                                                               target="_blank" rel="noopener" class="acordeon-btn-wa"
-                                                               onclick="event.stopPropagation();trackWhatsApp(<?= $comercio['id'] ?>)">
-                                                                &#128172; <?= $esVendido ? 'Consultar similares' : 'Consultar por WhatsApp' ?>
-                                                            </a>
-                                                        <?php endif; ?>
-                                                        <div class="acordeon-share-row">
-                                                            <button class="acordeon-share-btn acordeon-share-btn--fb" title="Facebook"
-                                                                    onclick="event.stopPropagation();compartirProd('facebook','<?= e(addslashes($prodUrl)) ?>','<?= e(addslashes($shareTexto)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)">&#128266;</button>
-                                                            <button class="acordeon-share-btn acordeon-share-btn--tw" title="X / Twitter"
-                                                                    onclick="event.stopPropagation();compartirProd('twitter','<?= e(addslashes($prodUrl)) ?>','<?= e(addslashes($shareTexto)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)">&#120143;</button>
-                                                            <button class="acordeon-share-btn acordeon-share-btn--wa" title="WhatsApp"
-                                                                    onclick="event.stopPropagation();compartirProd('whatsapp','<?= e(addslashes($prodUrl)) ?>','<?= e(addslashes($shareTexto)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)">&#128172;</button>
-                                                            <button class="acordeon-share-btn acordeon-share-btn--copy" title="Copiar enlace"
-                                                                    onclick="event.stopPropagation();compartirProd('copiar','<?= e(addslashes($prodUrl)) ?>','',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)">&#128203;</button>
-                                                        </div>
+                                                <?php endif; ?>
+
+                                                <div class="acordeon-det-vistas">&#128065; <?= $prod['vistas']??0 ?> vistas</div>
+
+                                                <?php if(!empty($prod['descripcion_detallada'])): ?>
+                                                <div class="acordeon-desc-exp">
+                                                    <button class="acordeon-desc-tog" onclick="event.stopPropagation();toggleDet(this)">&#128221; <span class="dtl">Ver m&aacute;s detalles</span> <span class="dti">&#9660;</span></button>
+                                                    <div class="acordeon-desc-txt"><?= nl2br(e($prod['descripcion_detallada'])) ?></div>
+                                                </div>
+                                                <?php endif; ?>
+
+                                                <div class="acordeon-acciones">
+                                                    <?php if(!empty($comercio['whatsapp'])): ?>
+                                                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/','', $comercio['whatsapp']) ?>?text=<?= urlencode($mW) ?>" target="_blank" rel="noopener" class="acordeon-btn-wa" onclick="event.stopPropagation();trackWhatsApp(<?= $comercio['id'] ?>)">&#128172; <?= $esV?'Consultar similares':($pT==='arriendo'?'Consultar por arriendo':($pT==='propiedad'?'Agendar visita':'Consultar por WhatsApp')) ?></a>
+                                                    <?php endif; ?>
+                                                    <div class="acordeon-share-row">
+                                                        <button class="acordeon-share-btn acordeon-share-btn--fb" title="Facebook" onclick="event.stopPropagation();shProd('facebook','<?= e(addslashes($pUrl)) ?>','<?= e(addslashes($sTxt)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
+                                                        <button class="acordeon-share-btn acordeon-share-btn--tw" title="X / Twitter" onclick="event.stopPropagation();shProd('twitter','<?= e(addslashes($pUrl)) ?>','<?= e(addslashes($sTxt)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></button>
+                                                        <button class="acordeon-share-btn acordeon-share-btn--wa" title="WhatsApp" onclick="event.stopPropagation();shProd('whatsapp','<?= e(addslashes($pUrl)) ?>','<?= e(addslashes($sTxt)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+                                                        <button class="acordeon-share-btn acordeon-share-btn--copy" title="Copiar enlace" onclick="event.stopPropagation();shProd('copiar','<?= e(addslashes($pUrl)) ?>','',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)"><svg width="18" height="18" viewBox="0 0 24 24" fill="#666"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg></button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            <?php endforeach; ?>
+                            </div>
+                        <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
                 <script>
-                function toggleAcordeon(header){
-                    var cont=header.nextElementSibling;
-                    var flecha=header.querySelector('.acordeon-flecha');
-                    cont.classList.toggle('abierto');
-                    flecha.classList.toggle('abierto');
-                }
-                function toggleDescDetalle(btn){
-                    var texto=btn.nextElementSibling;
-                    texto.classList.toggle('abierto');
-                    var icono=btn.querySelector('.acordeon-desc-icono');
-                    var label=btn.querySelector('.acordeon-desc-label');
-                    if(texto.classList.contains('abierto')){
-                        icono.innerHTML='&#9650;';label.textContent='Ver menos';
-                    }else{
-                        icono.innerHTML='&#9660;';label.textContent='Ver m\u00e1s detalles';
-                    }
-                }
-                document.querySelectorAll('.catalogo-filtro').forEach(function(btn){
-                    btn.addEventListener('click',function(){
-                        document.querySelectorAll('.catalogo-filtro').forEach(function(b){b.classList.remove('activo')});
-                        btn.classList.add('activo');
-                        var tipo=btn.dataset.tipo;
-                        document.querySelectorAll('.acordeon-item').forEach(function(item){
-                            item.style.display=(tipo==='todos'||item.dataset.tipo===tipo)?'':'none';
-                        });
-                    });
-                });
-                function compartirProd(red,url,texto,prodId,comId){
-                    var ue=encodeURIComponent(url),te=encodeURIComponent(texto),su='';
-                    if(red==='facebook')su='https://www.facebook.com/sharer/sharer.php?u='+ue;
-                    else if(red==='twitter')su='https://twitter.com/intent/tweet?text='+te+'&url='+ue;
-                    else if(red==='whatsapp')su='https://wa.me/?text='+te+'%20'+ue;
-                    else if(red==='copiar'){
-                        navigator.clipboard.writeText(url).then(function(){
-                            var b=event.target.closest('.acordeon-share-btn');
-                            b.innerHTML='&#10003;';setTimeout(function(){b.innerHTML='&#128203;';},2000);
-                        });
-                    }
-                    if(su)window.open(su,'_blank','width=600,height=400');
-                    fetch('/api/share-track',{method:'POST',headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify({red:red,slug:window.location.pathname.split('/').pop(),tipo:'producto',producto_id:prodId})
-                    }).catch(function(){});
-                }
-                document.addEventListener('DOMContentLoaded',function(){
-                    var items=document.querySelectorAll('.acordeon-item');
-                    var expandFirst=items.length<=3;
-                    if(expandFirst&&items.length>0){
-                        var c=items[0].querySelector('.acordeon-contenido');
-                        var f=items[0].querySelector('.acordeon-flecha');
-                        if(c)c.classList.add('abierto');
-                        if(f)f.classList.add('abierto');
-                    }
-                });
+                function toggleAc(h){var c=h.nextElementSibling,f=h.querySelector('.acordeon-flecha');c.classList.toggle('abierto');f.classList.toggle('abierto')}
+                function toggleDet(b){var t=b.nextElementSibling;t.classList.toggle('abierto');b.querySelector('.dti').innerHTML=t.classList.contains('abierto')?'&#9650;':'&#9660;';b.querySelector('.dtl').textContent=t.classList.contains('abierto')?'Ver menos':'Ver m\u00e1s detalles'}
+                document.querySelectorAll('.catalogo-filtro').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.catalogo-filtro').forEach(function(x){x.classList.remove('activo')});b.classList.add('activo');var t=b.dataset.tipo;document.querySelectorAll('.acordeon-item').forEach(function(i){i.style.display=(t==='todos'||i.dataset.tipo===t)?'':'none'})})});
+                function shProd(r,u,t,pId,cId){var ue=encodeURIComponent(u),te=encodeURIComponent(t),s='';if(r==='facebook')s='https://www.facebook.com/sharer/sharer.php?u='+ue;else if(r==='twitter')s='https://twitter.com/intent/tweet?text='+te+'&url='+ue;else if(r==='whatsapp')s='https://wa.me/?text='+te+'%20'+ue;else if(r==='copiar'){navigator.clipboard.writeText(u).then(function(){var b=event.target.closest('.acordeon-share-btn');var o=b.innerHTML;b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="#4caf50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';setTimeout(function(){b.innerHTML=o},2000)});return}if(s)window.open(s,'_blank','width=600,height=400');fetch('/api/share-track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({red:r,slug:window.location.pathname.split('/').pop(),tipo:'producto',producto_id:pId})}).catch(function(){})}
+                document.addEventListener('DOMContentLoaded',function(){var it=document.querySelectorAll('.acordeon-item');if(it.length>0&&it.length<=3){var c=it[0].querySelector('.acordeon-contenido'),f=it[0].querySelector('.acordeon-flecha');if(c)c.classList.add('abierto');if(f)f.classList.add('abierto')}});
                 </script>
 
                 <!-- Galería de fotos -->

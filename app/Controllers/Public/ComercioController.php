@@ -136,4 +136,24 @@ class ComercioController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Share page for individual product (OG meta tags)
+     */
+    public function productoShare(string $id): void
+    {
+        $id = (int) $id;
+        $producto = Producto::findByIdWithComercio($id);
+        if (!$producto || !$producto['activo']) {
+            header('Location: ' . url('/'));
+            exit;
+        }
+        $comercio = [
+            'id' => $producto['comercio_id'],
+            'nombre' => $producto['comercio_nombre'],
+            'slug' => $producto['comercio_slug'],
+            'logo' => $producto['comercio_logo'],
+        ];
+        include BASE_PATH . '/views/public/producto-share.php';
+    }
 }

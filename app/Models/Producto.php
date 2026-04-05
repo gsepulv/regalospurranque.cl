@@ -147,4 +147,18 @@ class Producto
             [$comercioId]
         );
     }
+
+    /**
+     * Producto con datos del comercio (para share OG)
+     */
+    public static function findByIdWithComercio(int $id): ?array
+    {
+        return Database::getInstance()->fetch(
+            "SELECT p.*, c.nombre AS comercio_nombre, c.slug AS comercio_slug, c.logo AS comercio_logo, c.whatsapp AS comercio_whatsapp
+             FROM productos p
+             INNER JOIN comercios c ON p.comercio_id = c.id
+             WHERE p.id = ?",
+            [$id]
+        );
+    }
 }
