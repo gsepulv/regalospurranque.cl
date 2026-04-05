@@ -200,7 +200,14 @@
                     </div>
                     <div class="card__body">
                         <h3 class="card__title" style="font-size:0.95rem;margin-bottom:0.25rem"><?= e($prod['nombre']) ?></h3>
-                        <p class="card__text card__text--small" style="margin-bottom:0.25rem"><?= e($prod['comercio_nombre']) ?></p>
+                        <div style="display:flex;align-items:center;gap:6px;margin-bottom:0.25rem">
+                            <?php if (!empty($prod['comercio_logo'])): ?>
+                                <img src="<?= asset('img/logos/' . $prod['comercio_logo']) ?>" alt="" style="width:24px;height:24px;border-radius:50%;object-fit:cover;flex-shrink:0" loading="lazy">
+                            <?php else: ?>
+                                <span style="width:24px;height:24px;border-radius:50%;background:#e5e7eb;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;color:#6B7280;flex-shrink:0"><?= mb_substr($prod['comercio_nombre'], 0, 1) ?></span>
+                            <?php endif; ?>
+                            <span class="card__text card__text--small" style="margin:0"><?= e($prod['comercio_nombre']) ?></span>
+                        </div>
                         <?php if ($prod['precio']): ?>
                             <span style="color:#166534;font-weight:700;font-size:0.95rem">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
                         <?php endif; ?>

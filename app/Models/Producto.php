@@ -69,7 +69,7 @@ class Producto
     public static function getDestacadosParaHome(int $limite = 8): array
     {
         return Database::getInstance()->fetchAll(
-            "SELECT p.*, c.nombre AS comercio_nombre, c.slug AS comercio_slug, c.whatsapp AS comercio_whatsapp
+            "SELECT p.*, c.nombre AS comercio_nombre, c.slug AS comercio_slug, c.whatsapp AS comercio_whatsapp, c.logo AS comercio_logo
              FROM productos p
              INNER JOIN comercios c ON p.comercio_id = c.id
              WHERE p.activo = 1 AND c.activo = 1 AND p.imagen IS NOT NULL
