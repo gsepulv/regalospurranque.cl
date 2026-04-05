@@ -569,13 +569,14 @@ class ComercianteController extends Controller
             }
         }
 
-        // Delivery / Envíos (booleanos)
-        foreach (['delivery_local', 'envios_chile'] as $boolCampo) {
-            $nuevo = isset($_POST[$boolCampo]) ? 1 : 0;
-            $actual = (int) ($comercio[$boolCampo] ?? 0);
-            if ($nuevo !== $actual) {
-                $cambios[$boolCampo] = ['anterior' => $actual, 'nuevo' => $nuevo];
-            }
+        // Delivery / Envios: guardar directamente sin aprobacion
+        $deliveryLocal = isset($_POST['delivery_local']) ? 1 : 0;
+        $enviosChile = isset($_POST['envios_chile']) ? 1 : 0;
+        if ($deliveryLocal !== (int)($comercio['delivery_local'] ?? 0) || $enviosChile !== (int)($comercio['envios_chile'] ?? 0)) {
+            Comercio::update($comercio['id'], [
+                'delivery_local' => $deliveryLocal,
+                'envios_chile'   => $enviosChile,
+            ]);
         }
 
         // Coordenadas
