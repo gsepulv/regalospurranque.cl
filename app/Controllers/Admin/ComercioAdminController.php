@@ -685,9 +685,12 @@ class ComercioAdminController extends Controller
         }
 
         $this->render('admin/comercios/producto-form', [
-            'title'    => 'Agregar producto — ' . e($comercio['nombre']),
-            'comercio' => $comercio,
-            'producto' => null,
+            'title'          => 'Agregar producto — ' . e($comercio['nombre']),
+            'comercio'       => $comercio,
+            'producto'       => null,
+            'totalProductos' => Producto::countByComercioId($id),
+            'maxProductos'   => $maxProductos,
+            'plan'           => $plan,
         ]);
     }
 
@@ -769,10 +772,15 @@ class ComercioAdminController extends Controller
             return;
         }
 
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+
         $this->render('admin/comercios/producto-form', [
-            'title'    => 'Editar producto — ' . e($producto['nombre']),
-            'comercio' => $comercio,
-            'producto' => $producto,
+            'title'          => 'Editar producto — ' . e($producto['nombre']),
+            'comercio'       => $comercio,
+            'producto'       => $producto,
+            'totalProductos' => Producto::countByComercioId($id),
+            'maxProductos'   => $plan['max_productos'] ?? 5,
+            'plan'           => $plan,
         ]);
     }
 

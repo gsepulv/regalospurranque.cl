@@ -19,7 +19,14 @@ $esEdicion = !empty($producto);
 </div>
 
 <h2 style="margin-bottom:0.25rem"><?= $esEdicion ? 'Editar producto — ' . e($producto['nombre']) : 'Agregar producto' ?></h2>
-<p style="color:var(--color-gray);font-size:var(--font-size-sm);margin-bottom:1.25rem">Comercio: <?= e($comercio['nombre']) ?></p>
+<p style="color:var(--color-gray);font-size:var(--font-size-sm);margin-bottom:0.5rem">Comercio: <?= e($comercio['nombre']) ?></p>
+<?php
+$_restantes = $maxProductos - $totalProductos;
+$_color = $_restantes <= 0 ? 'var(--color-danger, #dc2626)' : ($_restantes === 1 ? '#d97706' : 'var(--color-gray)');
+?>
+<p style="font-size:var(--font-size-sm);margin-bottom:1.25rem;color:<?= $_color ?>">
+    &#128230; <?= $totalProductos ?> de <?= $maxProductos ?> productos utilizados (Plan: <?= e($plan['nombre'] ?? 'Freemium') ?>)
+</p>
 
 <div class="admin-card">
     <div class="admin-card__body">
