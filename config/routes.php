@@ -336,6 +336,7 @@ return [
     // ── Productos del comerciante ────────────────────────────
     ['GET',  '/mi-comercio/productos',              'Public\\ComercianteController@productos',          []],
     ['GET',  '/mi-comercio/productos/crear',        'Public\\ComercianteController@productoCrear',      []],
+    ['POST', '/mi-comercio/productos/despacho',   'Public\\ComercianteController@productoDespacho',  []],
     ['POST', '/mi-comercio/productos/guardar',      'Public\\ComercianteController@productoGuardar',    []],
     ['GET',  '/mi-comercio/productos/editar/{id}',  'Public\\ComercianteController@productoEditar',     []],
     ['POST', '/mi-comercio/productos/actualizar/{id}', 'Public\\ComercianteController@productoActualizar', []],

@@ -50,6 +50,27 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
             </div>
         <?php endif; ?>
 
+                <!-- Opciones de despacho -->
+        <div style="background:var(--color-white);border-radius:12px;padding:1rem 1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:1rem">
+            <form method="POST" action="<?= url('/mi-comercio/productos/despacho') ?>" style="margin:0">
+                <input type="hidden" name="_csrf" value="<?= csrf_token() ?>">
+                <div style="font-weight:600;font-size:0.9rem;margin-bottom:0.75rem;color:#333">&#128666; Opciones de despacho</div>
+                <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:center">
+                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.88rem">
+                        <input type="checkbox" name="delivery_local" value="1" <?= !empty($comercio['delivery_local']) ? 'checked' : '' ?>
+                               onchange="this.form.submit()">
+                        <span>&#128666; Delivery en Purranque</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.4rem;cursor:pointer;font-size:0.88rem">
+                        <input type="checkbox" name="envios_chile" value="1" <?= !empty($comercio['envios_chile']) ? 'checked' : '' ?>
+                               onchange="this.form.submit()">
+                        <span>&#128230; Env&iacute;os a todo Chile</span>
+                    </label>
+                </div>
+                <noscript><button type="submit" class="btn btn--primary" style="margin-top:0.5rem;font-size:0.8rem;padding:0.35rem 0.75rem">Guardar</button></noscript>
+            </form>
+        </div>
+
         <?php if (empty($productos)): ?>
             <div style="background:var(--color-white);border-radius:12px;padding:2rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
                 <span style="font-size:3rem">&#127991;</span>

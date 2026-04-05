@@ -942,6 +942,36 @@ class ComercianteController extends Controller
     }
 
     /**
+     * Toggle delivery/envios - guardado directo sin aprobacion
+     */
+    public function productoDespacho(): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ' . url('/mi-comercio/login'));
+            exit;
+        }
+
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        if (!$comercio) {
+            header('Location: ' . url('/mi-comercio'));
+            exit;
+        }
+
+        $deliveryLocal = isset($_POST['delivery_local']) ? 1 : 0;
+        $enviosChile = isset($_POST['envios_chile']) ? 1 : 0;
+
+        Comercio::update($comercio['id'], [
+            'delivery_local' => $deliveryLocal,
+            'envios_chile'   => $enviosChile,
+        ]);
+
+        $_SESSION['flash_success'] = 'Opciones de despacho actualizadas.';
+        header('Location: ' . url('/mi-comercio/productos'));
+        exit;
+    }
+
+    /**
      * Formulario de nuevo producto
      */
     public function productoCrear(): void
