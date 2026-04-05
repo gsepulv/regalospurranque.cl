@@ -865,8 +865,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
-        $comercio = Comercio::find($comercioId);
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         if (!$comercio) {
             header('Location: ' . url('/mi-comercio'));
             exit;
@@ -896,8 +897,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
-        $comercio = Comercio::find($comercioId);
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         if (!$comercio) {
             header('Location: ' . url('/mi-comercio'));
             exit;
@@ -930,8 +932,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
-        $comercio = Comercio::find($comercioId);
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         if (!$comercio) {
             header('Location: ' . url('/mi-comercio'));
             exit;
@@ -1018,8 +1021,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
-        $comercio = Comercio::find($comercioId);
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         $producto = Producto::findById($id);
 
         if (!$comercio || !$producto || $producto['comercio_id'] != $comercioId) {
@@ -1046,8 +1050,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
-        $comercio = Comercio::find($comercioId);
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         $producto = Producto::findById($id);
 
         if (!$comercio || !$producto || $producto['comercio_id'] != $comercioId) {
@@ -1130,7 +1135,9 @@ class ComercianteController extends Controller
             exit;
         }
 
-        $comercioId = $_SESSION['comerciante']['comercio_id'] ?? 0;
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $comercioId = $comercio['id'] ?? 0;
         $producto = Producto::findById($id);
 
         if (!$producto || $producto['comercio_id'] != $comercioId) {
