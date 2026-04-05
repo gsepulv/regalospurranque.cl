@@ -130,6 +130,75 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error'], $_SESSION['flash_inf
                 </div>
             </div>
 
+            <!-- Estadísticas -->
+            <?php $st = $estadisticas ?? []; ?>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:1.25rem">
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.8rem;font-weight:700;color:#4caf50;display:block"><?= $st['visitas_30d'] ?? 0 ?></span>
+                    <span style="font-size:0.8rem;color:#6B7280">Visitas (30 días)</span>
+                </div>
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.8rem;font-weight:700;color:#4caf50;display:block"><?= $st['visitas_hoy'] ?? 0 ?></span>
+                    <span style="font-size:0.8rem;color:#6B7280">Visitas hoy</span>
+                </div>
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <span style="font-size:1.8rem;font-weight:700;color:#4caf50;display:block"><?= $st['whatsapp_30d'] ?? 0 ?></span>
+                    <span style="font-size:0.8rem;color:#6B7280">Clics WhatsApp</span>
+                </div>
+                <div style="background:var(--color-white);border-radius:12px;padding:1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
+                    <?php $maxProds = $plan['max_productos'] ?? 5; ?>
+                    <span style="font-size:1.8rem;font-weight:700;color:#4caf50;display:block"><?= $st['productos_activos'] ?? 0 ?>/<?= $maxProds ?></span>
+                    <span style="font-size:0.8rem;color:#6B7280">Productos</span>
+                </div>
+            </div>
+            <style>@media(max-width:768px){div[style*="repeat(4,1fr)"]{grid-template-columns:repeat(2,1fr) !important}}</style>
+
+            <!-- Gráfico 7 días -->
+            <?php
+            $dias7 = $st['visitas_7d'] ?? [];
+            $diasMap = [];
+            foreach ($dias7 as $d) $diasMap[$d['fecha']] = (int) $d['visitas'];
+            $maxVisitas = max(1, max(array_values($diasMap) ?: [1]));
+            $diasSemana = ['Do','Lu','Ma','Mi','Ju','Vi','Sa'];
+            ?>
+            <div style="background:var(--color-white);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:1.25rem">
+                <h3 style="margin:0 0 0.75rem;font-size:0.95rem">&#128202; Visitas últimos 7 días</h3>
+                <div style="display:flex;align-items:flex-end;gap:8px;height:100px;padding:20px 0">
+                    <?php for ($i = 6; $i >= 0; $i--):
+                        $fecha = date('Y-m-d', strtotime("-{$i} days"));
+                        $v = $diasMap[$fecha] ?? 0;
+                        $pct = $maxVisitas > 0 ? max(3, ($v / $maxVisitas) * 100) : 3;
+                        $diaSemana = $diasSemana[(int) date('w', strtotime($fecha))];
+                    ?>
+                        <div style="flex:1;position:relative;text-align:center">
+                            <span style="position:absolute;top:-18px;width:100%;font-size:0.7rem;font-weight:600;color:#333"><?= $v ?></span>
+                            <div style="height:<?= $pct ?>%;background:#4caf50;border-radius:4px 4px 0 0;min-height:3px;margin:0 auto;width:80%"></div>
+                            <span style="font-size:0.7rem;color:#999;margin-top:4px;display:block"><?= $diaSemana ?></span>
+                        </div>
+                    <?php endfor; ?>
+                </div>
+            </div>
+
+            <!-- Resumen productos -->
+            <?php $prodsTop = $st['productos_top'] ?? []; ?>
+            <?php if (!empty($prodsTop)): ?>
+            <div style="background:var(--color-white);border-radius:12px;padding:1.25rem;box-shadow:0 2px 8px rgba(0,0,0,0.08);margin-bottom:1.25rem">
+                <h3 style="margin:0 0 0.75rem;font-size:0.95rem">&#127991; Mis productos</h3>
+                <?php foreach ($prodsTop as $p): ?>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid #f0f0f0">
+                        <div>
+                            <span style="font-size:0.9rem;font-weight:500"><?= e($p['nombre']) ?></span>
+                            <?php if (!$p['activo']): ?>
+                                <span style="font-size:0.7rem;background:#FEF3C7;color:#92400E;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.35rem">Inactivo</span>
+                            <?php endif; ?>
+                        </div>
+                        <span style="font-size:0.85rem;color:#166534;font-weight:600"><?= $p['precio'] ? '$ ' . number_format($p['precio'], 0, '', '.') : '' ?></span>
+                    </div>
+                <?php endforeach; ?>
+                <a href="<?= url('/mi-comercio/productos') ?>" style="display:inline-block;margin-top:0.5rem;font-size:0.85rem;color:#4caf50;font-weight:600;text-decoration:none">Ver todos mis productos &rarr;</a>
+            </div>
+            <?php endif; ?>
+
             <!-- Acciones -->
             <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
                 <a href="<?= url('/mi-comercio/editar') ?>" class="btn btn--primary" style="flex:1;text-align:center;padding:0.75rem">

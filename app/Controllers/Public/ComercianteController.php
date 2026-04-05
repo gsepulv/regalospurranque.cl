@@ -339,6 +339,50 @@ class ComercianteController extends Controller
             }
         }
 
+        // Estadísticas del comercio
+        $estadisticas = [
+            'visitas_30d' => 0,
+            'visitas_hoy' => 0,
+            'whatsapp_30d' => 0,
+            'compartidos' => 0,
+            'productos_activos' => 0,
+            'visitas_7d' => [],
+        ];
+        if ($comercio) {
+            try {
+                $db = \App\Core\Database::getInstance();
+                $cid = (int) $comercio['id'];
+
+                $estadisticas['visitas_30d'] = (int) ($db->fetch(
+                    "SELECT COUNT(*) as t FROM visitas_log WHERE comercio_id = ? AND tipo = 'comercio' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$cid]
+                )['t'] ?? 0);
+
+                $estadisticas['visitas_hoy'] = (int) ($db->fetch(
+                    "SELECT COUNT(*) as t FROM visitas_log WHERE comercio_id = ? AND tipo = 'comercio' AND DATE(created_at) = CURDATE()", [$cid]
+                )['t'] ?? 0);
+
+                $estadisticas['whatsapp_30d'] = (int) ($db->fetch(
+                    "SELECT COUNT(*) as t FROM visitas_log WHERE comercio_id = ? AND tipo = 'whatsapp' AND created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)", [$cid]
+                )['t'] ?? 0);
+
+                $estadisticas['compartidos'] = (int) ($db->fetch(
+                    "SELECT COUNT(*) as t FROM share_log WHERE comercio_id = ?", [$cid]
+                )['t'] ?? 0);
+
+                $estadisticas['productos_activos'] = (int) ($db->fetch(
+                    "SELECT COUNT(*) as t FROM productos WHERE comercio_id = ? AND activo = 1", [$cid]
+                )['t'] ?? 0);
+
+                $estadisticas['visitas_7d'] = $db->fetchAll(
+                    "SELECT DATE(created_at) as fecha, COUNT(*) as visitas FROM visitas_log WHERE comercio_id = ? AND tipo = 'comercio' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) GROUP BY DATE(created_at) ORDER BY fecha ASC", [$cid]
+                );
+
+                $estadisticas['productos_top'] = $db->fetchAll(
+                    "SELECT id, nombre, precio, activo FROM productos WHERE comercio_id = ? ORDER BY activo DESC, created_at DESC LIMIT 5", [$cid]
+                );
+            } catch (\Throwable $e) {}
+        }
+
         $this->render('comerciante/dashboard', [
             'title'               => 'Mi comercio — ' . SITE_NAME,
             'noindex'             => true,
@@ -351,6 +395,7 @@ class ComercianteController extends Controller
             'planesDisponibles'   => $planesDisponibles,
             'metodosPago'         => $metodosPago,
             'datosBanco'          => $datosBanco,
+            'estadisticas'        => $estadisticas,
         ]);
     }
 
