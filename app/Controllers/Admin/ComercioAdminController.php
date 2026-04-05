@@ -715,8 +715,23 @@ class ComercioAdminController extends Controller
 
         $nombre      = trim($_POST['nombre'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
+        $descripcion_detallada = trim($_POST['descripcion_detallada'] ?? '');
         $precio      = $_POST['precio'] ?? null;
         $activo      = isset($_POST['activo']) ? 1 : 0;
+        $tipo        = $_POST['tipo'] ?? 'producto';
+        $estado      = $_POST['estado'] ?? 'disponible';
+        $stock       = $_POST['stock'] ?? null;
+        $condicion   = $_POST['condicion'] ?? null;
+
+        // Validar enums
+        $tiposValidos = ['producto', 'servicio', 'arriendo', 'propiedad'];
+        $estadosValidos = ['disponible', 'vendido', 'reservado', 'agotado'];
+        if (!in_array($tipo, $tiposValidos)) $tipo = 'producto';
+        if (!in_array($estado, $estadosValidos)) $estado = 'disponible';
+        if ($condicion !== null && !in_array($condicion, ['nuevo', 'usado', 'reacondicionado'])) $condicion = null;
+        if ($condicion === '') $condicion = null;
+        if ($stock !== null && $stock !== '') { $stock = (int) $stock; if ($stock < 0) $stock = 0; } else { $stock = null; }
+        if (mb_strlen($descripcion_detallada) > 2000) $descripcion_detallada = mb_substr($descripcion_detallada, 0, 2000);
 
         if (empty($nombre) || mb_strlen($nombre) > 150) {
             $this->redirect("/admin/comercios/{$id}/productos/crear", ['error' => 'El nombre es obligatorio (máx 150 caracteres)']);
@@ -746,14 +761,28 @@ class ComercioAdminController extends Controller
 
         $data = [
             'comercio_id' => $id,
+            'tipo'        => $tipo,
             'nombre'      => $nombre,
             'descripcion' => $descripcion ?: null,
+            'descripcion_detallada' => $descripcion_detallada ?: null,
             'precio'      => $precio,
+            'stock'       => $stock,
+            'condicion'   => $condicion,
             'activo'      => $activo,
+            'estado'      => $estado,
             'orden'       => Producto::countByComercioId($id),
         ];
         if ($imagenNombre) {
             $data['imagen'] = $imagenNombre;
+        }
+
+        // Imagen 2
+        $foto2 = $this->request->file('imagen2');
+        if ($foto2 && $foto2['error'] === UPLOAD_ERR_OK) {
+            if ($foto2['size'] <= 2 * 1024 * 1024) {
+                $img2 = FileManager::subirImagen($foto2, 'productos/' . $id, 800);
+                if ($img2) $data['imagen2'] = $img2;
+            }
         }
 
         Producto::create($data);
@@ -800,8 +829,23 @@ class ComercioAdminController extends Controller
 
         $nombre      = trim($_POST['nombre'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
+        $descripcion_detallada = trim($_POST['descripcion_detallada'] ?? '');
         $precio      = $_POST['precio'] ?? null;
         $activo      = isset($_POST['activo']) ? 1 : 0;
+        $tipo        = $_POST['tipo'] ?? 'producto';
+        $estado      = $_POST['estado'] ?? 'disponible';
+        $stock       = $_POST['stock'] ?? null;
+        $condicion   = $_POST['condicion'] ?? null;
+
+        // Validar enums
+        $tiposValidos = ['producto', 'servicio', 'arriendo', 'propiedad'];
+        $estadosValidos = ['disponible', 'vendido', 'reservado', 'agotado'];
+        if (!in_array($tipo, $tiposValidos)) $tipo = 'producto';
+        if (!in_array($estado, $estadosValidos)) $estado = 'disponible';
+        if ($condicion !== null && !in_array($condicion, ['nuevo', 'usado', 'reacondicionado'])) $condicion = null;
+        if ($condicion === '') $condicion = null;
+        if ($stock !== null && $stock !== '') { $stock = (int) $stock; if ($stock < 0) $stock = 0; } else { $stock = null; }
+        if (mb_strlen($descripcion_detallada) > 2000) $descripcion_detallada = mb_substr($descripcion_detallada, 0, 2000);
 
         if (empty($nombre) || mb_strlen($nombre) > 150) {
             $this->redirect("/admin/comercios/{$id}/productos/editar/{$pid}", ['error' => 'El nombre es obligatorio (máx 150 caracteres)']);
@@ -816,11 +860,34 @@ class ComercioAdminController extends Controller
         }
 
         $data = [
+            'tipo'        => $tipo,
             'nombre'      => $nombre,
             'descripcion' => $descripcion ?: null,
+            'descripcion_detallada' => $descripcion_detallada ?: null,
             'precio'      => $precio,
+            'stock'       => $stock,
+            'condicion'   => $condicion,
             'activo'      => $activo,
+            'estado'      => $estado,
         ];
+
+        // Eliminar imagen2 si se marco checkbox
+        if (!empty($_POST['eliminar_imagen2']) && !empty($producto['imagen2'])) {
+            FileManager::eliminarImagen('productos/' . $id, $producto['imagen2']);
+            $data['imagen2'] = null;
+        }
+
+        // Imagen 2
+        $foto2 = $this->request->file('imagen2');
+        if ($foto2 && $foto2['error'] === UPLOAD_ERR_OK) {
+            if ($foto2['size'] <= 2 * 1024 * 1024) {
+                $img2 = FileManager::subirImagen($foto2, 'productos/' . $id, 800);
+                if ($img2) {
+                    if (!empty($producto['imagen2'])) FileManager::eliminarImagen('productos/' . $id, $producto['imagen2']);
+                    $data['imagen2'] = $img2;
+                }
+            }
+        }
 
         // Eliminar imagen si se marcó checkbox
         if (!empty($_POST['eliminar_imagen']) && !empty($producto['imagen'])) {
@@ -863,6 +930,9 @@ class ComercioAdminController extends Controller
 
         if (!empty($producto['imagen'])) {
             FileManager::eliminarImagen('productos/' . $id, $producto['imagen']);
+        }
+        if (!empty($producto['imagen2'])) {
+            FileManager::eliminarImagen('productos/' . $id, $producto['imagen2']);
         }
 
         Producto::delete($pid);

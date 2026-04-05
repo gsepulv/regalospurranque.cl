@@ -135,17 +135,34 @@ $hoy = (int) date('w');
                     </div>
                 <?php endif; ?>
 
-                <!-- Catálogo de productos -->
+                <!-- Cat\u00e1logo de productos -->
                 <style>
                 .catalogo-grid{display:flex;flex-direction:column;gap:0}
-                .catalogo-card{display:flex;gap:1rem;padding:16px;border-bottom:1px solid #eee;align-items:flex-start}
+                .catalogo-card{display:flex;gap:1.25rem;padding:20px;border-bottom:1px solid #f0f0f0;align-items:flex-start;position:relative}
                 .catalogo-card:last-child{border-bottom:none}
-                .catalogo-img{width:200px;height:200px;object-fit:cover;border-radius:8px;flex-shrink:0}
-                .catalogo-placeholder{width:200px;height:200px;border-radius:8px;flex-shrink:0;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3rem}
+                .catalogo-img-wrap{position:relative;flex-shrink:0}
+                .catalogo-img{width:250px;height:250px;object-fit:cover;border-radius:12px}
+                .catalogo-placeholder{width:250px;height:250px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3.5rem}
+                .catalogo-logo{position:absolute;bottom:8px;right:8px;width:30px;height:30px;border-radius:50%;object-fit:cover;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+                .catalogo-overlay{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.4rem;font-weight:700;letter-spacing:1px}
                 .catalogo-info{flex:1;min-width:0}
+                .catalogo-badges{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.5rem}
+                .catalogo-badge{display:inline-block;padding:0.2rem 0.6rem;border-radius:12px;font-size:0.75rem;font-weight:600}
+                .catalogo-badge--producto{background:#EFF6FF;color:#1D4ED8}
+                .catalogo-badge--servicio{background:#FFF7ED;color:#C2410C}
+                .catalogo-badge--arriendo{background:#F0FDF4;color:#15803D}
+                .catalogo-badge--propiedad{background:#FAF5FF;color:#7E22CE}
+                .catalogo-badge--disponible{background:#F0FDF4;color:#15803D}
+                .catalogo-badge--vendido{background:#FEF2F2;color:#DC2626}
+                .catalogo-badge--reservado{background:#FFFBEB;color:#D97706}
+                .catalogo-badge--agotado{background:#F3F4F6;color:#6B7280}
                 .catalogo-nombre{font-size:1.2rem;font-weight:700;margin:0 0 0.25rem}
                 .catalogo-desc{font-size:0.9rem;color:#666;margin:0.25rem 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-                .catalogo-precio{font-size:1.3rem;font-weight:700;color:#4caf50;display:block;margin:0.5rem 0}
+                .catalogo-desc-det{font-size:0.88rem;color:#555;margin:0.5rem 0;line-height:1.5;display:none}
+                .catalogo-desc-det.active{display:block}
+                .catalogo-toggle{background:none;border:none;color:#2563EB;font-size:0.85rem;cursor:pointer;padding:0;font-weight:600}
+                .catalogo-precio{font-size:1.4rem;font-weight:700;color:#4caf50;display:block;margin:0.5rem 0}
+                .catalogo-meta{font-size:0.85rem;color:#666;margin-bottom:0.5rem}
                 .catalogo-actions{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.75rem}
                 .catalogo-btn{display:inline-flex;align-items:center;gap:0.35rem;padding:0.45rem 1rem;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;cursor:pointer;border:none;transition:opacity 0.2s;font-family:inherit}
                 .catalogo-btn:hover{opacity:0.85}
@@ -157,50 +174,129 @@ $hoy = (int) date('w');
                 .catalogo-share-fb{background:#1877F2;color:#fff}
                 .catalogo-share-x{background:#000;color:#fff}
                 .catalogo-share-wa2{background:#25D366;color:#fff}
+                .catalogo-filters{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem}
+                .catalogo-filter{padding:0.35rem 0.85rem;border-radius:20px;border:1.5px solid #ddd;background:#fff;color:#555;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+                .catalogo-filter.active{background:#2563EB;color:#fff;border-color:#2563EB}
                 @media(max-width:600px){
                     .catalogo-card{flex-direction:column;align-items:center;text-align:center}
-                    .catalogo-img,.catalogo-placeholder{width:100%;max-width:280px;height:200px}
+                    .catalogo-img,.catalogo-placeholder{width:100%;max-width:300px;height:220px}
                     .catalogo-actions{justify-content:center}
                     .catalogo-share-popup{justify-content:center}
+                    .catalogo-filters{justify-content:center}
                 }
                 </style>
                 <?php if (!empty($productos)): ?>
+                    <?php
+                    // Contar por tipo y estado
+                    $tiposPresentes = [];
+                    $countDisponibles = 0;
+                    foreach ($productos as $_p) {
+                        $t = $_p['tipo'] ?? 'producto';
+                        $tiposPresentes[$t] = ($tiposPresentes[$t] ?? 0) + 1;
+                        if (($_p['estado'] ?? 'disponible') === 'disponible' && $_p['activo']) $countDisponibles++;
+                    }
+                    $tieneServicios = isset($tiposPresentes['servicio']);
+                    $tienePropiedades = isset($tiposPresentes['propiedad']);
+                    // Titulo dinamico
+                    if ($tienePropiedades) {
+                        $catTitulo = '&#127991; Cat&aacute;logo &mdash; ' . count($productos) . ' publicacion' . (count($productos) !== 1 ? 'es' : '');
+                    } elseif ($tieneServicios) {
+                        $catTitulo = '&#128203; Productos y Servicios &mdash; ' . count($productos) . ' opcion' . (count($productos) !== 1 ? 'es' : '');
+                    } else {
+                        $catTitulo = '&#127991; Cat&aacute;logo &mdash; ' . count($productos) . ' opci' . (count($productos) === 1 ? '&oacute;n disponible' : 'ones disponibles');
+                    }
+                    ?>
                     <div class="comercio-section">
-                        <h2>&#127991; Catálogo — <?= count($productos) ?> opci<?= count($productos) === 1 ? 'ón disponible' : 'ones disponibles' ?></h2>
+                        <h2><?= $catTitulo ?></h2>
+
+                        <?php if (count($productos) > 3 && count($tiposPresentes) > 1): ?>
+                        <div class="catalogo-filters">
+                            <button class="catalogo-filter active" onclick="filtrarCatalogo('todos',this)">Todos</button>
+                            <?php foreach ($tiposPresentes as $ft => $fc): ?>
+                                <button class="catalogo-filter" onclick="filtrarCatalogo('<?= $ft ?>',this)"><?= \App\Models\Producto::getTipoLabel($ft) ?> (<?= $fc ?>)</button>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+
                         <div class="catalogo-grid">
                             <?php foreach ($productos as $prod):
+                                $prodTipo = $prod['tipo'] ?? 'producto';
+                                $prodEstado = $prod['estado'] ?? 'disponible';
                                 $prodUrl = url('/comercio/' . $comercio['slug']) . '#producto-' . $prod['id'];
                                 $prodPrecioFmt = $prod['precio'] ? '$' . number_format($prod['precio'], 0, '', '.') : '';
+                                $esVendido = in_array($prodEstado, ['vendido', 'agotado']);
                             ?>
-                                <div class="catalogo-card" id="producto-<?= $prod['id'] ?>">
-                                    <?php if (!empty($prod['imagen'])): ?>
-                                        <img class="catalogo-img"
-                                             src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
-                                             alt="<?= e($prod['nombre']) ?>"
-                                             loading="lazy"
-                                             onerror="this.src='<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>'">
-                                    <?php else: ?>
-                                        <div class="catalogo-placeholder">&#128230;</div>
-                                    <?php endif; ?>
+                                <div class="catalogo-card" id="producto-<?= $prod['id'] ?>" data-tipo="<?= $prodTipo ?>">
+                                    <div class="catalogo-img-wrap">
+                                        <?php if (!empty($prod['imagen'])): ?>
+                                            <img class="catalogo-img"
+                                                 src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $prod['imagen']) ?>"
+                                                 alt="<?= e($prod['nombre']) ?>"
+                                                 loading="lazy"
+                                                 onerror="this.src='<?= asset('img/productos/' . $comercio['id'] . '/' . $prod['imagen']) ?>'">
+                                        <?php else: ?>
+                                            <div class="catalogo-placeholder">&#128230;</div>
+                                        <?php endif; ?>
+                                        <?php if (!empty($comercio['logo'])): ?>
+                                            <img class="catalogo-logo"
+                                                 src="<?= asset('img/logos/' . $comercio['logo']) ?>"
+                                                 alt="<?= e($comercio['nombre']) ?>"
+                                                 loading="lazy">
+                                        <?php endif; ?>
+                                        <?php if ($esVendido): ?>
+                                            <div class="catalogo-overlay"><?= strtoupper($prodEstado) ?></div>
+                                        <?php endif; ?>
+                                    </div>
                                     <div class="catalogo-info">
+                                        <div class="catalogo-badges">
+                                            <span class="catalogo-badge catalogo-badge--<?= $prodTipo ?>"><?= \App\Models\Producto::getTipoLabel($prodTipo) ?></span>
+                                            <span class="catalogo-badge catalogo-badge--<?= $prodEstado ?>"><?= \App\Models\Producto::getEstadoLabel($prodEstado) ?></span>
+                                        </div>
                                         <h3 class="catalogo-nombre"><?= e($prod['nombre']) ?></h3>
                                         <?php if (!empty($prod['descripcion'])): ?>
                                             <p class="catalogo-desc"><?= e($prod['descripcion']) ?></p>
                                         <?php endif; ?>
+                                        <?php if (!empty($prod['descripcion_detallada'])): ?>
+                                            <button class="catalogo-toggle" onclick="toggleDetalle(this)">Ver m&aacute;s detalles &#9660;</button>
+                                            <div class="catalogo-desc-det"><?= nl2br(e($prod['descripcion_detallada'])) ?></div>
+                                        <?php endif; ?>
                                         <?php if ($prod['precio']): ?>
-                                            <span class="catalogo-precio">$ <?= number_format($prod['precio'], 0, '', '.') ?></span>
+                                            <span class="catalogo-precio">$ <?= number_format($prod['precio'], 0, '', '.') ?><?php if ($prodTipo === 'arriendo') echo ' /mes'; ?></span>
+                                        <?php endif; ?>
+                                        <?php
+                                        $metaParts = [];
+                                        if ($prod['stock'] !== null && $prodTipo === 'producto') $metaParts[] = '&#128230; ' . $prod['stock'] . ' unidades disponibles';
+                                        if (!empty($prod['condicion'])) $metaParts[] = ucfirst($prod['condicion']);
+                                        ?>
+                                        <?php if (!empty($metaParts)): ?>
+                                            <div class="catalogo-meta"><?= implode(' | ', $metaParts) ?></div>
                                         <?php endif; ?>
                                         <div class="catalogo-actions">
                                             <?php if (!empty($comercio['whatsapp'])):
-                                                $msgProd = 'Hola, vi el producto "' . $prod['nombre'] . '"';
-                                                if ($prod['precio']) $msgProd .= ' (' . $prodPrecioFmt . ')';
-                                                $msgProd .= ' en regalospurranque.cl y me interesa. ¿Está disponible?';
+                                                // Mensaje segun tipo
+                                                if ($esVendido) {
+                                                    $msgProd = 'Hola, vi que "' . $prod['nombre'] . '" en regalospurranque.cl ya no est&aacute; disponible. &iquest;Tienen algo similar?';
+                                                } elseif ($prodTipo === 'servicio') {
+                                                    $msgProd = 'Hola, vi el servicio "' . $prod['nombre'] . '" en regalospurranque.cl y me interesa. &iquest;Podemos coordinar?';
+                                                } elseif ($prodTipo === 'arriendo') {
+                                                    $msgProd = 'Hola, vi "' . $prod['nombre'] . '"';
+                                                    if ($prod['precio']) $msgProd .= ' (' . $prodPrecioFmt . '/mes)';
+                                                    $msgProd .= ' en regalospurranque.cl. &iquest;Est&aacute; disponible para arriendo?';
+                                                } elseif ($prodTipo === 'propiedad') {
+                                                    $msgProd = 'Hola, vi la propiedad "' . $prod['nombre'] . '"';
+                                                    if ($prod['precio']) $msgProd .= ' (' . $prodPrecioFmt . ')';
+                                                    $msgProd .= ' en regalospurranque.cl. &iquest;Podemos agendar una visita?';
+                                                } else {
+                                                    $msgProd = 'Hola, vi el producto "' . $prod['nombre'] . '"';
+                                                    if ($prod['precio']) $msgProd .= ' (' . $prodPrecioFmt . ')';
+                                                    $msgProd .= ' en regalospurranque.cl y me interesa. &iquest;Est&aacute; disponible?';
+                                                }
                                             ?>
                                                 <a href="https://wa.me/<?= preg_replace('/[^0-9]/', '', $comercio['whatsapp']) ?>?text=<?= urlencode($msgProd) ?>"
                                                    target="_blank" rel="noopener"
                                                    class="catalogo-btn catalogo-btn--wa"
                                                    onclick="trackWhatsApp(<?= $comercio['id'] ?>)">
-                                                    &#128172; Consultar por WhatsApp
+                                                    &#128172; <?= $esVendido ? 'Consultar similares' : 'Consultar por WhatsApp' ?>
                                                 </a>
                                             <?php endif; ?>
                                             <button class="catalogo-btn catalogo-btn--outline"
@@ -243,6 +339,23 @@ $hoy = (int) date('w');
                         var popup=btn.closest('.catalogo-card').querySelector('.catalogo-share-popup');
                         popup.classList.toggle('active');
                     }
+                }
+                function toggleDetalle(btn){
+                    var det=btn.nextElementSibling;
+                    if(det.classList.contains('active')){
+                        det.classList.remove('active');
+                        btn.innerHTML='Ver m&aacute;s detalles &#9660;';
+                    }else{
+                        det.classList.add('active');
+                        btn.innerHTML='Ver menos &#9650;';
+                    }
+                }
+                function filtrarCatalogo(tipo,btn){
+                    document.querySelectorAll('.catalogo-filter').forEach(function(b){b.classList.remove('active')});
+                    btn.classList.add('active');
+                    document.querySelectorAll('.catalogo-card').forEach(function(c){
+                        c.style.display=(tipo==='todos'||c.dataset.tipo===tipo)?'':'none';
+                    });
                 }
                 </script>
 

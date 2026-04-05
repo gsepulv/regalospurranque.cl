@@ -1008,8 +1008,24 @@ class ComercianteController extends Controller
 
         $nombre      = trim($_POST['nombre'] ?? '');
         $descripcion = trim($_POST['descripcion'] ?? '');
+        $descripcion_detallada = trim($_POST['descripcion_detallada'] ?? '');
         $precio      = $_POST['precio'] ?? null;
         $activo      = isset($_POST['activo']) ? 1 : 0;
+        $tipo        = $_POST['tipo'] ?? 'producto';
+        $estado      = $_POST['estado'] ?? 'disponible';
+        $stock       = $_POST['stock'] ?? null;
+        $condicion   = $_POST['condicion'] ?? null;
+
+        // Validar enums
+        $tiposValidos = ['producto', 'servicio', 'arriendo', 'propiedad'];
+        $estadosValidos = ['disponible', 'vendido', 'reservado', 'agotado'];
+        $condicionesValidas = ['nuevo', 'usado', 'reacondicionado', ''];
+        if (!in_array($tipo, $tiposValidos)) $tipo = 'producto';
+        if (!in_array($estado, $estadosValidos)) $estado = 'disponible';
+        if (!in_array($condicion ?? '', $condicionesValidas)) $condicion = null;
+        if ($condicion === '') $condicion = null;
+        if ($stock !== null && $stock !== '') { $stock = (int) $stock; if ($stock < 0) $stock = 0; } else { $stock = null; }
+        if (mb_strlen($descripcion_detallada) > 2000) $descripcion_detallada = mb_substr($descripcion_detallada, 0, 2000);
 
         $errores = [];
         if (empty($nombre)) {
@@ -1044,21 +1060,35 @@ class ComercianteController extends Controller
 
         if (!empty($errores)) {
             $_SESSION['flash_errors'] = $errores;
-            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'precio' => $precio, 'activo' => $activo];
+            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'descripcion_detallada' => $descripcion_detallada, 'precio' => $precio, 'activo' => $activo, 'tipo' => $tipo, 'estado' => $estado, 'stock' => $stock, 'condicion' => $condicion];
             header('Location: ' . url('/mi-comercio/productos/crear'));
             exit;
         }
 
         $data = [
             'comercio_id' => $comercioId,
+            'tipo'        => $tipo,
             'nombre'      => $nombre,
             'descripcion' => $descripcion ?: null,
+            'descripcion_detallada' => $descripcion_detallada ?: null,
             'precio'      => $precio,
+            'stock'       => $stock,
+            'condicion'   => $condicion,
             'activo'      => $activo,
+            'estado'      => $estado,
             'orden'       => Producto::countByComercioId($comercioId),
         ];
         if ($imagenNombre) {
             $data['imagen'] = $imagenNombre;
+        }
+
+        // Imagen 2
+        $imagen2Nombre = null;
+        if (!empty($_FILES['imagen2']['name']) && $_FILES['imagen2']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['imagen2']['size'] <= 2 * 1024 * 1024) {
+                $imagen2Nombre = FileManager::subirImagen($_FILES['imagen2'], 'productos/' . $comercioId, 800);
+                if ($imagen2Nombre) $data['imagen2'] = $imagen2Nombre;
+            }
         }
 
         Producto::create($data);
@@ -1161,16 +1191,21 @@ class ComercianteController extends Controller
 
         if (!empty($errores)) {
             $_SESSION['flash_errors'] = $errores;
-            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'precio' => $precio, 'activo' => $activo];
+            $_SESSION['flash_old'] = ['nombre' => $nombre, 'descripcion' => $descripcion, 'descripcion_detallada' => $descripcion_detallada, 'precio' => $precio, 'activo' => $activo, 'tipo' => $tipo, 'estado' => $estado, 'stock' => $stock, 'condicion' => $condicion];
             header('Location: ' . url('/mi-comercio/productos/editar/' . $id));
             exit;
         }
 
         $data = [
+            'tipo'        => $tipo,
             'nombre'      => $nombre,
             'descripcion' => $descripcion ?: null,
+            'descripcion_detallada' => $descripcion_detallada ?: null,
             'precio'      => $precio,
+            'stock'       => $stock,
+            'condicion'   => $condicion,
             'activo'      => $activo,
+            'estado'      => $estado,
         ];
         if ($imagenNombre) {
             // Eliminar imagen anterior
@@ -1178,6 +1213,19 @@ class ComercianteController extends Controller
                 $this->eliminarImagenProducto($comercioId, $producto['imagen']);
             }
             $data['imagen'] = $imagenNombre;
+        }
+
+        // Imagen 2
+        if (!empty($_FILES['imagen2']['name']) && $_FILES['imagen2']['error'] !== UPLOAD_ERR_NO_FILE) {
+            if ($_FILES['imagen2']['size'] <= 2 * 1024 * 1024) {
+                $img2 = FileManager::subirImagen($_FILES['imagen2'], 'productos/' . $comercioId, 800);
+                if ($img2) {
+                    if (!empty($producto['imagen2'])) {
+                        $this->eliminarImagenProducto($comercioId, $producto['imagen2']);
+                    }
+                    $data['imagen2'] = $img2;
+                }
+            }
         }
 
         Producto::update($id, $data);
@@ -1208,9 +1256,12 @@ class ComercianteController extends Controller
             exit;
         }
 
-        // Eliminar imagen del disco
+        // Eliminar imagenes del disco
         if (!empty($producto['imagen'])) {
             $this->eliminarImagenProducto($comercioId, $producto['imagen']);
+        }
+        if (!empty($producto['imagen2'])) {
+            $this->eliminarImagenProducto($comercioId, $producto['imagen2']);
         }
 
         Producto::delete($id);
