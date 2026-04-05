@@ -173,7 +173,7 @@ class ComercioController extends Controller
         if (!is_dir($cacheDir)) @mkdir($cacheDir, 0755, true);
         $cachePath = $cacheDir . '/producto-' . $id . '.jpg';
 
-        // Check cache - regenerate if product was updated after cache
+        // Serve from cache if fresh
         if (file_exists($cachePath)) {
             $cacheTime = filemtime($cachePath);
             $updatedAt = strtotime($producto['updated_at'] ?? '2000-01-01');
@@ -185,25 +185,24 @@ class ComercioController extends Controller
             }
         }
 
-        // Canvas 1200x630
-        $w = 1200; $h = 630;
-        $img = imagecreatetruecolor($w, $h);
-        $white = imagecolorallocate($img, 255, 255, 255);
-        $grayBg = imagecolorallocate($img, 245, 245, 245);
-        $black = imagecolorallocate($img, 51, 51, 51);
-        $gray = imagecolorallocate($img, 153, 153, 153);
-        $green = imagecolorallocate($img, 76, 175, 80);
-        imagefill($img, 0, 0, $white);
+        $W = 1200; $H = 630;
+        $barH = 100;
+        $barY = $H - $barH;
+        $fontB = '/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf';
+        $fontR = '/usr/share/fonts/dejavu/DejaVuSans.ttf';
 
-        // Bottom bar (120px)
-        $barH = 120;
-        $barY = $h - $barH;
-        imagefilledrectangle($img, 0, $barY, $w, $h, $grayBg);
-        // Thin green line separator
-        imagefilledrectangle($img, 0, $barY, $w, $barY + 3, $green);
-
-        $fontBold = '/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf';
-        $fontRegular = '/usr/share/fonts/dejavu/DejaVuSans.ttf';
+        // Create canvas with white background
+        $img = imagecreatetruecolor($W, $H);
+        imageantialias($img, true);
+        $white  = imagecolorallocate($img, 255, 255, 255);
+        $bgSoft = imagecolorallocate($img, 250, 250, 250);
+        $barBg  = imagecolorallocate($img, 255, 255, 255);
+        $black  = imagecolorallocate($img, 40, 40, 40);
+        $gray   = imagecolorallocate($img, 130, 130, 130);
+        $green  = imagecolorallocate($img, 76, 175, 80);
+        $greenDark = imagecolorallocate($img, 56, 142, 60);
+        $shadow = imagecolorallocate($img, 230, 230, 230);
+        imagefill($img, 0, 0, $bgSoft);
 
         // Load product image
         $prodImgPath = UPLOAD_PATH . '/productos/' . $producto['comercio_id'] . '/' . ($producto['imagen'] ?? '');
@@ -216,28 +215,60 @@ class ComercioController extends Controller
         }
 
         if ($prodImg) {
-            $pw = imagesx($prodImg); $ph = imagesy($prodImg);
-            // Max area for product image: 1200 x 510 (above bar)
-            $maxW = $w; $maxH = $barY;
-            $ratio = min($maxW / $pw, $maxH / $ph);
+            $pw = imagesx($prodImg);
+            $ph = imagesy($prodImg);
+
+            // Product image area: padded, never upscale
+            $areaW = $W - 80;       // 40px padding each side
+            $areaH = $barY - 40;    // 20px padding top+bottom
+            $ratio = min($areaW / $pw, $areaH / $ph, 1.0); // never upscale
             $newW = (int)($pw * $ratio);
             $newH = (int)($ph * $ratio);
-            $dx = (int)(($w - $newW) / 2);
-            $dy = (int)(($maxH - $newH) / 2);
-            imagecopyresampled($img, $prodImg, $dx, $dy, 0, 0, $newW, $newH, $pw, $ph);
+
+            // Create a high-quality resized version
+            $resized = imagecreatetruecolor($newW, $newH);
+            imagealphablending($resized, true);
+            imagesavealpha($resized, true);
+            // Fill with soft bg
+            $resBg = imagecolorallocate($resized, 250, 250, 250);
+            imagefill($resized, 0, 0, $resBg);
+            imagecopyresampled($resized, $prodImg, 0, 0, 0, 0, $newW, $newH, $pw, $ph);
+
+            // Center on canvas
+            $dx = (int)(($W - $newW) / 2);
+            $dy = (int)(($barY - $newH) / 2);
+
+            // Subtle shadow behind image (offset rectangle)
+            imagefilledrectangle($img, $dx + 4, $dy + 4, $dx + $newW + 4, $dy + $newH + 4, $shadow);
+
+            // White card behind image
+            imagefilledrectangle($img, $dx - 2, $dy - 2, $dx + $newW + 2, $dy + $newH + 2, $white);
+
+            // Paste resized image
+            imagecopy($img, $resized, $dx, $dy, 0, 0, $newW, $newH);
+            imagedestroy($resized);
             imagedestroy($prodImg);
         } else {
-            // No image - show product initial large
-            $initial = mb_substr($producto['nombre'], 0, 1);
-            $bbox = imagettfbbox(80, 0, $fontBold, $initial);
+            // No product image - show initial letter centered
+            $initial = mb_strtoupper(mb_substr($producto['nombre'], 0, 1));
+            $lightGray = imagecolorallocate($img, 220, 220, 220);
+            // Circle placeholder
+            $cx = $W / 2; $cy = ($barY) / 2;
+            imagefilledellipse($img, (int)$cx, (int)$cy, 200, 200, $lightGray);
+            $bbox = imagettfbbox(60, 0, $fontB, $initial);
             $tw = $bbox[2] - $bbox[0]; $th = $bbox[1] - $bbox[7];
-            imagettftext($img, 80, 0, (int)(($w - $tw)/2), (int)(($barY - $th)/2 + $th), $gray, $fontBold, $initial);
+            imagettftext($img, 60, 0, (int)($cx - $tw/2), (int)($cy + $th/2), $gray, $fontB, $initial);
         }
 
-        // Bottom bar: logo + text
+        // Bottom bar - clean white with top border
+        imagefilledrectangle($img, 0, $barY, $W, $H, $barBg);
+        imagefilledrectangle($img, 0, $barY, $W, $barY + 2, $green); // green accent line
+
+        // Logo in bottom bar
         $logoPath = UPLOAD_PATH . '/logos/' . ($producto['comercio_logo'] ?? '');
-        $logoSize = 60;
-        $logoX = 30; $logoY = $barY + (int)(($barH - $logoSize) / 2);
+        $logoSize = 54;
+        $logoX = 36;
+        $logoY = $barY + (int)(($barH - $logoSize) / 2);
 
         if (!empty($producto['comercio_logo']) && file_exists($logoPath)) {
             $ext = strtolower(pathinfo($logoPath, PATHINFO_EXTENSION));
@@ -248,39 +279,59 @@ class ComercioController extends Controller
 
             if ($logoImg) {
                 $lw = imagesx($logoImg); $lh = imagesy($logoImg);
-                $logoResized = imagecreatetruecolor($logoSize, $logoSize);
-                imagecopyresampled($logoResized, $logoImg, 0, 0, 0, 0, $logoSize, $logoSize, $lw, $lh);
+                // Downscale only, high quality
+                $logoRes = imagecreatetruecolor($logoSize, $logoSize);
+                imagealphablending($logoRes, true);
+                $logoWhite = imagecolorallocate($logoRes, 255, 255, 255);
+                imagefill($logoRes, 0, 0, $logoWhite);
+                imagecopyresampled($logoRes, $logoImg, 0, 0, 0, 0, $logoSize, $logoSize, $lw, $lh);
                 imagedestroy($logoImg);
-                imagecopy($img, $logoResized, $logoX, $logoY, 0, 0, $logoSize, $logoSize);
-                imagedestroy($logoResized);
+                imagecopy($img, $logoRes, $logoX, $logoY, 0, 0, $logoSize, $logoSize);
+                imagedestroy($logoRes);
             }
         } else {
-            // Placeholder circle with initial
-            $cx = $logoX + $logoSize/2; $cy = $logoY + $logoSize/2;
-            imagefilledellipse($img, (int)$cx, (int)$cy, $logoSize, $logoSize, $gray);
-            $ini = mb_substr($producto['comercio_nombre'], 0, 1);
-            $bbox2 = imagettfbbox(20, 0, $fontBold, $ini);
-            $tw2 = $bbox2[2] - $bbox2[0]; $th2 = $bbox2[1] - $bbox2[7];
-            imagettftext($img, 20, 0, (int)($cx - $tw2/2), (int)($cy + $th2/2), $white, $fontBold, $ini);
+            // Placeholder circle
+            $cx2 = $logoX + $logoSize/2; $cy2 = $logoY + $logoSize/2;
+            imagefilledellipse($img, (int)$cx2, (int)$cy2, $logoSize, $logoSize, $green);
+            $ini = mb_strtoupper(mb_substr($producto['comercio_nombre'], 0, 1));
+            $bb = imagettfbbox(18, 0, $fontB, $ini);
+            $itw = $bb[2] - $bb[0]; $ith = $bb[1] - $bb[7];
+            imagettftext($img, 18, 0, (int)($cx2 - $itw/2), (int)($cy2 + $ith/2), $white, $fontB, $ini);
         }
 
-        // Commerce name
-        $textX = $logoX + $logoSize + 16;
-        imagettftext($img, 18, 0, $textX, $barY + 50, $black, $fontBold, $producto['comercio_nombre']);
-        imagettftext($img, 12, 0, $textX, $barY + 75, $gray, $fontRegular, 'regalospurranque.cl');
+        // Text next to logo
+        $textX = $logoX + $logoSize + 18;
+        imagettftext($img, 16, 0, $textX, $barY + 45, $black, $fontB, $producto['comercio_nombre']);
+        imagettftext($img, 11, 0, $textX, $barY + 68, $gray, $fontR, 'regalospurranque.cl');
 
-        // Price badge (top-right)
+        // Price pill (top-right, rounded feel via two rects)
         if ($producto['precio']) {
-            $priceTxt = '$ ' . number_format($producto['precio'], 0, '', '.');
-            $bbox3 = imagettfbbox(22, 0, $fontBold, $priceTxt);
-            $ptw = $bbox3[2] - $bbox3[0] + 30;
-            $px = $w - $ptw - 20; $py = 20;
-            imagefilledrectangle($img, $px, $py, $px + $ptw, $py + 45, $green);
-            imagettftext($img, 22, 0, $px + 15, $py + 33, $white, $fontBold, $priceTxt);
+            $tipo = $producto['tipo'] ?? 'producto';
+            $priceTxt = '$ ' . number_format($producto['precio'], 0, '.', '.');
+            if ($tipo === 'arriendo') $priceTxt .= ' /mes';
+            $bbox3 = imagettfbbox(20, 0, $fontB, $priceTxt);
+            $ptw = $bbox3[2] - $bbox3[0] + 36;
+            $pth = 42;
+            $px = $W - $ptw - 24;
+            $py = 18;
+            // Green pill
+            imagefilledrectangle($img, $px, $py, $px + $ptw, $py + $pth, $green);
+            imagettftext($img, 20, 0, $px + 18, $py + 30, $white, $fontB, $priceTxt);
         }
 
-        // Save and serve
-        imagejpeg($img, $cachePath, 90);
+        // Product name (bottom-right area of bar)
+        $nameMaxW = $W - $textX - 40;
+        $prodName = $producto['nombre'];
+        // Truncate if too long
+        while (mb_strlen($prodName) > 3) {
+            $bb2 = imagettfbbox(13, 0, $fontR, $prodName);
+            if (($bb2[2] - $bb2[0]) <= $nameMaxW) break;
+            $prodName = mb_substr($prodName, 0, -1);
+        }
+        imagettftext($img, 13, 0, $W - 36 - (imagettfbbox(13, 0, $fontR, $prodName)[2] - imagettfbbox(13, 0, $fontR, $prodName)[0]), $barY + 55, $gray, $fontR, $prodName);
+
+        // Save as high-quality JPEG
+        imagejpeg($img, $cachePath, 95);
         imagedestroy($img);
 
         header('Content-Type: image/jpeg');
