@@ -183,7 +183,7 @@ $totalComercios = array_sum($conteos);
             <div>
                 <strong><?= e($c['nombre']) ?></strong>
                 <?php if (!empty($c['validado'])): ?>
-                    <span class="badge badge--success" style="font-size:.6rem;padding:.1rem .3rem">🛡️ Validado</span>
+                    <span class="badge badge--success" style="font-size:.6rem;padding:.1rem .3rem">&#10003; Verificado</span>
                 <?php endif; ?>
                 <?php if (!$c['activo']): ?>
                     <span class="status status--inactive" style="font-size:.65rem">Inactivo</span>
@@ -233,7 +233,7 @@ $totalComercios = array_sum($conteos);
         <div class="stat-card__header">
             <div>
                 <div class="stat-card__number"><?= count($validados) ?></div>
-                <div class="stat-card__label">Comercios Validados</div>
+                <div class="stat-card__label">Comercios Verificados</div>
             </div>
             <div class="stat-card__icon">🛡️</div>
         </div>
@@ -304,7 +304,7 @@ $totalComercios = array_sum($conteos);
 
 <!-- Ya validados -->
 <div class="admin-card">
-    <div class="admin-card__header"><h3>🛡️ Comercios Validados</h3></div>
+    <div class="admin-card__header"><h3>&#10003; Comercios Verificados</h3></div>
     <?php if (empty($validados)): ?>
         <div class="admin-card__body" style="text-align:center;color:#a0aec0;padding:2rem">
             Aún no hay comercios validados.

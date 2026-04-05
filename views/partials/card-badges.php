@@ -21,7 +21,7 @@ $_hasBadges = ($_plan !== 'freemium') || $_validado;
             <span class="badge badge--plan badge--banner">&#128226; Banner</span>
         <?php endif; ?>
         <?php if ($_validado): ?>
-            <span class="badge badge--validado">&#9989; Validado</span>
+            <span class="badge badge--validado" style="background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7">&#10003; Verificado</span>
         <?php endif; ?>
     </div>
 <?php endif; ?>

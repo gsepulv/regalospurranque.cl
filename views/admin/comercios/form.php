@@ -563,7 +563,7 @@ $errors  = $flash['errors'] ?? [];
                                name="validado"
                                value="1"
                                <?= old('validado', $editing ? $comercio['validado'] : 0) ? 'checked' : '' ?>>
-                        ✅ Validado
+                        ✓ Verificado
                     </label>
                 </div>
                 <div class="form-group">

@@ -50,7 +50,7 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
         <select name="validacion" class="form-control" style="max-width:180px" onchange="document.getElementById('filtrosForm').submit()">
             <option value="">Validacion: Todos</option>
             <option value="pendiente" <?= $validacionFilter === 'pendiente' ? 'selected' : '' ?>>Pendientes de validacion</option>
-            <option value="validado" <?= $validacionFilter === 'validado' ? 'selected' : '' ?>>Validados</option>
+            <option value="validado" <?= $validacionFilter === 'validado' ? 'selected' : '' ?>>Verificados</option>
         </select>
     </form>
 </div>
