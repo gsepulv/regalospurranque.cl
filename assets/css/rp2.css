@@ -2732,6 +2732,26 @@ textarea.form-control {
     background-color: #25d366;
 }
 
+.share-btn--linkedin {
+    background-color: #0a66c2;
+}
+
+.share-btn--telegram {
+    background-color: #26a5e4;
+}
+
+.share-btn--pinterest {
+    background-color: #e60023;
+}
+
+.share-btn--email {
+    background-color: #ea4335;
+}
+
+.share-btn--native {
+    background-color: var(--color-gray);
+}
+
 .share-btn--copy {
     background-color: var(--color-gray);
     color: var(--color-white);
