@@ -79,30 +79,24 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
             <!-- ═══════════ Selector de tipo ═══════════ -->
             <div style="margin-bottom:1.5rem">
                 <label style="display:block;font-weight:600;margin-bottom:0.5rem;font-size:0.9rem">&#127991; Tipo de publicaci&#243;n *</label>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem" id="tipoCards">
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:0.75rem" id="tipoCards">
                     <div class="tipo-card" data-tipo="producto"
                          style="border:2px solid #E5E7EB;border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s">
                         <div style="font-size:1.75rem">&#128230;</div>
                         <div style="font-weight:600;font-size:0.9rem;margin-top:0.25rem">Producto</div>
-                        <div style="font-size:0.75rem;color:#9CA3AF">Art&#237;culos f&#237;sicos</div>
+                        <div style="font-size:0.75rem;color:#9CA3AF">Vende un bien fisico</div>
                     </div>
                     <div class="tipo-card" data-tipo="servicio"
                          style="border:2px solid #E5E7EB;border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s">
-                        <div style="font-size:1.75rem">&#128736;</div>
+                        <div style="font-size:1.75rem">&#128295;</div>
                         <div style="font-weight:600;font-size:0.9rem;margin-top:0.25rem">Servicio</div>
-                        <div style="font-size:0.75rem;color:#9CA3AF">Servicios profesionales</div>
+                        <div style="font-size:0.75rem;color:#9CA3AF">Ofrece un servicio</div>
                     </div>
                     <div class="tipo-card" data-tipo="inmueble"
                          style="border:2px solid #E5E7EB;border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s">
                         <div style="font-size:1.75rem">&#127968;</div>
                         <div style="font-weight:600;font-size:0.9rem;margin-top:0.25rem">Inmueble</div>
-                        <div style="font-size:0.75rem;color:#9CA3AF">Arriendo o venta</div>
-                    </div>
-                    <div class="tipo-card" data-tipo="propiedad"
-                         style="border:2px solid #E5E7EB;border-radius:10px;padding:1rem;text-align:center;cursor:pointer;transition:all 0.2s">
-                        <div style="font-size:1.75rem">&#127969;</div>
-                        <div style="font-weight:600;font-size:0.9rem;margin-top:0.25rem">Propiedad</div>
-                        <div style="font-size:0.75rem;color:#9CA3AF">Casa, terreno, parcela</div>
+                        <div style="font-size:0.75rem;color:#9CA3AF">Arrienda, vende o permuta un inmueble</div>
                     </div>
                 </div>
             </div>
@@ -168,7 +162,7 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
 
             <!-- ═══════════ Detalles del servicio ═══════════ -->
             <div id="secServicio" style="margin-bottom:1rem;padding:1rem;background:#F9FAFB;border-radius:8px;border:1px solid #E5E7EB;display:none">
-                <h3 style="font-size:1rem;margin:0 0 1rem;color:#374151">&#128736; Detalles del servicio</h3>
+                <h3 style="font-size:1rem;margin:0 0 1rem;color:#374151">&#128295; Detalles del servicio</h3>
 
                 <div style="margin-bottom:1rem">
                     <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Modalidad</label>
@@ -199,11 +193,34 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
             <div id="secInmueble" style="margin-bottom:1rem;padding:1rem;background:#F9FAFB;border-radius:8px;border:1px solid #E5E7EB;display:none">
                 <h3 style="font-size:1rem;margin:0 0 1rem;color:#374151">&#127968; Detalles del inmueble</h3>
 
+                <!-- Operacion sub-selector -->
+                <div style="margin-bottom:1rem" id="wrapOperacion">
+                    <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Tipo de operaci&#243;n *</label>
+                    <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                            <input type="radio" name="operacion" value="arriendo" <?= $operacion === 'arriendo' ? 'checked' : '' ?> onchange="toggleOperacion(this.value)"> &#127968; Arriendo
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                            <input type="radio" name="operacion" value="venta" <?= $operacion === 'venta' ? 'checked' : '' ?> onchange="toggleOperacion(this.value)"> &#127969; Venta
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                            <input type="radio" name="operacion" value="permuta" <?= $operacion === 'permuta' ? 'checked' : '' ?> onchange="toggleOperacion(this.value)"> &#128260; Permuta
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                            <input type="radio" name="operacion" value="arriendo_con_opcion_compra" <?= $operacion === 'arriendo_con_opcion_compra' ? 'checked' : '' ?> onchange="toggleOperacion(this.value)"> &#127968;&#127969; Arriendo c/ opci&#243;n compra
+                        </label>
+                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                            <input type="radio" name="operacion" value="cesion_derechos" <?= $operacion === 'cesion_derechos' ? 'checked' : '' ?> onchange="toggleOperacion(this.value)"> &#128221; Cesi&#243;n de derechos
+                        </label>
+                    </div>
+                </div>
+
                 <div style="margin-bottom:1rem">
                     <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem" for="prodTipoPropiedad">Tipo de propiedad *</label>
                     <select name="tipo_propiedad" id="prodTipoPropiedad" class="form-control">
                         <option value="">-- Seleccionar --</option>
                         <option value="casa" <?= $tipo_propiedad === 'casa' ? 'selected' : '' ?>>Casa</option>
+                        <option value="casa_en_condominio" <?= $tipo_propiedad === 'casa_en_condominio' ? 'selected' : '' ?>>Casa en condominio</option>
                         <option value="departamento" <?= $tipo_propiedad === 'departamento' ? 'selected' : '' ?>>Departamento</option>
                         <option value="terreno" <?= $tipo_propiedad === 'terreno' ? 'selected' : '' ?>>Terreno</option>
                         <option value="parcela" <?= $tipo_propiedad === 'parcela' ? 'selected' : '' ?>>Parcela</option>
@@ -214,21 +231,6 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
                         <option value="cabana" <?= $tipo_propiedad === 'cabana' ? 'selected' : '' ?>>Caba&#241;a</option>
                         <option value="habitacion" <?= $tipo_propiedad === 'habitacion' ? 'selected' : '' ?>>Habitaci&#243;n</option>
                     </select>
-                </div>
-
-                <div style="margin-bottom:1rem">
-                    <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Operaci&#243;n</label>
-                    <div style="display:flex;gap:1rem;flex-wrap:wrap">
-                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
-                            <input type="radio" name="operacion" value="arriendo" <?= $operacion === 'arriendo' ? 'checked' : '' ?>> Arriendo
-                        </label>
-                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
-                            <input type="radio" name="operacion" value="venta" <?= $operacion === 'venta' ? 'checked' : '' ?>> Venta
-                        </label>
-                        <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
-                            <input type="radio" name="operacion" value="arriendo_temporal" <?= $operacion === 'arriendo_temporal' ? 'checked' : '' ?>> Arriendo temporal
-                        </label>
-                    </div>
                 </div>
 
                 <div style="margin-bottom:1rem">
@@ -274,7 +276,7 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
                     </div>
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.85rem" for="prodBodegas">Bodegas</label>
-                        <input type="number" name="bodegas" id="prodBodegas" value="<?= $bodegas ?>" min="0"
+                        <input type="number" name="bodegas_inmueble" id="prodBodegas" value="<?= $bodegas ?>" min="0"
                                class="form-control" placeholder="0">
                     </div>
                 </div>
@@ -293,12 +295,12 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
                 </div>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem">
-                    <div>
+                    <div id="wrapDisponibleDesde">
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem" for="prodDisponible">Disponible desde</label>
                         <input type="date" name="disponible_desde" id="prodDisponible" value="<?= $disponible_desde ?>"
                                class="form-control">
                     </div>
-                    <div>
+                    <div id="wrapGastosComunes">
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem" for="prodGastos">Gastos comunes (CLP)</label>
                         <input type="number" name="gastos_comunes" id="prodGastos" value="<?= $gastos_comunes ?>" min="0" step="1"
                                class="form-control" placeholder="Ej: 50000">
@@ -317,7 +319,7 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
                 <h3 style="font-size:1rem;margin:0 0 1rem;color:#374151">&#9989; Amenidades y servicios b&#225;sicos</h3>
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem">
-                    <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
+                    <label id="wrapAmoblado" style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
                         <input type="checkbox" name="amoblado" value="1" <?= $amoblado ? 'checked' : '' ?>> Amoblado
                     </label>
                     <label style="display:flex;align-items:center;gap:0.35rem;cursor:pointer;font-size:0.9rem">
@@ -361,7 +363,8 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
                 <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem" for="prodEstado">Estado</label>
                 <select name="estado" id="prodEstado" class="form-control">
                     <option value="disponible" <?= $estado === 'disponible' ? 'selected' : '' ?>>Disponible</option>
-                    <option value="agotado" <?= $estado === 'agotado' ? 'selected' : '' ?>>Agotado</option>
+                    <option value="agotado" <?= $estado === 'agotado' ? 'selected' : '' ?> id="optAgotado">Agotado</option>
+                    <option value="vendido" <?= $estado === 'vendido' ? 'selected' : '' ?> id="optVendido">Vendido</option>
                     <option value="reservado" <?= $estado === 'reservado' ? 'selected' : '' ?>>Reservado</option>
                     <option value="pausado" <?= $estado === 'pausado' ? 'selected' : '' ?>>Pausado</option>
                 </select>
@@ -437,8 +440,14 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
     var labelPrecio = document.getElementById('labelPrecio');
     var prodNombre = document.getElementById('prodNombre');
     var wrapAnoConstruccion = document.getElementById('wrapAnoConstruccion');
+    var wrapDisponibleDesde = document.getElementById('wrapDisponibleDesde');
+    var wrapGastosComunes = document.getElementById('wrapGastosComunes');
+    var wrapAmoblado = document.getElementById('wrapAmoblado');
+    var prodEstado = document.getElementById('prodEstado');
+    var optVendido = document.getElementById('optVendido');
+    var optAgotado = document.getElementById('optAgotado');
 
-    function toggleTipo(tipo) {
+    window.toggleTipo = function(tipo) {
         tipoInput.value = tipo;
 
         // Reset all sections
@@ -446,7 +455,13 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
         secServicio.style.display = 'none';
         secInmueble.style.display = 'none';
         secAmenidades.style.display = 'none';
-        if (wrapAnoConstruccion) wrapAnoConstruccion.style.display = 'none';
+
+        // Reset estado options for non-inmueble
+        if (optVendido) {
+            optVendido.textContent = 'Vendido';
+            optVendido.style.display = '';
+        }
+        if (optAgotado) optAgotado.style.display = '';
 
         // Update cards visual
         cards.forEach(function(c) {
@@ -474,18 +489,81 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
             case 'inmueble':
                 secInmueble.style.display = 'block';
                 secAmenidades.style.display = 'block';
-                labelPrecio.textContent = 'Precio arriendo / venta (CLP)';
                 prodNombre.placeholder = 'Ej: Departamento 2D 1B centro';
-                break;
-            case 'propiedad':
-                secInmueble.style.display = 'block';
-                secAmenidades.style.display = 'block';
-                if (wrapAnoConstruccion) wrapAnoConstruccion.style.display = 'block';
-                labelPrecio.textContent = 'Precio (CLP)';
-                prodNombre.placeholder = 'Ej: Parcela 5000 m\u00B2 camino a Corte Alto';
+                // Hide agotado for inmueble
+                if (optAgotado) optAgotado.style.display = 'none';
+                // Apply operacion-specific behavior
+                var opSel = document.querySelector('input[name="operacion"]:checked');
+                if (opSel) {
+                    toggleOperacion(opSel.value);
+                } else {
+                    labelPrecio.textContent = 'Precio (CLP)';
+                    if (wrapGastosComunes) wrapGastosComunes.style.display = '';
+                    if (wrapDisponibleDesde) wrapDisponibleDesde.style.display = '';
+                    if (wrapAnoConstruccion) wrapAnoConstruccion.style.display = 'none';
+                    if (wrapAmoblado) wrapAmoblado.style.display = '';
+                }
                 break;
         }
-    }
+    };
+
+    window.toggleOperacion = function(op) {
+        // Price label
+        switch (op) {
+            case 'arriendo':
+            case 'arriendo_con_opcion_compra':
+                labelPrecio.textContent = 'Arriendo mensual (CLP)';
+                break;
+            case 'venta':
+                labelPrecio.textContent = 'Precio de venta (CLP)';
+                break;
+            case 'permuta':
+                labelPrecio.textContent = 'Valor estimado (CLP)';
+                break;
+            case 'cesion_derechos':
+                labelPrecio.textContent = 'Precio cesi\u00F3n (CLP)';
+                break;
+            default:
+                labelPrecio.textContent = 'Precio (CLP)';
+        }
+
+        // gastos_comunes: only for arriendo / arriendo_con_opcion_compra
+        if (wrapGastosComunes) {
+            wrapGastosComunes.style.display = (op === 'arriendo' || op === 'arriendo_con_opcion_compra') ? '' : 'none';
+        }
+
+        // disponible_desde: only for arriendo / arriendo_con_opcion_compra
+        if (wrapDisponibleDesde) {
+            wrapDisponibleDesde.style.display = (op === 'arriendo' || op === 'arriendo_con_opcion_compra') ? '' : 'none';
+        }
+
+        // ano_construccion: only for venta
+        if (wrapAnoConstruccion) {
+            wrapAnoConstruccion.style.display = (op === 'venta') ? '' : 'none';
+        }
+
+        // amoblado: hide for venta
+        if (wrapAmoblado) {
+            wrapAmoblado.style.display = (op === 'venta') ? 'none' : '';
+        }
+
+        // Estado contextual options
+        if (optVendido) {
+            if (op === 'arriendo' || op === 'arriendo_con_opcion_compra') {
+                optVendido.textContent = 'Arrendado';
+                optVendido.value = 'vendido';
+                optVendido.style.display = '';
+            } else if (op === 'permuta') {
+                optVendido.textContent = 'Permutado';
+                optVendido.value = 'vendido';
+                optVendido.style.display = '';
+            } else {
+                optVendido.textContent = 'Vendido';
+                optVendido.value = 'vendido';
+                optVendido.style.display = '';
+            }
+        }
+    };
 
     cards.forEach(function(card) {
         card.addEventListener('click', function() {

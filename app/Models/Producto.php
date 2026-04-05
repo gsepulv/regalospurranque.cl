@@ -112,8 +112,7 @@ class Producto
         $labels = [
             'producto'  => "\u{1F4E6} Producto",
             'servicio'  => "\u{1F527} Servicio",
-            'arriendo'  => "\u{1F3E0} Arriendo",
-            'propiedad' => "\u{1F3E1} Propiedad",
+            'inmueble'  => "\u{1F3E0} Inmueble",
         ];
         return $labels[$tipo] ?? $tipo;
     }
@@ -160,5 +159,41 @@ class Producto
              WHERE p.id = ?",
             [$id]
         );
+    }
+
+    /**
+     * Label con icono para la operacion inmobiliaria
+     */
+    public static function getOperacionLabel(?string $op): string
+    {
+        $labels = [
+            'arriendo' => "\u{1F3E0} Arriendo",
+            'venta' => "\u{1F3E1} Venta",
+            'permuta' => "\u{1F504} Permuta",
+            'arriendo_con_opcion_compra' => "\u{1F3E0}\u{1F3E1} Arriendo c/ opci\u{00F3}n compra",
+            'cesion_derechos' => "\u{1F4DD} Cesi\u{00F3}n de derechos",
+        ];
+        return $labels[$op] ?? ($op ?: '');
+    }
+
+    /**
+     * Array de amenidades activas con iconos
+     */
+    public static function getAmenidades(array $prod): array
+    {
+        $amenidades = [];
+        if (!empty($prod['amoblado'])) $amenidades[] = "\u{1FA91} Amoblado";
+        if (!empty($prod['acepta_mascotas'])) $amenidades[] = "\u{1F43E} Mascotas OK";
+        if (!empty($prod['tiene_lenera'])) $amenidades[] = "\u{1FAB5} Le\u{00F1}era";
+        if (!empty($prod['tiene_areas_verdes'])) $amenidades[] = "\u{1F33F} \u{00C1}reas verdes";
+        if (!empty($prod['tiene_calefaccion'])) {
+            $tc = !empty($prod['tipo_calefaccion']) ? ' (' . $prod['tipo_calefaccion'] . ')' : '';
+            $amenidades[] = "\u{1F525} Calefacci\u{00F3}n" . $tc;
+        }
+        if (!empty($prod['agua_potable'])) $amenidades[] = "\u{1F4A7} Agua potable";
+        if (!empty($prod['alcantarillado'])) $amenidades[] = "\u{1F6B0} Alcantarillado";
+        if (!empty($prod['luz_electrica'])) $amenidades[] = "\u{1F4A1} Luz";
+        if (isset($prod['es_rural'])) $amenidades[] = $prod['es_rural'] ? "\u{1F33E} Rural" : "\u{1F3D9} Urbano";
+        return $amenidades;
     }
 }

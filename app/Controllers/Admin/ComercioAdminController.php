@@ -724,7 +724,7 @@ class ComercioAdminController extends Controller
         $condicion   = $_POST['condicion'] ?? null;
 
         // Validar enums
-        $tiposValidos = ['producto', 'servicio', 'arriendo', 'propiedad'];
+        $tiposValidos = ['producto', 'servicio', 'inmueble'];
         $estadosValidos = ['disponible', 'vendido', 'reservado', 'agotado'];
         if (!in_array($tipo, $tiposValidos)) $tipo = 'producto';
         if (!in_array($estado, $estadosValidos)) $estado = 'disponible';
@@ -778,7 +778,7 @@ class ComercioAdminController extends Controller
         if ($horario_atencion && mb_strlen($horario_atencion) > 100) $horario_atencion = mb_substr($horario_atencion, 0, 100);
         $tpValid = ['casa','departamento','local_comercial','oficina','bodega','terreno','estacionamiento','habitacion','parcela','galpon','sitio'];
         if ($tipo_propiedad_val && !in_array($tipo_propiedad_val, $tpValid)) $tipo_propiedad_val = null;
-        if ($operacion && !in_array($operacion, ['arriendo','venta'])) $operacion = null;
+        if ($operacion && !in_array($operacion, ['arriendo','venta','permuta','arriendo_con_opcion_compra','cesion_derechos'])) $operacion = null;
         if ($superficie_terreno !== null && $superficie_terreno !== '') $superficie_terreno = (float)$superficie_terreno; else $superficie_terreno = null;
         if ($superficie_construida !== null && $superficie_construida !== '') $superficie_construida = (float)$superficie_construida; else $superficie_construida = null;
         if ($dormitorios !== null && $dormitorios !== '') $dormitorios = (int)$dormitorios; else $dormitorios = null;
@@ -792,7 +792,7 @@ class ComercioAdminController extends Controller
 
         // Nullificar campos de otros tipos
         if ($tipo !== 'servicio') { $modalidad = null; $horario_atencion = ''; }
-        if (!in_array($tipo, ['arriendo','propiedad'])) {
+        if ($tipo !== 'inmueble') {
             $tipo_propiedad_val = null; $operacion = null; $superficie_terreno = null; $superficie_construida = null;
             $dormitorios = null; $banos_val = null; $estacionamientos_val = null; $bodegas_val = null;
             $direccion_propiedad = ''; $comuna_propiedad = ''; $disponible_desde = null; $ano_construccion = null;
@@ -800,8 +800,7 @@ class ComercioAdminController extends Controller
             $tiene_calefaccion = null; $tipo_calefaccion_val = null; $es_rural = null; $agua_potable = null;
             $alcantarillado_val = null; $luz_electrica = null; $gastos_comunes = null;
         }
-        if ($tipo === 'arriendo') $operacion = 'arriendo';
-        if ($tipo === 'propiedad') $operacion = 'venta';
+        // operacion is set by the form for inmueble type
 
         $imagenNombre = null;
         $foto = $this->request->file('imagen');
@@ -921,7 +920,7 @@ class ComercioAdminController extends Controller
         $condicion   = $_POST['condicion'] ?? null;
 
         // Validar enums
-        $tiposValidos = ['producto', 'servicio', 'arriendo', 'propiedad'];
+        $tiposValidos = ['producto', 'servicio', 'inmueble'];
         $estadosValidos = ['disponible', 'vendido', 'reservado', 'agotado'];
         if (!in_array($tipo, $tiposValidos)) $tipo = 'producto';
         if (!in_array($estado, $estadosValidos)) $estado = 'disponible';

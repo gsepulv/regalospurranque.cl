@@ -157,7 +157,7 @@ $hoy = (int) date('w');
                 .acordeon-badge--disponible{background:#e8f5e9;color:#2e7d32}.acordeon-badge--vendido{background:#ffebee;color:#c62828}
                 .acordeon-badge--reservado{background:#fff8e1;color:#f57f17}.acordeon-badge--agotado{background:#f5f5f5;color:#616161}
                 .acordeon-badge--producto{background:#e3f2fd;color:#1565c0}.acordeon-badge--servicio{background:#fce4ec;color:#c62828}
-                .acordeon-badge--arriendo{background:#f3e5f5;color:#7b1fa2}.acordeon-badge--propiedad{background:#e0f2f1;color:#00695c}
+                .acordeon-badge--inmueble{background:#e0f2f1;color:#00695c}
                 .acordeon-flecha{transition:transform 0.3s;flex-shrink:0;line-height:0}
                 .acordeon-flecha.abierto{transform:rotate(180deg)}
                 .acordeon-contenido{max-height:0;overflow:hidden;transition:max-height 0.3s ease-out}
@@ -203,9 +203,9 @@ $hoy = (int) date('w');
                 </style>
                 <?php if (!empty($productos)): ?>
                     <?php
-                    $_tL=['producto'=>'&#128230; Producto','servicio'=>'&#128295; Servicio','arriendo'=>'&#127968; Arriendo','propiedad'=>'&#127969; Propiedad'];
+                    $_tL=['producto'=>'&#128230; Producto','servicio'=>'&#128295; Servicio','inmueble'=>'&#127968; Inmueble'];
                     $_eL=['disponible'=>'&#9989; Disponible','vendido'=>'&#128308; Vendido','reservado'=>'&#128993; Reservado','agotado'=>'&#9899; Agotado'];
-                    $_tS=['producto'=>'&#128230;','servicio'=>'&#128295;','arriendo'=>'&#127968;','propiedad'=>'&#127969;'];
+                    $_tS=['producto'=>'&#128230;','servicio'=>'&#128295;','inmueble'=>'&#127968;'];
                     $_eS=['disponible'=>'&#9989;','vendido'=>'&#128308;','reservado'=>'&#128993;','agotado'=>'&#9899;'];
                     $tiposP=[];
                     foreach($productos as $_p){$t=$_p['tipo']??'producto';$tiposP[$t]=($tiposP[$t]??0)+1;}
@@ -231,12 +231,15 @@ $hoy = (int) date('w');
                             $pPF=$prod['precio']?'$'.number_format($prod['precio'],0,'','.'):'';
                             $esV=in_array($pE,['vendido','agotado']);
                             $pD=$prod['precio']?'$ '.number_format($prod['precio'],0,',','.'):'Consultar precio';
-                            if($pT==='arriendo'&&$prod['precio'])$pD.=' /mes';
+                            $pOp=$prod['operacion']??'';
+                            if($pT==='inmueble'&&$pOp==='arriendo'&&$prod['precio'])$pD.=' /mes';
+                            if($pT==='inmueble'&&$pOp==='permuta')$pD='Permuta';
                             $sTxt=$prod['nombre'].' - '.$pPF.' en '.$comercio['nombre'].' | Regalos Purranque';
                             if($esV){$mW='Hola, vi que "'.$prod['nombre'].'" fue vendido. Tienes algo similar?';}
                             elseif($pT==='servicio'){$mW='Hola, vi el servicio "'.$prod['nombre'].'" en regalospurranque.cl y me interesa. Podemos coordinar?';}
-                            elseif($pT==='arriendo'){$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.'/mes)';$mW.=' en regalospurranque.cl. Esta disponible para arriendo?';}
-                            elseif($pT==='propiedad'){$mW='Hola, vi la propiedad "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.')';$mW.=' en regalospurranque.cl. Podemos agendar una visita?';}
+                            elseif($pT==='inmueble'&&$pOp==='arriendo'){$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.'/mes)';$mW.=' en regalospurranque.cl. Esta disponible para arriendo?';}
+                            elseif($pT==='inmueble'&&$pOp==='venta'){$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.')';$mW.=' en regalospurranque.cl. Podemos agendar una visita?';}
+                            elseif($pT==='inmueble'){$mW='Hola, vi "'.$prod['nombre'].'" en regalospurranque.cl y me interesa. Podemos conversar?';}
                             else{$mW='Hola, vi "'.$prod['nombre'].'"';if($prod['precio'])$mW.=' ('.$pPF.')';$mW.=' en regalospurranque.cl y me interesa. Esta disponible?';}
                         ?>
                             <div class="acordeon-item" id="producto-<?= $prod['id'] ?>" data-tipo="<?= $pT ?>" data-estado="<?= $pE ?>">
@@ -290,9 +293,9 @@ $hoy = (int) date('w');
                                                     <div class="acordeon-det-meta">&#128336; <?= e($prod['horario_atencion']) ?></div>
                                                     <?php endif; ?>
 
-                                                <?php elseif($pT==='arriendo'||$pT==='propiedad'): ?>
+                                                <?php elseif($pT==='inmueble'): ?>
                                                     <?php if(!empty($prod['tipo_propiedad'])): ?>
-                                                    <div class="acordeon-det-meta" style="font-weight:600;margin-bottom:6px"><?= ucfirst(str_replace('_',' ',$prod['tipo_propiedad'])) ?><?php if($pT==='propiedad') echo ' en venta'; ?></div>
+                                                    <div class="acordeon-det-meta" style="font-weight:600;margin-bottom:6px"><?= ucfirst(str_replace('_',' ',$prod['tipo_propiedad'])) ?><?php if($pOp==='venta') echo ' en venta'; elseif($pOp==='arriendo') echo ' en arriendo'; elseif($pOp==='permuta') echo ' en permuta'; ?></div>
                                                     <?php endif; ?>
                                                     <div class="acordeon-det-grid">
                                                         <?php if($prod['dormitorios']!==null): ?><span>&#128716; <?= $prod['dormitorios'] ?> dormitorios</span><?php endif; ?>
@@ -347,7 +350,7 @@ $hoy = (int) date('w');
 
                                                 <div class="acordeon-acciones">
                                                     <?php if(!empty($comercio['whatsapp'])): ?>
-                                                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/','', $comercio['whatsapp']) ?>?text=<?= urlencode($mW) ?>" target="_blank" rel="noopener" class="acordeon-btn-wa" onclick="event.stopPropagation();trackWhatsApp(<?= $comercio['id'] ?>)">&#128172; <?= $esV?'Consultar similares':($pT==='arriendo'?'Consultar por arriendo':($pT==='propiedad'?'Agendar visita':'Consultar por WhatsApp')) ?></a>
+                                                    <a href="https://wa.me/<?= preg_replace('/[^0-9]/','', $comercio['whatsapp']) ?>?text=<?= urlencode($mW) ?>" target="_blank" rel="noopener" class="acordeon-btn-wa" onclick="event.stopPropagation();trackWhatsApp(<?= $comercio['id'] ?>)">&#128172; <?= $esV?'Consultar similares':(($pT==='inmueble'&&$pOp==='arriendo')?'Consultar por arriendo':(($pT==='inmueble'&&$pOp==='venta')?'Agendar visita':(($pT==='inmueble')?'Consultar por inmueble':($pT==='servicio'?'Consultar por servicio':'Consultar por WhatsApp')))) ?></a>
                                                     <?php endif; ?>
                                                     <div class="acordeon-share-row">
                                                         <button class="acordeon-share-btn acordeon-share-btn--fb" title="Facebook" onclick="event.stopPropagation();shProd('facebook','<?= e(addslashes($pUrl)) ?>','<?= e(addslashes($sTxt)) ?>',<?= $prod['id'] ?>,<?= $comercio['id'] ?>)"><svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></button>
