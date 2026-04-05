@@ -65,6 +65,13 @@ return [
     ['POST', '/admin/comercios/{id}/foto/eliminar',    'Admin\\ComercioAdminController@deletePhoto',   ['auth']],
     ['GET',  '/admin/comercios/{id}/horarios',         'Admin\\ComercioAdminController@horarios',      ['auth']],
     ['POST', '/admin/comercios/{id}/horarios',         'Admin\\ComercioAdminController@updateHorarios',['auth']],
+    ['GET',  '/admin/comercios/{id}/productos',                  'Admin\\ComercioAdminController@productos',         ['auth']],
+    ['GET',  '/admin/comercios/{id}/productos/crear',            'Admin\\ComercioAdminController@productoCrear',     ['auth']],
+    ['POST', '/admin/comercios/{id}/productos/guardar',          'Admin\\ComercioAdminController@productoGuardar',   ['auth']],
+    ['GET',  '/admin/comercios/{id}/productos/editar/{pid}',     'Admin\\ComercioAdminController@productoEditar',    ['auth']],
+    ['POST', '/admin/comercios/{id}/productos/actualizar/{pid}', 'Admin\\ComercioAdminController@productoActualizar',['auth']],
+    ['POST', '/admin/comercios/{id}/productos/eliminar/{pid}',   'Admin\\ComercioAdminController@productoEliminar',  ['auth']],
+    ['POST', '/admin/comercios/{id}/productos/toggle/{pid}',     'Admin\\ComercioAdminController@productoToggle',    ['auth']],
 
     // ── Categorías CRUD ───────────────────────────────────────
     ['GET',  '/admin/categorias',              'Admin\\CategoriaAdminController@index',  ['auth']],

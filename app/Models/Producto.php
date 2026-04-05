@@ -78,4 +78,15 @@ class Producto
             [$limite]
         );
     }
+
+    /**
+     * Toggle activo/inactivo de un producto
+     */
+    public static function toggleActivo(int $id): int
+    {
+        $db = Database::getInstance();
+        $db->execute("UPDATE productos SET activo = NOT activo WHERE id = ?", [$id]);
+        $row = $db->fetch("SELECT activo FROM productos WHERE id = ?", [$id]);
+        return $row ? (int) $row['activo'] : 0;
+    }
 }

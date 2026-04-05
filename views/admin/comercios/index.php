@@ -147,6 +147,9 @@ $planesDisponibles = \App\Core\Database::getInstance()->fetchAll("SELECT slug, n
                                         <a href="<?= url('/admin/comercios/' . $com['id'] . '/horarios') ?>"
                                            class="btn btn--outline btn--xs"
                                            title="Horarios">Horarios</a>
+                                        <a href="<?= url('/admin/comercios/' . $com['id'] . '/productos') ?>"
+                                           class="btn btn--outline btn--xs"
+                                           title="Productos">Productos</a>
                                         <a href="<?= url('/comercio/' . $com['slug']) ?>"
                                            class="btn btn--outline btn--xs"
                                            target="_blank"

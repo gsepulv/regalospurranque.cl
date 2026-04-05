@@ -6,6 +6,8 @@ use App\Models\AdminUsuario;
 use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
+use App\Models\PlanConfig;
+use App\Models\Producto;
 use App\Services\FileManager;
 use App\Services\Notification;
 
@@ -637,6 +639,243 @@ class ComercioAdminController extends Controller
 
         $this->log('comercios', 'horarios', 'comercio', $id, "Horarios actualizados: {$comercio['nombre']}");
         $this->redirect("/admin/comercios/{$id}/horarios", ['success' => 'Horarios actualizados']);
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // PRODUCTOS DEL COMERCIO
+    // ══════════════════════════════════════════════════════════
+
+    public function productos(string $id): void
+    {
+        $id = (int) $id;
+        $comercio = Comercio::find($id);
+        if (!$comercio) {
+            $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
+            return;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        $this->render('admin/comercios/productos', [
+            'title'          => 'Productos — ' . e($comercio['nombre']),
+            'comercio'       => $comercio,
+            'productos'      => Producto::findByComercioId($id, false),
+            'totalProductos' => Producto::countByComercioId($id),
+            'maxProductos'   => $maxProductos,
+            'plan'           => $plan,
+        ]);
+    }
+
+    public function productoCrear(string $id): void
+    {
+        $id = (int) $id;
+        $comercio = Comercio::find($id);
+        if (!$comercio) {
+            $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
+            return;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        if ($maxProductos > 0 && Producto::countByComercioId($id) >= $maxProductos) {
+            $this->redirect("/admin/comercios/{$id}/productos", ['error' => 'Este comercio alcanzó el límite de productos de su plan']);
+            return;
+        }
+
+        $this->render('admin/comercios/producto-form', [
+            'title'    => 'Agregar producto — ' . e($comercio['nombre']),
+            'comercio' => $comercio,
+            'producto' => null,
+        ]);
+    }
+
+    public function productoGuardar(string $id): void
+    {
+        $id = (int) $id;
+        $comercio = Comercio::find($id);
+        if (!$comercio) {
+            $this->redirect('/admin/comercios', ['error' => 'Comercio no encontrado']);
+            return;
+        }
+
+        $plan = PlanConfig::findBySlug($comercio['plan'] ?? 'freemium');
+        $maxProductos = $plan['max_productos'] ?? 5;
+
+        if ($maxProductos > 0 && Producto::countByComercioId($id) >= $maxProductos) {
+            $this->redirect("/admin/comercios/{$id}/productos", ['error' => 'Límite de productos alcanzado']);
+            return;
+        }
+
+        $nombre      = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $precio      = $_POST['precio'] ?? null;
+        $activo      = isset($_POST['activo']) ? 1 : 0;
+
+        if (empty($nombre) || mb_strlen($nombre) > 150) {
+            $this->redirect("/admin/comercios/{$id}/productos/crear", ['error' => 'El nombre es obligatorio (máx 150 caracteres)']);
+            return;
+        }
+
+        if ($precio !== null && $precio !== '') {
+            $precio = (int) $precio;
+            if ($precio < 0) $precio = 0;
+        } else {
+            $precio = null;
+        }
+
+        $imagenNombre = null;
+        $foto = $this->request->file('imagen');
+        if ($foto && $foto['error'] === UPLOAD_ERR_OK) {
+            if ($foto['size'] > 2 * 1024 * 1024) {
+                $this->redirect("/admin/comercios/{$id}/productos/crear", ['error' => 'La imagen no puede superar 2 MB']);
+                return;
+            }
+            $imagenNombre = FileManager::subirImagen($foto, 'productos/' . $id, 800);
+            if (!$imagenNombre) {
+                $this->redirect("/admin/comercios/{$id}/productos/crear", ['error' => 'Error al subir imagen. Solo JPG, PNG o WebP']);
+                return;
+            }
+        }
+
+        $data = [
+            'comercio_id' => $id,
+            'nombre'      => $nombre,
+            'descripcion' => $descripcion ?: null,
+            'precio'      => $precio,
+            'activo'      => $activo,
+            'orden'       => Producto::countByComercioId($id),
+        ];
+        if ($imagenNombre) {
+            $data['imagen'] = $imagenNombre;
+        }
+
+        Producto::create($data);
+
+        $this->log('productos', 'crear', 'comercio', $id, "Producto '{$nombre}' creado para {$comercio['nombre']}");
+        $this->redirect("/admin/comercios/{$id}/productos", ['success' => "Producto '{$nombre}' creado"]);
+    }
+
+    public function productoEditar(string $id, string $pid): void
+    {
+        $id = (int) $id;
+        $pid = (int) $pid;
+        $comercio = Comercio::find($id);
+        $producto = Producto::findById($pid);
+
+        if (!$comercio || !$producto || $producto['comercio_id'] != $id) {
+            $this->redirect('/admin/comercios', ['error' => 'Producto no encontrado']);
+            return;
+        }
+
+        $this->render('admin/comercios/producto-form', [
+            'title'    => 'Editar producto — ' . e($producto['nombre']),
+            'comercio' => $comercio,
+            'producto' => $producto,
+        ]);
+    }
+
+    public function productoActualizar(string $id, string $pid): void
+    {
+        $id = (int) $id;
+        $pid = (int) $pid;
+        $comercio = Comercio::find($id);
+        $producto = Producto::findById($pid);
+
+        if (!$comercio || !$producto || $producto['comercio_id'] != $id) {
+            $this->redirect('/admin/comercios', ['error' => 'Producto no encontrado']);
+            return;
+        }
+
+        $nombre      = trim($_POST['nombre'] ?? '');
+        $descripcion = trim($_POST['descripcion'] ?? '');
+        $precio      = $_POST['precio'] ?? null;
+        $activo      = isset($_POST['activo']) ? 1 : 0;
+
+        if (empty($nombre) || mb_strlen($nombre) > 150) {
+            $this->redirect("/admin/comercios/{$id}/productos/editar/{$pid}", ['error' => 'El nombre es obligatorio (máx 150 caracteres)']);
+            return;
+        }
+
+        if ($precio !== null && $precio !== '') {
+            $precio = (int) $precio;
+            if ($precio < 0) $precio = 0;
+        } else {
+            $precio = null;
+        }
+
+        $data = [
+            'nombre'      => $nombre,
+            'descripcion' => $descripcion ?: null,
+            'precio'      => $precio,
+            'activo'      => $activo,
+        ];
+
+        // Eliminar imagen si se marcó checkbox
+        if (!empty($_POST['eliminar_imagen']) && !empty($producto['imagen'])) {
+            FileManager::eliminarImagen('productos/' . $id, $producto['imagen']);
+            $data['imagen'] = null;
+        }
+
+        $foto = $this->request->file('imagen');
+        if ($foto && $foto['error'] === UPLOAD_ERR_OK) {
+            if ($foto['size'] > 2 * 1024 * 1024) {
+                $this->redirect("/admin/comercios/{$id}/productos/editar/{$pid}", ['error' => 'La imagen no puede superar 2 MB']);
+                return;
+            }
+            $imagenNombre = FileManager::subirImagen($foto, 'productos/' . $id, 800);
+            if ($imagenNombre) {
+                if (!empty($producto['imagen'])) {
+                    FileManager::eliminarImagen('productos/' . $id, $producto['imagen']);
+                }
+                $data['imagen'] = $imagenNombre;
+            }
+        }
+
+        Producto::update($pid, $data);
+
+        $this->log('productos', 'editar', 'comercio', $id, "Producto '{$nombre}' actualizado en {$comercio['nombre']}");
+        $this->redirect("/admin/comercios/{$id}/productos", ['success' => "Producto '{$nombre}' actualizado"]);
+    }
+
+    public function productoEliminar(string $id, string $pid): void
+    {
+        $id = (int) $id;
+        $pid = (int) $pid;
+        $comercio = Comercio::find($id);
+        $producto = Producto::findById($pid);
+
+        if (!$comercio || !$producto || $producto['comercio_id'] != $id) {
+            $this->redirect("/admin/comercios/{$id}/productos", ['error' => 'Producto no encontrado']);
+            return;
+        }
+
+        if (!empty($producto['imagen'])) {
+            FileManager::eliminarImagen('productos/' . $id, $producto['imagen']);
+        }
+
+        Producto::delete($pid);
+
+        $this->log('productos', 'eliminar', 'comercio', $id, "Producto '{$producto['nombre']}' eliminado de {$comercio['nombre']}");
+        $this->redirect("/admin/comercios/{$id}/productos", ['success' => "Producto '{$producto['nombre']}' eliminado"]);
+    }
+
+    public function productoToggle(string $id, string $pid): void
+    {
+        $id = (int) $id;
+        $pid = (int) $pid;
+        $producto = Producto::findById($pid);
+
+        if (!$producto || $producto['comercio_id'] != $id) {
+            $this->json(['success' => false, 'error' => 'Producto no encontrado']);
+            return;
+        }
+
+        $nuevoEstado = Producto::toggleActivo($pid);
+
+        $this->log('productos', 'toggle', 'comercio', $id, "Producto '{$producto['nombre']}' " . ($nuevoEstado ? 'activado' : 'desactivado'));
+        $this->json(['success' => true, 'activo' => $nuevoEstado]);
     }
 
 }
