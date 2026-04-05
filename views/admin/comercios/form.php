@@ -152,6 +152,21 @@ $errors  = $flash['errors'] ?? [];
 
             <div class="form-row">
                 <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                        <input type="checkbox" name="delivery_local" value="1" <?= !empty(old('delivery_local', $editing ? ($comercio['delivery_local'] ?? 0) : 0)) ? 'checked' : '' ?>>
+                        &#128666; Delivery en Purranque y alrededores
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer">
+                        <input type="checkbox" name="envios_chile" value="1" <?= !empty(old('envios_chile', $editing ? ($comercio['envios_chile'] ?? 0) : 0)) ? 'checked' : '' ?>>
+                        &#128230; Envíos a todo Chile
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
                     <label class="form-label" for="lat">Latitud</label>
                     <input type="text"
                            id="lat"

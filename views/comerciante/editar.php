@@ -99,6 +99,19 @@ $maxRedes = (int)($plan['max_redes'] ?? 1);
                            value="<?= e($comercio['direccion']) ?>" minlength="5" maxlength="255" required>
                 </div>
 
+                <div style="margin-bottom:1rem">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
+                        <input type="checkbox" name="delivery_local" value="1" <?= !empty($comercio['delivery_local']) ? 'checked' : '' ?>>
+                        <span>&#128666; Ofrezco delivery en Purranque y alrededores</span>
+                    </label>
+                </div>
+                <div style="margin-bottom:1rem">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
+                        <input type="checkbox" name="envios_chile" value="1" <?= !empty($comercio['envios_chile']) ? 'checked' : '' ?>>
+                        <span>&#128230; Realizo envíos a otras ciudades y regiones de Chile</span>
+                    </label>
+                </div>
+
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
                     <div>
                         <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Latitud</label>

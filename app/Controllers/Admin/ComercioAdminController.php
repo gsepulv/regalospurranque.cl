@@ -159,6 +159,8 @@ class ComercioAdminController extends Controller
         $data['email']           = $_POST['email'] ?? '';
         $data['sitio_web']       = $_POST['sitio_web'] ?? '';
         $data['direccion']       = $_POST['direccion'] ?? '';
+        $data['delivery_local']  = isset($_POST['delivery_local']) ? 1 : 0;
+        $data['envios_chile']    = isset($_POST['envios_chile']) ? 1 : 0;
         $data['lat']             = !empty($_POST['lat']) ? (float) $_POST['lat'] : null;
         $data['lng']             = !empty($_POST['lng']) ? (float) $_POST['lng'] : null;
         $data['activo']          = isset($_POST['activo']) ? 1 : 0;

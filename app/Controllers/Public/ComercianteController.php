@@ -524,6 +524,15 @@ class ComercianteController extends Controller
             }
         }
 
+        // Delivery / Envíos (booleanos)
+        foreach (['delivery_local', 'envios_chile'] as $boolCampo) {
+            $nuevo = isset($_POST[$boolCampo]) ? 1 : 0;
+            $actual = (int) ($comercio[$boolCampo] ?? 0);
+            if ($nuevo !== $actual) {
+                $cambios[$boolCampo] = ['anterior' => $actual, 'nuevo' => $nuevo];
+            }
+        }
+
         // Coordenadas
         foreach (['lat','lng'] as $coord) {
             $nuevo = !empty($_POST[$coord]) ? (float)$_POST[$coord] : null;

@@ -18,6 +18,7 @@
             <span style="color:#38a169;">&#10004;</span> Enlace a Google Maps<br>
             <span style="color:#38a169;">&#10004;</span> 1 red social (Facebook, Instagram, TikTok, etc.)<br>
             <span style="color:#38a169;">&#10004;</span> Cat&aacute;logo de hasta 5 productos con foto y precio<br>
+            <span style="color:#38a169;">&#10004;</span> Indica si ofreces delivery local o env&iacute;os a todo Chile<br>
             <span style="color:#38a169;">&#10004;</span> Visibilidad en fechas especiales (D&iacute;a de la Madre, Navidad, etc.)
         </div>
         <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.75rem;margin-bottom:1rem;">

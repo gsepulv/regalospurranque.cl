@@ -118,6 +118,8 @@ $hoy = (int) date('w');
                 if (!empty($comercio['email'])) $badges_confianza[] = ['icon' => '&#9993;', 'text' => 'Responde por correo electrónico'];
                 if (!empty($comercio['direccion'])) $badges_confianza[] = ['icon' => '&#128205;', 'text' => 'Negocio local en Purranque'];
                 if (!empty($comercio['sitio_web'])) $badges_confianza[] = ['icon' => '&#127760;', 'text' => 'Tiene sitio web'];
+                if (!empty($comercio['delivery_local'])) $badges_confianza[] = ['icon' => '&#128666;', 'text' => 'Ofrece delivery en Purranque y alrededores'];
+                if (!empty($comercio['envios_chile'])) $badges_confianza[] = ['icon' => '&#128230;', 'text' => 'Realiza envíos a todo Chile'];
                 ?>
                 <?php if (!empty($badges_confianza)): ?>
                     <div class="comercio-section">
