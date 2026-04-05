@@ -193,12 +193,26 @@ $hoy = (int) date('w');
                 .acordeon-share-btn--fb{background:#1877F2}.acordeon-share-btn--tw{background:#000}
                 .acordeon-share-btn--wa{background:#25D366}.acordeon-share-btn--copy{background:#f0f0f0}
                 .acordeon-img2{width:150px;height:150px;border-radius:8px;object-fit:cover;margin-top:8px}
+                .producto-galeria{position:relative}
+                .producto-galeria__principal-container{position:relative;overflow:hidden;border-radius:12px;cursor:zoom-in;width:300px;height:300px}
+                .producto-galeria__principal-img{width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:transform 0.1s}
+                .producto-galeria__principal-container:hover .producto-galeria__principal-img{transform:scale(2)}
+                .producto-galeria__logo{width:30px;height:30px;border-radius:50%;position:absolute;bottom:8px;right:8px;border:2px solid white;object-fit:cover;z-index:2}
+                .producto-galeria__overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(198,40,40,0.7);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.5rem;font-weight:700;z-index:1}
+                .producto-galeria__placeholder{width:300px;height:300px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:3.5rem}
+                .producto-galeria__thumbs{display:flex;gap:6px;margin-top:8px;overflow-x:auto}
+                .producto-galeria__thumb{width:60px;height:60px;border-radius:6px;object-fit:cover;cursor:pointer;border:2px solid transparent;transition:border-color 0.2s;flex-shrink:0}
+                .producto-galeria__thumb.activa{border-color:#4caf50}
+                .producto-galeria__thumb:hover{border-color:#999}
                 @media(max-width:768px){
                     .acordeon-det-layout{flex-direction:column}
                     .acordeon-det-img,.acordeon-det-ph{width:100%;height:200px}
                     .acordeon-header{padding:10px 12px}.acordeon-badges{display:none}
                     .acordeon-share-row{flex-wrap:wrap}.acordeon-det-grid{grid-template-columns:1fr}
                     .acordeon-img2{width:100%;max-width:200px;height:auto}
+                    .producto-galeria__principal-container{width:100%;height:200px;cursor:default}
+                    .producto-galeria__principal-container:hover .producto-galeria__principal-img{transform:none}
+                    .producto-galeria__placeholder{width:100%;height:200px}
                 }
                 </style>
                 <?php if (!empty($productos)): ?>
@@ -224,7 +238,15 @@ $hoy = (int) date('w');
                             <?php endif; ?>
                         </div>
                         <div class="catalogo-acordeon">
+                        <?php
+                    // Load fotos for all products
+                    $_fotosByProduct = [];
+                    foreach ($productos as $_fp) {
+                        $_fotosByProduct[$_fp['id']] = \App\Models\ProductoFoto::findByProductoId($_fp['id']);
+                    }
+                    ?>
                         <?php foreach($productos as $idx=>$prod):
+                            $prodFotos = $_fotosByProduct[$prod['id']] ?? [];
                             $pT=$prod['tipo']??'producto';
                             $pE=$prod['estado']??'disponible';
                             $pUrl=url('/producto/'.$prod['id']);
@@ -260,18 +282,33 @@ $hoy = (int) date('w');
                                 <div class="acordeon-contenido">
                                     <div class="acordeon-detalle">
                                         <div class="acordeon-det-layout">
-                                            <div class="acordeon-det-imgwrap">
-                                                <?php if(!empty($prod['imagen'])): ?>
-                                                <img class="acordeon-det-img" src="<?= asset('img/productos/'.$comercio['id'].'/'.$prod['imagen']) ?>" alt="<?= e($prod['nombre']) ?>" loading="lazy">
+                                            <div class="producto-galeria" data-pid="<?= $prod['id'] ?>">
+                                                <?php
+                                                $fotoPrincipal = !empty($prodFotos) ? $prodFotos[0] : null;
+                                                $fotoSrc = $fotoPrincipal ? asset('img/productos/'.$comercio['id'].'/'.$fotoPrincipal['imagen']) : '';
+                                                ?>
+                                                <?php if($fotoPrincipal): ?>
+                                                <div class="producto-galeria__principal-container">
+                                                    <img class="producto-galeria__principal-img" src="<?= $fotoSrc ?>" alt="<?= e($prod['nombre']) ?>" loading="lazy">
+                                                    <?php if(!empty($comercio['logo'])): ?>
+                                                    <img class="producto-galeria__logo" src="<?= asset('img/logos/'.$comercio['logo']) ?>" alt="<?= e($comercio['nombre']) ?>" loading="lazy">
+                                                    <?php endif; ?>
+                                                    <?php if($esV): ?><div class="producto-galeria__overlay"><?= strtoupper($pE) ?></div><?php endif; ?>
+                                                </div>
                                                 <?php else: ?>
-                                                <div class="acordeon-det-ph">&#128230;</div>
+                                                <div class="producto-galeria__placeholder">&#128230;</div>
                                                 <?php endif; ?>
-                                                <?php if(!empty($comercio['logo'])): ?>
-                                                <img class="acordeon-det-logo" src="<?= asset('img/logos/'.$comercio['logo']) ?>" alt="<?= e($comercio['nombre']) ?>" loading="lazy">
-                                                <?php endif; ?>
-                                                <?php if($esV): ?><div class="acordeon-det-overlay"><?= strtoupper($pE) ?></div><?php endif; ?>
-                                                <?php if(!empty($prod['imagen2'])): ?>
-                                                <img class="acordeon-img2" src="<?= asset('img/productos/'.$comercio['id'].'/'.$prod['imagen2']) ?>" alt="<?= e($prod['nombre']) ?> - 2" loading="lazy">
+                                                <?php if(count($prodFotos) > 1): ?>
+                                                <div class="producto-galeria__thumbs">
+                                                    <?php foreach($prodFotos as $fi => $pf): ?>
+                                                    <img class="producto-galeria__thumb<?= $fi === 0 ? ' activa' : '' ?>"
+                                                         src="<?= asset('img/productos/'.$comercio['id'].'/thumbs/'.$pf['imagen']) ?>"
+                                                         data-full="<?= asset('img/productos/'.$comercio['id'].'/'.$pf['imagen']) ?>"
+                                                         alt="Foto <?= $fi+1 ?>"
+                                                         loading="lazy"
+                                                         onclick="cambiarFotoPrincipal(this)">
+                                                    <?php endforeach; ?>
+                                                </div>
                                                 <?php endif; ?>
                                             </div>
                                             <div class="acordeon-det-info">
@@ -373,6 +410,25 @@ $hoy = (int) date('w');
                 function toggleDet(b){var t=b.nextElementSibling;t.classList.toggle('abierto');b.querySelector('.dti').innerHTML=t.classList.contains('abierto')?'&#9650;':'&#9660;';b.querySelector('.dtl').textContent=t.classList.contains('abierto')?'Ver menos':'Ver m\u00e1s detalles'}
                 document.querySelectorAll('.catalogo-filtro').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.catalogo-filtro').forEach(function(x){x.classList.remove('activo')});b.classList.add('activo');var t=b.dataset.tipo;document.querySelectorAll('.acordeon-item').forEach(function(i){i.style.display=(t==='todos'||i.dataset.tipo===t)?'':'none'})})});
                 function shProd(r,u,t,pId,cId){var ue=encodeURIComponent(u),te=encodeURIComponent(t),s='';if(r==='facebook')s='https://www.facebook.com/sharer/sharer.php?u='+ue;else if(r==='twitter')s='https://twitter.com/intent/tweet?text='+te+'&url='+ue;else if(r==='whatsapp')s='https://wa.me/?text='+te+'%20'+ue;else if(r==='copiar'){navigator.clipboard.writeText(u).then(function(){var b=event.target.closest('.acordeon-share-btn');var o=b.innerHTML;b.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="#4caf50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';setTimeout(function(){b.innerHTML=o},2000)});return}if(s)window.open(s,'_blank','width=600,height=400');fetch('/api/share-track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({red:r,slug:window.location.pathname.split('/').pop(),tipo:'producto',producto_id:pId})}).catch(function(){})}
+                // Gallery: zoom follow mouse
+                document.querySelectorAll('.producto-galeria__principal-container').forEach(function(cont){
+                    var img=cont.querySelector('.producto-galeria__principal-img');
+                    cont.addEventListener('mousemove',function(e){
+                        var r=cont.getBoundingClientRect();
+                        var x=((e.clientX-r.left)/r.width)*100;
+                        var y=((e.clientY-r.top)/r.height)*100;
+                        img.style.transformOrigin=x+'% '+y+'%';
+                    });
+                    cont.addEventListener('mouseleave',function(){img.style.transformOrigin='center center'});
+                });
+                // Gallery: change principal on thumb click
+                function cambiarFotoPrincipal(thumb){
+                    var g=thumb.closest('.producto-galeria');
+                    var p=g.querySelector('.producto-galeria__principal-img');
+                    if(p)p.src=thumb.dataset.full;
+                    g.querySelectorAll('.producto-galeria__thumb').forEach(function(t){t.classList.remove('activa')});
+                    thumb.classList.add('activa');
+                }
                 document.addEventListener('DOMContentLoaded',function(){var it=document.querySelectorAll('.acordeon-item');if(it.length>0&&it.length<=3){var c=it[0].querySelector('.acordeon-contenido'),f=it[0].querySelector('.acordeon-flecha');if(c)c.classList.add('abierto');if(f)f.classList.add('abierto')}});
                 </script>
 

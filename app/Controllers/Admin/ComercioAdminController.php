@@ -7,7 +7,9 @@ use App\Models\Categoria;
 use App\Models\Comercio;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Core\Database;
 use App\Models\Producto;
+use App\Models\ProductoFoto;
 use App\Services\FileManager;
 use App\Services\Notification;
 
@@ -1046,6 +1048,48 @@ class ComercioAdminController extends Controller
 
         $this->log('productos', 'eliminar', 'comercio', $id, "Producto '{$producto['nombre']}' eliminado de {$comercio['nombre']}");
         $this->redirect("/admin/comercios/{$id}/productos", ['success' => "Producto '{$producto['nombre']}' eliminado"]);
+    }
+
+    /**
+     * Eliminar foto de producto (AJAX)
+     */
+    public function productoFotoEliminar(string $id, string $pid, string $fid): void
+    {
+        $id = (int) $id; $pid = (int) $pid; $fid = (int) $fid;
+        $producto = Producto::findById($pid);
+        $foto = ProductoFoto::findById($fid);
+        if (!$producto || !$foto || $producto['comercio_id'] != $id || $foto['producto_id'] != $pid) {
+            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+        }
+        FileManager::eliminarImagen('productos/' . $id, $foto['imagen']);
+        ProductoFoto::delete($fid);
+        if ($foto['es_principal']) {
+            $next = ProductoFoto::getPrincipal($pid);
+            if ($next) ProductoFoto::setPrincipal($pid, $next['id']);
+        }
+        $principal = ProductoFoto::getPrincipal($pid);
+        Producto::update($pid, ['imagen' => $principal ? $principal['imagen'] : null]);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    /**
+     * Marcar foto como principal (AJAX)
+     */
+    public function productoFotoPrincipal(string $id, string $pid, string $fid): void
+    {
+        $id = (int) $id; $pid = (int) $pid; $fid = (int) $fid;
+        $producto = Producto::findById($pid);
+        $foto = ProductoFoto::findById($fid);
+        if (!$producto || !$foto || $producto['comercio_id'] != $id || $foto['producto_id'] != $pid) {
+            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+        }
+        ProductoFoto::setPrincipal($pid, $fid);
+        Producto::update($pid, ['imagen' => $foto['imagen']]);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true]);
+        exit;
     }
 
     public function productoToggle(string $id, string $pid): void

@@ -4,6 +4,9 @@
  * Variables: $comercio, $producto (null si es nuevo), $errors, $old
  */
 $esEdicion = !empty($producto);
+$fotos = $esEdicion ? \App\Models\ProductoFoto::findByProductoId($producto['id']) : [];
+$maxFotos = \App\Models\Producto::getMaxFotos($comercio['id']);
+$totalFotos = count($fotos);
 $errors = $_SESSION['flash_errors'] ?? [];
 $old    = $_SESSION['flash_old'] ?? [];
 unset($_SESSION['flash_errors'], $_SESSION['flash_old']);
@@ -74,6 +77,7 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
               style="background:var(--color-white);border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.08)">
 
             <input type="hidden" name="_csrf" value="<?= csrf_token() ?>">
+            <input type="hidden" name="_producto_id" value="<?= $producto['id'] ?? 0 ?>">
             <input type="hidden" name="tipo" id="tipoInput" value="<?= e($tipo) ?>">
 
             <!-- ═══════════ Selector de tipo ═══════════ -->
@@ -372,43 +376,36 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
 
             <!-- ═══════════ Imagen principal ═══════════ -->
             <div style="margin-bottom:1rem">
-                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Imagen principal</label>
-                <?php if ($esEdicion && !empty($producto['imagen'])): ?>
-                    <div style="margin-bottom:0.5rem">
-                        <img src="<?= asset('img/productos/' . $comercio['id'] . '/' . $producto['imagen']) ?>"
-                             alt="<?= e($producto['nombre']) ?>"
-                             style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover">
-                        <p style="font-size:0.75rem;color:#9CA3AF;margin:0.25rem 0 0">Imagen actual. Sube otra para reemplazarla.</p>
-                    </div>
-                <?php endif; ?>
-                <input type="file" name="imagen" accept="image/jpeg,image/png,image/webp" id="prodImagen">
-                <small style="color:#9CA3AF;font-size:0.75rem">JPG, PNG o WebP. M&#225;ximo 2 MB.</small>
-                <div id="imgPreview" style="margin-top:0.5rem;display:none">
-                    <img id="previewImg" src="" alt="Preview" style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover">
-                </div>
-            </div>
-
-            <!-- ═══════════ Imagen secundaria ═══════════ -->
+            <!-- ========= Galeria de fotos ========= -->
             <div style="margin-bottom:1rem">
-                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">Imagen secundaria</label>
-                <?php if ($esEdicion && !empty($producto['imagen2'])): ?>
-                    <div style="margin-bottom:0.5rem">
-                        <img src="<?= asset('img/productos/' . $comercio['id'] . '/' . $producto['imagen2']) ?>"
-                             alt="<?= e($producto['nombre']) ?> (2)"
-                             style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover">
-                        <p style="font-size:0.75rem;color:#9CA3AF;margin:0.25rem 0 0">Imagen secundaria actual. Sube otra para reemplazarla.</p>
+                <label style="display:block;font-weight:600;margin-bottom:0.35rem;font-size:0.9rem">&#128247; Im&aacute;genes del producto</label>
+                <p style="font-size:0.8rem;color:#9CA3AF;margin:0 0 0.75rem"><?= $totalFotos ?> de <?= $maxFotos ?> fotos (Plan: <?= e($plan['nombre'] ?? 'Freemium') ?>)</p>
+
+                <?php if ($esEdicion && !empty($fotos)): ?>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0.75rem" id="galeriaExistente">
+                    <?php foreach ($fotos as $ft): ?>
+                    <div style="position:relative;width:80px;height:80px" id="foto-<?= $ft['id'] ?>">
+                        <img src="<?= asset('img/productos/' . $comercio['id'] . '/thumbs/' . $ft['imagen']) ?>"
+                             alt="Foto" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid <?= $ft['es_principal'] ? '#4caf50' : '#e0e0e0' ?>"
+                             loading="lazy">
+                        <button type="button" onclick="eliminarFoto(<?= $ft['id'] ?>)"
+                                style="position:absolute;top:-6px;right:-6px;background:#ef4444;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:0.7rem;cursor:pointer;line-height:1;display:flex;align-items:center;justify-content:center">&times;</button>
+                        <button type="button" onclick="hacerPrincipal(<?= $ft['id'] ?>)"
+                                style="position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);background:<?= $ft['es_principal'] ? '#4caf50' : '#e0e0e0' ?>;color:<?= $ft['es_principal'] ? 'white' : '#666' ?>;border:none;border-radius:10px;padding:1px 6px;font-size:0.65rem;cursor:pointer"><?= $ft['es_principal'] ? '&#11088; Principal' : '&#9734;' ?></button>
                     </div>
-                <?php endif; ?>
-                <input type="file" name="imagen2" accept="image/jpeg,image/png,image/webp" id="prodImagen2">
-                <small style="color:#9CA3AF;font-size:0.75rem">JPG, PNG o WebP. M&#225;ximo 2 MB. (Opcional)</small>
-                <div id="imgPreview2" style="margin-top:0.5rem;display:none">
-                    <img id="previewImg2" src="" alt="Preview" style="max-width:200px;max-height:200px;border-radius:8px;object-fit:cover">
+                    <?php endforeach; ?>
                 </div>
+                <?php endif; ?>
+
+                <?php if ($totalFotos < $maxFotos): ?>
+                <input type="file" name="fotos[]" multiple accept="image/jpeg,image/png,image/webp" id="fotosInput">
+                <small style="color:#9CA3AF;font-size:0.75rem">JPG, PNG o WebP. M&aacute;x 2 MB por foto. Puedes seleccionar varias.</small>
+                <div id="fotosPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:0.5rem"></div>
+                <?php else: ?>
+                <p style="font-size:0.85rem;color:#d97706;background:#FEF3C7;padding:0.5rem 0.75rem;border-radius:8px">L&iacute;mite de <?= $maxFotos ?> fotos alcanzado.</p>
+                <?php endif; ?>
             </div>
 
-            <!-- ═══════════ Activo ═══════════ -->
-            <div style="margin-bottom:1.25rem">
-                <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.9rem">
                     <input type="checkbox" name="activo" value="1" <?= $activo ? 'checked' : '' ?>>
                     <span>Producto activo (visible en mi perfil)</span>
                 </label>
@@ -629,4 +626,25 @@ $gastos_comunes      = $old['gastos_comunes'] ?? $producto['gastos_comunes'] ?? 
         });
     }
 })();
+
+    // Gallery management
+    var _galeriaBase = '<?= url('/mi-comercio/productos/' . ($producto['id'] ?? 0)) ?>';
+    function _galeriaPost(path) {
+        var f=document.createElement('form');f.method='POST';f.action=_galeriaBase+path;f.style.display='none';
+        var c=document.createElement('input');c.name='_csrf';c.value=document.querySelector('[name=_csrf]').value;
+        f.appendChild(c);document.body.appendChild(f);f.submit();
+    }
+    function eliminarFoto(id){ if(confirm('Eliminar esta foto?'))_galeriaPost('/foto-eliminar/'+id); }
+    function hacerPrincipal(id){ _galeriaPost('/foto-principal/'+id); }
+
+    var _fi=document.getElementById('fotosInput'),_fp=document.getElementById('fotosPreview');
+    if(_fi&&_fp){_fi.addEventListener('change',function(){
+        _fp.innerHTML='';
+        if(this.files)Array.from(this.files).forEach(function(file){
+            if(file.size>2*1024*1024){alert(file.name+' supera 2MB');return;}
+            var r=new FileReader();
+            r.onload=function(e){var i=document.createElement('img');i.src=e.target.result;i.style.cssText='width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #e0e0e0';_fp.appendChild(i);};
+            r.readAsDataURL(file);
+        });
+    })}
 </script>

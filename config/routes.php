@@ -74,6 +74,8 @@ return [
     ['POST', '/admin/comercios/{id}/productos/actualizar/{pid}', 'Admin\\ComercioAdminController@productoActualizar',['auth']],
     ['POST', '/admin/comercios/{id}/productos/eliminar/{pid}',   'Admin\\ComercioAdminController@productoEliminar',  ['auth']],
     ['POST', '/admin/comercios/{id}/productos/toggle/{pid}',     'Admin\\ComercioAdminController@productoToggle',    ['auth']],
+    ['POST', '/admin/comercios/{id}/productos/{pid}/foto-eliminar/{fid}',  'Admin\\ComercioAdminController@productoFotoEliminar', ['auth']],
+    ['POST', '/admin/comercios/{id}/productos/{pid}/foto-principal/{fid}', 'Admin\\ComercioAdminController@productoFotoPrincipal', ['auth']],
 
     // ── Categorías CRUD ───────────────────────────────────────
     ['GET',  '/admin/categorias',              'Admin\\CategoriaAdminController@index',  ['auth']],
@@ -341,4 +343,6 @@ return [
     ['GET',  '/mi-comercio/productos/editar/{id}',  'Public\\ComercianteController@productoEditar',     []],
     ['POST', '/mi-comercio/productos/actualizar/{id}', 'Public\\ComercianteController@productoActualizar', []],
     ['POST', '/mi-comercio/productos/eliminar/{id}',   'Public\\ComercianteController@productoEliminar',   []],
+    ['POST', '/mi-comercio/productos/{id}/foto-eliminar/{fid}',    'Public\\ComercianteController@productoFotoEliminar', []],
+    ['POST', '/mi-comercio/productos/{id}/foto-principal/{fid}',   'Public\\ComercianteController@productoFotoPrincipal', []],
 ];

@@ -9,7 +9,9 @@ use App\Models\Comercio;
 use App\Models\Configuracion;
 use App\Models\FechaEspecial;
 use App\Models\PlanConfig;
+use App\Core\Database;
 use App\Models\Producto;
+use App\Models\ProductoFoto;
 use App\Models\RenovacionComercio;
 use App\Services\Captcha;
 use App\Services\FileManager;
@@ -1205,6 +1207,10 @@ class ComercianteController extends Controller
 
         Producto::create($data);
 
+        // Save uploaded photos
+        $newProductId = Database::getInstance()->lastInsertId();
+        $this->guardarFotosProducto($newProductId, $comercioId);
+
         $_SESSION['flash_success'] = 'Producto creado correctamente.';
         header('Location: ' . url('/mi-comercio/productos'));
         exit;
@@ -1424,6 +1430,9 @@ class ComercianteController extends Controller
 
         Producto::update($id, $data);
 
+        // Save new uploaded photos
+        $this->guardarFotosProducto($id, $comercioId);
+
         $_SESSION['flash_success'] = 'Producto actualizado correctamente.';
         header('Location: ' . url('/mi-comercio/productos'));
         exit;
@@ -1466,8 +1475,101 @@ class ComercianteController extends Controller
     }
 
     /**
+     * Eliminar una foto de producto (AJAX)
+     */
+    public function productoFotoEliminar(int $id, int $fid): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); echo json_encode(['error' => 'No autorizado']); exit;
+        }
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $producto = Producto::findById($id);
+        $foto = ProductoFoto::findById($fid);
+        if (!$comercio || !$producto || !$foto || $producto['comercio_id'] != $comercio['id'] || $foto['producto_id'] != $id) {
+            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+        }
+        // Delete physical file
+        $this->eliminarImagenProducto($comercio['id'], $foto['imagen']);
+        ProductoFoto::delete($fid);
+        // If was principal, set next as principal
+        if ($foto['es_principal']) {
+            $next = ProductoFoto::getPrincipal($id);
+            if ($next) ProductoFoto::setPrincipal($id, $next['id']);
+        }
+        // Update productos.imagen with current principal
+        $principal = ProductoFoto::getPrincipal($id);
+        Producto::update($id, ['imagen' => $principal ? $principal['imagen'] : null]);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true, 'remaining' => ProductoFoto::countByProductoId($id)]);
+        exit;
+    }
+
+    /**
+     * Marcar foto como principal (AJAX)
+     */
+    public function productoFotoPrincipal(int $id, int $fid): void
+    {
+        if (!$this->isLogueado() || $_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(403); echo json_encode(['error' => 'No autorizado']); exit;
+        }
+        $uid = $_SESSION['comerciante']['id'];
+        $comercio = Comercio::findByRegistradoPorWithCategorias($uid);
+        $producto = Producto::findById($id);
+        $foto = ProductoFoto::findById($fid);
+        if (!$comercio || !$producto || !$foto || $producto['comercio_id'] != $comercio['id'] || $foto['producto_id'] != $id) {
+            http_response_code(404); echo json_encode(['error' => 'No encontrado']); exit;
+        }
+        ProductoFoto::setPrincipal($id, $fid);
+        Producto::update($id, ['imagen' => $foto['imagen']]);
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    /**
      * Eliminar archivos de imagen de un producto (original, thumb, webp)
      */
+    /**
+     * Guardar fotos subidas para un producto
+     */
+    private function guardarFotosProducto(int $productoId, int $comercioId): void
+    {
+        if (empty($_FILES['fotos']['name'][0])) return;
+        $maxFotos = Producto::getMaxFotos($comercioId);
+        $currentCount = ProductoFoto::countByProductoId($productoId);
+        $hasPrincipal = $currentCount > 0;
+
+        foreach ($_FILES['fotos']['name'] as $i => $name) {
+            if (empty($name) || $_FILES['fotos']['error'][$i] !== UPLOAD_ERR_OK) continue;
+            if ($currentCount >= $maxFotos) break;
+            if ($_FILES['fotos']['size'][$i] > 2 * 1024 * 1024) continue;
+
+            $file = [
+                'name' => $_FILES['fotos']['name'][$i],
+                'type' => $_FILES['fotos']['type'][$i],
+                'tmp_name' => $_FILES['fotos']['tmp_name'][$i],
+                'error' => $_FILES['fotos']['error'][$i],
+                'size' => $_FILES['fotos']['size'][$i],
+            ];
+            $imgName = FileManager::subirImagen($file, 'productos/' . $comercioId, 800);
+            if ($imgName) {
+                $esPrincipal = !$hasPrincipal ? 1 : 0;
+                ProductoFoto::create([
+                    'producto_id' => $productoId,
+                    'imagen' => $imgName,
+                    'orden' => ProductoFoto::getNextOrden($productoId),
+                    'es_principal' => $esPrincipal,
+                ]);
+                if ($esPrincipal) {
+                    Producto::update($productoId, ['imagen' => $imgName]);
+                    $hasPrincipal = true;
+                }
+                $currentCount++;
+            }
+        }
+    }
+
     private function eliminarImagenProducto(int $comercioId, string $imagen): void
     {
         $basePath = UPLOAD_PATH . '/productos/' . $comercioId;

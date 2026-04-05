@@ -69,10 +69,12 @@ class Producto
     public static function getDestacadosParaHome(int $limite = 8): array
     {
         return Database::getInstance()->fetchAll(
-            "SELECT p.*, c.nombre AS comercio_nombre, c.slug AS comercio_slug, c.whatsapp AS comercio_whatsapp, c.logo AS comercio_logo
+            "SELECT p.*, c.nombre AS comercio_nombre, c.slug AS comercio_slug, c.whatsapp AS comercio_whatsapp, c.logo AS comercio_logo,
+                    COALESCE(pf.imagen, p.imagen) AS foto_principal
              FROM productos p
              INNER JOIN comercios c ON p.comercio_id = c.id
-             WHERE p.activo = 1 AND p.estado = 'disponible' AND c.activo = 1 AND p.imagen IS NOT NULL
+             LEFT JOIN producto_fotos pf ON pf.producto_id = p.id AND pf.es_principal = 1
+             WHERE p.activo = 1 AND p.estado = 'disponible' AND c.activo = 1 AND (p.imagen IS NOT NULL OR pf.imagen IS NOT NULL)
              ORDER BY p.created_at DESC
              LIMIT ?",
             [$limite]
@@ -195,5 +197,19 @@ class Producto
         if (!empty($prod['luz_electrica'])) $amenidades[] = "\u{1F4A1} Luz";
         if (isset($prod['es_rural'])) $amenidades[] = $prod['es_rural'] ? "\u{1F33E} Rural" : "\u{1F3D9} Urbano";
         return $amenidades;
+    }
+
+    /**
+     * Obtener max fotos permitidas segun plan del comercio
+     */
+    public static function getMaxFotos(int $comercioId): int
+    {
+        $row = Database::getInstance()->fetch(
+            "SELECT pc.max_fotos_producto FROM comercios c
+             INNER JOIN planes_config pc ON c.plan = pc.slug
+             WHERE c.id = ?",
+            [$comercioId]
+        );
+        return (int) ($row['max_fotos_producto'] ?? 2);
     }
 }
