@@ -11,7 +11,7 @@ class Share
     /**
      * Registrar un evento de compartir
      */
-    public static function registrar(?int $comercioId, string $pagina, string $redSocial): void
+    public static function registrar(?int $comercioId, string $pagina, string $redSocial, ?int $productoId = null): void
     {
         try {
             $db = Database::getInstance();
@@ -19,6 +19,7 @@ class Share
                 'comercio_id' => $comercioId,
                 'pagina'      => mb_substr($pagina, 0, 500),
                 'red_social'  => mb_substr($redSocial, 0, 50),
+                'producto_id' => $productoId,
                 'ip'          => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
                 'user_agent'  => mb_substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 500),
             ]);

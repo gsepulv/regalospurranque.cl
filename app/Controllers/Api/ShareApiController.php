@@ -22,9 +22,12 @@ class ShareApiController extends Controller
         $slug = $data['slug'] ?? '';
         $tipo = $data['tipo'] ?? '';
         $url  = $data['url'] ?? '';
+        $productoId = !empty($data['producto_id']) ? (int) $data['producto_id'] : null;
 
         // Construir URL desde slug+tipo si no viene url directa
-        if (empty($url) && !empty($slug) && !empty($tipo)) {
+        if (empty($url) && $tipo === 'producto' && $productoId) {
+            $url = '/producto/' . $productoId;
+        } elseif (empty($url) && !empty($slug) && !empty($tipo)) {
             $url = '/' . $tipo . '/' . $slug;
         }
 
@@ -40,7 +43,7 @@ class ShareApiController extends Controller
             $comercioId = $comercio ? (int) $comercio['id'] : null;
         }
 
-        Share::registrar($comercioId, $url ?: ('/' . $tipo . '/' . $slug), $red);
+        Share::registrar($comercioId, $url ?: ('/' . $tipo . '/' . $slug), $red, $productoId);
 
         $this->json(['success' => true]);
     }
