@@ -657,11 +657,12 @@ arco-admin, arco-confirmacion, backup-completado, cambios-pendientes-admin, come
 5. **Multi-sitio preparado pero no activo**: tabla sitios existe, site_id en la mayoria de tablas, solo 1 sitio.
 6. **Sitemap estatico**: No se regenera automaticamente al crear contenido. Debe regenerarse desde admin > SEO o admin > herramientas.
 7. **calidad_ok no filtra**: El campo existe en BD y admin pero fue removido de todos los queries publicos (2026-03-21). Si activo=1, el comercio aparece en listados, busqueda, mapa, categorias y fechas.
+8. **`ig.php` es funcionalidad legitima, NO dev cruft**: redirector inteligente de perfiles Instagram con UX adaptativa por dispositivo. iPhone/PC/Mac: 302 directo a `instagram.com/{user}`. Android: tarjeta intermedia con deep link `instagram://user?username=` + boton "copiar usuario" (workaround para bug de Android donde el handoff web→app de Instagram falla). Sanitiza el username via regex `[^a-zA-Z0-9._]`. Sin parametro `?u=` retorna 302 a `./`. Usado por `views/partials/comercio-redes.php` (linea 30) y `views/partials/social-profiles.php` (linea 65) para reemplazar el href Instagram declarado por el comercio. **NO marcar como ruido en futuras auditorias** — eliminarlo rompe los enlaces Instagram en TODAS las fichas de comercio.
 
 ### Limpieza realizada (2026-03-21)
 
 Los siguientes archivos fueron eliminados de produccion y/o sacados del tracking de git:
-- Scripts diagnostico: rastreo-fechas.php, diagnostico-directo.php, diagnostico-noticias-store.php, _diag-css.php, setup-smtp-produccion.php, clear-cache.php, buscar_tokens_google.php, buscar_tokens_v2.php, reenviar-instrucciones.php, ig.php
+- Scripts diagnostico: rastreo-fechas.php, diagnostico-directo.php, diagnostico-noticias-store.php, _diag-css.php, setup-smtp-produccion.php, clear-cache.php, buscar_tokens_google.php, buscar_tokens_v2.php, reenviar-instrucciones.php
 - Archivos legacy: app.zip, .htaccess.zip, robots.txt.zip, config/app.php.zip, seo-regalospurranque/
 - Deploy: deploy/fix-permissions.php (eliminado de prod y git)
 - Todos los .bak/.bak2/.bak3 en produccion
