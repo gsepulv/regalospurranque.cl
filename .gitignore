@@ -91,6 +91,12 @@ legales/*.docx
 legales/prompt-*.md
 .cpanel.yml.txt
 
+# Notas internas / auditorías — solo locales, nunca al repo
+/AUDIT_*.md
+/CAMBIOS-PRODUCCION-*.md
+/FIXES_APPLIED.md
+/diagnostico-*.md
+
 # TypeScript definitions (no usamos TS)
 *.d.ts
 
