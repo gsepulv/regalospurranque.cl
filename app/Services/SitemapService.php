@@ -67,12 +67,18 @@ class SitemapService
 
         $urls = array_merge($staticPages, $legalPages);
 
-        // ── 2. Categorías activas ────────────────────────────────────
+        // ── 2. Categorías activas con al menos 1 comercio activo ─────
+        // Excluye huérfanas para no indexar páginas vacías.
         $categorias = $this->db->fetchAll(
-            "SELECT slug, updated_at
-             FROM categorias
-             WHERE activo = 1
-             ORDER BY nombre"
+            "SELECT c.slug, c.updated_at
+             FROM categorias c
+             WHERE c.activo = 1
+               AND EXISTS (
+                   SELECT 1 FROM comercio_categoria cc
+                   JOIN comercios co ON co.id = cc.comercio_id
+                   WHERE cc.categoria_id = c.id AND co.activo = 1
+               )
+             ORDER BY c.nombre"
         );
         foreach ($categorias as $c) {
             $urls[] = [
@@ -83,12 +89,19 @@ class SitemapService
             ];
         }
 
-        // ── 3. Fechas especiales activas ──────────────────────────────
+        // ── 3. Fechas especiales activas (excluye las que tienen 301) ─
+        // Si /fecha/{slug} tiene un redirect activo en seo_redirects,
+        // no la incluimos: aparecería en sitemap pero respondería 301.
         $fechas = $this->db->fetchAll(
-            "SELECT slug, updated_at 
-             FROM fechas_especiales 
-             WHERE activo = 1
-             ORDER BY nombre"
+            "SELECT f.slug, f.updated_at
+             FROM fechas_especiales f
+             WHERE f.activo = 1
+               AND NOT EXISTS (
+                   SELECT 1 FROM seo_redirects r
+                   WHERE r.activo = 1
+                     AND r.url_origen = CONCAT('/fecha/', f.slug)
+               )
+             ORDER BY f.nombre"
         );
         foreach ($fechas as $f) {
             $urls[] = [
@@ -128,6 +141,23 @@ class SitemapService
                 'priority' => '0.6',
                 'freq'     => 'monthly',
                 'lastmod'  => $n['updated_at'] ?? null,
+            ];
+        }
+
+        // ── 6. Productos publicados ──────────────────────────────────
+        // Patrón público: /producto/{id} (ComercioController@productoShare)
+        $productos = $this->db->fetchAll(
+            "SELECT id, updated_at
+             FROM productos
+             WHERE activo = 1
+             ORDER BY updated_at DESC"
+        );
+        foreach ($productos as $p) {
+            $urls[] = [
+                'path'     => '/producto/' . $p['id'],
+                'priority' => '0.6',
+                'freq'     => 'monthly',
+                'lastmod'  => $p['updated_at'] ?? null,
             ];
         }
 

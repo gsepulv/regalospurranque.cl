@@ -63,22 +63,35 @@ class HomeController extends Controller
 
     /**
      * GET /sitemap.xml — Servir sitemap
-     * Prioriza archivo físico. Si no existe, genera en tiempo real.
+     * Sirve el archivo físico si existe y es reciente (<1h).
+     * En caso contrario regenera vía SitemapService::generateAndSave().
+     * Si la regeneración falla y existe un archivo viejo, lo sirve como fallback.
      */
     public function sitemap(): void
     {
         header('Content-Type: application/xml; charset=utf-8');
 
         $sitemapPath = BASE_PATH . '/sitemap.xml';
+        $maxAge      = 3600; // 1 hora
 
-        // Si existe el archivo físico (generado desde admin), servirlo
-        if (file_exists($sitemapPath)) {
-            readfile($sitemapPath);
-            return;
+        $needsRegen = !file_exists($sitemapPath)
+                    || (time() - filemtime($sitemapPath) > $maxAge);
+
+        if ($needsRegen) {
+            try {
+                $service = new \App\Services\SitemapService();
+                $service->generateAndSave();
+            } catch (\Throwable $e) {
+                error_log('[sitemap] Regen failed: ' . $e->getMessage());
+                if (!file_exists($sitemapPath)) {
+                    http_response_code(500);
+                    echo '<?xml version="1.0" encoding="UTF-8"?><error/>';
+                    return;
+                }
+                // Si existe el archivo viejo, lo servimos como fallback.
+            }
         }
 
-        // Fallback: generar en tiempo real
-        $service = new \App\Services\SitemapService();
-        echo $service->generateXml();
+        readfile($sitemapPath);
     }
 }
