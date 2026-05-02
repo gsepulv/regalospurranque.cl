@@ -5,6 +5,16 @@
 # =========================================================
 RewriteEngine On
 
+# ── 0) Bloquear acceso a directorios y archivos de control de versiones ──
+RedirectMatch 404 /\.git(/|$)
+RedirectMatch 404 /\.gitignore$
+RedirectMatch 404 /\.gitattributes$
+RedirectMatch 404 /\.svn(/|$)
+RedirectMatch 404 /\.hg(/|$)
+RedirectMatch 404 /\.env$
+RedirectMatch 404 /composer\.(json|lock)$
+RedirectMatch 404 /package(-lock)?\.json$
+
 # ── 1) Forzar HTTPS (excepto localhost) ───────────────────────────────────
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP_HOST} !^localhost$ [NC]
@@ -111,3 +121,10 @@ RewriteRule ^(app|config|storage|database|cron|deploy|views|legales|legal|lib)/ 
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
 </IfModule>
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Configure el paquete “ea-php83” como el lenguaje de programación predeterminado “PHP”.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php83 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
