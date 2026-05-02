@@ -28,6 +28,12 @@ RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
 RewriteCond %{HTTP_HOST} ^v2\.regalos\.purranque\.info$ [NC]
 RewriteRule ^(.*)$ https://regalospurranque.cl/$1 [R=301,L]
 
+# ── Forzar /sitemap.xml por front controller ───────────────────────────────
+# El archivo sitemap.xml existe en disco y Apache lo serviría directamente,
+# saltándose la lógica de auto-regeneración del HomeController. Esta regla
+# fuerza la ruta por PHP para que el controller decida si regenera o sirve cache.
+RewriteRule ^sitemap\.xml$ index.php [L,QSA]
+
 # ── Front Controller ─────────────────────────────────────────────────────────
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
