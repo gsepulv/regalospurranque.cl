@@ -68,8 +68,10 @@ class CategoriaController extends Controller
             ['label' => $categoria['nombre']],
         ];
 
-        // noindex para categorías sin comercios (thin content)
-        $noindex = false;
+        // noindex,follow para categorías sin comercios activos (thin content).
+        // follow=true permite que Google siga enlaces internos (nav, footer, breadcrumb)
+        // y descubra el resto del sitio aunque la URL propia no se indexe.
+        $noindex = ($total === 0);
         $seoDesc = $categoria['descripcion']
             ?: ($total > 0
                 ? "Los mejores comercios de {$categoria['nombre']} en Purranque, Chile. Encuentra {$total} opciones con ubicación, contacto y reseñas."
@@ -81,6 +83,7 @@ class CategoriaController extends Controller
             'og_image'    => asset('img/og/categoria-default.jpg'),
             'keywords'    => $categoria['nombre'] . ' purranque, ' . strtolower($categoria['nombre']) . ' en purranque, comercios purranque',
             'noindex'     => $noindex,
+            'follow'      => true,
             'categoria'   => $categoria,
             'comercios'   => $comercios,
             'categorias'  => $categorias,

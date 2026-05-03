@@ -28,6 +28,9 @@ if (!empty($currentPage) && !empty($totalPages) && $totalPages > 1) {
 }
 $seoType        = $og_type ?? 'website';
 $seoNoindex     = $noindex ?? false;
+// $follow=true emite "noindex, follow" (permite descubrir resto del sitio).
+// Default false preserva comportamiento previo "noindex, nofollow".
+$seoFollow      = $follow ?? false;
 
 // Imagen OG con fallbacks — siempre desde el servidor propio
 if (!empty($og_image)) {
@@ -68,7 +71,7 @@ if (!empty($gscMeta['valor'])): ?>
 <meta name="keywords" content="<?= e($seoKeywords) ?>">
 <?php endif; ?>
 <?php if ($seoNoindex): ?>
-<meta name="robots" content="noindex, nofollow">
+<meta name="robots" content="noindex, <?= $seoFollow ? 'follow' : 'nofollow' ?>">
 <?php else: ?>
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <?php endif; ?>
