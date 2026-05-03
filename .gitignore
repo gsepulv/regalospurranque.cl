@@ -97,6 +97,11 @@ legales/prompt-*.md
 /FIXES_APPLIED.md
 /diagnostico-*.md
 
+# Sitemap se genera dinámicamente por SitemapService::generateAndSave().
+# Si entra al repo, cada deploy con cp -R sobreescribe el archivo regenerado
+# con la versión vieja del repo (incidente 2026-05-02 bloque 11).
+/sitemap.xml
+
 # TypeScript definitions (no usamos TS)
 *.d.ts
 
